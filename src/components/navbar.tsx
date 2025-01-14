@@ -13,20 +13,37 @@ import {
   XMarkIcon,
   Bars3Icon,
 } from "@heroicons/react/24/solid";
+import Hero from "@/app/hero";
 
 const NAV_MENU = [
   {
-    name: "Page",
+    name: "Home",
     icon: RectangleStackIcon,
+    href: "https:localhost:3000/home",
   },
   {
-    name: "Account",
+    name: "Noti-Tarahumara",
     icon: UserCircleIcon,
+    href: "https:localhost:3000/noti-tarahumara",
+  },
+  {name: "Kardex",
+    icon: UserCircleIcon,
+    href: "https:localhost:3000/kardex",
   },
   {
-    name: "Docs",
-    icon: CommandLineIcon,
-    href: "https://www.material-tailwind.com/docs/react/installation",
+    name: "Cursos"  ,
+    icon: UserCircleIcon,
+    href: "https:localhost:3000/cursos",
+  },
+  {
+    name: "Asignar Cursos",
+    icon: UserCircleIcon,
+    href: "https:localhost:3000/asignar-cursos",
+  },
+  {
+    name: "Cuentas",
+    icon: UserCircleIcon,
+    href: "https:localhost:3000/cuentas",
   },
 ];
 
