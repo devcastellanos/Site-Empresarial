@@ -39,12 +39,12 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-center !justify-between">
           <Typography
             as="a"
-            href="https://www.material-tailwind.com"
+            href="#"
             target="_blank"
             variant="h6"
             className="text-gray-900"
           >
-            Material Tailwind
+            Grupo Tarahumara
           </Typography>
           <ul className="flex justify-center my-4 md:my-0 w-max mx-auto items-center gap-4">
             {LINKS.map((link, index) => (
@@ -80,13 +80,9 @@ export function Footer() {
           color="blue-gray"
           className="text-center mt-12 font-normal !text-gray-700"
         >
-          &copy; {CURRENT_YEAR} Made with{" "}
-          <a href="https://www.material-tailwind.com" target="_blank">
-            Material Tailwind
-          </a>{" "}
-          by{" "}
-          <a href="https://www.creative-tim.com" target="_blank">
-            Creative Tim
+          &copy; {CURRENT_YEAR} Made by{" "}
+          <a href=" " target="_blank">
+          Sistemas Tarahumara
           </a>
           .
         </Typography>
