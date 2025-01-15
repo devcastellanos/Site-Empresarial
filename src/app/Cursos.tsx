@@ -23,6 +23,7 @@ function CourseCatalog() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const handleAddCourse = () => {
     setIsModalOpen(true);
   };
@@ -239,10 +240,16 @@ function CourseCatalog() {
       )}
     </div>
     {isModalOpen && (
-    
-    <NuevoCurso  />
-        
-    )}
+        <div style={styles.modalContainer}>
+          <div style={styles.modal}>
+            <NuevoCurso />
+            <button onClick={handleCloseModal} style={styles.closeButton}>
+              Cerrar
+            </button>
+          </div>
+          <div style={styles.overlay}></div>
+        </div>
+      )}
     </div>
   );
 };
@@ -366,6 +373,25 @@ const styles: { [key: string]: CSSProperties } = {
     border: '1px solid #ddd',
     fontSize: '16px',
     marginTop: '10px',
+  },
+  modalContainer: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modal: {
+    backgroundColor: "#fff",
+    padding: "20px",
+    borderRadius: "8px",
+    width: "60%",
+    textAlign: "center",
   },
 };
 
