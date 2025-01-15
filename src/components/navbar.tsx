@@ -14,36 +14,37 @@ import {
   Bars3Icon,
 } from "@heroicons/react/24/solid";
 import Hero from "@/app/hero";
+import Image from "next/image";
 
 const NAV_MENU = [
   {
     name: "Home",
     icon: RectangleStackIcon,
-    href: "https:localhost:3000/home",
+    href: "/",
   },
   {
     name: "Noti-Tarahumara",
     icon: UserCircleIcon,
-    href: "https:localhost:3000/noti-tarahumara",
+    href: "/Blog",
   },
   {name: "Kardex",
     icon: UserCircleIcon,
-    href: "https:localhost:3000/kardex",
+    href: "/kardex",
   },
   {
     name: "Cursos"  ,
     icon: UserCircleIcon,
-    href: "https:localhost:3000/cursos",
+    href: "/Cursos",
   },
   {
     name: "Asignar Cursos",
     icon: UserCircleIcon,
-    href: "https:localhost:3000/asignar-cursos",
+    href: "/NuevoCurso",
   },
   {
     name: "Cuentas",
     icon: UserCircleIcon,
-    href: "https:localhost:3000/cuentas",
+    href: "/Cuentas",
   },
 ];
 
@@ -62,6 +63,9 @@ function NavItem({ children, href }: NavItemProps) {
         variant="paragraph"
         color="gray"
         className="flex items-center gap-2 font-medium text-gray-900"
+        placeholder=""
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
       >
         {children}
       </Typography>
@@ -82,17 +86,22 @@ export function Navbar() {
   }, []);
 
   return (
-    <MTNavbar shadow={false} fullWidth className="border-0 sticky top-0 z-50">
+    <MTNavbar 
+      shadow={false} 
+      fullWidth 
+      className="border-0 sticky top-0 z-50" 
+      placeholder="" 
+      onPointerEnterCapture={() => {}} 
+      onPointerLeaveCapture={() => {}}
+    >
       <div className="container mx-auto flex items-center justify-between">
-        <Typography
-          as="a"
-          href="https://www.material-tailwind.com"
-          target="_blank"
-          color="blue-gray"
-          className="text-lg font-bold"
-        >
-          Material Tailwind
-        </Typography>
+        <Image
+            width={200}
+            height={100}
+            src={"/image/logo.png"}
+            alt={"Grupo Tarahumara"}
+          />
+
         <ul className="ml-10 hidden items-center gap-8 lg:flex">
           {NAV_MENU.map(({ name, icon: Icon, href }) => (
             <NavItem key={name} href={href}>
@@ -102,9 +111,23 @@ export function Navbar() {
           ))}
         </ul>
         <div className="hidden items-center gap-2 lg:flex">
-          <Button variant="text">Sign In</Button>
+          <Button 
+            variant="text" 
+            placeholder="" 
+            onPointerEnterCapture={() => {}} 
+            onPointerLeaveCapture={() => {}}
+          >
+            Sign In
+          </Button>
           <a href="https://www.material-tailwind.com/blocks" target="_blank">
-            <Button color="gray">blocks</Button>
+            <Button 
+              color="gray" 
+              placeholder="" 
+              onPointerEnterCapture={() => {}} 
+              onPointerLeaveCapture={() => {}}
+            >
+              blocks
+            </Button>
           </a>
         </div>
         <IconButton
@@ -112,6 +135,9 @@ export function Navbar() {
           color="gray"
           onClick={handleOpen}
           className="ml-auto inline-block lg:hidden"
+          placeholder=""
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
         >
           {open ? (
             <XMarkIcon strokeWidth={2} className="h-6 w-6" />
@@ -131,9 +157,23 @@ export function Navbar() {
             ))}
           </ul>
           <div className="mt-6 mb-4 flex items-center gap-2">
-            <Button variant="text">Sign In</Button>
+            <Button 
+              variant="text" 
+              placeholder="" 
+              onPointerEnterCapture={() => {}} 
+              onPointerLeaveCapture={() => {}}
+            >
+              Sign In
+            </Button>
             <a href="https://www.material-tailwind.com/blocks" target="_blank">
-              <Button color="gray">blocks</Button>
+              <Button 
+                color="gray" 
+                placeholder="" 
+                onPointerEnterCapture={() => {}} 
+                onPointerLeaveCapture={() => {}}
+              >
+                blocks
+              </Button>
             </a>
           </div>
         </div>

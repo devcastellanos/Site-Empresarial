@@ -6,27 +6,27 @@ import ArticleCard from "@/components/article-card";
 
 const ARTICLES = [
   {
-    img: "/image/blogs/blog-1.png",
+    img: "/image/crehana.png",
     title: "Crehana",
     desc: "Crehana es una plataforma de educación online que ofrece cursos de diseño, marketing, fotografía, programación y más.",
   },
   {
-    img: "/image/blogs/blog-2.png",
+    img: "/image/plan.webp",
     title: "Plan de Capacitación",
     desc: "Da clic aquí para conocer el plan de capacitación de la empresa Tarahumara para 2025.",
   },
   {
-    img: "/image/blogs/blog-1.png",
+    img: "/image/asistencia.png",
     title: "Asistencia",
     desc: "Da clic aqui para descargar la lista de asistencia de la capacitación de Tarahumara.",
   },
   {
-    img: "/image/blogs/blog-1.png",
+    img: "/image/solicitud.jpg",
     title: "Formato de solicitud",
     desc: "Da clic aquí para descargar el formato de solicitud de cursos.",
   },
   {
-    img: "/image/blogs/blog-1.png",
+    img: "/image/registro.jpg",
     title: "Formato de Registro",
     desc: "Registra tu asistencia al curso que hayas tomado.",
   }
@@ -35,12 +35,15 @@ const ARTICLES = [
 export function Articles() {
   return (
     <section className="container mx-auto px-8 py-20">
-      <Typography variant="h2" color="blue-gray">
+      <Typography variant="h2" color="blue-gray" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
         Herramientas y Plataformas
       </Typography>
       <Typography
         variant="lead"
         className="my-2 w-full font-normal !text-gray-500 lg:w-5/12"
+        placeholder="" 
+        onPointerEnterCapture={() => {}} 
+        onPointerLeaveCapture={() => {}}
       >
        Herramientas y plataformas que te ayudarán a potenciar tu desarrollo profesional en tu área laboral.
       </Typography>

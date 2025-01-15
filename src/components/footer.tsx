@@ -16,12 +16,18 @@ export function Footer() {
           <Typography
             className="text-2xl md:text-3xl text-center font-bold "
             color="white"
+            placeholder=""
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
           >
             Join our community!
           </Typography>
           <Typography
             color="white"
             className=" md:w-7/12 text-center my-3 !text-base"
+            placeholder=""
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
           >
             Get news in your inbox every week! We hate spam too, so no worries
             about this.
@@ -31,7 +37,15 @@ export function Footer() {
               {/* @ts-ignore */}
               <Input label="Email" color="white" />
             </div>
-            <Button size="md" className="lg:w-32" fullWidth color="white">
+            <Button 
+              size="md" 
+              className="lg:w-32" 
+              fullWidth 
+              color="white" 
+              placeholder="" 
+              onPointerEnterCapture={() => {}} 
+              onPointerLeaveCapture={() => {}}
+            >
               subscribe
             </Button>
           </div>
@@ -43,6 +57,9 @@ export function Footer() {
             target="_blank"
             variant="h6"
             className="text-gray-900"
+            placeholder=""
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
           >
             Grupo Tarahumara
           </Typography>
@@ -55,6 +72,9 @@ export function Footer() {
                   variant="small"
                   color="white"
                   className="font-normal !text-gray-700 hover:!text-gray-900 transition-colors"
+                  placeholder=""
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
                 >
                   {link}
                 </Typography>
@@ -62,16 +82,16 @@ export function Footer() {
             ))}
           </ul>
           <div className="flex w-fit justify-center gap-2">
-            <IconButton size="sm" color="gray" variant="text">
+            <IconButton size="sm" color="gray" variant="text" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
               <i className="fa-brands fa-twitter text-lg" />
             </IconButton>
-            <IconButton size="sm" color="gray" variant="text">
+            <IconButton size="sm" color="gray" variant="text" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
               <i className="fa-brands fa-youtube text-lg" />
             </IconButton>
-            <IconButton size="sm" color="gray" variant="text">
+            <IconButton size="sm" color="gray" variant="text" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
               <i className="fa-brands fa-instagram text-lg" />
             </IconButton>
-            <IconButton size="sm" color="gray" variant="text">
+            <IconButton size="sm" color="gray" variant="text" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
               <i className="fa-brands fa-github text-lg" />
             </IconButton>
           </div>
@@ -79,6 +99,9 @@ export function Footer() {
         <Typography
           color="blue-gray"
           className="text-center mt-12 font-normal !text-gray-700"
+          placeholder=""
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
         >
           &copy; {CURRENT_YEAR} Made by{" "}
           <a href=" " target="_blank">

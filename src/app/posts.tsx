@@ -10,7 +10,7 @@ import {
 } from "@material-tailwind/react";
 import { ArrowSmallDownIcon } from "@heroicons/react/24/solid";
 import BlogPostCard from "@/components/blog-post-card";
-
+import Image from "next/image";
 
 const POSTS = [
   {
@@ -86,26 +86,35 @@ export function Posts() {
     <section className="grid min-h-screen place-items-center p-8">
       <Tabs value="trends" className="mx-auto max-w-7xl w-full mb-16 ">
         <div className="w-full flex mb-8 flex-col items-center">
-          <TabsHeader className="h-10 !w-12/12 md:w-[50rem] border border-white/25 bg-opacity-90">
-            <Tab value="trends">Trends</Tab>
-            <Tab value="frontend">Frontend</Tab>
-            <Tab value="backend">Backend</Tab>
-            <Tab value="cloud">Cloud</Tab>
-            <Tab value="ai">AI</Tab>
-            <Tab value="tools">Tools</Tab>
+          <TabsHeader className="h-10 !w-12/12 md:w-[50rem] border border-white/25 bg-opacity-90" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+            <Tab value="trends" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>Trends</Tab>
+            <Tab value="frontend" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>Frontend</Tab>
+            <Tab value="backend" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>Backend</Tab>
+            <Tab value="cloud" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>Cloud</Tab>
+            <Tab value="ai" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>AI</Tab>
+            <Tab value="tools" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>Tools</Tab>
           </TabsHeader>
         </div>
       </Tabs>
-      <Typography variant="h6" className="mb-2">
-        Latest Blog Posts
-      </Typography>
-      <Typography variant="h1" className="mb-2">
+      <Image
+        src={"/image/noti.png"}
+        alt={"Grupo Tarahumara"}
+        width={1280}
+        height={349}
+        layout="responsive"
+        className="object-cover"
+      />
+      <div className="py-8"></div>
+      <Typography variant="h1" className="mb-2 " placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
         Trends News
       </Typography>
       <Typography
         variant="lead"
         color="gray"
         className="max-w-3xl mb-36 text-center text-gray-500"
+        placeholder="" 
+        onPointerEnterCapture={() => {}} 
+        onPointerLeaveCapture={() => {}}
       >
         Check out what&apos;s new in the web development and tech worls! Do not
         forget to subscribe to our blog and we will notify you with the latest
@@ -132,6 +141,9 @@ export function Posts() {
         size="lg"
         color="gray"
         className="flex items-center gap-2 mt-24"
+        placeholder="" 
+        onPointerEnterCapture={() => {}} 
+        onPointerLeaveCapture={() => {}}
       >
         <ArrowSmallDownIcon className="h-5 w-5 font-bold text-gray-900" />
         VIEW MORE

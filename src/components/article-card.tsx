@@ -17,6 +17,10 @@ interface ArticleCardProps {
       <Card
         className="relative grid min-h-[30rem] items-end overflow-hidden rounded-xl"
         color="transparent"
+        placeholder=""
+        onPointerEnterCapture={() => {}}
+        onPointerLeaveCapture={() => {}}
+
       >
         <Image
           width={768}
@@ -26,14 +30,28 @@ interface ArticleCardProps {
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-black/60" />
-        <CardBody className="relative flex flex-col justify-end">
-          <Typography variant="h4" color="white">
+        <CardBody
+          className="relative flex flex-col justify-end"
+          placeholder=""
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
+        >
+          <Typography
+            variant="h4"
+            color="white"
+            placeholder=""
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
+          >
             {title}
           </Typography>
           <Typography
             variant="paragraph"
             color="white"
             className="my-2 font-normal"
+            placeholder=""
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
           >
             {desc}
           </Typography>

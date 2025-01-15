@@ -11,12 +11,18 @@ function Hero() {
       <Typography
         color="blue-gray"
         className="mx-auto w-full text-[30px] lg:text-[48px] font-bold leading-[45px] lg:leading-[60px] lg:max-w-2xl"
+        placeholder="" 
+        onPointerEnterCapture={() => {}} 
+        onPointerLeaveCapture={() => {}}
       >
         Capacitacion Tarahumara
       </Typography>
       <Typography
         variant="lead"
         className="mx-auto mt-8 mb-4 w-full px-8 !text-gray-700 lg:w-10/12 lg:px-12 xl:w-8/12 xl:px-20"
+        placeholder="" 
+        onPointerEnterCapture={() => {}} 
+        onPointerLeaveCapture={() => {}}
       >
         Descubre herramientas, presentaciones, guías y contenido multimedia diseñados para potenciar tu desarrollo profesional en tu área laboral.
         {'\n'}¡Aquí tienes todo lo necesario para crecer y avanzar!
@@ -27,7 +33,7 @@ function Hero() {
             {/* @ts-ignore */}
             <Input label="name@grupotarahumara.com.mx" />
           </div>
-          <Button size="md" className="lg:w-max shrink-0" fullWidth color="gray">
+          <Button size="md" className="lg:w-max shrink-0" fullWidth color="gray" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
             get started
           </Button>
         </div>
@@ -36,10 +42,10 @@ function Hero() {
     </div>
     <div className="w-full lg:container lg:mx-auto">
       <Image
-        width={1024}
-        height={400}
-        src="/image/blog-background.png"
-        alt="credit cards"
+        width={1920}
+        height={1080}
+        src="/image/apples.jpg"
+        alt="background"
         className="h-96 w-full rounded-lg object-cover lg:h-[21rem]"
       />
     </div>
