@@ -89,6 +89,7 @@ function CourseCatalog() {
   };
 
   const handleOpenEditDialog = (course: CourseJson) => {
+    console.log("los datos que llegan son",course)
     setEditCourse(course);
     setIsEditDialogOpen(true);
   };
@@ -101,8 +102,10 @@ function CourseCatalog() {
   const handleSaveEdit = () => {
     if (editCourse) {
       // Guardar cambios en el curso editado
+
+      console.log("edit course",editCourse)
       setFormatJson((prevCourses) => prevCourses.map((course) =>
-        course.id === editCourse.id ? editCourse : course
+        course.id === editCourse.ID? editCourse : course
       ));
     }
     handleCloseEditDialog();
@@ -159,7 +162,7 @@ function CourseCatalog() {
         <tbody>
   {filteredCourses.length > 0 ? (
     filteredCourses.map((course, index) => (
-      <tr key={course.id ? course.id : `${index}-${course.title}`}>
+      <tr key={course.id ? course.id : `${index}-${course.id }`}>
         <td style={styles.td}>{course.title}</td>
         <td style={styles.td}>{course.description}</td>
         <td style={styles.td}>{course.area}</td>
