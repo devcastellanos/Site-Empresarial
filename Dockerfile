@@ -13,11 +13,11 @@ RUN npm install
 # Copy the rest of the source code
 COPY . .
 
-# Build the application for production
-RUN npm run build
+# Set the port to 3001 (or whatever port you prefer)
+ENV PORT=3000
 
-# Expose port 3000 (or whatever port your app uses)
+# Expose the custom port
 EXPOSE 3000
 
 # Start the application in production mode
-CMD ["npm", "start"]
+CMD ["npm", "run","dev"]
