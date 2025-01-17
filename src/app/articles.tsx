@@ -11,7 +11,7 @@ const ARTICLES = [
     desc: "Crehana es una plataforma de educación online que ofrece cursos de diseño, marketing, fotografía, programación y más.",
   },
   {
-    img: "/image/plan.webp",
+    img: "/image/Plan.webp",
     title: "Plan de Capacitación",
     desc: "Da clic aquí para conocer el plan de capacitación de la empresa Tarahumara para 2025.",
   },

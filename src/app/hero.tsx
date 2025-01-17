@@ -44,7 +44,7 @@ function Hero() {
       <Image
         width={1920}
         height={1080}
-        src="/image/apples.jpg"
+        src="/image/Apples.jpg"
         alt="background"
         className="h-96 w-full rounded-lg object-cover lg:h-[21rem]"
       />
