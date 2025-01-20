@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState } from 'react';
 import { CSSProperties } from 'react';
 
@@ -6,39 +6,42 @@ interface Course {
   title: string;
   description: string;
   area: string;
-  tutor:string;
+  tutor: string;
 }
+export const handleAddMoodle = async (newCourse:Course) => {
+  try {
+    // Enviar la solicitud POST con los datos
+    const response = await fetch('http://localhost:3001/agregarCurso', {
+      method: 'POST', // Asegúrate de usar el método POST
+      headers: {
+        'Content-Type': 'application/json', // Indica que los datos son en formato JSON
+      },
+      body: JSON.stringify(newCourse), // Convierte el objeto courseData en una cadena JSON
+    });
 
-function CourseCatalog (){
+    if (!response.ok) {
+      throw new Error('Error en la solicitud');
+    }
+
+    const result = await response.json();
+    console.log('Curso agregado con éxito', result);
+    return newCourse
+  } catch (error) {
+    console.error('Error al agregar curso:', error);
+  }
+};
+function CourseCatalog() {
+  // El estado debe estar dentro del componente
   const [newCourse, setNewCourse] = useState<Course>({
     title: '',
     description: '',
     area: '',
-    tutor:'',
+    tutor: '',
   });
 
-  const handleAddMoodle = async () => {
-    try {
+ 
 
-      // Enviar la solicitud POST con los datos
-      const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/agregarCurso', {
-        method: 'POST', // Asegúrate de usar el método POST
-        headers: {
-          'Content-Type': 'application/json', // Indica que los datos son en formato JSON
-        },
-        body: JSON.stringify(newCourse), // Convierte el objeto courseData en una cadena JSON
-      });
-  
-      if (!response.ok) {
-        throw new Error('Error en la solicitud');
-      }
-  
-      const result = await response.json();
-      console.log('Curso agregado con éxito', result);
-    } catch (error) {
-      console.error('Error al agregar curso:', error);
-    }
-  };
+  // Manejador para agregar el curso
 
 
   return (
@@ -72,22 +75,21 @@ function CourseCatalog (){
             <option value="Marketing">Marketing</option>
           </select>
           <input
-            type="autor"
+            type="text"  // Cambié 'type="autor"' a 'type="text"'
             placeholder="Impartido"
             value={newCourse.tutor}
             onChange={(e) => setNewCourse({ ...newCourse, tutor: e.target.value })}
             style={styles.input}
           />
 
-          <button onClick={handleAddMoodle} style={styles.addButton}>
+          <button onClick={()=>{handleAddMoodle(newCourse)}  } style={styles.addButton}>
             Agregar Curso
           </button>
         </div>
-
       </div>
     </div>
   );
-};
+}
 
 const styles: { [key: string]: CSSProperties } = {
   container: {

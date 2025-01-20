@@ -4,14 +4,26 @@ import React, { useState,useEffect } from 'react';
 import { CSSProperties } from 'react';
 import { FaEye, FaEdit, FaPlus, FaTrash } from 'react-icons/fa'
 import NuevoCurso from './CrearCurso';
+import { handleAddMoodle}  from './CrearCurso';
+import { save } from './CrearCurso';
+//import { getNewCourses } from './CrearCurso';
 interface CourseJson {
-  id: number;
+  id_course: number;
   title: string;
   description: string;
   area: string; 
   tutor: string; 
+  status :String;
+
 }
 
+
+interface Course {
+  title: string;
+  description: string;
+  area: string;
+  tutor:string;
+}
 function CourseCatalog() {
  
   const [formatJson, setFormatJson] = useState<CourseJson[]>([]);
@@ -21,28 +33,40 @@ function CourseCatalog() {
   const [editCourse, setEditCourse] = useState<CourseJson | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
+  const [newCourse, setNewCourse] = useState({
+    title: '',
+    description: '',
+    area: '',
+    tutor: '',
+  });
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   
+  
+
+
   const handleAddCourse = () => {
     setIsModalOpen(true);
+
+
   };
 
   // Función para cerrar el modal
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleCloseModal = async () => {
+  
+    setIsModalOpen(false); 
   };
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
         const fetchCursosPresenciales = await fetch("http://api-cursos.192.168.29.40.sslip.io/cursosPresenciales");
-        if (!fetchCursosPresenciales.ok) {
-          throw new Error('Network response was not ok');
+        if (!fetchCursosPresenciales.ok) { 
         }
         const cursosPresenciales: CourseJson[] = await fetchCursosPresenciales.json();
         
         setFormatJson(cursosPresenciales);
+
         
       } catch (e) {
         console.error(e);
@@ -99,22 +123,94 @@ function CourseCatalog() {
     setEditCourse(null);
   };
 
+
+
+
+  const sendDatabase = async (edit: CourseJson) => {
+    console.log("Datos enviados:", edit.id_course,edit.title,edit.description, edit.area, edit.tutor);
+  
+    try {
+      const response = await fetch("http://api-cursos.192.168.29.40.sslip.io/actualizarCurso", {
+        method: "POST", // Método HTTP
+        headers: {
+          "Content-Type": "application/json", 
+        },
+        body: JSON.stringify(edit), 
+      });
+  
+      if (!response.ok) {
+        // Manejar errores del servidor
+        const error = await response.text();
+        console.error("Error en la solicitud:", error);
+        return;
+      }
+  
+      const data = await response.json(); // Convertir respuesta a JSON
+      console.log("Respuesta del servidor:", data);
+    } catch (error) {
+      console.error("Error en el POST:", error); // Manejar errores de red u otros
+    }
+  };
+  
   const handleSaveEdit = () => {
     if (editCourse) {
       // Guardar cambios en el curso editado
 
       console.log("edit course",editCourse)
+
+      console.log("id",editCourse.id_course)
+
       setFormatJson((prevCourses) => prevCourses.map((course) =>
-        course.id === editCourse.ID? editCourse : course
+        course.id_course === editCourse.id_course? editCourse : course
+         
       ));
+      
+      sendDatabase(editCourse)
+
+
+
     }
     handleCloseEditDialog();
   };
 
 
 
+  const handleDeleteDatabase= async(delet:CourseJson)=>{
+
+    try{
+        const response = await fetch("http://api-cursos.192.168.29.40.sslip.io/eliminarCurso", {
+      method: "POST", 
+      headers: {
+        "Content-Type": "application/json", 
+      },
+      body: JSON.stringify(delet), 
+    });
+    if (!response.ok) {
+      // Manejar errores del servidor
+      const error = await response.text();
+      console.error("Error en la solicitud:", error);
+      return;
+    }
+
+    const data = await response.json(); // Convertir respuesta a JSON
+    console.log("Respuesta del servidor:", data);   
+    }catch(e){
+
+      console.log(e)
+        
+      }
+
+
+  
+
+
+  }
+
   const handleDeleteCourse = (course: CourseJson) => {
-    setFormatJson((prevCourses) => prevCourses.filter((c) => c.id !== course.id));
+    console.log(course.id_course)
+    setFormatJson((prevCourses) => prevCourses.filter((c) => c.id_course!== course.id_course));
+
+    handleDeleteDatabase(course);
   }
 
   return (
@@ -162,7 +258,7 @@ function CourseCatalog() {
         <tbody>
   {filteredCourses.length > 0 ? (
     filteredCourses.map((course, index) => (
-      <tr key={course.id ? course.id : `${index}-${course.id }`}>
+      <tr key={course.id_course ? course.id_course : `${index}-${course.id_course}`}>
         <td style={styles.td}>{course.title}</td>
         <td style={styles.td}>{course.description}</td>
         <td style={styles.td}>{course.area}</td>
@@ -245,7 +341,8 @@ function CourseCatalog() {
     {isModalOpen && (
         <div style={styles.modalContainer}>
           <div style={styles.modal}>
-            <NuevoCurso />
+            <NuevoCurso 
+           />
             <button onClick={handleCloseModal} style={styles.closeButton}>
               Cerrar
             </button>
