@@ -8,29 +8,11 @@ interface Course {
   area: string;
   tutor: string;
 }
-export const handleAddMoodle = async (newCourse:Course) => {
-  try {
-    // Enviar la solicitud POST con los datos
-    const response = await fetch('http://localhost:3001/agregarCurso', {
-      method: 'POST', // Asegúrate de usar el método POST
-      headers: {
-        'Content-Type': 'application/json', // Indica que los datos son en formato JSON
-      },
-      body: JSON.stringify(newCourse), // Convierte el objeto courseData en una cadena JSON
-    });
+interface Props {
+  onAddCourse: (course: Course) => void; // Callback para enviar datos al padre
+}
 
-    if (!response.ok) {
-      throw new Error('Error en la solicitud');
-    }
-
-    const result = await response.json();
-    console.log('Curso agregado con éxito', result);
-    return newCourse
-  } catch (error) {
-    console.error('Error al agregar curso:', error);
-  }
-};
-function CourseCatalog() {
+function CourseCatalog({ onAddCourse }: Props) {
   // El estado debe estar dentro del componente
   const [newCourse, setNewCourse] = useState<Course>({
     title: '',
@@ -39,9 +21,36 @@ function CourseCatalog() {
     tutor: '',
   });
 
+  const handleAddMoodle = async (newCourse:Course) => {
+    try {
+      // Enviar la solicitud POST con los datos
+      const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/agregarCurso', {
+        method: 'POST', // Asegúrate de usar el método POST
+        headers: {
+          'Content-Type': 'application/json', // Indica que los datos son en formato JSON
+        },
+        body: JSON.stringify(newCourse), // Convierte el objeto courseData en una cadena JSON
+      });
+  
+      if (!response.ok) {
+        throw new Error('Error en la solicitud');
+      }
+  
+      const result = await response.json();
+      console.log('Curso agregado con éxito', result);
+      return newCourse
+    } catch (error) {
+      console.error('Error al agregar curso:', error);
+    }
+  };
+
  
 
-  // Manejador para agregar el curso
+  const handleAddCourse = () => {
+    handleAddMoodle(newCourse)
+    onAddCourse(newCourse); // Envía el curso al componente padre
+
+  };
 
 
   return (
@@ -82,7 +91,7 @@ function CourseCatalog() {
             style={styles.input}
           />
 
-          <button onClick={()=>{handleAddMoodle(newCourse)}  } style={styles.addButton}>
+          <button onClick={()=>{handleAddCourse()}  } style={styles.addButton}>
             Agregar Curso
           </button>
         </div>

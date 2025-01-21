@@ -44,7 +44,7 @@ const NAV_MENU = [
   {
     name: "Cuentas",
     icon: UserCircleIcon,
-    href: "/Cuentas",
+    href: "/Usuarios",
   },
 ];
 
