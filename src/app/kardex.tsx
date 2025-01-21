@@ -1,6 +1,7 @@
 
 "use client";
 import React, { useState , useEffect} from 'react';
+import Image from 'next/image';
 // Ajusta la ruta según tu estructura de archivos
 
 interface CursoTomado {
@@ -105,9 +106,20 @@ const Kardex = () => {
 
         console.log("el id del curso es",newCourse.id_course)
   
+
+          
+        // en esta parte actualizp 
         setSelectedCourses([...selectedCourses,{...selectedCourse,id: newCourse.id_course,id_course:newCourse.id_course, id_usuario: selectedUserId as number, },]);
         
-        setCursosFaltantes(cursosFaltantes.filter(course => course.id_course !== newCourseId));
+        const updatedCourses = await fetch('http://api-cursos.192.168.29.40.sslip.io/cursostomados');
+        const coursesData = await updatedCourses.json();
+        setCursosTomados(coursesData);
+  
+        //se actualiza}n los cursos
+        const userCourses = coursesData.filter(curso => curso.id_usuario === selectedUserId);
+        const updatedCursosFaltantes = cursosPresenciales.filter(curso => !userCourses.some(c => c.id_course === curso.id_course));
+        setCursosFaltantes(updatedCursosFaltantes);
+  
         setNewCourseId('');
       };
 
@@ -122,17 +134,22 @@ const Kardex = () => {
   };
 
   const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const userId = Number(e.target.value);
+    let userId = Number(e.target.value);
+    userId = Number(userId.toString().replace(/\D/g, ''));
+    userId = Number(userId.toString().slice(0, 4));
+    
     setSelectedUserId(userId);
     const user = users.find(user => user.Personal === userId) || null;
-    setSelectedUser(user);
+    setSelectedUser(user);   
 
     const userCourses = cursosTomados.filter(curso => curso.id_usuario === userId);
     setSelectedCourses(userCourses);
 
     const cursosFaltantes = cursosPresenciales.filter(curso => !userCourses.some(c => c.id_course === curso.id_course));
     setCursosFaltantes(cursosFaltantes);
+    console.log(formattedUserId);
   };
+  const formattedUserId = selectedUserId.toString().padStart(4, '0');
 
   return (
     <div>     
@@ -170,11 +187,16 @@ const Kardex = () => {
                   <p><strong>Departamento:</strong> {selectedUser.Departamento}</p>
                   <p><strong>Tipo de Pago:</strong> {selectedUser.PeriodoTipo}</p>
                 </div>
-                <img 
-                  src="https://img.freepik.com/vector-premium/avatar-hombre-barba-foto-perfil-masculina-generica_53562-20202.jpg"
+                <Image
+                  width={150}
+                  height={150}
+                  
+                  src={selectedUser ? `/fotos/${formattedUserId}.jpg` : 'https://img.freepik.com/vector-premium/avatar-hombre-barba-foto-perfil-masculina-generica_53562-20202.jpg'}
                   alt="Foto del empleado"
-                  style={{ borderRadius: '50%', width: '150px', height: '150px', border: '5px solid #9A3324' }}
-                />
+                >
+
+                </Image>
+
               </div>
             )}
 
@@ -193,20 +215,14 @@ const Kardex = () => {
               <tr key={course.id_course}>
                 <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>{course.id_course}</td>
                 <td style={{ border: '1px solid #ccc', padding: '10px' }}>
-                  <input
-                    type="text"
-                    value={course.title}
-                    // onChange={e => handleEditCourse(course.id, e.target.value)}
-                    style={{ width: '100%', border: '1px solid #9A3324', borderRadius: '4px', padding: '5px' }}
-                  />
+                <span style={{ width: '100%', borderRadius: '4px', padding: '5px' }}>
+  {course.title}
+</span>
+
+                 
                 </td>
                 <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
-                  <button
-                    style={{ backgroundColor: '#9A3324', color: 'white', border: 'none', borderRadius: '5px', padding: '5px 10px', cursor: 'pointer', marginRight: '10px' }}
-                    // onClick={() => handleEditCourse(course.id, course.title)}
-                  >
-                    Editar
-                  </button>
+               
                   <button
                     style={{ backgroundColor: '#5A5A5A', color: 'white', border: 'none', borderRadius: '5px', padding: '5px 10px', cursor: 'pointer' }}
                     onClick={() => toggleDialog(course.id_course)}

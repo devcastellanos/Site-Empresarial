@@ -4,7 +4,7 @@ import React, { useState,useEffect } from 'react';
 import { CSSProperties } from 'react';
 import { FaEye, FaEdit, FaPlus, FaTrash } from 'react-icons/fa'
 import NuevoCurso from './CrearCurso';
-import { handleAddMoodle}  from './CrearCurso';
+import CourseCatalog2 from './CrearCurso';
 import { save } from './CrearCurso';
 //import { getNewCourses } from './CrearCurso';
 interface CourseJson {
@@ -205,7 +205,15 @@ function CourseCatalog() {
 
 
   }
+  const handleNewCourse = (course: CourseJson) => {
+    // Aquí maneja la lógica para agregar el nuevo curso
+    console.log('Nuevo curso recibido:', course);
+  
 
+    setFormatJson((prevCourses) => [...prevCourses, course]);
+    
+  };
+  
   const handleDeleteCourse = (course: CourseJson) => {
     console.log(course.id_course)
     setFormatJson((prevCourses) => prevCourses.filter((c) => c.id_course!== course.id_course));
@@ -341,8 +349,8 @@ function CourseCatalog() {
     {isModalOpen && (
         <div style={styles.modalContainer}>
           <div style={styles.modal}>
-            <NuevoCurso 
-           />
+            
+          <CourseCatalog2 onAddCourse={handleNewCourse} />
             <button onClick={handleCloseModal} style={styles.closeButton}>
               Cerrar
             </button>
