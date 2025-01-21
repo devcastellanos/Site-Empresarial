@@ -7,6 +7,8 @@ interface Course {
   description: string;
   area: string;
   tutor: string;
+  start_date: string; 
+  end_date: string;  
 }
 interface Props {
   onAddCourse: (course: Course) => void; // Callback para enviar datos al padre
@@ -19,17 +21,23 @@ function CourseCatalog({ onAddCourse }: Props) {
     description: '',
     area: '',
     tutor: '',
+    start_date: '',
+    end_date: '',  
   });
 
-  const handleAddMoodle = async (newCourse:Course) => {
+  const handleAddMoodle = async (newCourse: Course) => {
     try {
-      // Enviar la solicitud POST con los datos
-      const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/agregarCurso', {
-        method: 'POST', // Asegúrate de usar el método POST
+
+      console.log('Fecha de inicio:', newCourse.start_date);
+      console.log('Fecha de fin:', newCourse.end_date);
+
+     
+      const response = await fetch('http://localhost:3001/agregarCurso', {
+        method: 'POST', 
         headers: {
-          'Content-Type': 'application/json', // Indica que los datos son en formato JSON
+          'Content-Type': 'application/json', 
         },
-        body: JSON.stringify(newCourse), // Convierte el objeto courseData en una cadena JSON
+        body: JSON.stringify(newCourse), 
       });
   
       if (!response.ok) {
@@ -38,20 +46,16 @@ function CourseCatalog({ onAddCourse }: Props) {
   
       const result = await response.json();
       console.log('Curso agregado con éxito', result);
-      return newCourse
+      return newCourse;
     } catch (error) {
       console.error('Error al agregar curso:', error);
     }
   };
 
- 
-
   const handleAddCourse = () => {
-    handleAddMoodle(newCourse)
-    onAddCourse(newCourse); // Envía el curso al componente padre
-
+    handleAddMoodle(newCourse);
+    onAddCourse(newCourse); 
   };
-
 
   return (
     <div>
@@ -72,6 +76,20 @@ function CourseCatalog({ onAddCourse }: Props) {
             onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })}
             style={styles.textarea}
           />
+          <input
+            type="date"
+            placeholder="Fecha de inicio"
+            value={newCourse.start_date}
+            onChange={(e) => setNewCourse({ ...newCourse, start_date: e.target.value })}
+            style={styles.input}
+          />
+          <input
+            type="date"
+            placeholder="Fecha de término"
+            value={newCourse.end_date}
+            onChange={(e) => setNewCourse({ ...newCourse, end_date: e.target.value })}
+            style={styles.input}
+          />
           <select
             value={newCourse.area}
             onChange={(e) => setNewCourse({ ...newCourse, area: e.target.value })}
@@ -84,14 +102,13 @@ function CourseCatalog({ onAddCourse }: Props) {
             <option value="Marketing">Marketing</option>
           </select>
           <input
-            type="text"  // Cambié 'type="autor"' a 'type="text"'
+            type="text" 
             placeholder="Impartido"
             value={newCourse.tutor}
             onChange={(e) => setNewCourse({ ...newCourse, tutor: e.target.value })}
             style={styles.input}
           />
-
-          <button onClick={()=>{handleAddCourse()}  } style={styles.addButton}>
+          <button onClick={handleAddCourse} style={styles.addButton}>
             Agregar Curso
           </button>
         </div>
@@ -156,47 +173,6 @@ const styles: { [key: string]: CSSProperties } = {
     fontSize: '16px',
     cursor: 'pointer',
     transition: 'background-color 0.3s',
-  },
-  courseList: {
-    marginTop: '30px',
-  },
-  courseCard: {
-    backgroundColor: '#fff',
-    padding: '20px',
-    borderRadius: '10px',
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-    marginBottom: '20px',
-  },
-  employeeSection: {
-    marginTop: '20px',
-  },
-  searchContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '10px',
-  },
-  searchButton: {
-    marginLeft: '10px',
-    padding: '10px 15px',
-    backgroundColor: '#333',
-    color: 'white',
-    cursor: 'pointer',
-    borderRadius: '8px',
-  },
-  employeeList: {
-    listStyle: 'none',
-    paddingLeft: '0',
-  },
-  employeeItem: {
-    padding: '5px 0',
-  },
-  addEmployeeButton: {
-    marginLeft: '10px',
-    padding: '5px 10px',
-    backgroundColor: '#9A3324',
-    color: 'white',
-    cursor: 'pointer',
-    borderRadius: '5px',
   },
 };
 
