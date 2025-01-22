@@ -42,6 +42,11 @@ const NAV_MENU = [
     href: "/NuevoCurso",
   },
   {
+    name:"Cargar Archivos excel",
+    icon: UserCircleIcon,
+    href:"/cargaMasiva"
+  },
+  {
     name: "Cuentas",
     icon: UserCircleIcon,
     href: "/Usuarios",

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { CSSProperties } from 'react';
 
 interface Course {
+  id_course:string,
   title: string;
   description: string;
   area: string;
@@ -17,6 +18,7 @@ interface Props {
 function CourseCatalog({ onAddCourse }: Props) {
   // El estado debe estar dentro del componente
   const [newCourse, setNewCourse] = useState<Course>({
+    id_course:'',
     title: '',
     description: '',
     area: '',
@@ -32,7 +34,7 @@ function CourseCatalog({ onAddCourse }: Props) {
       console.log('Fecha de fin:', newCourse.end_date);
 
      
-      const response = await fetch('http://localhost:3001/agregarCurso', {
+      const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/agregarCurso', {
         method: 'POST', 
         headers: {
           'Content-Type': 'application/json', 
@@ -54,6 +56,7 @@ function CourseCatalog({ onAddCourse }: Props) {
 
   const handleAddCourse = () => {
     handleAddMoodle(newCourse);
+    console.log(newCourse)
     onAddCourse(newCourse); 
   };
 
