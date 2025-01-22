@@ -5,14 +5,15 @@ import { CSSProperties } from 'react';
 import { FaEye, FaEdit, FaPlus, FaTrash } from 'react-icons/fa'
 import NuevoCurso from './CrearCurso';
 import CourseCatalog2 from './CrearCurso';
-import { save } from './CrearCurso';
-//import { getNewCourses } from './CrearCurso';
+
 interface CourseJson {
   id_course: number;
   title: string;
   description: string;
   area: string; 
   tutor: string; 
+  start_date:string,
+  end_date:string,
   status :String;
 
 }
@@ -22,6 +23,8 @@ interface Course {
   title: string;
   description: string;
   area: string;
+  start_date:string;
+  end_date:string;
   tutor:string;
 }
 function CourseCatalog() {
@@ -33,13 +36,7 @@ function CourseCatalog() {
   const [editCourse, setEditCourse] = useState<CourseJson | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
-  const [newCourse, setNewCourse] = useState({
-    title: '',
-    description: '',
-    area: '',
-    tutor: '',
-  });
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   
@@ -64,8 +61,23 @@ function CourseCatalog() {
         if (!fetchCursosPresenciales.ok) { 
         }
         const cursosPresenciales: CourseJson[] = await fetchCursosPresenciales.json();
+        console.log("la descripcion es",cursosPresenciales[0].description)
+
+        const filter=cursosPresenciales.filter((op)=>{
+          const [swap]=op.start_date.split('T')
+          op.start_date=swap;
+          const [swap2]=op.end_date.split('T')
+          op.end_date=swap2;
+
+        return swap;
+
+
+
+        })
+        console.log("filter",filter)
+
         
-        setFormatJson(cursosPresenciales);
+        setFormatJson(filter);
 
         
       } catch (e) {
@@ -97,6 +109,8 @@ function CourseCatalog() {
                               description.toLowerCase().includes(term.toLowerCase());
     
     const matchesArea = selectedArea ? course.area === selectedArea : true;
+    const dates=course.start_date
+
     
     return matchesSearchTerm && matchesArea;
   });
@@ -154,7 +168,6 @@ function CourseCatalog() {
   
   const handleSaveEdit = () => {
     if (editCourse) {
-      // Guardar cambios en el curso editado
 
       console.log("edit course",editCourse)
 
@@ -258,6 +271,9 @@ function CourseCatalog() {
             <th style={styles.th}>Título</th>
             <th style={styles.th}>Descripción</th>
             <th style={styles.th}>Área</th> 
+            <th style={styles.th}>fecha de inicio</th> 
+            <th style={styles.th}>fecha de fin</th> 
+
             <th style={styles.th}>impartido por</th>
             <th style={styles.th}>Acciones</th>
            
@@ -270,6 +286,8 @@ function CourseCatalog() {
         <td style={styles.td}>{course.title}</td>
         <td style={styles.td}>{course.description}</td>
         <td style={styles.td}>{course.area}</td>
+        <td style={styles.td}>{course.start_date}</td>
+        <td style={styles.td}>{course.end_date}</td>
         <td style={styles.td}>{course.tutor}</td>
         <td style={{ ...styles.td, width: "240px" }}>
           <button onClick={() => handleOpenDialog(course)} style={styles.viewButton}>
@@ -328,6 +346,16 @@ function CourseCatalog() {
             <textarea
               value={editCourse.description}
               onChange={(e) => setEditCourse({ ...editCourse, description: e.target.value })}
+              style={styles.textarea}
+            />
+             <textarea
+              value={editCourse.start_date}
+              onChange={(e) => setEditCourse({ ...editCourse, start_date: e.target.value })}
+              style={styles.textarea}
+            />
+             <textarea
+              value={editCourse.end_date}
+              onChange={(e) => setEditCourse({ ...editCourse, end_date: e.target.value })}
               style={styles.textarea}
             />
             <select
