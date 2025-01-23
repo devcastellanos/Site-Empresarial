@@ -37,20 +37,15 @@ const NAV_MENU = [
     href: "/Cursos",
   },
   {
-    name: "Asignar Cursos",
-    icon: UserCircleIcon,
-    href: "/NuevoCurso",
-  },
-  {
     name:"Cargar Archivos excel",
     icon: UserCircleIcon,
     href:"/cargaMasiva"
   },
-  {
-    name: "Cuentas",
-    icon: UserCircleIcon,
-    href: "/Usuarios",
-  },
+  // {
+  //   name: "Cuentas",
+  //   icon: UserCircleIcon,
+  //   href: "/Usuarios",
+  // },
 ];
 
 interface NavItemProps {
