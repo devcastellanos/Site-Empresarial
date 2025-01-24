@@ -115,9 +115,9 @@ const Kardex = () => {
         const coursesData = await updatedCourses.json();
         setCursosTomados(coursesData);
   
-        //se actualiza}n los cursos
-        const userCourses = coursesData.filter(curso => curso.id_usuario === selectedUserId);
-        const updatedCursosFaltantes = cursosPresenciales.filter(curso => !userCourses.some(c => c.id_course === curso.id_course));
+        //se actualizan los cursos
+        const userCourses = coursesData.filter((curso: CursoTomado) => curso.id_usuario === selectedUserId);
+        const updatedCursosFaltantes = cursosPresenciales.filter(curso => !userCourses.some((c: CursoTomado) => c.id_course === curso.id_course));
         setCursosFaltantes(updatedCursosFaltantes);
   
         setNewCourseId('');

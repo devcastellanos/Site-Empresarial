@@ -63,8 +63,8 @@ function NavItem({ children, href }: NavItemProps) {
         color="gray"
         className="flex items-center gap-2 font-medium text-gray-900"
         placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+          
+          
       >
         {children}
       </Typography>
@@ -90,8 +90,8 @@ export function Navbar() {
       fullWidth 
       className="border-0 sticky top-0 z-50" 
       placeholder="" 
-      onPointerEnterCapture={() => {}} 
-      onPointerLeaveCapture={() => {}}
+       
+      
     >
       <div className="container mx-auto flex items-center justify-between">
         <Image
@@ -110,20 +110,23 @@ export function Navbar() {
           ))}
         </ul>
         <div className="hidden items-center gap-2 lg:flex">
+          <a href="/Login">
           <Button 
             variant="text" 
             placeholder="" 
-            onPointerEnterCapture={() => {}} 
-            onPointerLeaveCapture={() => {}}
+             
+            
           >
             Sign In
           </Button>
-          <a href="https://www.material-tailwind.com/blocks" target="_blank">
+          </a>
+          
+          <a href="" target="_blank">
             <Button 
               color="gray" 
               placeholder="" 
-              onPointerEnterCapture={() => {}} 
-              onPointerLeaveCapture={() => {}}
+               
+              
             >
               blocks
             </Button>
@@ -135,8 +138,8 @@ export function Navbar() {
           onClick={handleOpen}
           className="ml-auto inline-block lg:hidden"
           placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+          
+          
         >
           {open ? (
             <XMarkIcon strokeWidth={2} className="h-6 w-6" />
@@ -159,8 +162,8 @@ export function Navbar() {
             <Button 
               variant="text" 
               placeholder="" 
-              onPointerEnterCapture={() => {}} 
-              onPointerLeaveCapture={() => {}}
+               
+              
             >
               Sign In
             </Button>
@@ -168,8 +171,8 @@ export function Navbar() {
               <Button 
                 color="gray" 
                 placeholder="" 
-                onPointerEnterCapture={() => {}} 
-                onPointerLeaveCapture={() => {}}
+                 
+                
               >
                 blocks
               </Button>

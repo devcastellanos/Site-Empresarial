@@ -3,13 +3,14 @@ import React, { useState } from 'react';
 import { CSSProperties } from 'react';
 
 interface Course {
-  id_course:string,
+  id_course:number,
   title: string;
   description: string;
   area: string;
   tutor: string;
   start_date: string; 
   end_date: string;  
+  status: string;
 }
 interface Props {
   onAddCourse: (course: Course) => void; // Callback para enviar datos al padre
@@ -18,13 +19,14 @@ interface Props {
 function CourseCatalog({ onAddCourse }: Props) {
   // El estado debe estar dentro del componente
   const [newCourse, setNewCourse] = useState<Course>({
-    id_course:'',
+    id_course: 0,
     title: '',
     description: '',
     area: '',
     tutor: '',
     start_date: '',
     end_date: '',  
+    status: 'Activo',
   });
 
   const handleAddMoodle = async (newCourse: Course) => {

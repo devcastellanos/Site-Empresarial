@@ -10,9 +10,9 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "NextJS Tailwind Blog Posts Page",
+  title: "Site Capacitacion",
   description:
-    "Download Tailwind Blog Post Page, a free webpage template developed by Creative Tim. Based on Tailwind CSS and Material Tailwind, see the live demo on our site and elevate your blogging experience!",
+    "Sitio web para la capacitacion de los empleados de la empresa, desarrollado por el equipo de Sistemas. Grupo Tarahumara",
 };
 
 export default function RootLayout({
