@@ -149,13 +149,13 @@ export function Posts() {
     <section className="grid min-h-screen place-items-center p-8">
       {/* <Tabs value="trends" className="mx-auto max-w-7xl w-full mb-16 ">
         <div className="w-full flex mb-8 flex-col items-center">
-          <TabsHeader className="h-10 !w-12/12 md:w-[50rem] border border-white/25 bg-opacity-90" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-            <Tab value="trends" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>Trends</Tab>
-            <Tab value="frontend" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>Frontend</Tab>
-            <Tab value="backend" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>Backend</Tab>
-            <Tab value="cloud" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>Cloud</Tab>
-            <Tab value="ai" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>AI</Tab>
-            <Tab value="tools" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>Tools</Tab>
+          <TabsHeader className="h-10 !w-12/12 md:w-[50rem] border border-white/25 bg-opacity-90"   >
+            <Tab value="trends"   >Trends</Tab>
+            <Tab value="frontend"   >Frontend</Tab>
+            <Tab value="backend"   >Backend</Tab>
+            <Tab value="cloud"   >Cloud</Tab>
+            <Tab value="ai"   >AI</Tab>
+            <Tab value="tools"   >Tools</Tab>
           </TabsHeader>
         </div>
       </Tabs> Tabs */}
@@ -168,12 +168,12 @@ export function Posts() {
         className="h-96 w-full rounded-lg object-cover lg:h-[21rem]"
       />
       <section className="px-8 py-20 container mx-auto">
-        <Typography variant="h5" color="blue-gray" placeholder="" onPointerEnterCapture={() => { }} onPointerLeaveCapture={() => { }}>
+        <Typography variant="h5" color="blue-gray"  >
           New Post
         </Typography>
         <Typography
           variant="small"
-          className="text-gray-600 font-normal mt-1" placeholder="" onPointerEnterCapture={() => { }} onPointerLeaveCapture={() => { }}
+          className="text-gray-600 font-normal mt-1"   
         >
           Llena los campos para agregar un nuevo post
         </Typography>
@@ -183,7 +183,7 @@ export function Posts() {
               <Typography
                 variant="small"
                 color="blue-gray"
-                className="mb-2 font-medium" placeholder="" onPointerEnterCapture={() => { }} onPointerLeaveCapture={() => { }}
+                className="mb-2 font-medium"   
               >
                 Titulo
               </Typography>
@@ -196,8 +196,8 @@ export function Posts() {
                   className: "hidden",
                 }}
                 className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
-                onPointerEnterCapture={() => { }}
-                onPointerLeaveCapture={() => { }}
+                
+                
                 crossOrigin=""
               />
             </div>
@@ -205,7 +205,7 @@ export function Posts() {
               <Typography
                 variant="small"
                 color="blue-gray"
-                className="mb-2 font-medium" placeholder="" onPointerEnterCapture={() => { }} onPointerLeaveCapture={() => { }}
+                className="mb-2 font-medium"   
               >
                 Nombre del autor
               </Typography>
@@ -214,8 +214,8 @@ export function Posts() {
                 placeholder="Nombre Autor"
                 value={post?.name_author}
                 onChange={(e) => setPost({ ...post!, name_author: e.target.value })}
-                onPointerEnterCapture={() => { }}
-                onPointerLeaveCapture={() => { }}
+                
+                
                 crossOrigin=""
                 labelProps={{
                   className: "hidden",
@@ -230,9 +230,9 @@ export function Posts() {
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"
-                placeholder=""
-                onPointerEnterCapture={() => { }}
-                onPointerLeaveCapture={() => { }}
+                
+                
+                
               >
                 Tags
               </Typography>
@@ -248,8 +248,8 @@ export function Posts() {
                     setPost((prevPost) => ({ ...prevPost, tag: value }));
                   }
                 }}
-                onPointerEnterCapture={() => { }}
-                onPointerLeaveCapture={() => { }}
+                
+                
               >
                 <Option value="Sistemas">Sistemas</Option>
                 <Option value="Recursos Humanos">Recursos Humanos</Option>
@@ -263,9 +263,9 @@ export function Posts() {
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
+                
+                
+                
               >
                 Fecha
               </Typography>
@@ -275,8 +275,8 @@ export function Posts() {
                 value={post?.date}
                 onChange={(e) => setPost({ ...post!, date: e.target.value })}
                 className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
+                
+                
                 crossOrigin=""
               />
             </div>
@@ -285,9 +285,9 @@ export function Posts() {
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
+                
+                
+                
               >
                 Número de empleado
               </Typography>
@@ -300,8 +300,8 @@ export function Posts() {
                   className: "hidden",
                 }}
                 className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
+                
+                
                 crossOrigin=""
               />
 
@@ -314,9 +314,9 @@ export function Posts() {
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
+                
+                
+                
               >
                 Descripción
               </Typography>
@@ -329,8 +329,8 @@ export function Posts() {
                   className: "hidden",
                 }}
                 className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
-                onPointerEnterCapture={() => { }}
-                onPointerLeaveCapture={() => { }}
+                
+                
               />
             </div>
           </div>
@@ -346,8 +346,8 @@ export function Posts() {
                 setImgFile(file);
               }
             }}
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+            
+            
             crossOrigin=""
           />
           {imgFile && (
@@ -366,9 +366,9 @@ export function Posts() {
               color="blue"
               size="sm"
               onClick={handleAddPost}
-              placeholder=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
+              
+              
+              
             >
               Agregar
             </Button>
@@ -379,16 +379,16 @@ export function Posts() {
 
 
       <div className="py-2"></div>
-      <Typography variant="h1" className="mb-2 " placeholder="" onPointerEnterCapture={() => { }} onPointerLeaveCapture={() => { }}>
+      <Typography variant="h1" className="mb-2 "   >
         Ultimos posts
       </Typography>
       <Typography
         variant="lead"
         color="gray"
         className="max-w-3xl mb-36 text-center text-gray-500"
-        placeholder=""
-        onPointerEnterCapture={() => { }}
-        onPointerLeaveCapture={() => { }}
+        
+        
+        
       >
         Aquí puedes ver la ultima información y noticias de Grupo Tarahumara
       </Typography>
@@ -417,9 +417,9 @@ export function Posts() {
         size="lg"
         color="gray"
         className="flex items-center gap-2 mt-24"
-        placeholder=""
-        onPointerEnterCapture={() => { }}
-        onPointerLeaveCapture={() => { }}
+        
+        
+        
       >
         <ArrowSmallDownIcon className="h-5 w-5 font-bold text-gray-900" />
         VIEW MORE

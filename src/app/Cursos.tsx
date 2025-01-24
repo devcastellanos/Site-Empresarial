@@ -20,12 +20,14 @@ interface CourseJson {
 
 
 interface Course {
+  id_course: number;
   title: string;
   description: string;
   area: string;
   start_date:string;
   end_date:string;
   tutor:string;
+  status: string;
 }
 function CourseCatalog() {
  
@@ -377,7 +379,6 @@ function CourseCatalog() {
     {isModalOpen && (
         <div style={styles.modalContainer}>
           <div style={styles.modal}>
-            
           <CourseCatalog2 onAddCourse={handleNewCourse} />
             <button onClick={handleCloseModal} style={styles.closeButton}>
               Cerrar

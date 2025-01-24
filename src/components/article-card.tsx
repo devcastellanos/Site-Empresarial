@@ -23,8 +23,8 @@ export function ArticleCard({ img, title, desc, link }: ArticleCardProps) {
       color="transparent"
       placeholder=""
       onClick={handleClick}
-      onPointerEnterCapture={() => {}}
-      onPointerLeaveCapture={() => {}}
+      
+      
     >
       <div className="relative">
         <Image
@@ -40,16 +40,16 @@ export function ArticleCard({ img, title, desc, link }: ArticleCardProps) {
       <CardBody
         className="relative flex flex-col justify-end p-6 bg-black "
         placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}} 
+          
+           
       >
         <Typography
           variant="h4"
           color="white"
           className=" mb-2"
           placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+          
+          
         >
           {title}
         </Typography>
@@ -58,8 +58,8 @@ export function ArticleCard({ img, title, desc, link }: ArticleCardProps) {
           color="white"
           className="font-normal "
           placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+          
+          
         >
           {desc}
         </Typography>

@@ -81,8 +81,8 @@ export function BlogPostCard({
 
   return (
     <>
-    <Card shadow={true} placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-      <CardHeader placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+    <Card shadow={true} placeholder=""  >
+      <CardHeader placeholder=""  >
         <Image
           width={768}
           height={768}
@@ -91,14 +91,14 @@ export function BlogPostCard({
           className="h-full w-full scale-110 object-cover"
         />
       </CardHeader>
-      <CardBody className="p-6" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+      <CardBody className="p-6" placeholder=""  >
         <Typography
           variant="small"
           color="blue"
           className="mb-2 !font-medium"
           placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+          
+          
         >
           {tag}
         </Typography>
@@ -109,16 +109,16 @@ export function BlogPostCard({
           color="blue-gray"
           className="mb-2 normal-case transition-colors hover:text-gray-900"
           placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+          
+          
         >
           {title}
         </Typography>
         <Typography
           className="mb-6 font-normal !text-gray-500"
           placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+          
+          
         >
           {desc}
         </Typography>
@@ -129,8 +129,8 @@ export function BlogPostCard({
             src={`/fotos/${formattedUserId}.jpg`}
             alt={author.name}
             placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+            
+            
           />
           <div>
             <Typography
@@ -138,8 +138,8 @@ export function BlogPostCard({
               color="blue-gray"
               className="mb-0.5 !font-medium"
               placeholder=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
+              
+              
             >
               {author.name}
             </Typography>
@@ -148,8 +148,8 @@ export function BlogPostCard({
               color="gray"
               className="text-xs !text-gray-500 font-normal"
               placeholder=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
+              
+              
             >
               {date}
             </Typography>
@@ -158,8 +158,7 @@ export function BlogPostCard({
           <Button 
           className="ml-auto"
           placeholder="" 
-          onPointerEnterCapture={() => {}} 
-          onPointerLeaveCapture={() => {}}
+          
           onClick={handleEditClick}>
             
               Editar
@@ -171,20 +170,20 @@ export function BlogPostCard({
     {/* Modal para editar información */}
     <Dialog 
       open={openModal} 
+      
       handler={handleCloseModal} 
       placeholder="" 
-      onPointerEnterCapture={() => {}} 
-      onPointerLeaveCapture={() => {}}>
+    >
+
     <DialogHeader 
       placeholder="" 
-      onPointerEnterCapture={() => {}} 
-      onPointerLeaveCapture={() => {}}>
+      >
       Edita la información
     </DialogHeader>
     <DialogBody 
       placeholder="" 
-      onPointerEnterCapture={() => {}} 
-      onPointerLeaveCapture={() => {}}>
+
+      >
       <div>
         {/* Aquí puedes agregar los campos del formulario de edición */}
         <Input
@@ -193,8 +192,8 @@ export function BlogPostCard({
           value={post.title}
           onChange={(e) => setPost({ ...post, title: e.target.value })}
           className="w-full p-2 border rounded mb-4"
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+
+          
           crossOrigin=""
         />
         <Input
@@ -202,8 +201,8 @@ export function BlogPostCard({
           value={post.desc}
           onChange={(e) => setPost({ ...post, desc: e.target.value })}
           className="w-full p-2 border rounded mb-4"
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+
+          
           crossOrigin=""
         />
         <Input
@@ -212,8 +211,8 @@ export function BlogPostCard({
           value={post.tag}
           onChange={(e) => setPost({ ...post, tag: e.target.value })}
           className="w-full p-2 border rounded mb-4"
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+
+          
           crossOrigin=""
         />
 
@@ -221,23 +220,22 @@ export function BlogPostCard({
     </DialogBody>
     <DialogFooter 
       placeholder="" 
-      onPointerEnterCapture={() => {}} 
-      onPointerLeaveCapture={() => {}}>
+
+      >
       <Button 
         variant="text" 
         color="red" 
         onClick={() => {  handleCloseModal(); }}
         placeholder="" 
-        onPointerEnterCapture={() => {}} 
-        onPointerLeaveCapture={() => {}}>
+
+        >
         Cerrar
       </Button>
       <Button 
         variant="gradient" 
         onClick={() =>{handleEdit();handleCloseModal();} }
         placeholder="" 
-        onPointerEnterCapture={() => {}} 
-        onPointerLeaveCapture={() => {}}>
+        >
         Guardar
       </Button>
     </DialogFooter>

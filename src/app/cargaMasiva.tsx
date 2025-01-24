@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
+import Swal from 'sweetalert2';
 
 const ExcelUploader: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
@@ -13,20 +14,40 @@ const ExcelUploader: React.FC = () => {
       reader.onload = (e) => {
         const arrayBuffer = e.target?.result;
         if (arrayBuffer) {
-          const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-          const sheetName = workbook.SheetNames[0]; 
+          const workbook = XLSX.read(arrayBuffer, { type: "array" });
+          const sheetName = workbook.SheetNames[0];
           const sheet = workbook.Sheets[sheetName];
-          const jsonData = XLSX.utils.sheet_to_json(sheet); 
-          response(jsonData)
-          setData(jsonData); 
+         
+          // Cambiar claves con encabezados personalizados
+          const customHeaders = [
+            "id_usuario", 
+            "puesto", 
+            "departamento", 
+            "curso", 
+            "fecha", 
+            "tutor"
+          ];
+  
+          // Convertir a JSON y detener el mapeo si encuentra filas vacías
+          const jsonData = XLSX.utils.sheet_to_json(sheet, {
+            header: customHeaders, // Reemplazar claves automáticamente
+            range: 1, // Ignorar la primera fila (asume que son encabezados)
+            defval: null // Rellena valores vacíos con `null`
+          }).filter(row => Object.values(row as { [key: string]: any }).some(value => value !== null)); // Filtrar filas vacías
+  
+          console.log("Datos procesados:", jsonData);
+  
+          response(jsonData);
+          setData(jsonData);
         }
       };
       reader.readAsArrayBuffer(file);
     }
   };
-  const response = async (data:any[]) => {
+  
+  const response = async (data: any[]) => {
     try {
-      const res = await fetch("http://api-cursos.192.168.29.40.sslip.io/updateCargaMasiva", {
+      const res = await fetch("http://localhost:3001/updateCargaMasiva", {
         method: "POST", 
         headers: {
           "Content-Type": "application/json", 
@@ -35,13 +56,38 @@ const ExcelUploader: React.FC = () => {
       });
   
       if (res.ok) {
-        const data = await res.json();
-        console.log("Datos insertados:", data);
+        const result = await res.json();
+        console.log("Datos insertados:", result);
+        Swal.fire({
+          icon: 'success',
+          title: 'Éxito',
+          text: 'Datos insertados correctamente',
+        });
       } else {
-        console.error("Error en la solicitud:", res.statusText);
+        const errorData = await res.json();
+
+        // Verificar si el error es de tipo "Duplicate entry"
+        if (errorData.code === 'ER_DUP_ENTRY') {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'El usuario ya está asignado a este curso.',
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: `Error en la solicitud: ${errorData.message || res.statusText}`,
+          });
+        }
       }
     } catch (error) {
       console.error("Error en la solicitud:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: `Error en la solicitud: ${(error as any).message}`,
+      });
     }
   };
   
@@ -54,7 +100,7 @@ const ExcelUploader: React.FC = () => {
       <div>
         <h2>Datos cargados:</h2>
         {data.length > 0 ? (
-          <table border="1" style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table border={1} style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
                 {/* Generar encabezados dinámicamente */}
@@ -71,7 +117,7 @@ const ExcelUploader: React.FC = () => {
                   {/* Generar celdas dinámicamente */}
                   {Object.values(row).map((value, colIndex) => (
                     <td key={colIndex} style={{ padding: '8px', border: '1px solid #ddd' }}>
-                      {value}
+                      {String(value)}
                     </td>
                   ))}
                 </tr>
