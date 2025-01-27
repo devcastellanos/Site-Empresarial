@@ -19,6 +19,7 @@ export function ArticleCard({ img, title, desc, link }: ArticleCardProps) {
 
   return (
     <Card
+    onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
     placeholder=""
       className="relative grid min-h-[30rem] overflow-hidden rounded-xl cursor-pointer"
       color="transparent"
@@ -36,6 +37,7 @@ export function ArticleCard({ img, title, desc, link }: ArticleCardProps) {
 
       <div className="absolute inset-0" />
       <CardBody
+      onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
       placeholder=""
         className="relative flex flex-col justify-end p-6 bg-black "
       >
