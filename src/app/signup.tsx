@@ -75,6 +75,7 @@ export function Login() {
             Your Email
           </Typography>
           <Input
+          crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             size="lg"
             type="email"
             placeholder="name@grupotarahumara.com.mx"
@@ -90,6 +91,7 @@ export function Login() {
             Password
           </Typography>
           <Input
+          crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             type="password"
             size="lg"
             placeholder="********"
