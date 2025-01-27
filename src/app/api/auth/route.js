@@ -19,7 +19,7 @@ export async function POST(req) {
     console.log(`[LOG] Iniciando autenticación para el usuario: ${email}`);
 
     // Llamada a la API externa para validar credenciales
-    const response = await fetch('http://localhost:3001/login', {
+    const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

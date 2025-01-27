@@ -64,7 +64,7 @@ export function BlogPostCard({
   };
 
   const handleEdit = () => {
-    fetch(`http://localhost:3001/ActualizarPost`, {
+    fetch(`http://api-cursos.192.168.29.40.sslip.io/ActualizarPost`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
