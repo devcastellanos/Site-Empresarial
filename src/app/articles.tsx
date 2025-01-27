@@ -41,10 +41,11 @@ const ARTICLES = [
 export function Articles() {
   return (
     <section className="container mx-auto px-8 py-20">
-      {/* <Typography variant="h2" color="blue-gray"  >
+      <Typography variant="h2" color="blue-gray"  placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
         Herramientas y Plataformas
-      </Typography> */}
+      </Typography>
       <Typography
+       placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
         variant="lead"
         className="my-2 w-full font-normal !text-gray-500 lg:w-5/12"      
       >

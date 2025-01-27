@@ -38,6 +38,7 @@ export function ArticleCard({ img, title, desc, link }: ArticleCardProps) {
         className="relative flex flex-col justify-end p-6 bg-black "
       >
         <Typography
+         placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           variant="h4"
           color="white"
           className=" mb-2"
@@ -45,6 +46,7 @@ export function ArticleCard({ img, title, desc, link }: ArticleCardProps) {
           {title}
         </Typography>
         <Typography
+         placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           variant="paragraph"
           color="white"
           className="font-normal "
