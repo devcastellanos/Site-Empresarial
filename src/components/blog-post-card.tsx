@@ -93,6 +93,7 @@ export function BlogPostCard({
       </CardHeader>
       <CardBody className="p-6"   >
         <Typography
+         placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           variant="small"
           color="blue"
           className="mb-2 !font-medium"
@@ -100,6 +101,7 @@ export function BlogPostCard({
           {tag}
         </Typography>
         <Typography
+         placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           as="a"
           href="#"
           variant="h5"
@@ -109,6 +111,7 @@ export function BlogPostCard({
           {title}
         </Typography>
         <Typography
+         placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           className="mb-6 font-normal !text-gray-500"
         >
           {desc}
@@ -122,12 +125,10 @@ export function BlogPostCard({
           />
           <div>
             <Typography
+             placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
               variant="small"
               color="blue-gray"
               className="mb-0.5 !font-medium"
-              
-              
-              
             >
               {author.name}
             </Typography>
@@ -135,9 +136,7 @@ export function BlogPostCard({
               variant="small"
               color="gray"
               className="text-xs !text-gray-500 font-normal"
-              
-              
-              
+              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             >
               {date}
             </Typography>

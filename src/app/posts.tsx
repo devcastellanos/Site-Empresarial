@@ -168,10 +168,11 @@ export function Posts() {
         className="h-96 w-full rounded-lg object-cover lg:h-[21rem]"
       />
       <section className="px-8 py-20 container mx-auto">
-        <Typography variant="h5" color="blue-gray"  >
+        <Typography variant="h5" color="blue-gray"  placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
           New Post
         </Typography>
         <Typography
+         placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           variant="small"
           className="text-gray-600 font-normal mt-1"   
         >
@@ -181,6 +182,7 @@ export function Posts() {
           <div className="mb-6 flex flex-col items-end gap-4 md:flex-row">
             <div className="w-full">
               <Typography
+               placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"   
@@ -200,6 +202,7 @@ export function Posts() {
             </div>
             <div className="w-full">
               <Typography
+               placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"   
@@ -224,9 +227,7 @@ export function Posts() {
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"
-                
-                
-                
+                placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
               >
                 Tags
               </Typography>
@@ -257,9 +258,7 @@ export function Posts() {
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"
-                
-                
-                
+                placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
               >
                 Fecha
               </Typography>
@@ -276,6 +275,7 @@ export function Posts() {
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"
+                placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
               >
                 Número de empleado
               </Typography>
@@ -299,9 +299,7 @@ export function Posts() {
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"
-                
-                
-                
+                placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
               >
                 Descripción
               </Typography>
@@ -358,10 +356,11 @@ export function Posts() {
 
 
       <div className="py-2"></div>
-      <Typography variant="h1" className="mb-2 "   >
+      <Typography variant="h1" className="mb-2 "  placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}  >
         Ultimos posts
       </Typography>
       <Typography
+       placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
         variant="lead"
         color="gray"
         className="max-w-3xl mb-36 text-center text-gray-500"
