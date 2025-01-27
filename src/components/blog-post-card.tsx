@@ -81,8 +81,8 @@ export function BlogPostCard({
 
   return (
     <>
-    <Card shadow={true}   >
-      <CardHeader   >
+    <Card shadow={true}   placeholder="">
+      <CardHeader   placeholder="">
         <Image
           width={768}
           height={768}
@@ -91,7 +91,7 @@ export function BlogPostCard({
           className="h-full w-full scale-110 object-cover"
         />
       </CardHeader>
-      <CardBody className="p-6"   >
+      <CardBody className="p-6" placeholder=""  >
         <Typography
          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           variant="small"
@@ -155,17 +155,17 @@ export function BlogPostCard({
 
     {/* Modal para editar información */}
     <Dialog 
+    placeholder=""
       open={openModal} 
-      
       handler={handleCloseModal}    
     >
 
     <DialogHeader 
+    placeholder=""
       >
       Edita la información
     </DialogHeader>
-    <DialogBody 
-      >
+    <DialogBody placeholder="">
       <div>
         {/* Aquí puedes agregar los campos del formulario de edición */}
         <Input
@@ -195,8 +195,7 @@ export function BlogPostCard({
 
       </div>
     </DialogBody>
-    <DialogFooter 
-      >
+    <DialogFooter placeholder="" >
       <Button 
         variant="text" 
         color="red" 

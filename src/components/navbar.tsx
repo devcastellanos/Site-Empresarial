@@ -124,6 +124,7 @@ export function Navbar() {
           </a>
         </div>
         <IconButton
+        placeholder=""
           variant="text"
           color="gray"
           onClick={handleOpen}

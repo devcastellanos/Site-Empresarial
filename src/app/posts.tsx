@@ -234,6 +234,7 @@ export function Posts() {
                 Tags
               </Typography>
               <Select
+              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
                 size="lg"
                 labelProps={{ className: "hidden" }}
                 className="border-t-blue-gray-200 aria-[expanded=true]:border-t-primary"
