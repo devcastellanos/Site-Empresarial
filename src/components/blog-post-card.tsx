@@ -81,8 +81,8 @@ export function BlogPostCard({
 
   return (
     <>
-    <Card shadow={true} placeholder=""  >
-      <CardHeader placeholder=""  >
+    <Card shadow={true}   >
+      <CardHeader   >
         <Image
           width={768}
           height={768}
@@ -91,14 +91,11 @@ export function BlogPostCard({
           className="h-full w-full scale-110 object-cover"
         />
       </CardHeader>
-      <CardBody className="p-6" placeholder=""  >
+      <CardBody className="p-6"   >
         <Typography
           variant="small"
           color="blue"
           className="mb-2 !font-medium"
-          placeholder=""
-          
-          
         >
           {tag}
         </Typography>
@@ -108,17 +105,11 @@ export function BlogPostCard({
           variant="h5"
           color="blue-gray"
           className="mb-2 normal-case transition-colors hover:text-gray-900"
-          placeholder=""
-          
-          
         >
           {title}
         </Typography>
         <Typography
           className="mb-6 font-normal !text-gray-500"
-          placeholder=""
-          
-          
         >
           {desc}
         </Typography>
@@ -128,16 +119,13 @@ export function BlogPostCard({
             variant="circular"
             src={`/fotos/${formattedUserId}.jpg`}
             alt={author.name}
-            placeholder=""
-            
-            
           />
           <div>
             <Typography
               variant="small"
               color="blue-gray"
               className="mb-0.5 !font-medium"
-              placeholder=""
+              
               
               
             >
@@ -147,7 +135,7 @@ export function BlogPostCard({
               variant="small"
               color="gray"
               className="text-xs !text-gray-500 font-normal"
-              placeholder=""
+              
               
               
             >
@@ -157,7 +145,7 @@ export function BlogPostCard({
           </div>
           <Button 
           className="ml-auto"
-          placeholder="" 
+           
           
           onClick={handleEditClick}>
             
@@ -171,18 +159,14 @@ export function BlogPostCard({
     <Dialog 
       open={openModal} 
       
-      handler={handleCloseModal} 
-      placeholder="" 
+      handler={handleCloseModal}    
     >
 
     <DialogHeader 
-      placeholder="" 
       >
       Edita la información
     </DialogHeader>
     <DialogBody 
-      placeholder="" 
-
       >
       <div>
         {/* Aquí puedes agregar los campos del formulario de edición */}
@@ -192,18 +176,12 @@ export function BlogPostCard({
           value={post.title}
           onChange={(e) => setPost({ ...post, title: e.target.value })}
           className="w-full p-2 border rounded mb-4"
-
-          
-          crossOrigin=""
         />
         <Input
           placeholder="Descripción"
           value={post.desc}
           onChange={(e) => setPost({ ...post, desc: e.target.value })}
           className="w-full p-2 border rounded mb-4"
-
-          
-          crossOrigin=""
         />
         <Input
           type="text"
@@ -212,21 +190,17 @@ export function BlogPostCard({
           onChange={(e) => setPost({ ...post, tag: e.target.value })}
           className="w-full p-2 border rounded mb-4"
 
-          
-          crossOrigin=""
         />
 
       </div>
     </DialogBody>
     <DialogFooter 
-      placeholder="" 
-
       >
       <Button 
         variant="text" 
         color="red" 
         onClick={() => {  handleCloseModal(); }}
-        placeholder="" 
+         
 
         >
         Cerrar
@@ -234,7 +208,7 @@ export function BlogPostCard({
       <Button 
         variant="gradient" 
         onClick={() =>{handleEdit();handleCloseModal();} }
-        placeholder="" 
+         
         >
         Guardar
       </Button>

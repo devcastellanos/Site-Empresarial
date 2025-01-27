@@ -196,9 +196,6 @@ export function Posts() {
                   className: "hidden",
                 }}
                 className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
-                
-                
-                crossOrigin=""
               />
             </div>
             <div className="w-full">
@@ -214,9 +211,6 @@ export function Posts() {
                 placeholder="Nombre Autor"
                 value={post?.name_author}
                 onChange={(e) => setPost({ ...post!, name_author: e.target.value })}
-                
-                
-                crossOrigin=""
                 labelProps={{
                   className: "hidden",
                 }}
@@ -275,9 +269,6 @@ export function Posts() {
                 value={post?.date}
                 onChange={(e) => setPost({ ...post!, date: e.target.value })}
                 className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
-                
-                
-                crossOrigin=""
               />
             </div>
             <div className="w-full">
@@ -285,9 +276,6 @@ export function Posts() {
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"
-                
-                
-                
               >
                 Número de empleado
               </Typography>
@@ -300,9 +288,6 @@ export function Posts() {
                   className: "hidden",
                 }}
                 className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
-                
-                
-                crossOrigin=""
               />
 
             </div>
@@ -346,9 +331,6 @@ export function Posts() {
                 setImgFile(file);
               }
             }}
-            
-            
-            crossOrigin=""
           />
           {imgFile && (
             <Image
@@ -365,10 +347,7 @@ export function Posts() {
               variant="filled"
               color="blue"
               size="sm"
-              onClick={handleAddPost}
-              
-              
-              
+              onClick={handleAddPost} 
             >
               Agregar
             </Button>
@@ -386,9 +365,6 @@ export function Posts() {
         variant="lead"
         color="gray"
         className="max-w-3xl mb-36 text-center text-gray-500"
-        
-        
-        
       >
         Aquí puedes ver la ultima información y noticias de Grupo Tarahumara
       </Typography>
@@ -417,9 +393,6 @@ export function Posts() {
         size="lg"
         color="gray"
         className="flex items-center gap-2 mt-24"
-        
-        
-        
       >
         <ArrowSmallDownIcon className="h-5 w-5 font-bold text-gray-900" />
         VIEW MORE

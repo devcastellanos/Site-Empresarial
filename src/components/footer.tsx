@@ -16,18 +16,13 @@ export function Footer() {
           <Typography
             className="text-2xl md:text-3xl text-center font-bold "
             color="white"
-            placeholder=""
-            
-            
           >
             Join our community!
           </Typography>
           <Typography
             color="white"
             className=" md:w-7/12 text-center my-3 !text-base"
-            placeholder=""
-            
-            
+
           >
             Get news in your inbox every week! We hate spam too, so no worries
             about this.
@@ -42,9 +37,6 @@ export function Footer() {
               className="lg:w-32" 
               fullWidth 
               color="white" 
-              placeholder="" 
-               
-              
             >
               subscribe
             </Button>
@@ -57,9 +49,6 @@ export function Footer() {
             target="_blank"
             variant="h6"
             className="text-gray-900"
-            placeholder=""
-            
-            
           >
             Grupo Tarahumara
           </Typography>
@@ -72,9 +61,6 @@ export function Footer() {
                   variant="small"
                   color="white"
                   className="font-normal !text-gray-700 hover:!text-gray-900 transition-colors"
-                  placeholder=""
-                  
-                  
                 >
                   {link}
                 </Typography>
@@ -82,24 +68,23 @@ export function Footer() {
             ))}
           </ul>
           <div className="flex w-fit justify-center gap-2">
-            <IconButton size="sm" color="gray" variant="text" placeholder=""  >
+            <IconButton size="sm" color="gray" variant="text"   >
               <i className="fa-brands fa-twitter text-lg" />
             </IconButton>
-            <IconButton size="sm" color="gray" variant="text" placeholder=""  >
+            <IconButton size="sm" color="gray" variant="text"   >
               <i className="fa-brands fa-youtube text-lg" />
             </IconButton>
-            <IconButton size="sm" color="gray" variant="text" placeholder="" >
+            <IconButton size="sm" color="gray" variant="text"  >
               <i className="fa-brands fa-instagram text-lg" />
             </IconButton>
-            <IconButton size="sm" color="gray" variant="text" placeholder=""  >
+            <IconButton size="sm" color="gray" variant="text"   >
               <i className="fa-brands fa-github text-lg" />
             </IconButton>
           </div>
         </div>
         <Typography
           color="blue-gray"
-          className="text-center mt-12 font-normal !text-gray-700"
-          placeholder=""
+          className="text-center mt-12 font-normal !text-gray-700" 
         >
           &copy; {CURRENT_YEAR} Made by{" "}
           <a href=" " target="_blank">

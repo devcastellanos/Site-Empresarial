@@ -105,8 +105,6 @@ const Kardex = () => {
         console.log('Curso agregado con éxito:', result);
 
         console.log("el id del curso es",newCourse.id_course)
-  
-
           
         // en esta parte actualizp 
         setSelectedCourses([...selectedCourses,{...selectedCourse,id: newCourse.id_course,id_course:newCourse.id_course, id_usuario: selectedUserId as number, },]);

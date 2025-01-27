@@ -21,10 +21,7 @@ export function ArticleCard({ img, title, desc, link }: ArticleCardProps) {
     <Card
       className="relative grid min-h-[30rem] overflow-hidden rounded-xl cursor-pointer"
       color="transparent"
-      placeholder=""
       onClick={handleClick}
-      
-      
     >
       <div className="relative">
         <Image
@@ -39,17 +36,11 @@ export function ArticleCard({ img, title, desc, link }: ArticleCardProps) {
       <div className="absolute inset-0" />
       <CardBody
         className="relative flex flex-col justify-end p-6 bg-black "
-        placeholder=""
-          
-           
       >
         <Typography
           variant="h4"
           color="white"
           className=" mb-2"
-          placeholder=""
-          
-          
         >
           {title}
         </Typography>
@@ -57,9 +48,6 @@ export function ArticleCard({ img, title, desc, link }: ArticleCardProps) {
           variant="paragraph"
           color="white"
           className="font-normal "
-          placeholder=""
-          
-          
         >
           {desc}
         </Typography>
