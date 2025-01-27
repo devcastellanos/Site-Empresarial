@@ -125,7 +125,7 @@ export function Navbar() {
           </a>
         </div>
         <IconButton
-        placeholder=""
+        placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           variant="text"
           color="gray"
           onClick={handleOpen}
