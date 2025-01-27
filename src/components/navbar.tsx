@@ -84,6 +84,7 @@ export function Navbar() {
 
   return (
     <MTNavbar 
+      placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
       shadow={false} 
       fullWidth 
       className="border-0 sticky top-0 z-50" 
