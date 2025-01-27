@@ -144,8 +144,7 @@ export function BlogPostCard({
           </div>
           <Button 
           className="ml-auto"
-           
-          
+          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           onClick={handleEditClick}>
             
               Editar
@@ -199,15 +198,14 @@ export function BlogPostCard({
         variant="text" 
         color="red" 
         onClick={() => {  handleCloseModal(); }}
-         
-
+        placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
         >
         Cerrar
       </Button>
       <Button 
         variant="gradient" 
         onClick={() =>{handleEdit();handleCloseModal();} }
-         
+        placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
         >
         Guardar
       </Button>

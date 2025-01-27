@@ -38,6 +38,7 @@ export function Footer() {
               className="lg:w-32" 
               fullWidth 
               color="white" 
+              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             >
               subscribe
             </Button>

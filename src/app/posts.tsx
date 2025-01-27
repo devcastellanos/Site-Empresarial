@@ -342,6 +342,7 @@ export function Posts() {
           </div>
             <div className="flex justify-center mt-4">
             <Button
+            placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
               variant="filled"
               color="blue"
               size="sm"
@@ -388,6 +389,7 @@ export function Posts() {
         )}
       </div>
       <Button
+      placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
         variant="text"
         size="lg"
         color="gray"

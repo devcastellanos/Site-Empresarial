@@ -102,6 +102,7 @@ export function Login() {
           />
         </div>
         <Button
+        placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           className="mt-6"
           fullWidth
           size="lg"
