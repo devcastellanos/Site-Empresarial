@@ -190,6 +190,7 @@ export function Posts() {
                 Titulo
               </Typography>
               <Input
+                crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
                 size="lg"
                 placeholder="Titulo del post"
                 value={post?.title}
@@ -210,6 +211,7 @@ export function Posts() {
                 Nombre del autor
               </Typography>
               <Input
+              crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
                 size="lg"
                 placeholder="Nombre Autor"
                 value={post?.name_author}
@@ -263,6 +265,7 @@ export function Posts() {
                 Fecha
               </Typography>
               <Input
+              crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
                 placeholder="Fecha"
                 type="date"
                 value={post?.date}
@@ -280,6 +283,7 @@ export function Posts() {
                 Número de empleado
               </Typography>
               <Input
+              crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
                 size="lg"
                 placeholder="Número de empleado"
                 value={post?.num_empleado}
@@ -312,14 +316,13 @@ export function Posts() {
                   className: "hidden",
                 }}
                 className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
-                
-                
               />
             </div>
           </div>
                 
           <div>
           <Input
+          crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             placeholder="Imagen"
             type="file"
             accept="image/*"

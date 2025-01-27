@@ -169,6 +169,7 @@ export function BlogPostCard({
       <div>
         {/* Aquí puedes agregar los campos del formulario de edición */}
         <Input
+        crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           type="text"
           placeholder="Título"
           value={post.title}
@@ -176,12 +177,14 @@ export function BlogPostCard({
           className="w-full p-2 border rounded mb-4"
         />
         <Input
+        crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           placeholder="Descripción"
           value={post.desc}
           onChange={(e) => setPost({ ...post, desc: e.target.value })}
           className="w-full p-2 border rounded mb-4"
         />
         <Input
+        crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           type="text"
           placeholder="Tag"
           value={post.tag}
