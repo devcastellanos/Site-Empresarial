@@ -118,6 +118,7 @@ export function BlogPostCard({
         </Typography>
         <div className="flex items-center gap-4">
           <Avatar
+          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             size="sm"
             variant="circular"
             src={`/fotos/${formattedUserId}.jpg`}
