@@ -309,6 +309,7 @@ export function Posts() {
                 Descripción
               </Typography>
               <Textarea
+                onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
                 size="lg"
                 placeholder="Descripción"
                 value={post?.desc}
