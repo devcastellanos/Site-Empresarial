@@ -72,16 +72,16 @@ export function Footer() {
             ))}
           </ul>
           <div className="flex w-fit justify-center gap-2">
-            <IconButton size="sm" color="gray" variant="text" placeholder="" >
+            <IconButton size="sm" color="gray" variant="text" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
               <i className="fa-brands fa-twitter text-lg" />
             </IconButton>
-            <IconButton size="sm" color="gray" variant="text" placeholder=""  >
+            <IconButton size="sm" color="gray" variant="text" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
               <i className="fa-brands fa-youtube text-lg" />
             </IconButton>
-            <IconButton size="sm" color="gray" variant="text" placeholder="" >
+            <IconButton size="sm" color="gray" variant="text" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
               <i className="fa-brands fa-instagram text-lg" />
             </IconButton>
-            <IconButton size="sm" color="gray" variant="text"  placeholder="" >
+            <IconButton size="sm" color="gray" variant="text"  placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
               <i className="fa-brands fa-github text-lg" />
             </IconButton>
           </div>
