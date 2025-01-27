@@ -29,7 +29,7 @@ function Hero() {
             {/* @ts-ignore */}
             <Input label="name@grupotarahumara.com.mx" />
           </div>
-          <Button size="md" className="lg:w-max shrink-0" fullWidth color="gray"  >
+          <Button size="md" className="lg:w-max shrink-0" fullWidth color="gray" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
             get started
           </Button>
         </div>

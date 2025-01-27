@@ -108,7 +108,7 @@ export function Navbar() {
           <a href="/Login">
           <Button 
             variant="text" 
-
+            placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           >
             Sign In
           </Button>
@@ -117,6 +117,7 @@ export function Navbar() {
           <a href="" target="_blank">
             <Button 
               color="gray"  
+              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             >
               blocks
             </Button>
@@ -148,12 +149,14 @@ export function Navbar() {
           <div className="mt-6 mb-4 flex items-center gap-2">
             <Button 
               variant="text" 
+              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             >
               Sign In
             </Button>
             <a href="https://www.material-tailwind.com/blocks" target="_blank">
               <Button 
                 color="gray" 
+                placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
               >
                 blocks
               </Button>
