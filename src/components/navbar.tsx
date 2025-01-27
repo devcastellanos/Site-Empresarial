@@ -62,9 +62,7 @@ function NavItem({ children, href }: NavItemProps) {
         variant="paragraph"
         color="gray"
         className="flex items-center gap-2 font-medium text-gray-900"
-        placeholder=""
-          
-          
+
       >
         {children}
       </Typography>
@@ -89,9 +87,6 @@ export function Navbar() {
       shadow={false} 
       fullWidth 
       className="border-0 sticky top-0 z-50" 
-      placeholder="" 
-       
-      
     >
       <div className="container mx-auto flex items-center justify-between">
         <Image
@@ -113,9 +108,7 @@ export function Navbar() {
           <a href="/Login">
           <Button 
             variant="text" 
-            placeholder="" 
-             
-            
+
           >
             Sign In
           </Button>
@@ -123,10 +116,7 @@ export function Navbar() {
           
           <a href="" target="_blank">
             <Button 
-              color="gray" 
-              placeholder="" 
-               
-              
+              color="gray"  
             >
               blocks
             </Button>
@@ -137,9 +127,6 @@ export function Navbar() {
           color="gray"
           onClick={handleOpen}
           className="ml-auto inline-block lg:hidden"
-          placeholder=""
-          
-          
         >
           {open ? (
             <XMarkIcon strokeWidth={2} className="h-6 w-6" />
@@ -161,18 +148,12 @@ export function Navbar() {
           <div className="mt-6 mb-4 flex items-center gap-2">
             <Button 
               variant="text" 
-              placeholder="" 
-               
-              
             >
               Sign In
             </Button>
             <a href="https://www.material-tailwind.com/blocks" target="_blank">
               <Button 
                 color="gray" 
-                placeholder="" 
-                 
-                
               >
                 blocks
               </Button>
