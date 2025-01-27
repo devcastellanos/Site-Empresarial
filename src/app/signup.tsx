@@ -62,7 +62,7 @@ export function Login() {
   };
 
   return (
-    <Card color="transparent" shadow={false} placeholder="">
+    <Card color="transparent" shadow={false} placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
       <Typography variant="h4" color="blue-gray" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
         Sign In
       </Typography>

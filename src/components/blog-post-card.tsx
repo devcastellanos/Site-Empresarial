@@ -81,8 +81,8 @@ export function BlogPostCard({
 
   return (
     <>
-    <Card shadow={true}   placeholder="">
-      <CardHeader   placeholder="">
+    <Card shadow={true}   placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+      <CardHeader onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}  placeholder="">
         <Image
           width={768}
           height={768}
@@ -91,7 +91,7 @@ export function BlogPostCard({
           className="h-full w-full scale-110 object-cover"
         />
       </CardHeader>
-      <CardBody className="p-6" placeholder=""  >
+      <CardBody className="p-6" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
         <Typography
          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           variant="small"
