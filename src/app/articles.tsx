@@ -44,6 +44,7 @@ export function Articles() {
       <Typography variant="h2" color="blue-gray"  >
         Herramientas y Plataformas
       </Typography>
+      {/* prueba */}
       <Typography
         variant="lead"
         className="my-2 w-full font-normal !text-gray-500 lg:w-5/12"      
