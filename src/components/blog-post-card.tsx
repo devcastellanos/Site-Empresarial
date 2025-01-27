@@ -64,7 +64,7 @@ export function BlogPostCard({
   };
 
   const handleEdit = () => {
-    fetch(`http://localhost:3001/ActualizarPost`, {
+    fetch(`http://api-cursos.192.168.29.40.sslip.io/ActualizarPost`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -81,8 +81,8 @@ export function BlogPostCard({
 
   return (
     <>
-    <Card shadow={true}   >
-      <CardHeader   >
+    <Card shadow={true}   placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+      <CardHeader onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}  placeholder="">
         <Image
           width={768}
           height={768}
@@ -91,8 +91,9 @@ export function BlogPostCard({
           className="h-full w-full scale-110 object-cover"
         />
       </CardHeader>
-      <CardBody className="p-6"   >
+      <CardBody className="p-6" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
         <Typography
+         placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           variant="small"
           color="blue"
           className="mb-2 !font-medium"
@@ -100,6 +101,7 @@ export function BlogPostCard({
           {tag}
         </Typography>
         <Typography
+         placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           as="a"
           href="#"
           variant="h5"
@@ -109,12 +111,14 @@ export function BlogPostCard({
           {title}
         </Typography>
         <Typography
+         placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           className="mb-6 font-normal !text-gray-500"
         >
           {desc}
         </Typography>
         <div className="flex items-center gap-4">
           <Avatar
+          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             size="sm"
             variant="circular"
             src={`/fotos/${formattedUserId}.jpg`}
@@ -122,12 +126,10 @@ export function BlogPostCard({
           />
           <div>
             <Typography
+             placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
               variant="small"
               color="blue-gray"
               className="mb-0.5 !font-medium"
-              
-              
-              
             >
               {author.name}
             </Typography>
@@ -135,9 +137,7 @@ export function BlogPostCard({
               variant="small"
               color="gray"
               className="text-xs !text-gray-500 font-normal"
-              
-              
-              
+              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             >
               {date}
             </Typography>
@@ -145,8 +145,7 @@ export function BlogPostCard({
           </div>
           <Button 
           className="ml-auto"
-           
-          
+          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           onClick={handleEditClick}>
             
               Editar
@@ -157,20 +156,21 @@ export function BlogPostCard({
 
     {/* Modal para editar información */}
     <Dialog 
+    placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
       open={openModal} 
-      
       handler={handleCloseModal}    
     >
 
     <DialogHeader 
+    placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
       >
       Edita la información
     </DialogHeader>
-    <DialogBody 
-      >
+    <DialogBody placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
       <div>
         {/* Aquí puedes agregar los campos del formulario de edición */}
         <Input
+        crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           type="text"
           placeholder="Título"
           value={post.title}
@@ -178,12 +178,14 @@ export function BlogPostCard({
           className="w-full p-2 border rounded mb-4"
         />
         <Input
+        crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           placeholder="Descripción"
           value={post.desc}
           onChange={(e) => setPost({ ...post, desc: e.target.value })}
           className="w-full p-2 border rounded mb-4"
         />
         <Input
+        crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           type="text"
           placeholder="Tag"
           value={post.tag}
@@ -194,21 +196,19 @@ export function BlogPostCard({
 
       </div>
     </DialogBody>
-    <DialogFooter 
-      >
+    <DialogFooter placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
       <Button 
         variant="text" 
         color="red" 
         onClick={() => {  handleCloseModal(); }}
-         
-
+        placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
         >
         Cerrar
       </Button>
       <Button 
         variant="gradient" 
         onClick={() =>{handleEdit();handleCloseModal();} }
-         
+        placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
         >
         Guardar
       </Button>

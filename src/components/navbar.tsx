@@ -62,7 +62,7 @@ function NavItem({ children, href }: NavItemProps) {
         variant="paragraph"
         color="gray"
         className="flex items-center gap-2 font-medium text-gray-900"
-
+        placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
       >
         {children}
       </Typography>
@@ -84,6 +84,7 @@ export function Navbar() {
 
   return (
     <MTNavbar 
+      placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
       shadow={false} 
       fullWidth 
       className="border-0 sticky top-0 z-50" 
@@ -108,7 +109,7 @@ export function Navbar() {
           <a href="/Login">
           <Button 
             variant="text" 
-
+            placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           >
             Sign In
           </Button>
@@ -117,12 +118,14 @@ export function Navbar() {
           <a href="" target="_blank">
             <Button 
               color="gray"  
+              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             >
               blocks
             </Button>
           </a>
         </div>
         <IconButton
+        placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           variant="text"
           color="gray"
           onClick={handleOpen}
@@ -148,12 +151,14 @@ export function Navbar() {
           <div className="mt-6 mb-4 flex items-center gap-2">
             <Button 
               variant="text" 
+              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             >
               Sign In
             </Button>
             <a href="https://www.material-tailwind.com/blocks" target="_blank">
               <Button 
                 color="gray" 
+                placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
               >
                 blocks
               </Button>

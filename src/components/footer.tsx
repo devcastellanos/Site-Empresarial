@@ -14,6 +14,7 @@ export function Footer() {
       <div className="container flex flex-col mx-auto">
         <div className="flex !w-full py-10 mb-5 md:mb-20 flex-col justify-center !items-center bg-gray-900 container max-w-6xl mx-auto rounded-2xl p-5 ">
           <Typography
+           placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             className="text-2xl md:text-3xl text-center font-bold "
             color="white"
           >
@@ -22,7 +23,7 @@ export function Footer() {
           <Typography
             color="white"
             className=" md:w-7/12 text-center my-3 !text-base"
-
+            placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           >
             Get news in your inbox every week! We hate spam too, so no worries
             about this.
@@ -37,6 +38,7 @@ export function Footer() {
               className="lg:w-32" 
               fullWidth 
               color="white" 
+              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             >
               subscribe
             </Button>
@@ -44,6 +46,7 @@ export function Footer() {
         </div>
         <div className="flex flex-col md:flex-row items-center !justify-between">
           <Typography
+           placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             as="a"
             href="#"
             target="_blank"
@@ -56,6 +59,7 @@ export function Footer() {
             {LINKS.map((link, index) => (
               <li key={index}>
                 <Typography
+                 placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
                   as="a"
                   href="#"
                   variant="small"
@@ -68,21 +72,22 @@ export function Footer() {
             ))}
           </ul>
           <div className="flex w-fit justify-center gap-2">
-            <IconButton size="sm" color="gray" variant="text"   >
+            <IconButton size="sm" color="gray" variant="text" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
               <i className="fa-brands fa-twitter text-lg" />
             </IconButton>
-            <IconButton size="sm" color="gray" variant="text"   >
+            <IconButton size="sm" color="gray" variant="text" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
               <i className="fa-brands fa-youtube text-lg" />
             </IconButton>
-            <IconButton size="sm" color="gray" variant="text"  >
+            <IconButton size="sm" color="gray" variant="text" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
               <i className="fa-brands fa-instagram text-lg" />
             </IconButton>
-            <IconButton size="sm" color="gray" variant="text"   >
+            <IconButton size="sm" color="gray" variant="text"  placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
               <i className="fa-brands fa-github text-lg" />
             </IconButton>
           </div>
         </div>
         <Typography
+         placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           color="blue-gray"
           className="text-center mt-12 font-normal !text-gray-700" 
         >

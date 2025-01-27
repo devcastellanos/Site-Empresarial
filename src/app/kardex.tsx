@@ -188,7 +188,6 @@ const Kardex = () => {
                 <Image
                   width={150}
                   height={150}
-                  
                   src={selectedUser ? `/fotos/${formattedUserId}.jpg` : 'https://img.freepik.com/vector-premium/avatar-hombre-barba-foto-perfil-masculina-generica_53562-20202.jpg'}
                   alt="Foto del empleado"
                 >
