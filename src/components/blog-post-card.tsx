@@ -156,17 +156,17 @@ export function BlogPostCard({
 
     {/* Modal para editar información */}
     <Dialog 
-    placeholder=""
+    placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
       open={openModal} 
       handler={handleCloseModal}    
     >
 
     <DialogHeader 
-    placeholder=""
+    placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
       >
       Edita la información
     </DialogHeader>
-    <DialogBody placeholder="">
+    <DialogBody placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
       <div>
         {/* Aquí puedes agregar los campos del formulario de edición */}
         <Input
@@ -196,7 +196,7 @@ export function BlogPostCard({
 
       </div>
     </DialogBody>
-    <DialogFooter placeholder="" >
+    <DialogFooter placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
       <Button 
         variant="text" 
         color="red" 
