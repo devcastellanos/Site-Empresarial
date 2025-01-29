@@ -1,13 +1,20 @@
 "use client";
-
+import axios from "axios";
 import Image from "next/image";
 import { Button, Typography, Input } from "@material-tailwind/react";
 
 
 function Hero() {
+  const getProfile = async () => {
+    const response = await axios.get('/api/auth/profile', { withCredentials: true });
+    console.log(response);
+    console.log(response.data.user.email);
+  }
+
   return (
     <header className="mt-5 bg-white p-8">
     <div className="w-w-full container mx-auto pt-12 pb-24 text-center">
+
       <Typography
         placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
         color="blue-gray"

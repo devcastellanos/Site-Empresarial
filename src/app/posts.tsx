@@ -29,6 +29,7 @@ import { DayPicker } from "react-day-picker";
 // @heroicons/react
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 
+import { useAuth } from "@/app/hooks/useAuth";
 
 export interface Post {
   idBlog: number;
@@ -61,6 +62,7 @@ export function Posts() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [imgFile, setImgFile] = React.useState<File | null>(null);
 
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -147,19 +149,6 @@ export function Posts() {
 
   return (
     <section className="grid min-h-screen place-items-center p-8">
-      {/* <Tabs value="trends" className="mx-auto max-w-7xl w-full mb-16 ">
-        <div className="w-full flex mb-8 flex-col items-center">
-          <TabsHeader className="h-10 !w-12/12 md:w-[50rem] border border-white/25 bg-opacity-90"   >
-            <Tab value="trends"   >Trends</Tab>
-            <Tab value="frontend"   >Frontend</Tab>
-            <Tab value="backend"   >Backend</Tab>
-            <Tab value="cloud"   >Cloud</Tab>
-            <Tab value="ai"   >AI</Tab>
-            <Tab value="tools"   >Tools</Tab>
-          </TabsHeader>
-        </div>
-      </Tabs> Tabs */}
-      {/* <iframe src="https://gpotarahumara-my.sharepoint.com/personal/becario2_sis_grupotarahumara_com_mx1/_layouts/15/Doc.aspx?sourcedoc={e0152e46-6a54-4a22-9dc4-d3c33f2983d7}&amp;action=embedview&amp;wdAr=1.7777777777777777" width="476px" height="288px" frameBorder="0">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe> */}
       <Image
         width={1920}
         height={1080}
@@ -167,7 +156,9 @@ export function Posts() {
         alt="background"
         className="h-96 w-full rounded-lg object-cover lg:h-[21rem]"
       />
-      <section className="px-8 py-20 container mx-auto">
+      {
+      isAuthenticated ? (
+        <section className="px-8 py-10 container mx-auto">
         <Typography variant="h5" color="blue-gray"  placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
           New Post
         </Typography>
@@ -360,8 +351,9 @@ export function Posts() {
         </div>
       </section>
 
+      ): null }
 
-      <div className="py-2"></div>
+      <div className="py-10"></div>
       <Typography variant="h1" className="mb-2 "  placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}  >
         Ultimos posts
       </Typography>
@@ -369,11 +361,11 @@ export function Posts() {
        placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
         variant="lead"
         color="gray"
-        className="max-w-3xl mb-36 text-center text-gray-500"
+        className="max-w-3xl mb-12 text-center text-gray-500"
       >
         Aquí puedes ver la ultima información y noticias de Grupo Tarahumara
       </Typography>
-      <div className="container my-auto grid grid-cols-1 gap-x-8 gap-y-16 items-start lg:grid-cols-3">
+      <div className="container my-auto grid grid-cols-1 gap-x-8 gap-y-10 items-start lg:grid-cols-3">
         {posts?.length > 0 ? (
           posts.map(({ img, tag, title, desc, date, img_author, name_author, idBlog, num_empleado }) => (
             <BlogPostCard
@@ -398,9 +390,9 @@ export function Posts() {
         variant="text"
         size="lg"
         color="gray"
-        className="flex items-center gap-2 mt-24"
+        className="flex items-center gap-2 mt-12"
       >
-        <ArrowSmallDownIcon className="h-5 w-5 font-bold text-gray-900" />
+        <ArrowSmallDownIcon className="h- w-5 font-bold text-gray-900" />
         VIEW MORE
       </Button>
     </section>

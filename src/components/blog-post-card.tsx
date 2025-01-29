@@ -86,7 +86,7 @@ export function BlogPostCard({
         <Image
           width={768}
           height={768}
-          src={img}
+          src={`/api/images/${img.split('/').pop()}`} 
           alt={title}
           className="h-full w-full scale-110 object-cover"
         />

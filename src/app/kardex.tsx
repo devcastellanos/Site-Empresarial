@@ -1,7 +1,8 @@
 
 "use client";
-import React, { useState , useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useAuth } from './hooks/useAuth';
 // Ajusta la ruta según tu estructura de archivos
 
 interface CursoTomado {
@@ -34,19 +35,21 @@ interface User {
 }
 
 const Kardex = () => {
-    const [users, setUsers] = useState<User[]>([]);
+  const { isAuthenticated } = useAuth();
 
-    const [newCourseId, setNewCourseId] = useState<number | ''>(''); // For selected course from the dropdown
-  
-    const [dialogInfo, setDialogInfo] = useState<{ id: number; isOpen: boolean }>({ id: 0, isOpen: false });
-    const [selectedUserId, setSelectedUserId] = useState<number | ''>('');
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  
-    const [cursosTomados, setCursosTomados] = useState<CursoTomado[]>([]);
-    const [selectedCourses, setSelectedCourses] = useState<CursoTomado[]>([]);
-  
-    const [cursosPresenciales, setCursosPresenciales] = useState<CursosPresencialesJson[]>([]);
-    const [cursosFaltantes, setCursosFaltantes] = useState<CursosPresencialesJson[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+
+  const [newCourseId, setNewCourseId] = useState<number | ''>(''); // For selected course from the dropdown
+
+  const [dialogInfo, setDialogInfo] = useState<{ id: number; isOpen: boolean }>({ id: 0, isOpen: false });
+  const [selectedUserId, setSelectedUserId] = useState<number | ''>('');
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+  const [cursosTomados, setCursosTomados] = useState<CursoTomado[]>([]);
+  const [selectedCourses, setSelectedCourses] = useState<CursoTomado[]>([]);
+
+  const [cursosPresenciales, setCursosPresenciales] = useState<CursosPresencialesJson[]>([]);
+  const [cursosFaltantes, setCursosFaltantes] = useState<CursosPresencialesJson[]>([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -61,7 +64,7 @@ const Kardex = () => {
 
         const datacourse = await fetch('http://api-cursos.192.168.29.40.sslip.io/cursostomados');
         const coursesData = await datacourse.json();
-   
+
         setCursosTomados(coursesData);
 
 
@@ -70,7 +73,7 @@ const Kardex = () => {
           throw new Error('Network response was not ok');
         }
         const cursos: CursoTomado[] = await fetchCursosPresenciales.json();
-        
+
         setCursosPresenciales(cursos);
 
       } catch (error) {
@@ -83,13 +86,13 @@ const Kardex = () => {
 
   const handleAddCourse = async () => {
     try {
-    const selectedCourse = cursosFaltantes.find(course => course.id_course === newCourseId);
-    if (selectedCourse) {
-      const newCourse = {
-        id_course: selectedCourse.id_course,
-        id_usuario: selectedUserId as number,
-      };
- 
+      const selectedCourse = cursosFaltantes.find(course => course.id_course === newCourseId);
+      if (selectedCourse) {
+        const newCourse = {
+          id_course: selectedCourse.id_course,
+          id_usuario: selectedUserId as number,
+        };
+
         const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/agregarCursoTomado', {
           method: 'POST',
           headers: {
@@ -104,27 +107,27 @@ const Kardex = () => {
         const result = await response.json();
         console.log('Curso agregado con éxito:', result);
 
-        console.log("el id del curso es",newCourse.id_course)
-          
+        console.log("el id del curso es", newCourse.id_course)
+
         // en esta parte actualizp 
-        setSelectedCourses([...selectedCourses,{...selectedCourse,id: newCourse.id_course,id_course:newCourse.id_course, id_usuario: selectedUserId as number, },]);
-        
+        setSelectedCourses([...selectedCourses, { ...selectedCourse, id: newCourse.id_course, id_course: newCourse.id_course, id_usuario: selectedUserId as number, },]);
+
         const updatedCourses = await fetch('http://api-cursos.192.168.29.40.sslip.io/cursostomados');
         const coursesData = await updatedCourses.json();
         setCursosTomados(coursesData);
-  
+
         //se actualizan los cursos
         const userCourses = coursesData.filter((curso: CursoTomado) => curso.id_usuario === selectedUserId);
         const updatedCursosFaltantes = cursosPresenciales.filter(curso => !userCourses.some((c: CursoTomado) => c.id_course === curso.id_course));
         setCursosFaltantes(updatedCursosFaltantes);
-  
+
         setNewCourseId('');
       };
 
     } catch (error) {
-        console.error('Error al agregar el curso:', error);
-        alert('Hubo un problema al agregar el curso.');
-      }
+      console.error('Error al agregar el curso:', error);
+      alert('Hubo un problema al agregar el curso.');
+    }
   };
 
   const toggleDialog = (id: number) => {
@@ -135,10 +138,10 @@ const Kardex = () => {
     let userId = Number(e.target.value);
     userId = Number(userId.toString().replace(/\D/g, ''));
     userId = Number(userId.toString().slice(0, 4));
-    
+
     setSelectedUserId(userId);
     const user = users.find(user => user.Personal === userId) || null;
-    setSelectedUser(user);   
+    setSelectedUser(user);
 
     const userCourses = cursosTomados.filter(curso => curso.id_usuario === userId);
     setSelectedCourses(userCourses);
@@ -150,7 +153,7 @@ const Kardex = () => {
   const formattedUserId = selectedUserId.toString().padStart(4, '0');
 
   return (
-    <div>     
+    <div>
       <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '800px', margin: '0 auto', border: '1px solid black', padding: '20px', borderRadius: '10px', backgroundColor: '#f9f9f9' }}>
         {/* Header Section */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -163,39 +166,39 @@ const Kardex = () => {
 
         {/* i want an input that you put the Numero/user.id and after that put the infomration of the personal in the labels*/}
         <h2 style={{ backgroundColor: '#9A3324', color: 'white', padding: '10px', textAlign: 'center', borderRadius: '5px' }}>Información Personal</h2>
-    
-            <div style={{ marginBottom: '20px' ,padding: '10px', borderRadius: '5px' }}>
-              <label htmlFor="userIdInput"><strong>Número Empleado:</strong></label>
-              <input
-                type="number"
-                id="userIdInput"
-                value={selectedUserId}
-                onChange={handleUserChange}
-                style={{ marginLeft: '10px', padding: '5px', borderRadius: '5px', border: '1px solid #ccc' }}
-              />
+
+        <div style={{ marginBottom: '20px', padding: '10px', borderRadius: '5px' }}>
+          <label htmlFor="userIdInput"><strong>Número Empleado:</strong></label>
+          <input
+            type="number"
+            id="userIdInput"
+            value={selectedUserId}
+            onChange={handleUserChange}
+            style={{ marginLeft: '10px', padding: '5px', borderRadius: '5px', border: '1px solid #ccc' }}
+          />
+        </div>
+        {selectedUser && (
+          <div key={selectedUser.Personal} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid #ccc', paddingBottom: '20px' }}>
+            <div style={{ marginBottom: '20px' }}>
+              <p><strong>Nombre:</strong> {selectedUser.Nombre}</p>
+              <p><strong>Apellido Paterno:</strong> {selectedUser.ApellidoPaterno}</p>
+              <p><strong>Apellido Materno:</strong> {selectedUser.ApellidoMaterno}</p>
+              <p><strong>Estatus:</strong> {selectedUser.Estatus}</p>
+              <p><strong>Puesto:</strong> {selectedUser.Puesto}</p>
+              <p><strong>Departamento:</strong> {selectedUser.Departamento}</p>
+              <p><strong>Tipo de Pago:</strong> {selectedUser.PeriodoTipo}</p>
             </div>
-            {selectedUser && (
-              <div key={selectedUser.Personal} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid #ccc', paddingBottom: '20px' }}>
-                <div style={{ marginBottom: '20px' }}>
-                  <p><strong>Nombre:</strong> {selectedUser.Nombre}</p>
-                  <p><strong>Apellido Paterno:</strong> {selectedUser.ApellidoPaterno}</p>
-                  <p><strong>Apellido Materno:</strong> {selectedUser.ApellidoMaterno}</p>
-                  <p><strong>Estatus:</strong> {selectedUser.Estatus}</p>
-                  <p><strong>Puesto:</strong> {selectedUser.Puesto}</p>
-                  <p><strong>Departamento:</strong> {selectedUser.Departamento}</p>
-                  <p><strong>Tipo de Pago:</strong> {selectedUser.PeriodoTipo}</p>
-                </div>
-                <Image
-                  width={150}
-                  height={150}
-                  src={selectedUser ? `/fotos/${formattedUserId}.jpg` : 'https://img.freepik.com/vector-premium/avatar-hombre-barba-foto-perfil-masculina-generica_53562-20202.jpg'}
-                  alt="Foto del empleado"
-                >
+            <Image
+              width={150}
+              height={150}
+              src={selectedUser ? `/fotos/${formattedUserId}.jpg` : 'https://img.freepik.com/vector-premium/avatar-hombre-barba-foto-perfil-masculina-generica_53562-20202.jpg'}
+              alt="Foto del empleado"
+            >
 
-                </Image>
+            </Image>
 
-              </div>
-            )}
+          </div>
+        )}
 
         {/* Courses Section */}
 
@@ -212,14 +215,12 @@ const Kardex = () => {
               <tr key={course.id_course}>
                 <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>{course.id_course}</td>
                 <td style={{ border: '1px solid #ccc', padding: '10px' }}>
-                <span style={{ width: '100%', borderRadius: '4px', padding: '5px' }}>
-  {course.title}
-</span>
-
-                 
+                  <span style={{ width: '100%', borderRadius: '4px', padding: '5px' }}>
+                    {course.title}
+                  </span>
                 </td>
                 <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
-               
+
                   <button
                     style={{ backgroundColor: '#5A5A5A', color: 'white', border: 'none', borderRadius: '5px', padding: '5px 10px', cursor: 'pointer' }}
                     onClick={() => toggleDialog(course.id_course)}
@@ -231,9 +232,9 @@ const Kardex = () => {
             ))}
           </tbody>
         </table>
-
         {/* Add New Course Section */}
-        <div style={{ marginTop: '20px', display: 'flex', alignItems: 'center' }}>
+        { isAuthenticated ? (
+          <div style={{ marginTop: '20px', display: 'flex', alignItems: 'center' }}>
           <select
             value={newCourseId}
             onChange={e => setNewCourseId(Number(e.target.value))}
@@ -254,13 +255,15 @@ const Kardex = () => {
             Agregar Curso
           </button>
         </div>
+        ): null
+        }      
 
         {/* Course Information Dialog */}
         {dialogInfo.isOpen && (
           <div style={{
-            position: 'fixed', 
-            top: 0, left: 0, right: 0, bottom: 0, 
-            backgroundColor: 'rgba(0,0,0,0.5)', 
+            position: 'fixed',
+            top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
             display: 'flex', justifyContent: 'center', alignItems: 'center'
           }}>
             <div style={{
