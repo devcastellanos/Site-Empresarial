@@ -2,11 +2,29 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import axios from 'axios';
+import { useRouter } from "next/navigation";
+import { useAuth }  from '../app/hooks/useAuth';
 
 export function Login() {
+  const { isAuthenticated, login,  logout} = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const getProfile = async () => {
+    const response = await axios.get('/api/auth/profile', { withCredentials: true });
+    console.log(response);
+    console.log(response.data.user.email);
+  }
+
+  const handleSubmit = async () => {
+    console.log(email, password);
+    const response = await axios.post('/api/auth/login', { email, password }, { withCredentials: true });
+    console.log(response);
+    
+  };
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -20,34 +38,24 @@ export function Login() {
     setIsLoading(true);
 
     try {
-      console.log('Enviando solicitud a /api/auth');
-      const response = await fetch('/api/auth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
+      const response = await axios.post('/api/auth/login', { email, password }, { withCredentials: true });
+      login();
       console.log('Respuesta recibida:', response);
 
-      const result = await response.json();
-
-      if (!response.ok) {
+      if (response.status !== 200) {
         Swal.fire({
           icon: 'error',
           title: 'Error en la solicitud',
-          text: result.message || 'No se pudo completar el inicio de sesión.',
+          text: response.data.message || 'No se pudo completar el inicio de sesión.',
         });
         return;
       }
-
       Swal.fire({
         icon: 'success',
         title: 'Inicio de sesión exitoso',
         text: 'Bienvenido de nuevo!',
       }).then(() => {
-        window.location.href = '/'; // Redirigir al usuario
+        router.push('/');
       });
     } catch (error) {
       Swal.fire({
@@ -109,6 +117,7 @@ export function Login() {
           fullWidth
           size="lg"
           onClick={handleLogin}
+          // onClick={handleSubmit}
           disabled={isLoading}
         >
           {isLoading ? 'Cargando...' : 'Sign In'}
@@ -123,3 +132,4 @@ export function Login() {
     </Card>
   );
 }
+

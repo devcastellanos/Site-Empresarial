@@ -15,38 +15,10 @@ import {
 } from "@heroicons/react/24/solid";
 import Hero from "@/app/hero";
 import Image from "next/image";
+import axios from "axios";
 
-const NAV_MENU = [
-  {
-    name: "Home",
-    icon: RectangleStackIcon,
-    href: "/",
-  },
-  {
-    name: "Noti-Tarahumara",
-    icon: UserCircleIcon,
-    href: "/Blog",
-  },
-  {name: "Kardex",
-    icon: UserCircleIcon,
-    href: "/kardex",
-  },
-  {
-    name: "Cursos"  ,
-    icon: UserCircleIcon,
-    href: "/Cursos",
-  },
-  {
-    name:"Cargar Archivos excel",
-    icon: UserCircleIcon,
-    href:"/cargaMasiva"
-  },
-  // {
-  //   name: "Cuentas",
-  //   icon: UserCircleIcon,
-  //   href: "/Usuarios",
-  // },
-];
+import { useAuth }  from '../app/hooks/useAuth';
+import { is } from "date-fns/locale";
 
 interface NavItemProps {
   children: React.ReactNode;
@@ -72,15 +44,48 @@ function NavItem({ children, href }: NavItemProps) {
 
 export function Navbar() {
   const [open, setOpen] = React.useState(false);
-
+  const { isAuthenticated, login, logout } = useAuth();
   const handleOpen = () => setOpen((cur) => !cur);
-
-  React.useEffect(() => {
+  const NAV_MENU = [
+    {
+      name: "Home",
+      icon: RectangleStackIcon,
+      href: "/",
+    },
+    {
+      name: "Noti-Tarahumara",
+      icon: UserCircleIcon,
+      href: "/Blog",
+    },
+    {name: "Kardex",
+      icon: UserCircleIcon,
+      href: "/kardex",
+    },
+    ...(isAuthenticated? [
+  
+    {
+      name: "Cursos"  ,
+      icon: UserCircleIcon,
+      href: "/Cursos",
+    },
+    {
+      name:"Cargar Archivos excel",
+      icon: UserCircleIcon,
+      href:"/cargaMasiva"
+    },
+    ]: []),
+  
+  ];
+  React.useEffect(() => { 
+    console.log('isAuthenticated', isAuthenticated);
     window.addEventListener(
       "resize",
       () => window.innerWidth >= 960 && setOpen(false)
     );
   }, []);
+
+    
+
 
   return (
     <MTNavbar 
@@ -115,14 +120,11 @@ export function Navbar() {
           </Button>
           </a>
           
-          <a href="" target="_blank">
-            <Button 
-              color="gray"  
-              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-            >
-              blocks
-            </Button>
-          </a>
+          <Button 
+            onClick={logout} color="blue-gray" className="mb-4" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
+            Log Out
+          </Button>
+
         </div>
         <IconButton
         placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}

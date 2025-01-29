@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { Layout, FixedPlugin } from "@/components";
+import { AuthProvider } from "../app/context/AuthContext"; // Asegúrate de tener la ruta correcta al contexto
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -33,10 +34,13 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/favicon.png" type="image/png" />
       </head>
       <body className={roboto.className}>
-        <Layout>
-          {children}
-          <FixedPlugin />
-        </Layout>
+        {/* Asegúrate de envolver tu aplicación con AuthProvider */}
+        <AuthProvider>
+          <Layout>
+            {children}
+            <FixedPlugin />
+          </Layout>
+        </AuthProvider>
       </body>
     </html>
   );
