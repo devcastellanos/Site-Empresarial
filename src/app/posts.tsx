@@ -13,6 +13,7 @@ import { Input, Select, Option, Carousel } from "@material-tailwind/react";
 import axios from "axios";
 
 import { useAuth } from "@/app/hooks/useAuth";
+import { id } from "date-fns/locale";
 
 export interface Post {
   idBlog: number;
@@ -67,6 +68,41 @@ export function Posts() {
 
   }, []);
 
+  const handleDeletePost = async (idBlog: number) => {
+    // Encontrar el post que se va a eliminar
+    const postDeleted = posts.find((post) => post.idBlog === idBlog);
+    console.log('Imágenes del post a eliminar:', postDeleted?.img);
+    console.log('Post a eliminar:', idBlog);
+    try {
+      // Eliminar el post de la base de datos
+      const response = await fetch("http://localhost:3001/EliminarPost", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idBlog: idBlog }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Error en la solicitud");
+      }
+  
+      const result = await response.json();
+      console.log("Post eliminado con éxito", result);
+  
+      // Eliminar las imágenes asociadas al post
+      if (postDeleted?.img && postDeleted.img.length > 0) {
+        const res = await axios.post("/api/deleteImages", { images: postDeleted.img });
+        console.log("Imágenes eliminadas correctamente:", res.data);
+      }
+  
+      // Actualizar el estado de los posts
+      setPosts((prevPosts) => prevPosts.filter((post) => post.idBlog !== idBlog));
+    } catch (error) {
+      console.error("Error al eliminar post:", error);
+    }
+  };
+  
   const handlePostEdit = (updatedPost: Post) => {
     setPosts((prevPosts) =>
       prevPosts.map((post) =>
@@ -89,7 +125,6 @@ export function Posts() {
       formData.append("images", file); // 👈 Agrega múltiples imágenes con el mismo key
     }
     });
-
     formData.append("num_empleado", post.num_empleado.toString());
     formData.append("name_author", post.name_author);
     formData.append("title", post.title);
@@ -128,9 +163,14 @@ export function Posts() {
       const result = await response.json();
       console.log('Post agregado con éxito', result);
 
-      setPosts((prevPosts) => [...prevPosts, newPost]);
+      const postWithId = {
+        ...newPost,
+        idBlog: result.idBlog, 
+      };  
 
-      console.log('Post agregado:', posts);
+      setPosts((prevPosts) => [...prevPosts, postWithId]);
+      console.log('Post agregado:', postWithId);
+      window.location.reload();
     } catch (error) {
       console.error('Error al agregar post:', error);
     }
@@ -357,18 +397,20 @@ export function Posts() {
       <div className="container my-auto grid grid-cols-1 gap-x-8 gap-y-10 items-start lg:grid-cols-2">
         {posts?.length > 0 ? (
           posts.map(({ img, tag, title, desc, date, img_author, name_author, idBlog, num_empleado }) => (
-            <BlogPostCard
-              key={title}
-              img={img}
-              tag={tag}
-              title={title}
-              desc={desc}
-              date={date}
-              author={{ img: img_author, name: name_author }}
-              idBlog={idBlog}
-              num_empleado={num_empleado}
-              onPostEdit={handlePostEdit}
-            />
+            <div key={idBlog}>
+              <BlogPostCard
+                img={img}
+                tag={tag}
+                title={title}
+                desc={desc}
+                date={date}
+                author={{ img: img_author, name: name_author }}
+                idBlog={idBlog}
+                num_empleado={num_empleado}
+                onPostEdit={handlePostEdit}
+                onPostDelete={handleDeletePost}
+              />
+            </div>
           ))
         ) : (
           <p>No posts available</p>
