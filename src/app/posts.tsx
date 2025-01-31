@@ -4,36 +4,19 @@ import React, { useEffect, useState } from "react";
 import {
   Button,
   Typography,
-  Tabs,
-  TabsHeader,
-  Tab,
   Textarea,
 } from "@material-tailwind/react";
 import { ArrowSmallDownIcon } from "@heroicons/react/24/solid";
 import BlogPostCard from "@/components/blog-post-card";
 import Image from "next/image";
-import { Input, Select, Option } from "@material-tailwind/react";
-import path from "path";
+import { Input, Select, Option, Carousel } from "@material-tailwind/react";
 import axios from "axios";
-
-import {
-  Popover,
-  PopoverHandler,
-  PopoverContent,
-} from "@material-tailwind/react";
-
-// day picker
-import { format } from "date-fns";
-import { DayPicker } from "react-day-picker";
-
-// @heroicons/react
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 
 import { useAuth } from "@/app/hooks/useAuth";
 
 export interface Post {
   idBlog: number;
-  img: string;
+  img: string[];
   tag: string;
   title: string;
   desc: string;
@@ -47,7 +30,7 @@ export function Posts() {
   const [post, setPost] = React.useState<Post>(
     {
       idBlog: 0,
-      img: "",
+      img: [],
       tag: "",
       title: "",
       desc: "",
@@ -59,8 +42,8 @@ export function Posts() {
   );
 
   const [posts, setPosts] = React.useState<Post[]>([]);
-  const [date, setDate] = useState<Date | undefined>(undefined);
-  const [imgFile, setImgFile] = React.useState<File | null>(null);
+ 
+  const [imgFiles, setImgFiles] = useState<File[]>([]);
 
   const { isAuthenticated } = useAuth();
 
@@ -76,7 +59,7 @@ export function Posts() {
         setPosts(data);
       } catch (error) {
         console.error('Error fetching posts:', error);
-        setPosts([]); // Vacía los posts en caso de error
+        setPosts([]);
       }
     };
 
@@ -94,15 +77,19 @@ export function Posts() {
 
   const handleAddPost = async () => {
 
-    if (!imgFile || !post?.num_empleado) {
+    if (!imgFiles.length || !post?.num_empleado) {
       alert("Por favor, sube una imagen y proporciona el número de empleado.");
       return;
     }
 
     const formData = new FormData();
-    if (post && imgFile instanceof File) {
-      formData.append("image", imgFile);
+
+    imgFiles.forEach((file, index) => {
+    if (file instanceof File) {
+      formData.append("images", file); // 👈 Agrega múltiples imágenes con el mismo key
     }
+    });
+
     formData.append("num_empleado", post.num_empleado.toString());
     formData.append("name_author", post.name_author);
     formData.append("title", post.title);
@@ -119,11 +106,11 @@ export function Posts() {
           },
         });
 
-      console.log("Imagen guardada correctamente");
+      console.log("Imagenes guardada correctamente");
 
       const newPost = {
         ...post,
-        img: res.data.imageUrl,
+        img: res.data.imageUrls,
       };
 
       const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/Agregarpost', {
@@ -142,6 +129,8 @@ export function Posts() {
       console.log('Post agregado con éxito', result);
 
       setPosts((prevPosts) => [...prevPosts, newPost]);
+
+      console.log('Post agregado:', posts);
     } catch (error) {
       console.error('Error al agregar post:', error);
     }
@@ -319,16 +308,16 @@ export function Posts() {
             placeholder="Imagen"
             type="file"
             accept="image/*"
+            multiple
             onChange={(e) => {
-              if (e.target.files && e.target.files[0]) {
-                const file = e.target.files[0];
-                setImgFile(file);
+              if (e.target.files) {
+                setImgFiles([...e.target.files]);
               }
             }}
           />
-          {imgFile && (
+          {imgFiles[1] && (
             <Image
-              src={URL.createObjectURL(imgFile)}
+              src={URL.createObjectURL(imgFiles[1])}
               alt="Post image"
               width={200}
               height={200}
@@ -365,7 +354,7 @@ export function Posts() {
       >
         Aquí puedes ver la ultima información y noticias de Grupo Tarahumara
       </Typography>
-      <div className="container my-auto grid grid-cols-1 gap-x-8 gap-y-10 items-start lg:grid-cols-3">
+      <div className="container my-auto grid grid-cols-1 gap-x-8 gap-y-10 items-start lg:grid-cols-2">
         {posts?.length > 0 ? (
           posts.map(({ img, tag, title, desc, date, img_author, name_author, idBlog, num_empleado }) => (
             <BlogPostCard

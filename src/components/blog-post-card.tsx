@@ -12,13 +12,14 @@ import {
   DialogBody,
   DialogFooter,
   Input,
+  Carousel,
 } from "@material-tailwind/react";
 
 import { Post } from "../app/posts";
 
 
 interface BlogPostCardProps {
-  img: string;
+  img: string[];
   tag: string;
   title: string;
   desc: string;
@@ -41,10 +42,11 @@ export function BlogPostCard({
   onPostEdit,}: BlogPostCardProps) {
   const formattedUserId = num_empleado.toString().padStart(4, '0');
   const [openModal, setOpenModal] = React.useState(false);
+  const [imageJson, setImageJson] = React.useState<string[]>([]);
   const [post, setPost] = React.useState<Post >(
      {
        idBlog: idBlog,
-       img: img,
+       img: Array.isArray(img) ? img : [],
        tag: tag,
        title: title,
        desc: desc,
@@ -83,13 +85,21 @@ export function BlogPostCard({
     <>
     <Card shadow={true}   placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
       <CardHeader onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}  placeholder="">
-        <Image
-          width={768}
-          height={768}
-          src={`/api/images/${img.split('/').pop()}`} 
-          alt={title}
-          className="h-full w-full scale-110 object-cover"
-        />
+      {Array.isArray(post.img) && post.img.length > 0 && (
+        <Carousel placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+          {post.img.map((imgUrl, index) => (
+            <div key={index}>
+              <Image
+                src={`/api/images/${imgUrl.split('/').pop()}`}
+                alt={`Imagen ${index + 1}`}
+                width={600}
+                height={600}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            ))}
+        </Carousel>
+      )}
       </CardHeader>
       <CardBody className="p-6" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
         <Typography

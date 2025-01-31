@@ -8,8 +8,7 @@ export async function GET() {
         const cookieStore = await cookies(); // 👈 Agrega `await`
         const myTokenCookie = cookieStore.get('myToken');
 
-        console.log('[LOG] Todas las cookies:', await cookieStore.getAll()); // 👈 También usa `await`
-        console.log('[LOG] Token recibido:', myTokenCookie);
+        // console.log('[LOG] Token recibido:', myTokenCookie);
 
         if (!myTokenCookie) {
             return NextResponse.json({ success: false, message: 'Token no encontrado' }, { status: 401 });
@@ -18,7 +17,7 @@ export async function GET() {
         const myToken = myTokenCookie.value;
 
         const user = verify(myToken, 'secret');
-        console.log('[LOG] Usuario verificado:', user);
+        // console.log('[LOG] Usuario verificado:', user);
 
         return NextResponse.json({ success: true, user });
     } catch (error) {
