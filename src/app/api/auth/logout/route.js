@@ -16,7 +16,8 @@ export async function POST(req) {
         verify(myTokenCookie.value, 'secret');
         const serialized = serialize('myToken', null, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            // secure: process.env.NODE_ENV === 'production',
+            secure: false,
             sameSite: 'Lax',
             maxAge: 0,
             path: '/',
