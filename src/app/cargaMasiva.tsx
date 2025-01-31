@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import Swal from 'sweetalert2';
+import { Card, Typography, Input, Button } from "@material-tailwind/react";
 
 const ExcelUploader: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
@@ -93,43 +94,95 @@ const ExcelUploader: React.FC = () => {
   
 
   return (
-    <div>
-      <h1>Cargar archivo Excel</h1>
-      <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
-      
+  <Card 
+    className="p-6 shadow-lg" 
+    placeholder="" 
+    onPointerEnterCapture={() => {}} 
+    onPointerLeaveCapture={() => {}}
+  >
+      <Typography 
+        variant="h2" 
+        color="blue-gray" 
+        className="mb-4" 
+        placeholder="" 
+        onPointerEnterCapture={() => {}} 
+        onPointerLeaveCapture={() => {}}
+      >
+        Cargar archivo Excel
+      </Typography>
+
+      <div className="mb-8">
+        <Input
+          type="file"
+          accept=".xlsx, .xls"
+          onChange={handleFileUpload}
+          label="Selecciona un archivo"
+          className="focus:ring-2 focus:ring-blue-500"
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
+          crossOrigin=""
+        />
+      </div>
+
       <div>
-        <h2>Datos cargados:</h2>
+        <Typography 
+          variant="h4" 
+          color="blue-gray" 
+          className="mb-4" 
+          placeholder="" 
+          onPointerEnterCapture={() => {}} 
+          onPointerLeaveCapture={() => {}}
+        >
+          Datos cargados:
+        </Typography>
+
         {data.length > 0 ? (
-          <table border={1} style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                {/* Generar encabezados dinámicamente */}
-                {Object.keys(data[0]).map((key, index) => (
-                  <th key={index} style={{ padding: '8px', textAlign: 'left', backgroundColor: '#f2f2f2' }}>
-                    {key}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((row, rowIndex) => (
-                <tr key={rowIndex}>
-                  {/* Generar celdas dinámicamente */}
-                  {Object.values(row).map((value, colIndex) => (
-                    <td key={colIndex} style={{ padding: '8px', border: '1px solid #ddd' }}>
-                      {String(value)}
-                    </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+              <thead className="bg-blue-gray-50">
+                <tr>
+                  {Object.keys(data[0]).map((key, index) => (
+                    <th
+                      key={index}
+                      className="px-6 py-3 text-left text-xs font-medium text-blue-gray-700 uppercase tracking-wider"
+                    >
+                      {key}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-blue-gray-200">
+                {data.map((row, rowIndex) => (
+                  <tr key={rowIndex} className="hover:bg-blue-gray-50">
+                    {Object.values(row).map((value, colIndex) => (
+                      <td
+                        key={colIndex}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-blue-gray-900"
+                      >
+                        {String(value)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <p>No se han cargado datos aún.</p>
+          <Typography 
+            variant="paragraph" 
+            color="gray" 
+            className="mt-4" 
+            placeholder="" 
+            onPointerEnterCapture={() => {}} 
+            onPointerLeaveCapture={() => {}}
+          >
+            No se han cargado datos aún.
+          </Typography>
         )}
       </div>
-    </div>
+    </Card>
   );
 };
+
 
 export default ExcelUploader;
