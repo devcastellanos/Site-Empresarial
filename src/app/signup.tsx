@@ -40,7 +40,7 @@ export function Login() {
     try {
       const response = await axios.post('/api/auth/login', { email, password }, { withCredentials: true });
       login();
-      console.log('Respuesta recibida:', response);
+      
 
       if (response.status !== 200) {
         Swal.fire({
@@ -63,7 +63,7 @@ export function Login() {
         title: 'Error',
         text: 'Hubo un problema al intentar iniciar sesión. Inténtalo nuevamente.',
       });
-      console.error('Error al logear usuario:', error);
+      
     } finally {
       setIsLoading(false);
     }

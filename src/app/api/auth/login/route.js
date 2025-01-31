@@ -34,8 +34,8 @@ export async function POST(req) {
           );
         }
         const user = await response.json();
-        console.log(`[LOG] Usuario autenticado: ${user.data.name}`);
-        console.log('[LOG] Respuesta completa de login:', user);
+        // console.log(`[LOG] Usuario autenticado: ${user.data.name}`);
+        // console.log('[LOG] Respuesta completa de login:', user);
 
         const token = jwt.sign({
             exp: Math.floor(Date.now() / 1000) + 60*60*24*30,
