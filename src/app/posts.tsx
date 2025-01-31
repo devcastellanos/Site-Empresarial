@@ -75,7 +75,7 @@ export function Posts() {
     console.log('Post a eliminar:', idBlog);
     try {
       // Eliminar el post de la base de datos
-      const response = await fetch("http://localhost:3001/EliminarPost", {
+      const response = await fetch("http://api-cursos.192.168.29.40.sslip.io/EliminarPost", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
