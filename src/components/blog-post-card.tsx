@@ -28,6 +28,7 @@ interface BlogPostCardProps {
   idBlog: number;
   num_empleado: number;
   onPostEdit: (post: Post) => void;
+  onPostDelete: (idBlog: number) => void;
 }
 
 export function BlogPostCard({
@@ -39,7 +40,9 @@ export function BlogPostCard({
   date,
   idBlog,
   num_empleado,
-  onPostEdit,}: BlogPostCardProps) {
+  onPostEdit,
+  onPostDelete,
+  }: BlogPostCardProps) {
   const formattedUserId = num_empleado.toString().padStart(4, '0');
   const [openModal, setOpenModal] = React.useState(false);
   const [imageJson, setImageJson] = React.useState<string[]>([]);
@@ -153,6 +156,14 @@ export function BlogPostCard({
             </Typography>
            
           </div>
+          <Button
+            placeholder=""
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
+            onClick={() => onPostDelete(idBlog)}
+          > 
+          Eliminar
+          </Button>
           <Button 
           className="ml-auto"
           placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
