@@ -69,7 +69,7 @@ const ExcelUploader: React.FC = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:3001/updateCargaMasiva", {
+      const res = await fetch("http://api-cursos.192.168.29.40.sslip.io/updateCargaMasiva", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
