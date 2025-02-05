@@ -13,7 +13,7 @@ export default function Campaign() {
       <Navbar />
       <Hero />
       <Articles />
-      <Footer />
+      {/* <Footer /> */}
 
     </>
 

@@ -355,7 +355,7 @@ export function Posts() {
               }
             }}
           />
-          {imgFiles[1] && (
+          {imgFiles[0] && (
             <Image
               src={URL.createObjectURL(imgFiles[1])}
               alt="Post image"
@@ -413,7 +413,7 @@ export function Posts() {
             </div>
           ))
         ) : (
-          <p>No posts available</p>
+          <p>No hay publicaciones</p>
         )}
       </div>
       <Button
@@ -424,7 +424,7 @@ export function Posts() {
         className="flex items-center gap-2 mt-12"
       >
         <ArrowSmallDownIcon className="h- w-5 font-bold text-gray-900" />
-        VIEW MORE
+        Ver mas
       </Button>
     </section>
   );

@@ -111,20 +111,23 @@ export function Navbar() {
           ))}
         </ul>
         <div className="hidden items-center gap-2 lg:flex">
-          <a href="/Login">
-          <Button 
-            variant="text" 
-            placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-          >
-            Sign In
-          </Button>
-          </a>
-          
-          <Button 
-            onClick={logout} color="blue-gray" className="mb-4" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
-            Log Out
-          </Button>
 
+          {isAuthenticated ? (
+            <Button 
+              onClick={logout} color="blue-gray" className="mb-4" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
+              Cerrar Sesión
+            </Button>
+          ) : (
+            <a href="/Login">
+              <Button 
+                variant="text" 
+                placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+              >
+                Iniciar Sesión
+              </Button>
+            </a>
+          )}
+          
         </div>
         <IconButton
         placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
@@ -155,7 +158,7 @@ export function Navbar() {
               variant="text" 
               placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             >
-              Sign In
+              Iniciar Sesión
             </Button>
             <a href="https://www.material-tailwind.com/blocks" target="_blank">
               <Button 
