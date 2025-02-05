@@ -34,7 +34,7 @@ function Hero() {
         <div className="mt-8 flex flex-col items-center justify-center gap-4 md:flex-row">
           <div className="w-80">
             {/* @ts-ignore */}
-            <Input label="name@grupotarahumara.com.mx" />
+            <Input label="nombre@grupotarahumara.com.mx" />
           </div>
           <Button size="md" className="lg:w-max shrink-0" fullWidth color="gray" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
             get started
