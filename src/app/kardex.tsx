@@ -1,8 +1,10 @@
 
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useAuth } from './hooks/useAuth';
+import { Button, Input } from '@material-tailwind/react';
+import axios from 'axios';
 // Ajusta la ruta según tu estructura de archivos
 
 interface CursoTomado {
@@ -151,6 +153,29 @@ const Kardex = () => {
     console.log(formattedUserId);
   };
   const formattedUserId = selectedUserId.toString().padStart(4, '0');
+  
+  const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const formData = new FormData();
+      formData.append('file', e.target.files[0]);
+      formData.append('id', selectedUserId?.toString() || '');
+  
+      try {
+        console.log("Actualizando Imagen...");
+        const res = await axios.post("/api/employeesImages", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+  
+        if (res.status === 200) {
+          console.log("Imagen actualizada correctamente:", res.data.imageUrl);
+        } else {
+          console.error("Error al actualizar la imagen:", res.data.message);
+        }
+      } catch (error) {
+        console.error("Error en la solicitud:", error);
+      }
+    }
+  };
 
   return (
     <div>
@@ -188,15 +213,28 @@ const Kardex = () => {
               <p><strong>Departamento:</strong> {selectedUser.Departamento}</p>
               <p><strong>Tipo de Pago:</strong> {selectedUser.PeriodoTipo}</p>
             </div>
-            <Image
-              width={150}
-              height={150}
-              src={selectedUser ? `/fotos/${formattedUserId}.jpg` : 'https://img.freepik.com/vector-premium/avatar-hombre-barba-foto-perfil-masculina-generica_53562-20202.jpg'}
-              alt="Foto del empleado"
-            >
 
-            </Image>
-
+            <div>
+              <Image
+                width={150}
+                height={150}
+                src={`/fotos/${formattedUserId}.jpg`}
+                alt="Foto del empleado"
+              >
+              </Image>
+              <div style={{ textAlign: 'center', marginTop: '10px' }}>
+                <Input
+                type="file"
+                placeholder="Imagen"
+                accept="image/*"
+                multiple
+                crossOrigin={''}
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+                onChange={handleChangeImage}
+                />
+              </div>
+            </div>
           </div>
         )}
 

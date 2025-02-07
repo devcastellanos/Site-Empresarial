@@ -68,6 +68,23 @@ const ExcelUploader: React.FC = () => {
       return;
     }
 
+   //swal fire estas seguro de cargar esta informacion?
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: "¿Deseas cargar esta información?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, cargar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+
     try {
       const res = await fetch("http://api-cursos.192.168.29.40.sslip.io/updateCargaMasiva", {
         method: "POST",
