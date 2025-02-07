@@ -36,7 +36,7 @@ export async function POST(req) {
       fs.writeFileSync(imagePath, Buffer.from(buffer));
       console.log("Imagen guardada en:", imagePath);
 
-      imageUrls.push(imageName); // 👈 Guardamos todas las URLs
+      imageUrls.push(imageName); //  Guardamos todas las URLs
     }
 
     return NextResponse.json(

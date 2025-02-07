@@ -62,8 +62,12 @@ function CourseCatalog() {
         const filter = cursosPresenciales.filter((op) => {
           const [swap] = op.start_date.split("T");
           op.start_date = swap;
-          const [swap2] = op.end_date.split("T");
-          op.end_date = swap2;
+          if (op.end_date === null) {
+            op.end_date = "Sin Expiración";
+          }else{
+            const [swap2] = op.end_date.split("T");
+            op.end_date = swap2;
+          }
 
           return swap;
         });

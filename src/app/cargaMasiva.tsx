@@ -22,7 +22,7 @@ const ExcelUploader: React.FC = () => {
           const sheetName = workbook.SheetNames[0];
           const sheet = workbook.Sheets[sheetName];
 
-          const customHeaders = ["id_usuario", "puesto", "departamento", "curso", "fecha", "tutor"];
+          const customHeaders = ["id_usuario", "puesto", "departamento", "curso", "fecha", "tutor", "progress"];
 
           const jsonData = XLSX.utils.sheet_to_json(sheet, {
             header: customHeaders,
@@ -55,15 +55,6 @@ const ExcelUploader: React.FC = () => {
         icon: 'warning',
         title: 'Atención',
         text: 'No hay datos para cargar.',
-      });
-      return;
-    }
-
-    if (!expirationDate) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Atención',
-        text: 'Selecciona una fecha de expiración.',
       });
       return;
     }
