@@ -357,7 +357,7 @@ export function Posts() {
           />
           {imgFiles[0] && (
             <Image
-              src={URL.createObjectURL(imgFiles[1])}
+              src={URL.createObjectURL(imgFiles[0])}
               alt="Post image"
               width={200}
               height={200}
