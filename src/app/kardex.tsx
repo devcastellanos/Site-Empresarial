@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useAuth } from './hooks/useAuth';
-import { Button, Input } from '@material-tailwind/react';
+import { Button, Dialog, DialogBody, DialogHeader, DialogFooter, Input, Progress, Slider, Typography } from '@material-tailwind/react';
 import axios from 'axios';
 // Ajusta la ruta según tu estructura de archivos
 
@@ -13,16 +13,16 @@ interface CursoTomado {
   id_usuario: number;
   title: string;
   description: string;
-  area: string;
   tutor: string;
+  progress: string;
 }
 
 interface CursosPresencialesJson {
   id_course: number;
   title: string;
   description: string;
-  area: string;
   tutor: string;
+  progress: string;
 }
 
 interface User {
@@ -43,7 +43,7 @@ const Kardex = () => {
 
   const [newCourseId, setNewCourseId] = useState<number | ''>(''); // For selected course from the dropdown
 
-  const [dialogInfo, setDialogInfo] = useState<{ id: number; isOpen: boolean }>({ id: 0, isOpen: false });
+  const [dialogInfo, setDialogInfo] = useState<{course: CursoTomado, isOpen: boolean}>({ course: { id: 0, id_course: 0, id_usuario: 0, title: '', description: '', tutor: '', progress: '' }, isOpen: false });
   const [selectedUserId, setSelectedUserId] = useState<number | ''>('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
@@ -58,25 +58,19 @@ const Kardex = () => {
       try {
         const response = await fetch('http://api-site-intelisis.192.168.29.40.sslip.io/api/users');
         const data = await response.json();
-        const formattedData = data.map((user: any) => ({
+        setUsers(data.map((user: any) => ({
           ...user,
-          Personal: Number(user.Personal), // Convierte Personal a número
-        }));
-        setUsers(formattedData);
-
+          Personal: Number(user.Personal), // Asegurar que `Personal` es un número
+        })));
+  
         const datacourse = await fetch('http://api-cursos.192.168.29.40.sslip.io/cursostomados');
-        const coursesData = await datacourse.json();
-
-        setCursosTomados(coursesData);
-
+        setCursosTomados(await datacourse.json());
 
         const fetchCursosPresenciales = await fetch("http://api-cursos.192.168.29.40.sslip.io/cursosPresenciales");
         if (!fetchCursosPresenciales.ok) {
           throw new Error('Network response was not ok');
         }
-        const cursos: CursoTomado[] = await fetchCursosPresenciales.json();
-
-        setCursosPresenciales(cursos);
+        setCursosPresenciales(await fetchCursosPresenciales.json());
 
       } catch (error) {
         console.error(error);
@@ -112,7 +106,14 @@ const Kardex = () => {
         console.log("el id del curso es", newCourse.id_course)
 
         // en esta parte actualizp 
-        setSelectedCourses([...selectedCourses, { ...selectedCourse, id: newCourse.id_course, id_course: newCourse.id_course, id_usuario: selectedUserId as number, },]);
+        setSelectedCourses(prevCourses => {
+          if (!prevCourses.length || !dialogInfo.course.id_course) return prevCourses; // Evita mutaciones innecesarias
+          return prevCourses.map(course => 
+            course.id_course === dialogInfo.course.id_course
+              ? { ...course, progress: progress.toString() }
+              : course
+          );
+        });
 
         const updatedCourses = await fetch('http://api-cursos.192.168.29.40.sslip.io/cursostomados');
         const coursesData = await updatedCourses.json();
@@ -132,8 +133,19 @@ const Kardex = () => {
     }
   };
 
-  const toggleDialog = (id: number) => {
-    setDialogInfo({ id, isOpen: !dialogInfo.isOpen });
+  const toggleDialog = (course: CursoTomado | null) => {
+    if (course) {
+      setProgress(Number(course.progress)); // ✅ Actualiza el estado de progress al valor actual del curso
+      setDialogInfo({
+        course,
+        isOpen: true,
+      });
+    } else {
+      setDialogInfo(prevDialog => ({
+        ...prevDialog,
+        isOpen: !prevDialog.isOpen,
+      }));
+    }
   };
 
   const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -176,6 +188,48 @@ const Kardex = () => {
       }
     }
   };
+
+  //Dialog modify progress
+
+  const [progress, setProgress] = useState<number>(Number(dialogInfo.course.progress));
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const handleProgressChange = (newValue: number) => {
+    setProgress(newValue);
+  };
+
+  const updateProgress = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/updateProgress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id_usuario: dialogInfo.course.id_usuario,
+          id_course: dialogInfo.course.id_course,
+          progress: progress,
+        }),
+      });
+  
+      const data = await response.json();
+      console.log("Respuesta:", data);
+
+      setDialogInfo((prev) => ({
+        ...prev,
+        course: { ...prev.course, progress: progress.toString() }, // Convert progress back to string
+      }));
+
+      setSelectedCourses(selectedCourses.map((course) => {
+        if (course.id_course === dialogInfo.course.id_course) {
+          return { ...course, progress: progress.toString() };
+        }
+        return course;
+      }));
+    } catch (error) {
+      console.error("Error en la solicitud:", error);
+    }
+  };
+  
 
   return (
     <div>
@@ -222,6 +276,7 @@ const Kardex = () => {
                 alt="Foto del empleado"
               >
               </Image>
+              { isAuthenticated ? (
               <div style={{ textAlign: 'center', marginTop: '10px' }}>
                 <Input
                 type="file"
@@ -234,6 +289,7 @@ const Kardex = () => {
                 onChange={handleChangeImage}
                 />
               </div>
+              ) : null}
             </div>
           </div>
         )}
@@ -245,6 +301,7 @@ const Kardex = () => {
             <tr>
               <th style={{ border: '1px solid #9A3324', padding: '10px', backgroundColor: '#9A3324', color: 'white' }}>ID</th>
               <th style={{ border: '1px solid #9A3324', padding: '10px', backgroundColor: '#9A3324', color: 'white' }}>Curso</th>
+              <th style={{ border: '1px solid #9A3324', padding: '10px', backgroundColor: '#9A3324', color: 'white' }}>Progreso</th>
               <th style={{ border: '1px solid #9A3324', padding: '10px', backgroundColor: '#9A3324', color: 'white' }}>Acciones</th>
             </tr>
           </thead>
@@ -258,10 +315,28 @@ const Kardex = () => {
                   </span>
                 </td>
                 <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
+                <div className="w-full">
+                  <div className="mb-2 flex items-center justify-between gap-4">
+                    <Typography color="blue-gray" variant="h6" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+                      Completado
+                    </Typography>
+                    <Typography color="blue-gray" variant="h6" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+                    {course.progress}%
+                    </Typography>
+                  </div>
+                  <Progress 
+                    value={Number(course.progress)} 
+                    placeholder="" 
+                    onPointerEnterCapture={() => {}} 
+                    onPointerLeaveCapture={() => {}} 
+                  />
+                </div>
+                </td>
+                <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
 
                   <button
                     style={{ backgroundColor: '#5A5A5A', color: 'white', border: 'none', borderRadius: '5px', padding: '5px 10px', cursor: 'pointer' }}
-                    onClick={() => toggleDialog(course.id_course)}
+                    onClick={() => toggleDialog(course)}
                   >
                     Información
                   </button>
@@ -298,29 +373,72 @@ const Kardex = () => {
 
         {/* Course Information Dialog */}
         {dialogInfo.isOpen && (
-          <div style={{
-            position: 'fixed',
-            top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            display: 'flex', justifyContent: 'center', alignItems: 'center'
-          }}>
-            <div style={{
-              backgroundColor: 'white', padding: '20px', borderRadius: '10px', maxWidth: '500px', width: '100%',
-              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)'
-            }}>
-              <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>Detalles del Curso</h3>
-              <p><strong>ID:</strong> {dialogInfo.id}</p>
-              {/* <p><strong>Nombre:</strong> {courses.find(c => c.id === dialogInfo.id)?.name}</p>
-              <p><strong>Descripción:</strong> {courses.find(c => c.id === dialogInfo.id)?.description}</p>
-              <p><strong>Fecha:</strong> {courses.find(c => c.id === dialogInfo.id)?.date}</p> */}
-              <button
-                style={{ backgroundColor: '#9A3324', color: 'white', border: 'none', borderRadius: '5px', padding: '10px 20px', cursor: 'pointer', marginTop: '10px' }}
-                onClick={() => toggleDialog(dialogInfo.id)}
-              >
-                Cerrar
-              </button>
+          <Dialog 
+            open={dialogInfo.isOpen} 
+            handler={() => toggleDialog(null)} 
+            onPointerLeaveCapture={() => {}} 
+            onPointerEnterCapture={() => {}} 
+            placeholder=""
+          >
+          <DialogHeader placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>Detalles del Curso</DialogHeader>
+          <DialogBody onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">
+            <p><strong>Curso:</strong> {dialogInfo.course.title}</p>
+            <p><strong>Descripción:</strong> {dialogInfo.course.description}</p>
+            <p><strong>Tutor:</strong> {dialogInfo.course.tutor}</p>
+    
+            <div className="my-4">
+              <label className="block text-sm font-medium text-gray-700">Progreso</label>
+              <Slider 
+                value={progress} 
+                onChange={(e) => handleProgressChange(Number(e.target.value))} 
+                min={0} 
+                max={100} 
+                step={1} 
+                placeholder="" 
+                onPointerEnterCapture={() => {}} 
+                onPointerLeaveCapture={() => {}} 
+              />
+              { isAuthenticated ? (
+              <Input 
+                value={progress} 
+                onChange={(e) => setProgress(Number(e.target.value))} 
+                type="number" 
+                min="0" 
+                max="100" 
+                onPointerEnterCapture={() => {}} 
+                onPointerLeaveCapture={() => {}} 
+                crossOrigin={undefined} 
+              />
+              ) : null}
             </div>
-          </div>
+    
+            {message && <p className="text-center text-sm text-green-600">{message}</p>}
+          </DialogBody>
+    
+          <DialogFooter 
+            placeholder="" 
+            onPointerEnterCapture={() => {}} 
+            onPointerLeaveCapture={() => {}}>
+            <Button 
+              color="red" 
+              onClick={() => toggleDialog(null)} 
+              placeholder="" 
+              onPointerEnterCapture={() => {}} 
+              onPointerLeaveCapture={() => {}}
+            >
+              Cerrar
+            </Button>
+            <Button 
+              color="blue" 
+              onClick={updateProgress} 
+              onPointerLeaveCapture={() => {}} 
+              onPointerEnterCapture={() => {}} 
+              placeholder=""
+            >
+              Actualizar
+            </Button>
+          </DialogFooter>
+        </Dialog>
         )}
       </div>
     </div>
