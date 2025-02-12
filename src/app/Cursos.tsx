@@ -57,7 +57,6 @@ function CourseCatalog() {
         }
         const cursosPresenciales: CourseJson[] =
           await fetchCursosPresenciales.json();
-        console.log("la descripcion es", cursosPresenciales[0].description);
 
         const filter = cursosPresenciales.filter((op) => {
           const [swap] = op.start_date.split("T");
@@ -303,9 +302,7 @@ function CourseCatalog() {
                   <td style={styles.td}>{course.description}</td>
                   <td style={styles.td}>{course.area}</td>
                   <td style={styles.td}>{course.start_date}</td>
-                  <td style={{ ...styles.td, ...getStatusStyle(course.end_date) }}>
-                {course.end_date}
-              </td>
+                  {course.end_date === "" ? <td style={{ ...styles.td, ...getStatusStyle(course.end_date) }}>Sin Vencimiento</td> : <td style={{ ...styles.td, ...getStatusStyle(course.end_date) }}>{course.end_date}</td> }
                   <td style={styles.td}>{course.tutor}</td>
                   <td style={{ ...styles.td, width: "240px" }}>
                     <button
@@ -325,6 +322,12 @@ function CourseCatalog() {
                       style={styles.button}
                     >
                       <FaTrash /> Eliminar
+                    </button>
+                    <button
+                      // onClick={() => handleDepartment(course)}
+                      style={{ ...styles.button, backgroundColor: "green" }}
+                    >  
+                      <FaPlus /> Asignar Departamento
                     </button>
                   </td>
                 </tr>

@@ -1,20 +1,20 @@
-import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { NextResponse } from "next/server";
+import fs from "fs/promises";
+import path from "path";
 
 export async function GET(req, { params }) {
-
-  const imageName = params?.imageName;
-
-  if (!imageName) {
-    return NextResponse.json({ message: "Nombre de imagen no proporcionado" }, { status: 400 });
-  }
-
-  const imagePath = path.join(process.cwd(), 'uploads', imageName);
-  console.log("Buscando imagen en:", imagePath);
-
   try {
-    // Verificar si la imagen existe antes de intentar leerla
+    // Extraer el nombre de la imagen desde los parámetros de la URL
+    const { imageName } = params;
+
+    if (!imageName) {
+      return NextResponse.json({ message: "Nombre de imagen no proporcionado" }, { status: 400 });
+    }
+
+    const imagePath = path.join(process.cwd(), "uploads", imageName);
+    console.log("Buscando imagen en:", imagePath);
+
+    // Verificar si la imagen existe antes de leerla
     await fs.access(imagePath);
 
     const imageBuffer = await fs.readFile(imagePath);
@@ -35,6 +35,7 @@ export async function GET(req, { params }) {
       headers: { "Content-Type": contentType },
     });
   } catch (error) {
+    console.error("Error al buscar la imagen:", error);
     return NextResponse.json({ message: "Imagen no encontrada" }, { status: 404 });
   }
 }

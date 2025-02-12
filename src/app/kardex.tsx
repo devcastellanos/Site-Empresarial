@@ -201,7 +201,7 @@ const Kardex = () => {
 
   const updateProgress = async () => {
     try {
-      const response = await fetch("http://localhost:3001/updateProgress", {
+      const response = await fetch("http://api-cursos.192.168.29.40.sslip.io/updateProgress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -385,7 +385,7 @@ const Kardex = () => {
             <p><strong>Curso:</strong> {dialogInfo.course.title}</p>
             <p><strong>Descripción:</strong> {dialogInfo.course.description}</p>
             <p><strong>Tutor:</strong> {dialogInfo.course.tutor}</p>
-    
+            { isAuthenticated ? (
             <div className="my-4">
               <label className="block text-sm font-medium text-gray-700">Progreso</label>
               <Slider 
@@ -398,7 +398,7 @@ const Kardex = () => {
                 onPointerEnterCapture={() => {}} 
                 onPointerLeaveCapture={() => {}} 
               />
-              { isAuthenticated ? (
+              
               <Input 
                 value={progress} 
                 onChange={(e) => setProgress(Number(e.target.value))} 
@@ -409,9 +409,9 @@ const Kardex = () => {
                 onPointerLeaveCapture={() => {}} 
                 crossOrigin={undefined} 
               />
-              ) : null}
+              
             </div>
-    
+            ) : null}
             {message && <p className="text-center text-sm text-green-600">{message}</p>}
           </DialogBody>
     
@@ -428,6 +428,7 @@ const Kardex = () => {
             >
               Cerrar
             </Button>
+            {isAuthenticated ? (
             <Button 
               color="blue" 
               onClick={updateProgress} 
@@ -437,6 +438,7 @@ const Kardex = () => {
             >
               Actualizar
             </Button>
+            ):null}
           </DialogFooter>
         </Dialog>
         )}

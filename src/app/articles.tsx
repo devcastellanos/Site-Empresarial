@@ -34,7 +34,7 @@ const ARTICLES = [
     img: "/image/Convenio.png",
     title: "Convenios Educativos",
     desc: "Da clic aquí para conocer los convenios educativos que tenemos.",
-    link: 'https://forms.office.com/pages/responsepage.aspx?id=HR1qNFvnU0eQK3TtYK53oRa6ro17qA9HmqqIEDMD7wpUMkdVRTNTUzRSTk1SQkk0N0hXVlJENE5YUS4u',
+    link: '/Convenios',
   }
 ];
 

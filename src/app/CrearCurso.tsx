@@ -11,6 +11,7 @@ interface Course {
   start_date: string; 
   end_date: string;  
   status: string;
+  noEndDate?: boolean;
 }
 interface Props {
   onAddCourse: (course: Course) => void; // Callback para enviar datos al padre
@@ -64,61 +65,70 @@ function CourseCatalog({ onAddCourse }: Props) {
 
   return (
     <div>
-      <div style={styles.container}>
-        <h1 style={styles.heading}>Capacitación Tarahumara</h1>
-        <div style={styles.formContainer}>
-          <h2 style={styles.subHeading}>Registrar Nuevo Curso</h2>
+  <div style={styles.container}>
+    <h1 style={styles.heading}>Capacitación Tarahumara</h1>
+    <div style={styles.formContainer}>
+      <h2 style={styles.subHeading}>Registrar Nuevo Curso</h2>
+      
+      <input
+        type="text"
+        placeholder="Título del curso"
+        value={newCourse.title}
+        onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })}
+        style={styles.input}
+      />
+      
+      <textarea
+        placeholder="Descripción del curso"
+        value={newCourse.description}
+        onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })}
+        style={styles.textarea}
+      />
+      
+      <label htmlFor="Fecha de inicio">Fecha de impartición</label>
+      <input
+        type="date"
+        placeholder="Fecha de inicio"
+        value={newCourse.start_date}
+        onChange={(e) => setNewCourse({ ...newCourse, start_date: e.target.value })}
+        style={styles.input}
+      />
+
+      <label htmlFor="Fecha de término">Fecha de Vencimiento</label>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <input
+          type="date"
+          placeholder="Fecha de término"
+          value={newCourse.end_date || ""}
+          onChange={(e) => setNewCourse({ ...newCourse, end_date: e.target.value })}
+          style={styles.input}
+          disabled={newCourse.noEndDate}
+        />
+        <label>
           <input
-            type="text"
-            placeholder="Título del curso"
-            value={newCourse.title}
-            onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })}
-            style={styles.input}
+            type="checkbox"
+            checked={newCourse.noEndDate}
+            onChange={(e) => setNewCourse({ ...newCourse, noEndDate: e.target.checked, end_date: e.target.checked ? "" : newCourse.end_date })}
           />
-          <textarea
-            placeholder="Descripción del curso"
-            value={newCourse.description}
-            onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })}
-            style={styles.textarea}
-          />
-          <input
-            type="date"
-            placeholder="Fecha de inicio"
-            value={newCourse.start_date}
-            onChange={(e) => setNewCourse({ ...newCourse, start_date: e.target.value })}
-            style={styles.input}
-          />
-          <input
-            type="date"
-            placeholder="Fecha de término"
-            value={newCourse.end_date}
-            onChange={(e) => setNewCourse({ ...newCourse, end_date: e.target.value })}
-            style={styles.input}
-          />
-          <select
-            value={newCourse.area}
-            onChange={(e) => setNewCourse({ ...newCourse, area: e.target.value })}
-            style={styles.select}
-          >
-            <option value="">Selecciona un área</option>
-            <option value="Recursos Humanos">Recursos Humanos</option>
-            <option value="Finanzas">Finanzas</option>
-            <option value="IT">IT</option>
-            <option value="Marketing">Marketing</option>
-          </select>
-          <input
-            type="text" 
-            placeholder="Impartido"
-            value={newCourse.tutor}
-            onChange={(e) => setNewCourse({ ...newCourse, tutor: e.target.value })}
-            style={styles.input}
-          />
-          <button onClick={handleAddCourse} style={styles.addButton}>
-            Agregar Curso
-          </button>
-        </div>
+          Sin Vencimiento
+        </label>
       </div>
+      
+      <input
+        type="text" 
+        placeholder="Impartido por:"
+        value={newCourse.tutor}
+        onChange={(e) => setNewCourse({ ...newCourse, tutor: e.target.value })}
+        style={styles.input}
+      />
+
+      <button onClick={handleAddCourse} style={styles.addButton}>
+        Agregar Curso
+      </button>
     </div>
+  </div>
+</div>
+
   );
 }
 
