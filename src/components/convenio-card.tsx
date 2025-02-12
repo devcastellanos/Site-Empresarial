@@ -74,6 +74,7 @@ export function ConvenioCard({
         setOpenModal(false);
         onConvenioEdit(convenio);
       });
+    window.location.reload();
   };
 
   return (
