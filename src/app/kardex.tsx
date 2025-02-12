@@ -15,6 +15,7 @@ interface CursoTomado {
   description: string;
   tutor: string;
   progress: string;
+  status: string;
 }
 
 interface CursosPresencialesJson {
@@ -23,6 +24,7 @@ interface CursosPresencialesJson {
   description: string;
   tutor: string;
   progress: string;
+  status: string;
 }
 
 interface User {
@@ -306,43 +308,44 @@ const Kardex = () => {
             </tr>
           </thead>
           <tbody>
-            {selectedCourses.map(course => (
-              <tr key={course.id_course}>
-                <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>{course.id_course}</td>
-                <td style={{ border: '1px solid #ccc', padding: '10px' }}>
-                  <span style={{ width: '100%', borderRadius: '4px', padding: '5px' }}>
-                    {course.title}
-                  </span>
-                </td>
-                <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
-                <div className="w-full">
-                  <div className="mb-2 flex items-center justify-between gap-4">
-                    <Typography color="blue-gray" variant="h6" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-                      Completado
-                    </Typography>
-                    <Typography color="blue-gray" variant="h6" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-                    {course.progress}%
-                    </Typography>
-                  </div>
-                  <Progress 
-                    value={Number(course.progress)} 
-                    placeholder="" 
-                    onPointerEnterCapture={() => {}} 
-                    onPointerLeaveCapture={() => {}} 
-                  />
-                </div>
-                </td>
-                <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
-
-                  <button
-                    style={{ backgroundColor: '#5A5A5A', color: 'white', border: 'none', borderRadius: '5px', padding: '5px 10px', cursor: 'pointer' }}
-                    onClick={() => toggleDialog(course)}
-                  >
-                    Información
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {selectedCourses
+              .filter(course => course.status === 'true')
+              .map(course => (
+                <tr key={course.id_course}>
+                  <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>{course.id_course}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                    <span style={{ width: '100%', borderRadius: '4px', padding: '5px' }}>
+                      {course.title}
+                    </span>
+                  </td>
+                  <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
+                    <div className="w-full">
+                      <div className="mb-2 flex items-center justify-between gap-4">
+                        <Typography color="blue-gray" variant="h6" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+                          Completado
+                        </Typography>
+                        <Typography color="blue-gray" variant="h6" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+                          {course.progress}%
+                        </Typography>
+                      </div>
+                      <Progress 
+                        value={Number(course.progress)} 
+                        placeholder="" 
+                        onPointerEnterCapture={() => {}} 
+                        onPointerLeaveCapture={() => {}} 
+                      />
+                    </div>
+                  </td>
+                  <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
+                    <button
+                      style={{ backgroundColor: '#5A5A5A', color: 'white', border: 'none', borderRadius: '5px', padding: '5px 10px', cursor: 'pointer' }}
+                      onClick={() => toggleDialog(course)}
+                    >
+                      Información
+                    </button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
         {/* Add New Course Section */}
