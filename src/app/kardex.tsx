@@ -45,7 +45,7 @@ const Kardex = () => {
 
   const [newCourseId, setNewCourseId] = useState<number | ''>(''); // For selected course from the dropdown
 
-  const [dialogInfo, setDialogInfo] = useState<{course: CursoTomado, isOpen: boolean}>({ course: { id: 0, id_course: 0, id_usuario: 0, title: '', description: '', tutor: '', progress: '' }, isOpen: false });
+  const [dialogInfo, setDialogInfo] = useState<{course: CursoTomado, isOpen: boolean}>({ course: { id: 0, id_course: 0, id_usuario: 0, title: '', description: '', tutor: '', progress: '', status: '' }, isOpen: false });
   const [selectedUserId, setSelectedUserId] = useState<number | ''>('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
@@ -54,31 +54,30 @@ const Kardex = () => {
 
   const [cursosPresenciales, setCursosPresenciales] = useState<CursosPresencialesJson[]>([]);
   const [cursosFaltantes, setCursosFaltantes] = useState<CursosPresencialesJson[]>([]);
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('http://api-site-intelisis.192.168.29.40.sslip.io/api/users');
+      const data = await response.json();
+      setUsers(data.map((user: any) => ({
+        ...user,
+        Personal: Number(user.Personal), // Asegurar que `Personal` es un número
+      })));
+
+      const datacourse = await fetch('http://api-cursos.192.168.29.40.sslip.io/cursostomados');
+      setCursosTomados(await datacourse.json());
+
+      const fetchCursosPresenciales = await fetch("http://api-cursos.192.168.29.40.sslip.io/cursosPresenciales");
+      if (!fetchCursosPresenciales.ok) {
+        throw new Error('Network response was not ok');
+      }
+      setCursosPresenciales(await fetchCursosPresenciales.json());
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch('http://api-site-intelisis.192.168.29.40.sslip.io/api/users');
-        const data = await response.json();
-        setUsers(data.map((user: any) => ({
-          ...user,
-          Personal: Number(user.Personal), // Asegurar que `Personal` es un número
-        })));
-  
-        const datacourse = await fetch('http://api-cursos.192.168.29.40.sslip.io/cursostomados');
-        setCursosTomados(await datacourse.json());
-
-        const fetchCursosPresenciales = await fetch("http://api-cursos.192.168.29.40.sslip.io/cursosPresenciales");
-        if (!fetchCursosPresenciales.ok) {
-          throw new Error('Network response was not ok');
-        }
-        setCursosPresenciales(await fetchCursosPresenciales.json());
-
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     fetchUsers();
   }, []);
 
@@ -107,15 +106,8 @@ const Kardex = () => {
 
         console.log("el id del curso es", newCourse.id_course)
 
-        // en esta parte actualizp 
-        setSelectedCourses(prevCourses => {
-          if (!prevCourses.length || !dialogInfo.course.id_course) return prevCourses; // Evita mutaciones innecesarias
-          return prevCourses.map(course => 
-            course.id_course === dialogInfo.course.id_course
-              ? { ...course, progress: progress.toString() }
-              : course
-          );
-        });
+        //se actualizan los cursos tomados
+        setSelectedCourses([...selectedCourses,{...selectedCourse,id: newCourse.id_course,id_course:newCourse.id_course, id_usuario: selectedUserId as number, progress: '0' },]);
 
         const updatedCourses = await fetch('http://api-cursos.192.168.29.40.sslip.io/cursostomados');
         const coursesData = await updatedCourses.json();
@@ -127,6 +119,7 @@ const Kardex = () => {
         setCursosFaltantes(updatedCursosFaltantes);
 
         setNewCourseId('');
+
       };
 
     } catch (error) {
@@ -240,8 +233,8 @@ const Kardex = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <img src="https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_300,w_300,f_auto,q_auto/6088316/314367_858588.png" alt="Grupo Tarahumara" style={{ width: '180px', height: 'auto' }} />
           <div style={{ textAlign: 'right', fontSize: '16px' }}>
-            <p><strong>Avance:</strong> %</p>
-            <p><strong>Estatus:</strong> ALTA</p>
+            <p> Grupo Tarahumara</p>
+            <p> 2025</p>
           </div>
         </div>
 
@@ -253,7 +246,6 @@ const Kardex = () => {
           <input
             type="number"
             id="userIdInput"
-            value={selectedUserId}
             onChange={handleUserChange}
             style={{ marginLeft: '10px', padding: '5px', borderRadius: '5px', border: '1px solid #ccc' }}
           />
