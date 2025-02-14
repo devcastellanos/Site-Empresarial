@@ -10,7 +10,6 @@ interface CourseJson {
   id_course: number;
   title: string;
   description: string;
-  area: string;
   tutor: string;
   start_date: string;
   end_date: string;
@@ -21,7 +20,6 @@ interface Course {
   id_course: number;
   title: string;
   description: string;
-  area: string;
   start_date: string;
   end_date: string;
   tutor: string;
@@ -30,7 +28,6 @@ interface Course {
 function CourseCatalog() {
   const [formatJson, setFormatJson] = useState<CourseJson[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedArea, setSelectedArea] = useState<string>("");
   const [selectedCourse, setSelectedCourse] = useState<CourseJson | null>(null);
   const [editCourse, setEditCourse] = useState<CourseJson | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
@@ -85,10 +82,6 @@ function CourseCatalog() {
     setSearchTerm(e.target.value);
   };
 
-  const handleAreaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedArea(e.target.value);
-  };
-
   const filteredCourses = formatJson.filter((course) => {
     // Asegúrate de que `fullname` y `description` sean cadenas de texto
     const fullname = course.title || ""; // Si no existe, asigna una cadena vacía
@@ -100,11 +93,9 @@ function CourseCatalog() {
     const matchesSearchTerm =
       fullname.toLowerCase().includes(term.toLowerCase()) ||
       description.toLowerCase().includes(term.toLowerCase());
-
-    const matchesArea = selectedArea ? course.area === selectedArea : true;
     const dates = course.start_date;
 
-    return matchesSearchTerm && matchesArea;
+    return matchesSearchTerm ;
   });
 
   const handleOpenDialog = (course: CourseJson) => {
@@ -134,7 +125,6 @@ function CourseCatalog() {
       edit.id_course,
       edit.title,
       edit.description,
-      edit.area,
       edit.tutor,
       edit.start_date,
       edit.end_date,
@@ -243,7 +233,7 @@ function CourseCatalog() {
   return (
     <div>
       <div style={styles.container}>
-        <h1 style={styles.heading}>Capacitación Tarahumara</h1>
+        <h1 style={styles.heading}>Cursos</h1>
         <div style={styles.addButtonContainer}>
           <button
             onClick={handleAddCourse}
@@ -260,17 +250,6 @@ function CourseCatalog() {
               onChange={handleSearchChange}
               style={{ ...styles.input, marginRight: "20px" }}
             />
-            <select
-              value={selectedArea}
-              onChange={handleAreaChange}
-              style={styles.select}
-            >
-              <option value="">Todas las áreas</option>
-              <option value="Recursos Humanos">Recursos Humanos</option>
-              <option value="Finanzas">Finanzas</option>
-              <option value="IT">IT</option>
-              <option value="Marketing">Marketing</option>
-            </select>
           </div>
         </div>
         {/* Barra de búsqueda */}
@@ -281,7 +260,6 @@ function CourseCatalog() {
             <tr>
               <th style={styles.th}>Título</th>
               <th style={styles.th}>Descripción</th>
-              <th style={styles.th}>Área</th>
               <th style={styles.th}>fecha de inicio</th>
               <th style={styles.th}>Expiración de Curso </th>
               <th style={styles.th}>impartido por</th>
@@ -300,7 +278,6 @@ function CourseCatalog() {
                 >
                   <td style={styles.td}>{course.title}</td>
                   <td style={styles.td}>{course.description}</td>
-                  <td style={styles.td}>{course.area}</td>
                   <td style={styles.td}>{course.start_date}</td>
                   {course.end_date === "" ? <td style={{ ...styles.td, ...getStatusStyle(course.end_date) }}>Sin Vencimiento</td> : <td style={{ ...styles.td, ...getStatusStyle(course.end_date) }}>{course.end_date}</td> }
                   <td style={styles.td}>{course.tutor}</td>
@@ -355,9 +332,6 @@ function CourseCatalog() {
                 <strong>Descripción:</strong> {selectedCourse.description}
               </p>
               <p>
-                <strong>Categoria:</strong> {selectedCourse.area}
-              </p>
-              <p>
                 <strong>Impartido por:</strong>
                 {selectedCourse.tutor}
               </p>
@@ -406,18 +380,6 @@ function CourseCatalog() {
                 }
                 style={styles.input}
                 />
-              <select
-                value={editCourse.area}
-                onChange={(e) =>
-                  setEditCourse({ ...editCourse, area: e.target.value })
-                }
-                style={styles.select}
-              >
-                <option value="Recursos Humanos">Recursos Humanos</option>
-                <option value="Finanzas">Finanzas</option>
-                <option value="IT">IT</option>
-                <option value="Marketing">Marketing</option>
-              </select>
               <button onClick={handleSaveEdit} style={styles.saveButton}>
                 Guardar Cambios
               </button>

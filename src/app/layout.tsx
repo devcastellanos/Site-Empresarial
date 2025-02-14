@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-import { Layout, FixedPlugin } from "@/components";
+import { Layout } from "@/components";
 import { AuthProvider } from "../app/context/AuthContext"; // Asegúrate de tener la ruta correcta al contexto
 
 const roboto = Roboto({
@@ -38,7 +38,7 @@ export default function RootLayout({
         <AuthProvider>
           <Layout>
             {children}
-            <FixedPlugin />
+
           </Layout>
         </AuthProvider>
       </body>
