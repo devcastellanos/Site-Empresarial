@@ -5,6 +5,7 @@ import { Navbar, Footer, BlogPostCard } from "@/components";
 import Hero from "../hero";
 
 import Articles from "../articles";
+import Usuarios from "../usuarios";
 
 
 export default function Campaign() {
@@ -12,7 +13,7 @@ export default function Campaign() {
     <>
       <Navbar />
 
-      {/* <Usuarios /> */}
+      <Usuarios />
     </>
 
   );
