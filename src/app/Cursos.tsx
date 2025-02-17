@@ -5,6 +5,8 @@ import { CSSProperties } from "react";
 import { FaEye, FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import NuevoCurso from "./CrearCurso";
 import CourseCatalog2 from "./CrearCurso";
+import AssignDepartmentModal from "./Department"; // Asegúrate de que la ruta es correcta
+
 
 interface CourseJson {
   id_course: number;
@@ -35,6 +37,10 @@ function CourseCatalog() {
   const [editCourse, setEditCourse] = useState<CourseJson | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [departments, setDepartments] = useState<string[]>([]);
+  const [usersByDepartment, setUsersByDepartment] = useState([]);
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -85,9 +91,49 @@ function CourseCatalog() {
     setSearchTerm(e.target.value);
   };
 
+  
   const handleAreaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedArea(e.target.value);
   };
+
+  const fetchDepartments = async () => {
+    try {
+        const response = await fetch("http://localhost:3048/api/departments");
+        const data = await response.json();
+
+        console.log("Departamentos obtenidos:", data); // Verifica en la consola
+
+        if (Array.isArray(data)) {
+            setDepartments(data);
+        } else {
+            console.error("La API no devolvió un array:", data);
+            setDepartments([]);
+        }
+    } catch (error) {
+        console.error("Error al obtener departamentos:", error);
+        setDepartments([]);
+    }
+};
+
+useEffect(() => {
+    fetchDepartments();
+}, []);
+
+// const fetchUsersByDepartment = async (department: string) => {
+//   try {
+//       const response = await fetch(`http://tu-api.com/api/users/by-department?department=${department}`); // Ajusta la URL
+//       const data = await response.json();
+//       setUsersByDepartment(data[department] || []); // Accede al array del departamento específico
+//   } catch (error) {
+//       console.error("Error al obtener usuarios del departamento:", error);
+//   }
+// };
+
+// Cargar departamentos al montar el componente
+
+const handleAssignDepartment = (course: CourseJson, department: string) => {
+  console.log(`Asignado curso: ${course.title} al departamento: ${department}`);
+};
 
   const filteredCourses = formatJson.filter((course) => {
     // Asegúrate de que `fullname` y `description` sean cadenas de texto
@@ -224,6 +270,20 @@ function CourseCatalog() {
     handleDeleteDatabase(course);
   };
 
+  const handleOpenAssignModal = (course) => {
+    setSelectedCourse(course);
+    setIsAssignModalOpen(true);
+};
+  
+  const handleCloseAssignModal = () => {
+    setIsAssignModalOpen(false);
+    setSelectedCourse(null);
+    setUsersByDepartment([]); // Limpia la lista al cerrar
+  };
+
+
+
+
   const getStatusStyle = (endDate: string) => {
     const today = new Date();
     const expirationDate = new Date(endDate);
@@ -324,11 +384,12 @@ function CourseCatalog() {
                       <FaTrash /> Eliminar
                     </button>
                     <button
-                      // onClick={() => handleDepartment(course)}
-                      style={{ ...styles.button, backgroundColor: "green" }}
-                    >  
-                      <FaPlus /> Asignar Departamento
-                    </button>
+                      onClick={() => handleOpenAssignModal(course)}
+                      style={{ backgroundColor: "green", color: "white", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" }}
+                  >
+                      Asignar Departamento
+                  </button>
+
                   </td>
                 </tr>
               ))
@@ -442,7 +503,18 @@ function CourseCatalog() {
           <div style={styles.overlay}></div>
         </div>
       )}
+
+{isAssignModalOpen && selectedCourse && (
+    <AssignDepartmentModal
+        course={selectedCourse}
+        onClose={handleCloseAssignModal}
+        onAssign={handleAssignDepartment}
+        departments={departments} // 🔹 PASAMOS LOS DEPARTAMENTOS
+    />
+)}
+
     </div>
+    
   );
 }
 
