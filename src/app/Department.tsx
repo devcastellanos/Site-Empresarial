@@ -14,7 +14,7 @@ function AssignDepartmentModal({ course, onClose, onAssign, departments }: Assig
   // Obtener usuarios del departamento seleccionado
   const fetchUsers = async (department: string) => {
     try {
-        const response = await fetch(`http://localhost:3048/api/users/by-department?department=${department}`);
+        const response = await fetch(`http://api-site-intelisis.192.168.29.40.sslip.io/api/users/by-department?department=${department}`);
         const data = await response.json();
         
         console.log(`Usuarios en ${department}:`, data); // Verifica los datos en la consola
