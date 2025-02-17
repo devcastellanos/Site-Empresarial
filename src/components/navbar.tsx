@@ -12,6 +12,10 @@ import {
   CommandLineIcon,
   XMarkIcon,
   Bars3Icon,
+  DocumentIcon,
+  NewspaperIcon,
+  ClipboardDocumentIcon,
+  BookOpenIcon
 } from "@heroicons/react/24/solid";
 import Hero from "@/app/hero";
 import Image from "next/image";
@@ -54,24 +58,29 @@ export function Navbar() {
     },
     {
       name: "Noti-Tarahumara",
-      icon: UserCircleIcon,
+      icon: NewspaperIcon,
       href: "/Blog",
     },
     {name: "Kardex",
-      icon: UserCircleIcon,
+      icon: ClipboardDocumentIcon,
       href: "/kardex",
     },
     ...(isAuthenticated? [
   
     {
       name: "Cursos"  ,
-      icon: UserCircleIcon,
+      icon: BookOpenIcon,
       href: "/Cursos",
     },
     {
       name:"Cargar Archivos excel",
-      icon: UserCircleIcon,
+      icon: DocumentIcon,
       href:"/cargaMasiva"
+    },
+    {
+      name:"Usuarios",
+      icon: UserCircleIcon,
+      href:"/Usuarios"
     },
     ]: []),
   
