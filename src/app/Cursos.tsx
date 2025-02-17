@@ -95,7 +95,7 @@ function CourseCatalog() {
 
   const fetchDepartments = async () => {
     try {
-        const response = await fetch("http://localhost:3048/api/departments");
+        const response = await fetch("http://api-site-intelisis.192.168.29.40.sslip.io/api/departments");
         const data = await response.json();
 
         console.log("Departamentos obtenidos:", data); // Verifica en la consola
