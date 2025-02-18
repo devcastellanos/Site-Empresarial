@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { CSSProperties } from "react";
 import { FaEye, FaEdit, FaPlus, FaTrash } from "react-icons/fa";
-import NuevoCurso from "./CrearCurso";
+// import NuevoCurso from "./CrearCurso";
 import CourseCatalog2 from "./CrearCurso";
 import AssignDepartmentModal from "./Department"; // Asegúrate de que la ruta es correcta
 
@@ -27,6 +27,14 @@ interface Course {
   tutor: string;
   status: string;
 }
+
+interface AssignDepartmentModalProps {
+  course: CourseJson;  // Change this from `{ title: string }` to `CourseJson`
+  onClose: () => void;
+  onAssign: (course: CourseJson, department: string) => void;
+  departments: string[];
+}
+
 function CourseCatalog() {
   const [formatJson, setFormatJson] = useState<CourseJson[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -95,9 +103,9 @@ function CourseCatalog() {
   };
 
   
-  const handleAreaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedArea(e.target.value);
-  };
+  // const handleAreaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setSelectedArea(e.target.value);
+  // };
 
   const fetchDepartments = async () => {
     try {
@@ -270,7 +278,7 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
     handleDeleteDatabase(course);
   };
 
-  const handleOpenAssignModal = (course) => {
+  const handleOpenAssignModal = (course: CourseJson) => {
     setSelectedCourse(course);
     setIsAssignModalOpen(true);
 };
@@ -478,9 +486,11 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
 
 {isAssignModalOpen && selectedCourse && (
     <AssignDepartmentModal
-        course={selectedCourse}
+        course={{ title: selectedCourse.title }} // Pass only title
         onClose={handleCloseAssignModal}
-        onAssign={handleAssignDepartment}
+        onAssign={(course, department) =>
+            handleAssignDepartment({ ...selectedCourse, title: course.title }, department)
+        }
         departments={departments} // 🔹 PASAMOS LOS DEPARTAMENTOS
     />
 )}
