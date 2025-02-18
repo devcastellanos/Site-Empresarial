@@ -56,33 +56,39 @@ function CourseCatalog() {
         const fetchCursosPresenciales = await fetch(
           "http://api-cursos.192.168.29.40.sslip.io/cursosPresenciales"
         );
+  
         if (!fetchCursosPresenciales.ok) {
+          throw new Error("Error al obtener los cursos");
         }
-        const cursosPresenciales: CourseJson[] =
-          await fetchCursosPresenciales.json();
-
-        const filter = cursosPresenciales.filter((op) => {
-          const [swap] = op.start_date.split("T");
-          op.start_date = swap;
-          if (op.end_date === null) {
-            op.end_date = "Sin Expiración";
-          }else{
-            const [swap2] = op.end_date.split("T");
-            op.end_date = swap2;
+  
+        const cursosPresenciales: CourseJson[] = await fetchCursosPresenciales.json();
+  
+        const filter = cursosPresenciales.map((op) => {
+          if (typeof op.start_date === "string" && op.start_date.includes("T")) {
+            op.start_date = op.start_date.split("T")[0]; // Extract date part
+          } else {
+            op.start_date = "Fecha no disponible"; // Handle missing dates
           }
-
-          return swap;
+  
+          if (!op.end_date) {
+            op.end_date = "Sin Expiración";
+          } else if (typeof op.end_date === "string" && op.end_date.includes("T")) {
+            op.end_date = op.end_date.split("T")[0];
+          }
+  
+          return op;
         });
+  
         console.log("filter", filter);
-
         setFormatJson(filter);
       } catch (e) {
-        console.error(e);
+        console.error("Error fetching data:", e);
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
