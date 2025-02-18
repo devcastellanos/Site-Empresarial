@@ -224,6 +224,37 @@ const Kardex = () => {
       console.error("Error en la solicitud:", error);
     }
   };
+
+  const handleDeleteCourse = async (id_course: number, id_usuario: number) => {
+    try {
+      const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/eliminarCursoTomado', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id_usuario, id_course }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error en la solicitud');
+      }
+
+      const result = await response.json();
+      console.log('Curso eliminado con éxito:', result);
+
+      setSelectedCourses(selectedCourses.filter(course => course.id_course !== id_course));
+      const updatedCourses = await fetch('http://api-cursos.192.168.29.40.sslip.io/cursostomados');
+      const coursesData = await updatedCourses.json();
+      setCursosTomados(coursesData);
+
+      const userCourses = coursesData.filter((curso: CursoTomado) => curso.id_usuario === selectedUserId);
+      const updatedCursosFaltantes = cursosPresenciales.filter(curso => !userCourses.some((c: CursoTomado) => c.id_course === curso.id_course));
+      setCursosFaltantes(updatedCursosFaltantes);
+    } catch (error) {
+      console.error('Error al eliminar el curso:', error);
+      alert('Hubo un problema al eliminar el curso.');
+    }
+  };
   
 
   return (

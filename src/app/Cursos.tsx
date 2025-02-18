@@ -13,8 +13,6 @@ interface CourseJson {
   title: string;
   description: string;
   tutor: string;
-  start_date: string;
-  end_date: string;
   status: String;
 }
 
@@ -22,8 +20,6 @@ interface Course {
   id_course: number;
   title: string;
   description: string;
-  start_date: string;
-  end_date: string;
   tutor: string;
   status: string;
 }
@@ -60,22 +56,10 @@ function CourseCatalog() {
         }
         const cursosPresenciales: CourseJson[] =
           await fetchCursosPresenciales.json();
+        
+        
+        setFormatJson(cursosPresenciales);
 
-        const filter = cursosPresenciales.filter((op) => {
-          const [swap] = op.start_date.split("T");
-          op.start_date = swap;
-          if (op.end_date === null) {
-            op.end_date = "Sin Expiración";
-          }else{
-            const [swap2] = op.end_date.split("T");
-            op.end_date = swap2;
-          }
-
-          return swap;
-        });
-        console.log("filter", filter);
-
-        setFormatJson(filter);
       } catch (e) {
         console.error(e);
       }
@@ -86,11 +70,6 @@ function CourseCatalog() {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-  };
-
-  
-  const handleAreaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedArea(e.target.value);
   };
 
   const fetchDepartments = async () => {
@@ -143,7 +122,6 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
     const matchesSearchTerm =
       fullname.toLowerCase().includes(term.toLowerCase()) ||
       description.toLowerCase().includes(term.toLowerCase());
-    const dates = course.start_date;
 
     return matchesSearchTerm ;
   });
@@ -176,8 +154,6 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
       edit.title,
       edit.description,
       edit.tutor,
-      edit.start_date,
-      edit.end_date,
     );
 
     try {
@@ -264,7 +240,7 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
     handleDeleteDatabase(course);
   };
 
-  const handleOpenAssignModal = (course) => {
+  const handleOpenAssignModal = (course: CourseJson) => {
     setSelectedCourse(course);
     setIsAssignModalOpen(true);
 };
@@ -324,8 +300,6 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
             <tr>
               <th style={styles.th}>Título</th>
               <th style={styles.th}>Descripción</th>
-              <th style={styles.th}>fecha de inicio</th>
-              <th style={styles.th}>Expiración de Curso </th>
               <th style={styles.th}>impartido por</th>
               <th style={styles.th}>Acciones</th>
             </tr>
@@ -342,8 +316,6 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
                 >
                   <td style={styles.td}>{course.title}</td>
                   <td style={styles.td}>{course.description}</td>
-                  <td style={styles.td}>{course.start_date}</td>
-                  {course.end_date === "" ? <td style={{ ...styles.td, ...getStatusStyle(course.end_date) }}>Sin Vencimiento</td> : <td style={{ ...styles.td, ...getStatusStyle(course.end_date) }}>{course.end_date}</td> }
                   <td style={styles.td}>{course.tutor}</td>
                   <td style={{ ...styles.td, width: "240px" }}>
                     <button
@@ -428,22 +400,6 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
                   setEditCourse({ ...editCourse, description: e.target.value })
                 }
                 style={styles.textarea}
-                />
-                <input
-                type="date"
-                value={editCourse.start_date}
-                onChange={(e) =>
-                  setEditCourse({ ...editCourse, start_date: e.target.value })
-                }
-                style={styles.input}
-                />
-                <input
-                type="date"
-                value={editCourse.end_date}
-                onChange={(e) =>
-                  setEditCourse({ ...editCourse, end_date: e.target.value })
-                }
-                style={styles.input}
                 />
               <button onClick={handleSaveEdit} style={styles.saveButton}>
                 Guardar Cambios
