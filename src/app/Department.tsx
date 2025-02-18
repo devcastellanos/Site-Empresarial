@@ -4,33 +4,38 @@ interface AssignDepartmentModalProps {
   course: { title: string };
   onClose: () => void;
   onAssign: (course: { title: string }, department: string) => void;
-  departments: string[]; // 🔹 Ahora recibimos los departamentos
+  departments: string[];
 }
 
-function AssignDepartmentModal({ course, onClose, onAssign, departments }: AssignDepartmentModalProps) {
+const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, onClose, onAssign, departments }) => {
   const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<any[]>([]); // Asegurar que es un array
 
   // Obtener usuarios del departamento seleccionado
   const fetchUsers = async (department: string) => {
     try {
-        const response = await fetch(`http://api-site-intelisis.192.168.29.40.sslip.io/api/users/by-department?department=${department}`);
-        const data = await response.json();
-        
-        console.log(`Usuarios en ${department}:`, data); // Verifica los datos en la consola
+      const response = await fetch(
+        `http://api-site-intelisis.192.168.29.40.sslip.io/api/users/by-department?department=${department}`
+      );
+      const data = await response.json();
+      console.log(`Usuarios en ${department}:`, data); // Verifica los datos en la consola
 
-        setUsers(data); // Ahora la API devuelve un array directamente
+      if (Array.isArray(data)) {
+        setUsers(data);
+      } else {
+        setUsers([]); // Si no es un array, establecer vacío
+      }
     } catch (error) {
-        console.error("Error al obtener usuarios:", error);
+      console.error("Error al obtener usuarios:", error);
     }
-};
+  };
 
   // Manejar el cambio de departamento
-  const handleDepartmentChange = (e) => {
+  const handleDepartmentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const department = e.target.value;
     setSelectedDepartment(department);
     fetchUsers(department);
-};
+  };
 
   return (
     <div style={styles.modalOverlay}>
@@ -39,11 +44,18 @@ function AssignDepartmentModal({ course, onClose, onAssign, departments }: Assig
 
         {/* Select para elegir un departamento */}
         <label htmlFor="department">Selecciona un Departamento:</label>
-        <select id="department" value={selectedDepartment} onChange={handleDepartmentChange} style={styles.select}>
-            <option value="">Seleccione un departamento</option>
-            {departments.map((dept) => (
-                <option key={dept} value={dept}>{dept}</option>
-            ))}
+        <select
+          id="department"
+          value={selectedDepartment}
+          onChange={handleDepartmentChange}
+          style={styles.select}
+        >
+          <option value="">Seleccione un departamento</option>
+          {departments.map((dept) => (
+            <option key={dept} value={dept}>
+              {dept}
+            </option>
+          ))}
         </select>
 
         {/* Mostrar usuarios del departamento seleccionado */}
@@ -52,7 +64,9 @@ function AssignDepartmentModal({ course, onClose, onAssign, departments }: Assig
             <h3>Usuarios en {selectedDepartment}:</h3>
             <ul>
               {users.map((user) => (
-                <li key={user.Personal}>{user.Nombre} {user.ApellidoPaterno} {user.ApellidoMaterno} - {user.Puesto}</li>
+                <li key={user.Personal}>
+                  {user.Nombre} {user.ApellidoPaterno} {user.ApellidoMaterno} - {user.Puesto}
+                </li>
               ))}
             </ul>
           </div>
@@ -69,9 +83,10 @@ function AssignDepartmentModal({ course, onClose, onAssign, departments }: Assig
       </div>
     </div>
   );
-}
+};
 
-const styles = {
+// Definir estilos en la misma página
+const styles: { [key: string]: React.CSSProperties } = {
   modalOverlay: {
     position: "fixed",
     top: 0,
@@ -82,14 +97,15 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 1000
+    zIndex: 1000,
   },
   modalContent: {
     backgroundColor: "#fff",
     padding: "20px",
     borderRadius: "8px",
     width: "400px",
-    textAlign: "center"
+    textAlign: "center",
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
   },
   select: {
     width: "100%",
@@ -97,11 +113,14 @@ const styles = {
     marginTop: "10px",
     borderRadius: "8px",
     border: "1px solid #ddd",
-    fontSize: "16px"
+    fontSize: "16px",
   },
   userList: {
     marginTop: "15px",
-    textAlign: "left"
+    textAlign: "left",
+    backgroundColor: "#f9f9f9",
+    padding: "10px",
+    borderRadius: "5px",
   },
   assignButton: {
     marginTop: "10px",
@@ -110,7 +129,8 @@ const styles = {
     color: "#fff",
     border: "none",
     borderRadius: "5px",
-    cursor: "pointer"
+    cursor: "pointer",
+    width: "100%",
   },
   closeButton: {
     marginTop: "10px",
@@ -119,8 +139,9 @@ const styles = {
     color: "#fff",
     border: "none",
     borderRadius: "5px",
-    cursor: "pointer"
-  }
+    cursor: "pointer",
+    width: "100%",
+  },
 };
 
 export default AssignDepartmentModal;
