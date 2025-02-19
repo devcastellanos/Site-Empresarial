@@ -7,7 +7,6 @@ import { FaEye, FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import CourseCatalog2 from "./CrearCurso";
 import AssignDepartmentModal from "./Department"; // Asegúrate de que la ruta es correcta
 
-
 interface CourseJson {
   id_course: number;
   title: string;
@@ -42,7 +41,6 @@ function CourseCatalog() {
   const [departments, setDepartments] = useState<string[]>([]);
   const [usersByDepartment, setUsersByDepartment] = useState([]);
 
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAddCourse = () => {
@@ -60,24 +58,21 @@ function CourseCatalog() {
         const fetchCursosPresenciales = await fetch(
           "http://api-cursos.192.168.29.40.sslip.io/cursosPresenciales"
         );
-  
+
         if (!fetchCursosPresenciales.ok) {
           throw new Error("Error al obtener los cursos");
         }
         const cursosPresenciales: CourseJson[] =
           await fetchCursosPresenciales.json();
-        
-        
-        setFormatJson(cursosPresenciales);
 
+        setFormatJson(cursosPresenciales);
       } catch (e) {
         console.error("Error fetching data:", e);
       }
     };
-  
+
     fetchData();
   }, []);
-  
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -85,42 +80,46 @@ function CourseCatalog() {
 
   const fetchDepartments = async () => {
     try {
-        const response = await fetch("http://api-site-intelisis.192.168.29.40.sslip.io/api/departments");
-        const data = await response.json();
+      const response = await fetch(
+        "http://api-site-intelisis.192.168.29.40.sslip.io/api/departments"
+      );
+      const data = await response.json();
 
-        console.log("Departamentos obtenidos:", data); // Verifica en la consola
+      console.log("Departamentos obtenidos:", data); // Verifica en la consola
 
-        if (Array.isArray(data)) {
-            setDepartments(data);
-        } else {
-            console.error("La API no devolvió un array:", data);
-            setDepartments([]);
-        }
-    } catch (error) {
-        console.error("Error al obtener departamentos:", error);
+      if (Array.isArray(data)) {
+        setDepartments(data);
+      } else {
+        console.error("La API no devolvió un array:", data);
         setDepartments([]);
+      }
+    } catch (error) {
+      console.error("Error al obtener departamentos:", error);
+      setDepartments([]);
     }
-};
+  };
 
-useEffect(() => {
+  useEffect(() => {
     fetchDepartments();
-}, []);
+  }, []);
 
-// const fetchUsersByDepartment = async (department: string) => {
-//   try {
-//       const response = await fetch(`http://tu-api.com/api/users/by-department?department=${department}`); // Ajusta la URL
-//       const data = await response.json();
-//       setUsersByDepartment(data[department] || []); // Accede al array del departamento específico
-//   } catch (error) {
-//       console.error("Error al obtener usuarios del departamento:", error);
-//   }
-// };
+  // const fetchUsersByDepartment = async (department: string) => {
+  //   try {
+  //       const response = await fetch(`http://tu-api.com/api/users/by-department?department=${department}`); // Ajusta la URL
+  //       const data = await response.json();
+  //       setUsersByDepartment(data[department] || []); // Accede al array del departamento específico
+  //   } catch (error) {
+  //       console.error("Error al obtener usuarios del departamento:", error);
+  //   }
+  // };
 
-// Cargar departamentos al montar el componente
+  // Cargar departamentos al montar el componente
 
-const handleAssignDepartment = (course: CourseJson, department: string) => {
-  console.log(`Asignado curso: ${course.title} al departamento: ${department}`);
-};
+  const handleAssignDepartment = (course: CourseJson, department: string) => {
+    console.log(
+      `Asignado curso: ${course.title} al departamento: ${department}`
+    );
+  };
 
   const filteredCourses = formatJson.filter((course) => {
     // Asegúrate de que `fullname` y `description` sean cadenas de texto
@@ -134,7 +133,7 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
       fullname.toLowerCase().includes(term.toLowerCase()) ||
       description.toLowerCase().includes(term.toLowerCase());
 
-    return matchesSearchTerm ;
+    return matchesSearchTerm;
   });
 
   const handleOpenDialog = (course: CourseJson) => {
@@ -164,7 +163,7 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
       edit.id_course,
       edit.title,
       edit.description,
-      edit.tutor,
+      edit.tutor
     );
 
     try {
@@ -254,16 +253,13 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
   const handleOpenAssignModal = (course: CourseJson) => {
     setSelectedCourse(course);
     setIsAssignModalOpen(true);
-};
-  
+  };
+
   const handleCloseAssignModal = () => {
     setIsAssignModalOpen(false);
     setSelectedCourse(null);
     setUsersByDepartment([]); // Limpia la lista al cerrar
   };
-
-
-
 
   const getStatusStyle = (endDate: string) => {
     const today = new Date();
@@ -273,13 +269,12 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
 
     if (daysDiff < 0) {
       return styles.expired; // Curso expirado
-    } else if (daysDiff <= 7  && daysDiff >= 0) {
+    } else if (daysDiff <= 7 && daysDiff >= 0) {
       return styles.aboutToExpire; // Curso próximo a expirar (en 7 días o menos)
     } else {
       return styles.active; // Curso vigente
     }
   };
-
 
   return (
     <div>
@@ -349,11 +344,16 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
                     </button>
                     <button
                       onClick={() => handleOpenAssignModal(course)}
-                      style={{ backgroundColor: "green", color: "white", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" }}
-                  >
+                      style={{
+                        backgroundColor: "green",
+                        color: "white",
+                        padding: "5px 10px",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                      }}
+                    >
                       Asignar Departamento
-                  </button>
-
+                    </button>
                   </td>
                 </tr>
               ))
@@ -393,57 +393,66 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
 
         {/* Fondo borroso y diálogo para editar la información del curso */}
         {editCourse && isEditDialogOpen && (
-           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-           <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md space-y-4">
-             <h2 className="text-xl font-bold text-gray-800">Editar Curso</h2>
-     
-             <div className="space-y-3">
-               <div>
-                 <label className="block text-gray-700">Título</label>
-                 <input
-                   type="text"
-                   value={editCourse.title}
-                   onChange={(e) => setEditCourse({ ...editCourse, title: e.target.value })}
-                   className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                 />
-               </div>
-     
-               <div>
-                 <label className="block text-gray-700">Descripción</label>
-                 <textarea
-                   value={editCourse.description}
-                   onChange={(e) => setEditCourse({ ...editCourse, description: e.target.value })}
-                   className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                 />
-               </div>
-     
-               <div>
-                 <label className="block text-gray-700">Tutor</label>
-                 <input
-                   type="text"
-                   value={editCourse.tutor}
-                   onChange={(e) => setEditCourse({ ...editCourse, tutor: e.target.value })}
-                   className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                 />
-               </div>
-             </div>
-     
-             <div className="flex justify-end space-x-3 mt-4">
-               <button
-                 onClick={handleSaveEdit}
-                 className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-               >
-                 Guardar Cambios
-               </button>
-               <button
-                 onClick={handleCloseEditDialog}
-                 className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition"
-               >
-                 Cancelar
-               </button>
-             </div>
-           </div>
-         </div>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md space-y-4">
+              <h2 className="text-xl font-bold text-gray-800">Editar Curso</h2>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-gray-700">Título</label>
+                  <input
+                    type="text"
+                    value={editCourse.title}
+                    onChange={(e) =>
+                      setEditCourse({ ...editCourse, title: e.target.value })
+                    }
+                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700">Descripción</label>
+                  <textarea
+                    value={editCourse.description}
+                    onChange={(e) =>
+                      setEditCourse({
+                        ...editCourse,
+                        description: e.target.value,
+                      })
+                    }
+                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700">Tutor</label>
+                  <input
+                    type="text"
+                    value={editCourse.tutor}
+                    onChange={(e) =>
+                      setEditCourse({ ...editCourse, tutor: e.target.value })
+                    }
+                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 mt-4">
+                <button
+                  onClick={handleSaveEdit}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                >
+                  Guardar Cambios
+                </button>
+                <button
+                  onClick={handleCloseEditDialog}
+                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
       {isModalOpen && (
@@ -458,19 +467,29 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
         </div>
       )}
 
-{isAssignModalOpen && selectedCourse && (
-    <AssignDepartmentModal
-        course={{ id_course: selectedCourse.id_course, title: selectedCourse.title }} // Pass id_course and title
-        onClose={handleCloseAssignModal}
-        onAssign={(course: { id_course: number; title: string }, department: string) =>
-            handleAssignDepartment({ ...selectedCourse, title: course.title }, department)
-        }
-        departments={departments} // 🔹 PASAMOS LOS DEPARTAMENTOS
-    />
-)}
-
+      {isAssignModalOpen && selectedCourse && (
+        <AssignDepartmentModal
+          course={{
+            id_course: selectedCourse.id_course,
+            title: selectedCourse.title,
+          }} 
+          onClose={handleCloseAssignModal}
+          onAssign={(course, department) =>
+            handleAssignDepartment(
+              { 
+                id_course: selectedCourse.id_course, 
+                title: selectedCourse.title, 
+                description: selectedCourse.description, 
+                tutor: selectedCourse.tutor, 
+                status: selectedCourse.status 
+              },
+              department
+            )
+          }
+          departments={departments} // 🔹 PASAMOS LOS DEPARTAMENTOS
+        />
+      )}
     </div>
-    
   );
 }
 
@@ -629,9 +648,9 @@ const styles: { [key: string]: CSSProperties } = {
     width: "60%",
     textAlign: "center",
   },
-  expired: { backgroundColor: '#ffcccc' }, // Estilo para cursos expirados
-  aboutToExpire: { backgroundColor: '#fff3cd' }, // Estilo para cursos próximos a expirar
-  active: { backgroundColor: '#ccffcc' } // Estilo para cursos vigentes
+  expired: { backgroundColor: "#ffcccc" }, // Estilo para cursos expirados
+  aboutToExpire: { backgroundColor: "#fff3cd" }, // Estilo para cursos próximos a expirar
+  active: { backgroundColor: "#ccffcc" }, // Estilo para cursos vigentes
 };
 
 export default CourseCatalog;
