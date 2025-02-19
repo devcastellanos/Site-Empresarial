@@ -64,32 +64,73 @@ function AssignDepartmentModal({ course, onClose, departments }: AssignDepartmen
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-      <Card className="w-full max-w-lg p-6 bg-white shadow-xl rounded-lg overflow-y-auto max-h-[90vh]">
-        <CardBody>
-          <Typography variant="h5" className="text-center text-blue-600 mb-4">Asignar Curso: {course.title}</Typography>
+      <Card className="w-full max-w-lg p-6 bg-white shadow-xl rounded-lg overflow-y-auto max-h-[90vh]"
+      onPointerLeaveCapture={() => {}}
+      onPointerEnterCapture={() => {}}
+      placeholder="">
+        <CardBody
+        onPointerLeaveCapture={() => {}}
+        onPointerEnterCapture={() => {}}
+        placeholder="">
+          <Typography
+            variant="h5"
+            className="text-center text-blue-600 mb-4"
+            onPointerLeaveCapture={() => {}}
+            onPointerEnterCapture={() => {}}
+            placeholder=""
+          >
+            {`Asignar Curso: ${course.title}`}
+          </Typography>
           <div className="space-y-4">
             <select id="department" value={selectedDepartment} onChange={handleDepartmentChange} className="w-full p-2 border border-gray-300 rounded-md">
               <option value="">Seleccione un departamento</option>
               {departments.map(dept => <option key={dept} value={dept}>{dept}</option>)}
             </select>
-            <Input type="number" label="Progreso" value={progress} onChange={(e) => setProgress(Number(e.target.value))} className="w-full" />
-            <Input type="date" label="Fecha de inicio" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full" />
-            <Input type="date" label="Fecha de finalización" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full" />
+            <Input 
+              type="number" 
+              label="Progreso" 
+              value={progress} 
+              onChange={(e) => setProgress(Number(e.target.value))} 
+              className="w-full" 
+              crossOrigin="" 
+              onPointerLeaveCapture={() => {}} 
+              onPointerEnterCapture={() => {}} 
+            />
+            <Input type="date" label="Fecha de inicio" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full" 
+            crossOrigin="" 
+            onPointerLeaveCapture={() => {}} 
+            onPointerEnterCapture={() => {}} />
+            <Input type="date" label="Fecha de finalización" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full"
+            crossOrigin="" 
+            onPointerLeaveCapture={() => {}} 
+            onPointerEnterCapture={() => {}}  />
           </div>
           {selectedDepartment && users.length > 0 && (
             <div className="mt-4 max-h-40 overflow-y-auto">
-              <Typography variant="h6" className="text-gray-700">Usuarios en {selectedDepartment}:</Typography>
+              <Typography variant="h6" className="text-gray-700"
+              onPointerLeaveCapture={() => {}}
+              onPointerEnterCapture={() => {}}
+              placeholder="">Usuarios en {selectedDepartment}:</Typography>
               {users.map(user => (
                 <div key={user.Personal} className="flex items-center gap-2 mt-2">
                   <Checkbox checked={selectedUsers.has(user.Personal)} onChange={() => handleCheckboxChange(user.Personal)} />
-                  <Typography>{user.Nombre} {user.ApellidoPaterno} {user.ApellidoMaterno} - {user.Puesto}</Typography>
+                  <Typography
+                  onPointerLeaveCapture={() => {}}
+                  onPointerEnterCapture={() => {}}
+                  placeholder="">{user.Nombre} {user.ApellidoPaterno} {user.ApellidoMaterno} - {user.Puesto}</Typography>
                 </div>
               ))}
             </div>
           )}
           <div className="mt-6 flex justify-between">
-            <Button color="blue" onClick={handleAssign} className="w-full mr-2">Asignar</Button>
-            <Button color="red" onClick={onClose} className="w-full">Cerrar</Button>
+            <Button color="blue" onClick={handleAssign} className="w-full mr-2"
+            onPointerLeaveCapture={() => {}}
+            onPointerEnterCapture={() => {}}
+            placeholder="">Asignar</Button>
+            <Button color="red" onClick={onClose} className="w-full"
+            onPointerLeaveCapture={() => {}}
+            onPointerEnterCapture={() => {}}
+            placeholder="">Cerrar</Button>
           </div>
         </CardBody>
       </Card>
