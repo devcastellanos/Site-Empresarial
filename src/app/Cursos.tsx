@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { CSSProperties } from "react";
 import { FaEye, FaEdit, FaPlus, FaTrash } from "react-icons/fa";
-import NuevoCurso from "./CrearCurso";
+// import NuevoCurso from "./CrearCurso";
 import CourseCatalog2 from "./CrearCurso";
 import AssignDepartmentModal from "./Department"; // Asegúrate de que la ruta es correcta
 
@@ -23,6 +23,14 @@ interface Course {
   tutor: string;
   status: string;
 }
+
+interface AssignDepartmentModalProps {
+  course: { id_course: number; title: string };
+  onClose: () => void;
+  onAssign: (course: { id_course: number; title: string }, department: string) => void;
+  departments: string[];
+}
+
 function CourseCatalog() {
   const [formatJson, setFormatJson] = useState<CourseJson[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -52,7 +60,9 @@ function CourseCatalog() {
         const fetchCursosPresenciales = await fetch(
           "http://api-cursos.192.168.29.40.sslip.io/cursosPresenciales"
         );
+  
         if (!fetchCursosPresenciales.ok) {
+          throw new Error("Error al obtener los cursos");
         }
         const cursosPresenciales: CourseJson[] =
           await fetchCursosPresenciales.json();
@@ -61,12 +71,13 @@ function CourseCatalog() {
         setFormatJson(cursosPresenciales);
 
       } catch (e) {
-        console.error(e);
+        console.error("Error fetching data:", e);
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -428,9 +439,11 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
 
 {isAssignModalOpen && selectedCourse && (
     <AssignDepartmentModal
-        course={selectedCourse}
+        course={{ id_course: selectedCourse.id_course, title: selectedCourse.title }} // Pass id_course and title
         onClose={handleCloseAssignModal}
-        onAssign={handleAssignDepartment}
+        onAssign={(course: { id_course: number; title: string }, department: string) =>
+            handleAssignDepartment({ ...selectedCourse, title: course.title }, department)
+        }
         departments={departments} // 🔹 PASAMOS LOS DEPARTAMENTOS
     />
 )}
