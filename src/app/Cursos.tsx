@@ -393,36 +393,57 @@ const handleAssignDepartment = (course: CourseJson, department: string) => {
 
         {/* Fondo borroso y diálogo para editar la información del curso */}
         {editCourse && isEditDialogOpen && (
-          <div>
-            <div style={styles.blurBackground}></div>
-            <div style={styles.dialog}>
-                <h2>Editar Curso</h2>
-                <input
-                type="text"
-                value={editCourse.title}
-                onChange={(e) =>
-                  setEditCourse({ ...editCourse, title: e.target.value })
-                }
-                style={styles.input}
-                />
-                <textarea
-                value={editCourse.description}
-                onChange={(e) =>
-                  setEditCourse({ ...editCourse, description: e.target.value })
-                }
-                style={styles.textarea}
-                />
-              <button onClick={handleSaveEdit} style={styles.saveButton}>
-                Guardar Cambios
-              </button>
-              <button
-                onClick={handleCloseEditDialog}
-                style={styles.closeButton}
-              >
-                Cancelar
-              </button>
-            </div>
-          </div>
+           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+           <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md space-y-4">
+             <h2 className="text-xl font-bold text-gray-800">Editar Curso</h2>
+     
+             <div className="space-y-3">
+               <div>
+                 <label className="block text-gray-700">Título</label>
+                 <input
+                   type="text"
+                   value={editCourse.title}
+                   onChange={(e) => setEditCourse({ ...editCourse, title: e.target.value })}
+                   className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                 />
+               </div>
+     
+               <div>
+                 <label className="block text-gray-700">Descripción</label>
+                 <textarea
+                   value={editCourse.description}
+                   onChange={(e) => setEditCourse({ ...editCourse, description: e.target.value })}
+                   className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                 />
+               </div>
+     
+               <div>
+                 <label className="block text-gray-700">Tutor</label>
+                 <input
+                   type="text"
+                   value={editCourse.tutor}
+                   onChange={(e) => setEditCourse({ ...editCourse, tutor: e.target.value })}
+                   className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                 />
+               </div>
+             </div>
+     
+             <div className="flex justify-end space-x-3 mt-4">
+               <button
+                 onClick={handleSaveEdit}
+                 className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+               >
+                 Guardar Cambios
+               </button>
+               <button
+                 onClick={handleCloseEditDialog}
+                 className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition"
+               >
+                 Cancelar
+               </button>
+             </div>
+           </div>
+         </div>
         )}
       </div>
       {isModalOpen && (
