@@ -83,37 +83,7 @@ function CourseCatalog({ onAddCourse }: Props) {
         value={newCourse.description}
         onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })}
         style={styles.textarea}
-      />
-      
-      <label htmlFor="Fecha de inicio">Fecha de impartición</label>
-      <input
-        type="date"
-        placeholder="Fecha de inicio"
-        value={newCourse.start_date}
-        onChange={(e) => setNewCourse({ ...newCourse, start_date: e.target.value })}
-        style={styles.input}
-      />
-
-      <label htmlFor="Fecha de término">Fecha de Vencimiento</label>
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <input
-          type="date"
-          placeholder="Fecha de término"
-          value={newCourse.end_date || ""}
-          onChange={(e) => setNewCourse({ ...newCourse, end_date: e.target.value })}
-          style={styles.input}
-          disabled={newCourse.noEndDate}
-        />
-        <label>
-          <input
-            type="checkbox"
-            checked={newCourse.noEndDate}
-            onChange={(e) => setNewCourse({ ...newCourse, noEndDate: e.target.checked, end_date: e.target.checked ? "" : newCourse.end_date })}
-          />
-          Sin Vencimiento
-        </label>
-      </div>
-      
+      />      
       <input
         type="text" 
         placeholder="Impartido por:"
