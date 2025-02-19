@@ -113,7 +113,13 @@ function AssignDepartmentModal({ course, onClose, departments }: AssignDepartmen
               placeholder="">Usuarios en {selectedDepartment}:</Typography>
               {users.map(user => (
                 <div key={user.Personal} className="flex items-center gap-2 mt-2">
-                  <Checkbox checked={selectedUsers.has(user.Personal)} onChange={() => handleCheckboxChange(user.Personal)} />
+                  <Checkbox 
+                    checked={selectedUsers.has(user.Personal)} 
+                    onChange={() => handleCheckboxChange(user.Personal)} 
+                    onPointerEnterCapture={() => {}} 
+                    onPointerLeaveCapture={() => {}} 
+                    crossOrigin="" 
+                  />
                   <Typography
                   onPointerLeaveCapture={() => {}}
                   onPointerEnterCapture={() => {}}
@@ -136,7 +142,7 @@ function AssignDepartmentModal({ course, onClose, departments }: AssignDepartmen
       </Card>
     </div>
   );
-}
+};
 
 
 const styles = {
