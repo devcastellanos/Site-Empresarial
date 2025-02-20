@@ -32,11 +32,6 @@ function CourseCatalog({ onAddCourse }: Props) {
 
   const handleAddMoodle = async (newCourse: Course) => {
     try {
-
-      console.log('Fecha de inicio:', newCourse.start_date);
-      console.log('Fecha de fin:', newCourse.end_date);
-
-     
       const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/agregarCurso', {
         method: 'POST', 
         headers: {
@@ -51,16 +46,24 @@ function CourseCatalog({ onAddCourse }: Props) {
   
       const result = await response.json();
       console.log('Curso agregado con éxito', result);
+      window.alert("✅ Curso agregado con éxito");
       return newCourse;
     } catch (error) {
       console.error('Error al agregar curso:', error);
     }
   };
 
-  const handleAddCourse = () => {
-    handleAddMoodle(newCourse);
-    console.log(newCourse)
-    onAddCourse(newCourse); 
+  const handleAddCourse =async () => {
+    try{
+       const status=await handleAddMoodle(newCourse);
+       if(!status){
+        console.log("no se pudo agregar el curso")
+        return;
+       }
+      onAddCourse(newCourse); 
+    }catch(e){
+      console.log("no se pudo agregar el curso ")
+    }  
   };
 
   return (
