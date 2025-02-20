@@ -16,7 +16,11 @@ const CourseContext = createContext<{
   addCourse: () => {},
 });
 
-export const CourseProvider: React.FC = ({ children }) => {
+interface CourseProviderProps {
+  children: React.ReactNode;
+}
+
+export const CourseProvider: React.FC<CourseProviderProps> = ({ children }) => {
   const [courses, setCourses] = useState<Course[]>([]);
 
   const addCourse = (course: Course) => {
