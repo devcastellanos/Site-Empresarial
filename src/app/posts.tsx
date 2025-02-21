@@ -14,6 +14,7 @@ import axios from "axios";
 
 import { useAuth } from "@/app/hooks/useAuth";
 import { id } from "date-fns/locale";
+import { Nanum_Pen_Script } from "next/font/google";
 
 export interface Post {
   idBlog: number;
@@ -25,6 +26,7 @@ export interface Post {
   img_author: string;
   name_author: string;
   num_empleado: number;
+  likes: number;
 }
 
 export function Posts() {
@@ -39,6 +41,7 @@ export function Posts() {
       img_author: "",
       name_author: "",
       num_empleado: 0,
+      likes: 0,
     }
   );
 
@@ -396,7 +399,7 @@ export function Posts() {
       </Typography>
       <div className="container my-auto grid grid-cols-1 gap-x-8 gap-y-10 items-start lg:grid-cols-2">
         {posts?.length > 0 ? (
-          posts.map(({ img, tag, title, desc, date, img_author, name_author, idBlog, num_empleado }) => (
+          posts.map(({ img, tag, title, desc, date, img_author, name_author, idBlog, num_empleado, likes }) => (
             <div key={idBlog}>
               <BlogPostCard
                 img={img}
@@ -407,6 +410,7 @@ export function Posts() {
                 author={{ img: img_author, name: name_author }}
                 idBlog={idBlog}
                 num_empleado={num_empleado}
+                likes={likes}
                 onPostEdit={handlePostEdit}
                 onPostDelete={handleDeletePost}
               />

@@ -13,11 +13,13 @@ import {
   DialogFooter,
   Input,
   Carousel,
+  IconButton,
 } from "@material-tailwind/react";
 
 import { Post } from "../app/posts";
 
 import { useAuth } from "@/app/hooks/useAuth";
+import { set } from "date-fns";
 
 interface BlogPostCardProps {
   img: string[];
@@ -28,6 +30,7 @@ interface BlogPostCardProps {
   date: string;
   idBlog: number;
   num_empleado: number;
+  likes: number;
   onPostEdit: (post: Post) => void;
   onPostDelete: (idBlog: number) => void;
 }
@@ -41,12 +44,13 @@ export function BlogPostCard({
   date,
   idBlog,
   num_empleado,
+  likes,
   onPostEdit,
   onPostDelete,
 }: BlogPostCardProps) {
   const formattedUserId = num_empleado.toString().padStart(4, "0");
   const [openModal, setOpenModal] = React.useState(false);
-  const [imageJson, setImageJson] = React.useState<string[]>([]);
+  const [statusLike, setStatusLike] = React.useState(false);
   const [post, setPost] = React.useState<Post>({
     idBlog: idBlog,
     img: Array.isArray(img) ? img : [],
@@ -57,6 +61,7 @@ export function BlogPostCard({
     img_author: author.img,
     name_author: author.name,
     num_empleado: num_empleado,
+    likes: likes,
   });
 
   const { isAuthenticated } = useAuth();
@@ -207,6 +212,55 @@ export function BlogPostCard({
                 </Button>
               </div>
             )}
+            { statusLike  ? <IconButton
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                  placeholder=""
+                  onClick={() => {
+                    fetch(`http://api-cursos.192.168.29.40.sslip.io/dislike/${idBlog}`, {
+                      method: "PUT",
+                    })
+                    .then((res) => res.json())
+                    .then((data) => {
+                      console.log(data);
+                      setPost((prevPost) => ({
+                        ...prevPost,
+                        likes: prevPost.likes + 1, // Actualiza el número de likes en el estado
+                      }));
+                      setStatusLike(!statusLike);
+                      onPostEdit(post);
+                    });
+                  }
+                  }
+                >
+                <i className="fas fa-heart" />
+              </IconButton> : 
+              <IconButton
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                  placeholder=""
+                  onClick={() => {
+                    fetch(`http://api-cursos.192.168.29.40.sslip.io/like/${idBlog}`,
+                      {
+                        method: "PUT",
+                      })
+                      .then((res) => res.json())
+                      .then((data) => {
+                        console.log(data);
+                        setPost((prevPost) => ({
+                          ...prevPost,
+                          likes: prevPost.likes - 1, 
+                        }));
+                        setStatusLike(!statusLike);
+                        onPostEdit(post);
+                      });     
+                    }}
+                >
+                <i className="far fa-heart" />
+              </IconButton>      
+            }
+                
+              {likes}
             
           </div>
         </CardBody>
