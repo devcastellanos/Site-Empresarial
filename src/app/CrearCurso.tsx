@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { CSSProperties } from 'react';
+import Swal from 'sweetalert2';
 
 interface Course {
   id_course:number,
@@ -45,11 +46,11 @@ function CourseCatalog({ onAddCourse }: Props) {
       }
   
       const result = await response.json();
-      console.log('Curso agregado con éxito', result);
-      window.alert("✅ Curso agregado con éxito");
+      Swal.fire('Curso agregado', `El curso ${result.title} ha sido agregado correctamente`, 'success');
       return newCourse;
     } catch (error) {
-      console.error('Error al agregar curso:', error);
+      console.error('Error al agregar el curso:', error);
+      Swal.fire('Error', 'No se pudo agregar el curso', 'error');
     }
   };
 
