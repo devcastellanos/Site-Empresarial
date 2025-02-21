@@ -14,6 +14,8 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
+import sweetAlert from "sweetalert2";
+import Swal from "sweetalert2";
 // Ajusta la ruta según tu estructura de archivos
 
 interface CursoTomado {
@@ -25,7 +27,7 @@ interface CursoTomado {
   tutor: string;
   progress: string;
   status: string;
-  start_date?: string;
+  start_date: string;
   end_date?: string;
 }
 
@@ -36,6 +38,8 @@ interface CursosPresencialesJson {
   tutor: string;
   progress: string;
   status: string;
+  start_date: string;
+  end_date?: string;
 }
 
 interface User {
@@ -72,6 +76,7 @@ const Kardex = () => {
       tutor: "",
       progress: "",
       status: "",
+      start_date: "",
     },
     isOpen: false,
   });
@@ -84,9 +89,7 @@ const Kardex = () => {
   const [cursosPresenciales, setCursosPresenciales] = useState<
     CursosPresencialesJson[]
   >([]);
-  const [cursosFaltantes, setCursosFaltantes] = useState<
-    CursosPresencialesJson[]
-  >([]);
+
   const fetchUsers = async () => {
     try {
       const response = await fetch(
@@ -123,9 +126,17 @@ const Kardex = () => {
 
   const handleAddCourse = async () => {
     try {
-      const selectedCourse = cursosFaltantes.find(
+      const selectedCourse = cursosPresenciales.find(
         (course) => course.id_course === newCourseId
       );
+      if ( startDate === ""){
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "La fecha de impartición es requerida.",
+        });
+        return;
+      }
       if (selectedCourse) {
         const newCourse = {
           id_course: selectedCourse.id_course,
@@ -153,7 +164,12 @@ const Kardex = () => {
         }
 
         const result = await response.json();
-        console.log("Curso agregado con éxito:", result);
+        
+        Swal.fire({
+          icon: "success",
+          title: "Curso agregado con éxito",
+          text: `El curso ${selectedCourse.title} se ha añadido al kardex.`,
+        });
 
         setSelectedCourses((prevCourses) => [
           ...prevCourses,
@@ -163,8 +179,8 @@ const Kardex = () => {
             id_course: newCourse.id_course,
             id_usuario: selectedUserId as number,
             progress: newCourse.progress.toString(),
-            start_date: newCourse.start_date || undefined,
-            end_date: newCourse.end_date || undefined,
+            start_date: newCourse.start_date || "",
+            end_date: newCourse.end_date || "",
           },
         ]);
 
@@ -184,8 +200,6 @@ const Kardex = () => {
               (c: CursoTomado) => c.id_course === curso.id_course
             )
         );
-
-        setCursosFaltantes(updatedCursosFaltantes);
         setNewCourseId("");
       }
     } catch (error) {
@@ -226,7 +240,6 @@ const Kardex = () => {
     const cursosFaltantes = cursosPresenciales.filter(
       (curso) => !userCourses.some((c) => c.id_course === curso.id_course)
     );
-    setCursosFaltantes(cursosFaltantes);
     console.log(formattedUserId);
   };
   const formattedUserId = selectedUserId.toString().padStart(4, "0");
@@ -244,12 +257,12 @@ const Kardex = () => {
         });
 
         if (res.status === 200) {
-          console.log("Imagen actualizada correctamente:", res.data.imageUrl);
+          Swal.fire({ icon: "success", title: "Imagen actualizada", text: "La imagen se ha subido correctamente." });
         } else {
-          console.error("Error al actualizar la imagen:", res.data.message);
+          Swal.fire({ icon: "error", title: "Error", text: "No se pudo actualizar la imagen." });
         }
       } catch (error) {
-        console.error("Error en la solicitud:", error);
+        Swal.fire({ icon: "error", title: "Error", text: "Error en la solicitud de imagen." });
       }
     }
   };
@@ -281,8 +294,13 @@ const Kardex = () => {
         }
       );
 
-      const data = await response.json();
-      console.log("Respuesta:", data);
+      if (!response.ok) throw new Error("Error al actualizar el progreso");
+
+      Swal.fire({
+        icon: "success",
+        title: "Progreso actualizado",
+        text: `El progreso del curso ${dialogInfo.course.title} se ha actualizado correctamente.`,
+      });
 
       setDialogInfo((prev) => ({
         ...prev,
@@ -302,7 +320,7 @@ const Kardex = () => {
     }
   };
 
-  const handleDeleteCourse = async (id_course: number, id_usuario: number) => {
+  const handleDeleteCourse = async (id_course: number, id_usuario: number, start_date: string) => {
     try {
       const response = await fetch(
         "http://api-cursos.192.168.29.40.sslip.io/eliminarCursoTomado",
@@ -311,7 +329,7 @@ const Kardex = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ id_usuario, id_course }),
+          body: JSON.stringify({ id_usuario, id_course, start_date }),
         }
       );
 
@@ -319,11 +337,15 @@ const Kardex = () => {
         throw new Error("Error en la solicitud");
       }
 
-      const result = await response.json();
-      console.log("Curso eliminado con éxito:", result);
+
+      Swal.fire({
+        icon: "success",
+        title: "Curso eliminado",
+        text: "El curso ha sido eliminado correctamente.",
+      });
 
       setSelectedCourses(
-        selectedCourses.filter((course) => course.id_course !== id_course)
+        selectedCourses.filter((course) => !(course.id_course === id_course && course.start_date === start_date))
       );
       const updatedCourses = await fetch(
         "http://api-cursos.192.168.29.40.sslip.io/cursostomados"
@@ -331,14 +353,6 @@ const Kardex = () => {
       const coursesData = await updatedCourses.json();
       setCursosTomados(coursesData);
 
-      const userCourses = coursesData.filter(
-        (curso: CursoTomado) => curso.id_usuario === selectedUserId
-      );
-      const updatedCursosFaltantes = cursosPresenciales.filter(
-        (curso) =>
-          !userCourses.some((c: CursoTomado) => c.id_course === curso.id_course)
-      );
-      setCursosFaltantes(updatedCursosFaltantes);
     } catch (error) {
       console.error("Error al eliminar el curso:", error);
       alert("Hubo un problema al eliminar el curso.");
@@ -522,6 +536,16 @@ const Kardex = () => {
                   color: "white",
                 }}
               >
+                Fecha de Impartición
+              </th>
+              <th
+                style={{
+                  border: "1px solid #9A3324",
+                  padding: "10px",
+                  backgroundColor: "#9A3324",
+                  color: "white",
+                }}
+              >
                 Acciones
               </th>
             </tr>
@@ -587,6 +611,17 @@ const Kardex = () => {
                       />
                     </div>
                   </td>
+                  <td style={{ border: "1px solid #ccc", padding: "10px" }}>
+                  <span
+                      style={{
+                        width: "100%",
+                        borderRadius: "4px",
+                        padding: "5px",
+                      }}
+                    >
+                      {course.start_date}
+                    </span>
+                  </td>
                   <td
                     style={{
                       border: "1px solid #ccc",
@@ -621,7 +656,8 @@ const Kardex = () => {
                         onClick={() =>
                           handleDeleteCourse(
                             course.id_course,
-                            course.id_usuario
+                            course.id_usuario,
+                            course.start_date
                           )
                         }
                       >
@@ -656,7 +692,7 @@ const Kardex = () => {
             }}
           >
       <option value="">Seleccionar Curso</option>
-      {cursosFaltantes.map((course) => (
+      {cursosPresenciales.map((course) => (
         <option key={course.id_course} value={course.id_course}>
           {course.title}
         </option>
@@ -688,7 +724,7 @@ const Kardex = () => {
 
         <Input
           type="date"
-          label="Fecha de inicio"
+          label="Fecha de impartición"
           required
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}

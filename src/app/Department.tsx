@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button, Card, CardBody, Typography, Input, Checkbox } from "@material-tailwind/react";
+import Swal from "sweetalert2";
 
 interface AssignDepartmentModalProps {
   course: { id_course: number; title: string };
@@ -57,10 +58,14 @@ const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, o
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
       });
-      response.ok ? alert("Usuarios asignados correctamente") : alert("Error al asignar usuarios");
+      if (response.ok) {
+        Swal.fire({ icon: "success", title: "Usuarios asignados", text: "Los usuarios fueron asignados correctamente." });
+      } else {
+        Swal.fire({ icon: "error", title: "Error", text: "Error al asignar usuarios." });
+      }
       onClose();
     } catch (error) {
-      console.error("Error al asignar curso:", error);
+      Swal.fire({ icon: "error", title: "Error", text: "Hubo un problema al asignar el curso." });
     }
   };
 
