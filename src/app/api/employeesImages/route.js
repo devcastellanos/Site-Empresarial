@@ -27,7 +27,7 @@ export async function POST(req) {
     }
 
     // Crear directorio si no existe
-    const uploadDir = path.join(process.cwd(), "public", "fotos");
+    const uploadDir = path.join(process.cwd(), "uploads", "fotos");
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
     // Generar nombre único

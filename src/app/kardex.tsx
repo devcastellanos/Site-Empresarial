@@ -465,7 +465,8 @@ const Kardex = () => {
               <Image
                 width={150}
                 height={150}
-                src={`/fotos/${formattedUserId}.jpg`}
+                src={`/api/employees/${formattedUserId}`}
+
                 alt="Foto del empleado"
               ></Image>
               {isAuthenticated ? (
