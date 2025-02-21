@@ -90,7 +90,7 @@ const Kardex = () => {
   const fetchUsers = async () => {
     try {
       const response = await fetch(
-        "http://api-site-intelisis.192.168.29.40.sslip.io/api/users"
+        "http://api-site-intelisis.192.168.29.40.sslip.io/api/users/all"
       );
       const data = await response.json();
       setUsers(
