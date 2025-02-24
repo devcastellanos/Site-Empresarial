@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import Image from "next/image";
 import {
   Typography,
@@ -17,9 +18,7 @@ import {
 } from "@material-tailwind/react";
 
 import { Post } from "../app/posts";
-
 import { useAuth } from "@/app/hooks/useAuth";
-import { set } from "date-fns";
 
 interface BlogPostCardProps {
   img: string[];
@@ -49,9 +48,9 @@ export function BlogPostCard({
   onPostDelete,
 }: BlogPostCardProps) {
   const formattedUserId = num_empleado.toString().padStart(4, "0");
-  const [openModal, setOpenModal] = React.useState(false);
-  const [statusLike, setStatusLike] = React.useState(false);
-  const [post, setPost] = React.useState<Post>({
+  const [openModal, setOpenModal] = useState(false);
+  const [statusLike, setStatusLike] = useState(false);
+  const [post, setPost] = useState<Post>({
     idBlog: idBlog,
     img: Array.isArray(img) ? img : [],
     tag: tag,
@@ -64,53 +63,92 @@ export function BlogPostCard({
     likes: likes,
   });
 
+  // Estado para las imágenes nuevas seleccionadas durante la edición
+  const [newImgFiles, setNewImgFiles] = useState<File[]>([]);
+
   const { isAuthenticated } = useAuth();
 
   const handleEditClick = () => {
-    setOpenModal(true); // Abre el modal cuando se hace clic en "Editar"
+    setOpenModal(true);
   };
 
   const handleCloseModal = () => {
-    setOpenModal(false); // Cierra el modal
+    setOpenModal(false);
+    // Limpiar las imágenes nuevas al cerrar el modal
+    setNewImgFiles([]);
   };
 
-  const handleEdit = () => {
-    fetch(`http://api-cursos.192.168.29.40.sslip.io/ActualizarPost`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(post),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setOpenModal(false);
-        onPostEdit(post);
+  // Función para eliminar una imagen de la lista actual
+  const handleRemoveImage = (index: number) => {
+    const updatedImages = [...post.img];
+    updatedImages.splice(index, 1);
+    setPost({ ...post, img: updatedImages });
+  };
+
+  const handleEdit = async () => {
+    // Toma las imágenes actuales (ya con las eliminaciones realizadas)
+    let updatedImages = [...post.img];
+
+    // Si se seleccionaron nuevas imágenes, se suben y se concatenan
+    if (newImgFiles.length > 0) {
+      const formData = new FormData();
+      newImgFiles.forEach((file) => {
+        formData.append("images", file);
       });
+      formData.append("num_empleado", num_empleado.toString());
+      try {
+        console.log("Subiendo nuevas imágenes...");
+        const res = await axios.post("/api/uploadImages", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        console.log("Imágenes subidas correctamente:", res.data.imageUrls);
+        // Concatenar las imágenes ya existentes con las nuevas subidas
+        updatedImages = [...updatedImages, ...res.data.imageUrls];
+      } catch (error) {
+        console.error("Error al subir nuevas imágenes:", error);
+        return;
+      }
+    }
+
+    // Construir el objeto actualizado con el arreglo completo de imágenes
+    const updatedPost = { ...post, img: updatedImages };
+
+    try {
+      const response = await fetch("http://api-cursos.192.168.29.40.sslip.io/ActualizarPost", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedPost),
+      });
+      if (!response.ok) {
+        throw new Error("Error en la solicitud");
+      }
+      const data = await response.json();
+      console.log("Post actualizado:", data);
+      setOpenModal(false);
+      onPostEdit(updatedPost);
+    } catch (error) {
+      console.error("Error al actualizar post:", error);
+    }
   };
 
   return (
     <>
-      <Card
-        shadow={true}
-        placeholder=""
-        onPointerEnterCapture={() => {}}
-        onPointerLeaveCapture={() => {}}
-      >
+      <Card shadow={true}
+      placeholder=""
+      onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
         <CardHeader
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
-          placeholder=""
-        >
+        placeholder=""
+        onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
           {Array.isArray(post.img) && post.img.length > 0 && (
             <Carousel
-              placeholder=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-            >
+            placeholder=""
+      onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
               {post.img.map((imgUrl, index) => (
-                <div key={index}>
+                <div key={index} className="relative">
                   <Image
                     src={`/api/images/${imgUrl.split("/").pop()}`}
                     alt={`Imagen ${index + 1}`}
@@ -123,26 +161,17 @@ export function BlogPostCard({
             </Carousel>
           )}
         </CardHeader>
-        <CardBody
-          className="p-6"
+        <CardBody className="p-6"
+        placeholder=""
+        onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+          <Typography variant="small" color="blue" className="mb-2 !font-medium"
           placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
-        >
-          <Typography
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
-            variant="small"
-            color="blue"
-            className="mb-2 !font-medium"
-          >
+          onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
             {tag}
           </Typography>
           <Typography
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+          placeholder=""
+          onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             as="a"
             href="#"
             variant="h5"
@@ -151,201 +180,197 @@ export function BlogPostCard({
           >
             {title}
           </Typography>
-          <Typography
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
-            className="mb-6 font-normal !text-gray-500"
-          >
+          <Typography className="mb-6 font-normal !text-gray-500"
+          placeholder=""
+          onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
             {desc}
           </Typography>
           <div className="flex items-center gap-4">
             <Avatar
-              placeholder=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
               size="sm"
               variant="circular"
               src={`/fotos/${formattedUserId}.jpg`}
               alt={author.name}
+              placeholder=""
+      onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
             />
             <div>
-              <Typography
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
-                variant="small"
-                color="blue-gray"
-                className="mb-0.5 !font-medium"
-              >
+              <Typography variant="small" color="blue-gray" className="mb-0.5 !font-medium"
+              placeholder=""
+              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
                 {author.name}
               </Typography>
-              <Typography
-                variant="small"
-                color="gray"
-                className="text-xs !text-gray-500 font-normal"
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
-              >
+              <Typography variant="small" color="gray" className="text-xs !text-gray-500 font-normal"
+              placeholder=""
+              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
                 {date}
               </Typography>
             </div>
             {isAuthenticated && (
               <div>
-                <Button
+                <Button onClick={() => onPostDelete(idBlog)}
                   placeholder=""
-                  onPointerEnterCapture={() => {}}
-                  onPointerLeaveCapture={() => {}}
-                  onClick={() => onPostDelete(idBlog)}
-                >
-                  Eliminar
-                </Button>
-                <Button
-                  className="ml-auto"
-                  placeholder=""
-                  onPointerEnterCapture={() => {}}
-                  onPointerLeaveCapture={() => {}}
-                  onClick={handleEditClick}
-                >
+                  onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>Eliminar</Button>
+                <Button className="ml-auto" onClick={handleEditClick}
+                placeholder=""
+                onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
                   Editar
                 </Button>
               </div>
             )}
-            { statusLike  ? <IconButton
-                  onPointerEnterCapture={() => {}}
-                  onPointerLeaveCapture={() => {}}
-                  placeholder=""
-                  onClick={() => {
-                    fetch(`http://api-cursos.192.168.29.40.sslip.io/dislike/${idBlog}`, {
-                      method: "PUT",
-                    })
+            {statusLike ? (
+              <IconButton
+              placeholder=""
+      onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+                onClick={() => {
+                  fetch(`http://api-cursos.192.168.29.40.sslip.io/dislike/${idBlog}`, {
+                    method: "PUT",
+                  })
                     .then((res) => res.json())
                     .then((data) => {
                       console.log(data);
                       setPost((prevPost) => ({
                         ...prevPost,
-                        likes: prevPost.likes + 1, // Actualiza el número de likes en el estado
+                        likes: prevPost.likes + 1,
                       }));
                       setStatusLike(!statusLike);
                       onPostEdit(post);
                     });
-                  }
-                  }
-                >
+                }}
+              >
                 <i className="fas fa-heart" />
-              </IconButton> : 
+              </IconButton>
+            ) : (
               <IconButton
-                  onPointerEnterCapture={() => {}}
-                  onPointerLeaveCapture={() => {}}
-                  placeholder=""
-                  onClick={() => {
-                    fetch(`http://api-cursos.192.168.29.40.sslip.io/like/${idBlog}`,
-                      {
-                        method: "PUT",
-                      })
-                      .then((res) => res.json())
-                      .then((data) => {
-                        console.log(data);
-                        setPost((prevPost) => ({
-                          ...prevPost,
-                          likes: prevPost.likes - 1, 
-                        }));
-                        setStatusLike(!statusLike);
-                        onPostEdit(post);
-                      });     
-                    }}
-                >
+              placeholder=""
+      onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+                onClick={() => {
+                  fetch(`http://api-cursos.192.168.29.40.sslip.io/like/${idBlog}`, {
+                    method: "PUT",
+                  })
+                    .then((res) => res.json())
+                    .then((data) => {
+                      console.log(data);
+                      setPost((prevPost) => ({
+                        ...prevPost,
+                        likes: prevPost.likes - 1,
+                      }));
+                      setStatusLike(!statusLike);
+                      onPostEdit(post);
+                    });
+                }}
+              >
                 <i className="far fa-heart" />
-              </IconButton>      
-            }
-                
-              {likes}
-            
+              </IconButton>
+            )}
+            {likes}
           </div>
         </CardBody>
       </Card>
 
       {/* Modal para editar información */}
-      <Dialog
-        placeholder=""
-        onPointerEnterCapture={() => {}}
-        onPointerLeaveCapture={() => {}}
-        open={openModal}
-        handler={handleCloseModal}
+      <Dialog open={openModal} handler={handleCloseModal}
+      placeholder=""
+      onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} 
       >
         <DialogHeader
-          placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
-        >
-          Edita la información
-        </DialogHeader>
+        onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+        placeholder=""
+        >Editar la información</DialogHeader>
         <DialogBody
-          placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+        onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} 
+        placeholder=""
         >
           <div>
-            {/* Aquí puedes agregar los campos del formulario de edición */}
+            {/* Campos de edición de texto */}
             <Input
-              crossOrigin=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
               type="text"
               placeholder="Título"
               value={post.title}
               onChange={(e) => setPost({ ...post, title: e.target.value })}
               className="w-full p-2 border rounded mb-4"
+              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} 
+              crossOrigin=""
             />
             <Input
-              crossOrigin=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
               placeholder="Descripción"
               value={post.desc}
               onChange={(e) => setPost({ ...post, desc: e.target.value })}
               className="w-full p-2 border rounded mb-4"
+              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} 
+              crossOrigin=""
             />
             <Input
-              crossOrigin=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
               type="text"
               placeholder="Tag"
               value={post.tag}
               onChange={(e) => setPost({ ...post, tag: e.target.value })}
               className="w-full p-2 border rounded mb-4"
+              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} 
+              crossOrigin=""
             />
+
+            {/* Sección para editar imágenes */}
+            <div className="mb-4">
+              <Typography variant="small" color="blue-gray" className="mb-2"
+              placeholder=""
+              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
+                Imágenes actuales:
+              </Typography>
+              <div className="flex flex-wrap gap-2">
+                {post.img.map((imgUrl, index) => (
+                  <div key={index} className="relative">
+                    <Image
+                      src={`/api/images/${imgUrl.split("/").pop()}`}
+                      alt={`Imagen ${index + 1}`}
+                      width={100}
+                      height={100}
+                      className="object-cover rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                    >
+                      x
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <Typography variant="small" color="blue-gray" className="mb-2"
+              placeholder=""
+              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
+                Agregar nuevas imágenes:
+              </Typography>
+              <Input
+              crossOrigin=""
+                type="file"
+                multiple
+                onChange={(e) => {
+                  if (e.target.files) {
+                    setNewImgFiles(Array.from(e.target.files));
+                  }
+                }}
+                className="w-full p-2 border rounded"
+                onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} 
+              />
+            </div>
           </div>
         </DialogBody>
         <DialogFooter
+        placeholder=""
+        onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
+          <Button variant="text" color="red" onClick={handleCloseModal}
           placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
-        >
-          <Button
-            variant="text"
-            color="red"
-            onClick={() => {
-              handleCloseModal();
-            }}
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
-          >
+          onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
             Cerrar
           </Button>
-          <Button
-            variant="gradient"
-            onClick={() => {
-              handleEdit();
-              handleCloseModal();
-            }}
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
-          >
+          <Button variant="gradient" onClick={handleEdit}
+          placeholder=""
+          onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
             Guardar
           </Button>
         </DialogFooter>

@@ -381,11 +381,13 @@ const Kardex = () => {
             marginBottom: "20px",
           }}
         >
-          <img
+          <Image
+            width={150}
+            height={150}
+            style={{ width: "180px", height: "auto" }}
             src="https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_300,w_300,f_auto,q_auto/6088316/314367_858588.png"
             alt="Grupo Tarahumara"
-            style={{ width: "180px", height: "auto" }}
-          />
+          ></Image>
           <div style={{ textAlign: "right", fontSize: "16px" }}>
             <p> Grupo Tarahumara</p>
             <p> 2025</p>
