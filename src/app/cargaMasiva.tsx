@@ -22,7 +22,7 @@ const ExcelUploader: React.FC = () => {
           const sheetName = workbook.SheetNames[0];
           const sheet = workbook.Sheets[sheetName];
 
-          const customHeaders = ["id_usuario", "puesto", "departamento", "curso", "fecha", "tutor", "progress"];
+          const customHeaders = ["id_usuario", "puesto", "departamento", "curso", "start_date", "tutor", "progress"];
 
           const jsonData = XLSX.utils.sheet_to_json(sheet, {
             header: customHeaders,
@@ -75,6 +75,7 @@ const ExcelUploader: React.FC = () => {
       return;
     }
 
+    console.log("Datos a cargar:", data);
 
     try {
       const res = await fetch("http://api-cursos.192.168.29.40.sslip.io/updateCargaMasiva", {

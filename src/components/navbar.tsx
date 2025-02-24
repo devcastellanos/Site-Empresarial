@@ -91,7 +91,7 @@ export function Navbar() {
       "resize",
       () => window.innerWidth >= 960 && setOpen(false)
     );
-  }, []);
+  }, [isAuthenticated]);
 
     
 
