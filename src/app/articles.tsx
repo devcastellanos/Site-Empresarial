@@ -1,9 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Typography } from "@material-tailwind/react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
 import ArticleCard from "@/components/article-card";
-import { link } from "fs";
 
 const ARTICLES = [
   {
@@ -15,20 +18,20 @@ const ARTICLES = [
   {
     img: "/image/Plan.webp",
     title: "Plan de Capacitación",
-    desc: " Da clic para conocer el Plan anual de capacitación actualizada",
+    desc: "Da clic para conocer el Plan anual de capacitación actualizada",
     link: '',
   },
   {
     img: "/image/asistencia.png",
     title: "Asistencia",
-    desc: "Da clic aqui para descargar la lista de asistencia de la capacitación de Tarahumara.",
-    link: 'https://gpotarahumara-my.sharepoint.com/personal/mariana_perez_grupotarahumara_com_mx/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fmariana%5Fperez%5Fgrupotarahumara%5Fcom%5Fmx%2FDocuments%2FDocumentos%2FDocumentaci%C3%B3n%20del%20%C3%A1rea%2FF%2DP%2DRHU%2D01%2D03%5F6%5FRegistros%20de%20capacitacion%5Foriginal%2Epdf&parent=%2Fpersonal%2Fmariana%5Fperez%5Fgrupotarahumara%5Fcom%5Fmx%2FDocuments%2FDocumentos%2FDocumentaci%C3%B3n%20del%20%C3%A1rea&ct=1737406876098&or=OWA%2DNT%2DMail&cid=1ecde25e%2D3b4d%2Dad25%2D8d3e%2D568fc48914c0&ga=1',
+    desc: "Da clic aquí para descargar la lista de asistencia de la capacitación de Tarahumara.",
+    link: 'https://gpotarahumara-my.sharepoint.com/...',
   },
   {
     img: "/image/solicitud.jpg",
     title: "Formato de solicitud",
     desc: "Da clic aquí para descargar el formato de solicitud de cursos.",
-    link: 'https://gpotarahumara-my.sharepoint.com/:x:/g/personal/mariana_perez_grupotarahumara_com_mx/EXIe6iBPgnNGpMuo63FeZ1gBYdjBXXY1AxVzK418aUpSFQ?e=89xqdG&CID=efd56ef1-2340-296e-d712-2c877bb06ace',
+    link: 'https://gpotarahumara-my.sharepoint.com/...',
   },
   {
     img: "/image/Convenio.png",
@@ -39,26 +42,64 @@ const ARTICLES = [
 ];
 
 export function Articles() {
+  const [hoveredArticle, setHoveredArticle] = useState(null);
+
   return (
-    <section className="container mx-auto px-8 py-20">
-      <Typography variant="h2" color="blue-gray"  placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
+    <section className="container mx-auto px-8 py-20 text-center">
+      <Typography variant="h3" color="blue-gray">
         Herramientas y Plataformas
       </Typography>
-      {/* prueba */}
       <Typography
-       placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
         variant="lead"
-        className="my-2 w-full font-normal !text-gray-500 lg:w-5/12"      
+        className="my-2 w-full font-normal !text-gray-500 lg:w-5/12 mx-auto text-lg"
       >
-       Herramientas y plataformas que te ayudarán a potenciar tu desarrollo profesional en tu área laboral.
+        Herramientas y plataformas que te ayudarán a potenciar tu desarrollo profesional en tu área laboral.
       </Typography>
 
-      <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {ARTICLES.map((props, idx) => (
-          <ArticleCard key={idx} {...props} />
-        ))}
+      {/* Carrusel con Swiper */}
+      <div className="mt-8">
+        <Swiper
+          modules={[Autoplay, Pagination]}
+          slidesPerView={3} // Muestra 3 artículos a la vez
+          spaceBetween={20}
+          autoplay={{ delay: 3000, disableOnInteraction: false }} // Autoplay cada 3s
+          pagination={{ clickable: true }}
+          loop={true} // Carrusel infinito
+          className="w-full"
+        >
+          {ARTICLES.map((article, idx) => (
+            <SwiperSlide key={idx}>
+              <div
+                className={`relative transition-all duration-300 transform ${hoveredArticle === idx ? 'scale-110' : 'scale-90'}`}
+                onMouseEnter={() => setHoveredArticle(idx)}
+                onMouseLeave={() => setHoveredArticle(null)}
+              >
+                {/* Tarjeta */}
+                <ArticleCard img={article.img} title={article.title} />
+
+                {/* Overlay con botón */}
+                {hoveredArticle === idx && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white p-4 rounded transition-opacity duration-300">
+                    <p className="text-center">{article.desc}</p>
+                    {article.link && (
+                      <a
+                        href={article.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-all"
+                      >
+                        Ir al enlace
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
     </section>
   );
 }
+
 export default Articles;
