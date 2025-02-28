@@ -22,7 +22,7 @@ const ExcelUploader: React.FC = () => {
           const sheetName = workbook.SheetNames[0];
           const sheet = workbook.Sheets[sheetName];
 
-          const customHeaders = ["id_usuario", "puesto", "departamento", "curso", "start_date", "tutor", "progress"];
+          const customHeaders = ["id_usuario", "puesto", "departamento", "curso", "start_date", "end_date", "tutor", "progress"];
 
           const jsonData = XLSX.utils.sheet_to_json(sheet, {
             header: customHeaders,
