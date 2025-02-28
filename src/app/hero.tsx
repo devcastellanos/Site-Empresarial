@@ -12,7 +12,7 @@ function Hero() {
 
   return (
     <header className="bg-white p-8">
-      <div className="w-full container mx-auto pt-6 pb-12 text-center"> {/* Reduje pb-48 a pb-12 */}
+      <div className="w-full container mx-auto pt-2 pb-14 text-center"> {/* Reduje pb-48 a pb-12 */}
 
         {/* Título más arriba */}
         <Typography

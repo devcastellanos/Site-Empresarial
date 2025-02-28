@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import { Typography } from "@material-tailwind/react";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -42,42 +41,55 @@ const ARTICLES = [
 ];
 
 export function Articles() {
-  const [hoveredArticle, setHoveredArticle] = useState(null);
+  const [hoveredArticle, setHoveredArticle] = useState<number | null>(null);
 
   return (
-    <section className="container mx-auto px-8 py-20 text-center">
-      <Typography variant="h3" color="blue-gray">
-        Herramientas y Plataformas
-      </Typography>
-      <Typography
-        variant="lead"
-        className="my-2 w-full font-normal !text-gray-500 lg:w-5/12 mx-auto text-lg"
-      >
-        Herramientas y plataformas que te ayudarán a potenciar tu desarrollo profesional en tu área laboral.
-      </Typography>
+    <section className="container mx-auto px-8 py-10 text-center">
 
-      {/* Carrusel con Swiper */}
-      <div className="mt-8">
+      <Typography
+          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+          color="blue-gray"
+          className="text-[36px] lg:text-[50px] font-bold leading-tight"
+        >
+          Herramientas y Plataformas
+        </Typography>
+
+        {/* Descripción más pequeña y sin restricciones de margen */}
+        <Typography
+          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+          variant="lead"
+          className="mt-2 text-sm lg:text-base text-gray-700" // Reduje mt-4 a mt-2
+        >
+          Herramientas y plataformas que te ayudarán a potenciar tu desarrollo profesional en tu área laboral.
+        </Typography>
+
+
+      <div className="mt-12">
         <Swiper
           modules={[Autoplay, Pagination]}
-          slidesPerView={3} // Muestra 3 artículos a la vez
-          spaceBetween={20}
-          autoplay={{ delay: 3000, disableOnInteraction: false }} // Autoplay cada 3s
+          slidesPerView={3}
+          spaceBetween={10}
+          autoplay={{ delay: 3000, disableOnInteraction: false }}
           pagination={{ clickable: true }}
-          loop={true} // Carrusel infinito
+          loop={true}
           className="w-full"
         >
           {ARTICLES.map((article, idx) => (
             <SwiperSlide key={idx}>
               <div
-                className={`relative transition-all duration-300 transform ${hoveredArticle === idx ? 'scale-110' : 'scale-90'}`}
+                className={`relative transition-all duration-300 transform ${
+                  hoveredArticle === idx ? 'scale-100' : 'scale-95'
+                }`}
                 onMouseEnter={() => setHoveredArticle(idx)}
                 onMouseLeave={() => setHoveredArticle(null)}
               >
-                {/* Tarjeta */}
-                <ArticleCard img={article.img} title={article.title} />
+                <ArticleCard
+                  img={article.img}
+                  title={article.title}
+                  desc={article.desc}
+                  link={article.link}
+                />
 
-                {/* Overlay con botón */}
                 {hoveredArticle === idx && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white p-4 rounded transition-opacity duration-300">
                     <p className="text-center">{article.desc}</p>
