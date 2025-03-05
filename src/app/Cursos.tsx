@@ -258,7 +258,7 @@ function CourseCatalog() {
   const handleCloseAssignModal = () => {
     setIsAssignModalOpen(false);
     setSelectedCourse(null);
-    setUsersByDepartment([]); // Limpia la lista al cerrar
+    setUsersByDepartment([]); 
   };
 
   const getStatusStyle = (endDate: string) => {
