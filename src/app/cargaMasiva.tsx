@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import * as XLSX from 'xlsx';
-import Swal from 'sweetalert2';
+import React, { useState } from "react";
+import * as XLSX from "xlsx";
+import Swal from "sweetalert2";
 import { Card, Typography, Input, Button } from "@material-tailwind/react";
-import { da } from 'date-fns/locale';
+import { da } from "date-fns/locale";
 
 const ExcelUploader: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
@@ -22,24 +22,26 @@ const ExcelUploader: React.FC = () => {
           const sheetName = workbook.SheetNames[0];
           const sheet = workbook.Sheets[sheetName];
 
-          const customHeaders = ["id_usuario", "puesto", "departamento", "curso", "tutor", "progress"];
+          const customHeaders = [
+            "id_usuario",
+            "puesto",
+            "departamento",
+            "curso",
+            "tutor",
+            "progress",
+          ];
 
-          const jsonData = XLSX.utils.sheet_to_json(sheet, {
-            header: customHeaders,
-            range: 1,
-            defval: null,
-          }).filter(row => Object.values(row as { [key: string]: any }).some(value => value !== null));
-
-          // Agregar la fecha de expiración a cada curso
-          // const updatedData = jsonData.map((row) => {
-          //   if (typeof row === 'object' && row !== null) {
-          //     return {
-          //       ...row,
-          //       end_date: expirationDate || null, // Si no hay fecha seleccionada, asigna null
-          //     };
-          //   }
-          //   return row;
-          // });
+          const jsonData = XLSX.utils
+            .sheet_to_json(sheet, {
+              header: customHeaders,
+              range: 1,
+              defval: null,
+            })
+            .filter((row) =>
+              Object.values(row as { [key: string]: any }).some(
+                (value) => value !== null
+              )
+            );
 
           console.log("Datos procesados:", jsonData);
           setData(jsonData);
@@ -52,23 +54,23 @@ const ExcelUploader: React.FC = () => {
   const handleUpload = async () => {
     if (!data.length) {
       Swal.fire({
-        icon: 'warning',
-        title: 'Atención',
-        text: 'No hay datos para cargar.',
+        icon: "warning",
+        title: "Atención",
+        text: "No hay datos para cargar.",
       });
       return;
     }
 
-   //swal fire estas seguro de cargar esta informacion?
+    //swal fire estas seguro de cargar esta informacion?
     const result = await Swal.fire({
-      title: '¿Estás seguro?',
+      title: "¿Estás seguro?",
       text: "¿Deseas cargar esta información?",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, cargar',
-      cancelButtonText: 'Cancelar'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, cargar",
+      cancelButtonText: "Cancelar",
     });
 
     if (!result.isConfirmed) {
@@ -78,103 +80,132 @@ const ExcelUploader: React.FC = () => {
     console.log("Datos a cargar:", data);
 
     try {
-      const res = await fetch("http://api-cursos.192.168.29.40.sslip.io/updateCargaMasiva", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        "http://api-cursos.192.168.29.40.sslip.io/updateCargaMasiva",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (res.ok) {
         Swal.fire({
-          icon: 'success',
-          title: 'Éxito',
-          text: 'Datos insertados correctamente',
+          icon: "success",
+          title: "Éxito",
+          text: "Datos insertados correctamente",
         });
       } else {
         const errorData = await res.json();
         Swal.fire({
-          icon: 'error',
-          title: 'Error',
+          icon: "error",
+          title: "Error",
           text: `Error en la solicitud: ${errorData.message || res.statusText}`,
         });
       }
     } catch (error) {
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
+        icon: "error",
+        title: "Error",
         text: `Error en la solicitud: ${(error as any).message}`,
       });
     }
   };
 
   return (
-    <Card className="p-6 shadow-lg" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-      <Typography 
-        variant="h2" 
-        color="blue-gray" 
-        className="mb-4" 
-        onPointerEnterCapture={() => {}} 
-        onPointerLeaveCapture={() => {}} 
+    <Card
+      className="p-6 shadow-lg"
+      placeholder=""
+      onPointerEnterCapture={() => {}}
+      onPointerLeaveCapture={() => {}}
+    >
+      <Typography
+        variant="h2"
+        color="blue-gray"
+        className="mb-4"
+        onPointerEnterCapture={() => {}}
+        onPointerLeaveCapture={() => {}}
         placeholder=""
       >
         Cargar archivo Excel
       </Typography>
 
-      <div className="mb-8">
-        <Input
-          type="file"
-          accept=".xlsx, .xls"
-          onChange={handleFileUpload}
-          label="Selecciona un archivo"
-          className="focus:ring-2 focus:ring-blue-500"
-          crossOrigin=""
+      <div className="flex flex-row ">
+        <div className="mb-8 w-44">
+          <label className="block mb-2 text-sm font-medium text-gray-700">
+            Selecciona archivo Excel
+          </label>
+          <Input
+            type="file"
+            accept=".xlsx, .xls"
+            onChange={handleFileUpload}
+            className="focus:ring-2 focus:ring-blue-500 "
+            crossOrigin=""
+            onPointerLeaveCapture={() => {}}
+            onPointerEnterCapture={() => {}}
+          />
+
+          <label className="block mt-4 mb-2 text-sm font-medium text-gray-700">
+            Fecha de Asignación
+          </label>
+          <Input
+            type="date"
+            placeholder="Fecha de expiración del curso"
+            className="focus:ring-2 focus:ring-blue-500 "
+            onChange={(e) => {
+              setExpirationDate(e.target.value);
+              setData((prevData) =>
+                prevData.map((item) => ({
+                  ...item,
+                  start_date: e.target.value,
+                }))
+              );
+            }}
+            crossOrigin=""
+            onPointerLeaveCapture={() => {}}
+            onPointerEnterCapture={() => {}}
+          />
+
+          <label className="block mt-4 mb-2 text-sm font-medium text-gray-700">
+            Fecha de Expiración
+          </label>
+          <Input
+            type="date"
+            placeholder="Fecha de expiración del curso"
+            className="focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => {
+              setExpirationDate(e.target.value);
+              setData((prevData) =>
+                prevData.map((item) => ({ ...item, end_date: e.target.value }))
+              );
+            }}
+            crossOrigin=""
+            onPointerLeaveCapture={() => {}}
+            onPointerEnterCapture={() => {}}
+          />
+
+          <Button
+            color="blue"
+            className="mt-4"
+            onClick={handleUpload}
+            placeholder=""
+            onPointerLeaveCapture={() => {}}
+            onPointerEnterCapture={() => {}}
+          >
+            Cargar datos
+          </Button>
+        </div>
+        <div className="flex-1 ml-8">
+        <Typography
+          variant="h5"
+          color="blue-gray"
+          className="mb-4 text-center"
+          placeholder=""
           onPointerLeaveCapture={() => {}}
           onPointerEnterCapture={() => {}}
-        />
-
-        <label className="block mt-4 mb-2 text-sm font-medium text-gray-700">Fecha de Asignación</label>
-        <Input
-          type="date"
-          placeholder="Fecha de expiración del curso"
-          className="focus:ring-2 focus:ring-blue-500"
-          onChange={(e) => {
-            
-            setExpirationDate(e.target.value);
-            setData(prevData => prevData.map(item => ({ ...item, start_date: e.target.value })))
-          }}
-          crossOrigin=""
-          onPointerLeaveCapture={() => {}}
-          onPointerEnterCapture={() => {}}
-        />
-
-        <label className="block mt-4 mb-2 text-sm font-medium text-gray-700">Fecha de Expiración</label>
-        <Input
-          type="date"
-          placeholder="Fecha de expiración del curso"
-          className="focus:ring-2 focus:ring-blue-500"
-          onChange={(e) => {
-            
-            setExpirationDate(e.target.value);
-            setData(prevData => prevData.map(item => ({ ...item, end_date: e.target.value })))
-          }}
-          crossOrigin=""
-          onPointerLeaveCapture={() => {}}
-          onPointerEnterCapture={() => {}}
-        />
-
-        <Button color="blue" className="mt-4" onClick={handleUpload} placeholder=""
-        onPointerLeaveCapture={() => {}}
-        onPointerEnterCapture={() => {}}>
-          Cargar datos
-        </Button>
-      </div>
-
-      <div>
-        <Typography variant="h4" color="blue-gray" className="mb-4" placeholder=""
-          onPointerLeaveCapture={() => {}}
-          onPointerEnterCapture={() => {}}>
+        >
           Datos cargados:
         </Typography>
 
@@ -184,7 +215,10 @@ const ExcelUploader: React.FC = () => {
               <thead className="bg-blue-gray-50">
                 <tr>
                   {Object.keys(data[0]).map((key, index) => (
-                    <th key={index} className="px-6 py-3 text-left text-xs font-medium text-blue-gray-700 uppercase">
+                    <th
+                      key={index}
+                      className="px-6 py-3 text-left text-xs font-medium text-blue-gray-700 uppercase"
+                    >
                       {key}
                     </th>
                   ))}
@@ -194,7 +228,10 @@ const ExcelUploader: React.FC = () => {
                 {data.map((row, rowIndex) => (
                   <tr key={rowIndex} className="hover:bg-blue-gray-50">
                     {Object.values(row).map((value, colIndex) => (
-                      <td key={colIndex} className="px-6 py-4 whitespace-nowrap text-sm text-blue-gray-900">
+                      <td
+                        key={colIndex}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-blue-gray-900"
+                      >
                         {String(value)}
                       </td>
                     ))}
@@ -204,11 +241,21 @@ const ExcelUploader: React.FC = () => {
             </table>
           </div>
         ) : (
-          <Typography variant="paragraph" color="gray" className="mt-4" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+          <Typography
+            variant="paragraph"
+            color="gray"
+            className="mt-4"
+            placeholder=""
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
+          >
             No se han cargado datos aún.
           </Typography>
         )}
       </div>
+      </div>
+
+      
     </Card>
   );
 };
