@@ -279,7 +279,7 @@ function CourseCatalog() {
   return (
     <div>
       <div style={styles.container}>
-        <h1 style={styles.heading}>Cursos</h1>
+        <h1 style={styles.heading} className="text-3xl font-bold text-center mb-6 ">Cursos</h1>
         <div style={styles.addButtonContainer}>
           <button
             onClick={handleAddCourse}
