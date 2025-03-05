@@ -27,16 +27,16 @@ const ARTICLES = [
     link: "https://gpotarahumara-my.sharepoint.com/...",
   },
   {
-    img: "/image/solicitud.jpg",
-    title: "Formato de solicitud",
-    desc: "Da clic aquí para descargar el formato de solicitud de cursos.",
-    link: "https://gpotarahumara-my.sharepoint.com/...",
-  },
-  {
     img: "/image/Convenio.png",
     title: "Convenios Educativos",
     desc: "Da clic aquí para conocer los convenios educativos que tenemos.",
     link: "/Convenios",
+  },
+  {
+    img: "/image/solicitud.jpg",
+    title: "Formato de solicitud",
+    desc: "Da clic aquí para descargar el formato de solicitud de cursos.",
+    link: 'https://gpotarahumara-my.sharepoint.com/...',
   },
 ];
 
