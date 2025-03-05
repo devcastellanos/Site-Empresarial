@@ -32,6 +32,10 @@ function CourseCatalog({ onAddCourse }: Props) {
   });
 
   const handleAddMoodle = async (newCourse: Course) => {
+    if (!newCourse.title || !newCourse.tutor) {
+      Swal.fire('Error', 'El título y el instructor son obligatorios', 'error');
+      return;
+    }
     try {
       const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/agregarCurso', {
         method: 'POST', 
