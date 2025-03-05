@@ -63,7 +63,6 @@ export function Articles() {
           Herramientas y plataformas que te ayudarán a potenciar tu desarrollo profesional en tu área laboral.
         </Typography>
 
-
       <div className="mt-12">
         <Swiper
           modules={[Autoplay, Pagination]}
