@@ -15,21 +15,18 @@ import {
   DocumentIcon,
   NewspaperIcon,
   ClipboardDocumentIcon,
-  BookOpenIcon
+  BookOpenIcon,
 } from "@heroicons/react/24/solid";
-import Hero from "@/app/hero";
 import Image from "next/image";
-import axios from "axios";
-
-import { useAuth }  from '../app/hooks/useAuth';
-import { is } from "date-fns/locale";
+import { useAuth } from "../app/hooks/useAuth";
 
 interface NavItemProps {
   children: React.ReactNode;
   href?: string;
+  className?: string;
 }
 
-function NavItem({ children, href }: NavItemProps) {
+function NavItem({ children, href, className }: NavItemProps) {
   return (
     <li>
       <Typography
@@ -37,8 +34,10 @@ function NavItem({ children, href }: NavItemProps) {
         href={href || "#"}
         variant="paragraph"
         color="gray"
-        className="flex items-center gap-2 font-medium text-gray-900"
-        placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+        className={`flex items-center gap-2 font-medium text-gray-200 ${className}`}
+        placeholder=""
+        onPointerEnterCapture={() => {}}
+        onPointerLeaveCapture={() => {}}
       >
         {children}
       </Typography>
@@ -48,112 +47,90 @@ function NavItem({ children, href }: NavItemProps) {
 
 export function Navbar() {
   const [open, setOpen] = React.useState(false);
-  const { isAuthenticated, login, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
+
   const handleOpen = () => setOpen((cur) => !cur);
+
   const NAV_MENU = [
-    {
-      name: "Home",
-      icon: RectangleStackIcon,
-      href: "/",
-    },
-    {
-      name: "Noti-Tarahumara",
-      icon: NewspaperIcon,
-      href: "/Blog",
-    },
-    {name: "Kardex",
-      icon: ClipboardDocumentIcon,
-      href: "/kardex",
-    },
-    ...(isAuthenticated? [
-  
-    {
-      name: "Cursos"  ,
-      icon: BookOpenIcon,
-      href: "/Cursos",
-    },
-    {
-      name:"Cargar Archivos excel",
-      icon: DocumentIcon,
-      href:"/cargaMasiva"
-    },
-    {
-      name:"Usuarios",
-      icon: UserCircleIcon,
-      href:"/Usuarios"
-    },
-    ]: []),
-  
+    { name: "Home", icon: RectangleStackIcon, href: "/" },
+    { name: "Noti-Tarahumara", icon: NewspaperIcon, href: "/Blog" },
+    { name: "Kardex", icon: ClipboardDocumentIcon, href: "/kardex" },
+    ...(isAuthenticated
+      ? [
+          { name: "Cursos", icon: BookOpenIcon, href: "/Cursos" },
+          { name: "Cargar Archivos Excel", icon: DocumentIcon, href: "/cargaMasiva" },
+          { name: "Usuarios", icon: UserCircleIcon, href: "/Usuarios" },
+        ]
+      : []),
   ];
-  React.useEffect(() => { 
-    console.log('isAuthenticated', isAuthenticated);
-    window.addEventListener(
-      "resize",
-      () => window.innerWidth >= 960 && setOpen(false)
-    );
-  }, [isAuthenticated]);
-
-    
-
 
   return (
-    <MTNavbar 
-      placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-      shadow={false} 
-      fullWidth 
-      className="border-0 sticky top-0 z-50" 
+    <MTNavbar
+      shadow={false}
+      fullWidth
+      className="bg-[#8B0000] bg-opacity-75 backdrop-blur-md border-0 sticky top-0 z-50 transition-all duration-300"
+      placeholder=""
+      onPointerEnterCapture={() => {}}
+      onPointerLeaveCapture={() => {}}
     >
       <div className="container mx-auto flex items-center justify-between">
-        <Image
-            width={200}
-            height={100}
-            src={"/image/logo.png"}
-            alt={"Grupo Tarahumara"}
-          />
+        {/* Logo */}
+        <Image width={200} height={100} src={"/image/logo.png"} alt={"Grupo Tarahumara"} />
 
+        {/* Menú de navegación */}
         <ul className="ml-10 hidden items-center gap-8 lg:flex">
           {NAV_MENU.map(({ name, icon: Icon, href }) => (
-            <NavItem key={name} href={href}>
+            <NavItem key={name} href={href} className="text-white">
               <Icon className="h-5 w-5" />
               {name}
             </NavItem>
           ))}
         </ul>
-        <div className="hidden items-center gap-2 lg:flex">
 
+        {/* Botón de sesión */}
+        <div className="hidden items-center gap-2 lg:flex">
           {isAuthenticated ? (
-            <Button 
-              onClick={logout} color="blue-gray" className="mb-4" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
+            <Button
+              onClick={logout}
+              color="blue-gray"
+              className="mb-4"
+              placeholder=""
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+            >
               Cerrar Sesión
             </Button>
           ) : (
             <a href="/Login">
-              <Button 
-                variant="text" 
-                placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+              <Button
+                variant="text"
+                placeholder=""
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
               >
                 Iniciar Sesión
               </Button>
             </a>
           )}
-          
         </div>
+
+        {/* Menú móvil */}
         <IconButton
-        placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           variant="text"
           color="gray"
           onClick={handleOpen}
           className="ml-auto inline-block lg:hidden"
+          placeholder=""
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
         >
-          {open ? (
-            <XMarkIcon strokeWidth={2} className="h-6 w-6" />
-          ) : (
-            <Bars3Icon strokeWidth={2} className="h-6 w-6" />
-          )}
+          {open ? <XMarkIcon strokeWidth={2} className="h-6 w-6" /> : <Bars3Icon strokeWidth={2} className="h-6 w-6" />}
         </IconButton>
       </div>
+
+      {/* Menú desplegable móvil */}
       <Collapse open={open}>
-        <div className="container mx-auto mt-3 border-t border-gray-200 px-2 pt-4">
+        <div className="container mx-auto mt-3 border-t border-gray-200 px-2 pt-4 bg-[#8B0000] bg-opacity-90">
           <ul className="flex flex-col gap-4">
             {NAV_MENU.map(({ name, icon: Icon }) => (
               <NavItem key={name}>
@@ -162,22 +139,6 @@ export function Navbar() {
               </NavItem>
             ))}
           </ul>
-          <div className="mt-6 mb-4 flex items-center gap-2">
-            <Button 
-              variant="text" 
-              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-            >
-              Iniciar Sesión
-            </Button>
-            <a href="https://www.material-tailwind.com/blocks" target="_blank">
-              <Button 
-                color="gray" 
-                placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-              >
-                blocks
-              </Button>
-            </a>
-          </div>
         </div>
       </Collapse>
     </MTNavbar>

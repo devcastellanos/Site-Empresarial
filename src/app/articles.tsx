@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Typography } from "@material-tailwind/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
@@ -12,102 +12,91 @@ const ARTICLES = [
     img: "/image/crehana.png",
     title: "Crehana",
     desc: "Crehana es una plataforma de educación online que ofrece cursos de diseño, marketing, fotografía, programación y más.",
-    link: 'https://www.crehana.com/entrar/',
+    link: "https://www.crehana.com/entrar/",
   },
   {
     img: "/image/Plan.webp",
     title: "Plan de Capacitación",
-    desc: "Da clic para conocer el Plan anual de capacitación actualizada",
-    link: '',
+    desc: "Da clic para conocer el Plan anual de capacitación actualizada.",
+    link: "",
   },
   {
     img: "/image/asistencia.png",
     title: "Asistencia",
     desc: "Da clic aquí para descargar la lista de asistencia de la capacitación de Tarahumara.",
-    link: 'https://gpotarahumara-my.sharepoint.com/...',
+    link: "https://gpotarahumara-my.sharepoint.com/...",
   },
   {
     img: "/image/solicitud.jpg",
     title: "Formato de solicitud",
     desc: "Da clic aquí para descargar el formato de solicitud de cursos.",
-    link: 'https://gpotarahumara-my.sharepoint.com/...',
+    link: "https://gpotarahumara-my.sharepoint.com/...",
   },
   {
     img: "/image/Convenio.png",
     title: "Convenios Educativos",
     desc: "Da clic aquí para conocer los convenios educativos que tenemos.",
-    link: '/Convenios',
-  }
+    link: "/Convenios",
+  },
 ];
 
 export function Articles() {
-  const [hoveredArticle, setHoveredArticle] = useState<number | null>(null);
-
   return (
-    <section className="container mx-auto px-8 py-10 text-center">
+    <section className="w-full min-h-screen bg-gray-900 bg-opacity-95 text-center py-10 px-4 md:px-16">
+      
+      {/* Título */}
+      <Typography color="white" className="text-[36px] lg:text-[50px] font-bold leading-tight" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+        Herramientas y Plataformas
+      </Typography>
 
-      <Typography
-          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-          color="blue-gray"
-          className="text-[36px] lg:text-[50px] font-bold leading-tight"
-        >
-          Herramientas y Plataformas
-        </Typography>
+      {/* Descripción */}
+      <Typography variant="lead" color="white" className="mt-2 text-sm lg:text-base" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+        Herramientas y plataformas que te ayudarán a potenciar tu desarrollo profesional en tu área laboral.
+      </Typography>
 
-        {/* Descripción más pequeña y sin restricciones de margen */}
-        <Typography
-          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-          variant="lead"
-          className="mt-2 text-sm lg:text-base text-gray-700" // Reduje mt-4 a mt-2
-        >
-          Herramientas y plataformas que te ayudarán a potenciar tu desarrollo profesional en tu área laboral.
-        </Typography>
-
-      <div className="mt-12">
+      {/* Carrusel */}
+      <div className="mt-12 relative">
         <Swiper
           modules={[Autoplay, Pagination]}
-          slidesPerView={3}
-          spaceBetween={10}
           autoplay={{ delay: 3000, disableOnInteraction: false }}
-          pagination={{ clickable: true }}
+          pagination={{ clickable: true, bulletClass: "swiper-pagination-bullet-custom" }}
           loop={true}
-          className="w-full"
+          spaceBetween={16}
+          breakpoints={{
+            640: { slidesPerView: 1 },
+            768: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
+          }}
+          className="w-full pb-14" // Mayor separación de la paginación
         >
           {ARTICLES.map((article, idx) => (
             <SwiperSlide key={idx}>
-              <div
-                className={`relative transition-all duration-300 transform ${
-                  hoveredArticle === idx ? 'scale-100' : 'scale-95'
-                }`}
-                onMouseEnter={() => setHoveredArticle(idx)}
-                onMouseLeave={() => setHoveredArticle(null)}
-              >
+              <div className="transition-all duration-300 transform hover:scale-105">
                 <ArticleCard
                   img={article.img}
                   title={article.title}
                   desc={article.desc}
                   link={article.link}
                 />
-
-                {hoveredArticle === idx && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white p-4 rounded transition-opacity duration-300">
-                    <p className="text-center">{article.desc}</p>
-                    {article.link && (
-                      <a
-                        href={article.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-all"
-                      >
-                        Ir al enlace
-                      </a>
-                    )}
-                  </div>
-                )}
               </div>
             </SwiperSlide>
           ))}
         </Swiper>
+
+        <style jsx global>{`
+          .swiper-pagination {
+            bottom: 5px !important; /* Separa la paginación */
+          }
+          .swiper-pagination-bullet {
+            width: 10px;
+            height: 10px;
+            background-color: white; 
+   
+          }
+          .swiper-pagination-bullet-active {
+            background-color: #007bff; /* Bullet activo en azul */
+          }
+        `}</style>
       </div>
     </section>
   );

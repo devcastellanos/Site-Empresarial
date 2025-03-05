@@ -11,44 +11,46 @@ function Hero() {
   }
 
   return (
-    <header className="bg-white p-8">
-      <div className="w-full container mx-auto pt-2 pb-14 text-center"> {/* Reduje pb-48 a pb-12 */}
+    <header className="relative w-full h-screen flex items-center justify-center text-center">
+      {/* Video de fondo */}
+      <video 
+        autoPlay 
+        loop 
+        muted 
+        className="absolute top-0 left-0 w-full h-full object-cover"
+      >
+        <source src="/image/background.mp4" type="video/mp4" />
+        Tu navegador no soporta videos.
+      </video>
 
-        {/* Título más arriba */}
+      {/* Capa oscura para mejorar visibilidad del texto */}
+      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50"></div>
+
+      {/* Contenido */}
+      <div className="relative z-10 w-full max-w-3xl px-8">
         <Typography
-          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-          color="blue-gray"
+          color="white"
           className="text-[36px] lg:text-[50px] font-bold leading-tight"
+          placeholder=""
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
         >
           Capacitacion Tarahumara
         </Typography>
 
-        {/* Descripción más pequeña y sin restricciones de margen */}
         <Typography
-          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
           variant="lead"
-          className="mt-2 text-sm lg:text-base text-gray-700" // Reduje mt-4 a mt-2
+          className="mt-2 text-sm lg:text-base text-gray-200"
+          placeholder=""
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
         >
           Descubre herramientas, presentaciones, guías y contenido multimedia diseñados para potenciar tu desarrollo profesional en tu área laboral.
           {'\n'}¡Aquí tienes todo lo necesario para crecer y avanzar!
         </Typography>
-
-        {/* Formulario */}
-        <div className="grid place-items-start justify-center gap-2">
-        </div>
-      </div>
-
-      {/* Imagen */}
-      <div className="w-full lg:container lg:mx-auto">
-        <Image
-          width={1920}
-          height={1080}
-          src="/image/Apples.jpg"
-          alt="background"
-          className="h-96 w-full rounded-lg object-cover lg:h-[21rem]"
-        />
       </div>
     </header>
   );
 }
+
 export default Hero;
