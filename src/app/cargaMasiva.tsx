@@ -22,7 +22,7 @@ const ExcelUploader: React.FC = () => {
           const sheetName = workbook.SheetNames[0];
           const sheet = workbook.Sheets[sheetName];
 
-          const customHeaders = ["id_usuario", "puesto", "departamento", "curso", "start_date", "end_date", "tutor", "progress"];
+          const customHeaders = ["id_usuario", "puesto", "departamento", "curso", "tutor", "progress"];
 
           const jsonData = XLSX.utils.sheet_to_json(sheet, {
             header: customHeaders,
@@ -31,18 +31,18 @@ const ExcelUploader: React.FC = () => {
           }).filter(row => Object.values(row as { [key: string]: any }).some(value => value !== null));
 
           // Agregar la fecha de expiración a cada curso
-          const updatedData = jsonData.map((row) => {
-            if (typeof row === 'object' && row !== null) {
-              return {
-                ...row,
-                end_date: expirationDate || null, // Si no hay fecha seleccionada, asigna null
-              };
-            }
-            return row;
-          });
+          // const updatedData = jsonData.map((row) => {
+          //   if (typeof row === 'object' && row !== null) {
+          //     return {
+          //       ...row,
+          //       end_date: expirationDate || null, // Si no hay fecha seleccionada, asigna null
+          //     };
+          //   }
+          //   return row;
+          // });
 
-          console.log("Datos procesados:", updatedData);
-          setData(updatedData);
+          console.log("Datos procesados:", jsonData);
+          setData(jsonData);
         }
       };
       reader.readAsArrayBuffer(file);
@@ -134,7 +134,22 @@ const ExcelUploader: React.FC = () => {
           onPointerEnterCapture={() => {}}
         />
 
-        <label className="block mt-4 mb-2 text-sm font-medium text-gray-700">Fecha de expiración</label>
+        <label className="block mt-4 mb-2 text-sm font-medium text-gray-700">Fecha de Asignación</label>
+        <Input
+          type="date"
+          placeholder="Fecha de expiración del curso"
+          className="focus:ring-2 focus:ring-blue-500"
+          onChange={(e) => {
+            
+            setExpirationDate(e.target.value);
+            setData(prevData => prevData.map(item => ({ ...item, start_date: e.target.value })))
+          }}
+          crossOrigin=""
+          onPointerLeaveCapture={() => {}}
+          onPointerEnterCapture={() => {}}
+        />
+
+        <label className="block mt-4 mb-2 text-sm font-medium text-gray-700">Fecha de Expiración</label>
         <Input
           type="date"
           placeholder="Fecha de expiración del curso"
