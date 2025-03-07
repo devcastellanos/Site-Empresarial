@@ -68,7 +68,7 @@ export function Navbar() {
     <MTNavbar
       shadow={false}
       fullWidth
-      className="bg-[#8B0000] bg-opacity-75 backdrop-blur-md border-0 sticky top-0 z-50 transition-all duration-300"
+      className="bg-[#818181] bg-opacity-30 backdrop-blur-md border-0 sticky top-0 z-50 transition-all duration-300"
       placeholder=""
       onPointerEnterCapture={() => {}}
       onPointerLeaveCapture={() => {}}
@@ -130,7 +130,7 @@ export function Navbar() {
 
       {/* Menú desplegable móvil */}
       <Collapse open={open}>
-        <div className="container mx-auto mt-3 border-t border-gray-200 px-2 pt-4 bg-[#8B0000] bg-opacity-90">
+        <div className="container mx-auto mt-3 border-t border-gray-200 px-2 pt-4 bg-[#818181] bg-opacity-90">
           <ul className="flex flex-col gap-4">
             {NAV_MENU.map(({ name, icon: Icon }) => (
               <NavItem key={name}>
