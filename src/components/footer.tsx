@@ -1,61 +1,32 @@
-import {
-  Typography,
-  IconButton,
-  Input,
-  Button,
-} from "@material-tailwind/react";
-
 const CURRENT_YEAR = new Date().getFullYear();
-
 
 export function Footer() {
   return (
-    <footer className="pb-5 p-10 md:pt-10">
-      <div className="container flex flex-col mx-auto">
-        <div className="flex !w-full py-10 mb-5 md:mb-20 flex-col justify-center !items-center bg-gray-900 container max-w-6xl mx-auto rounded-2xl p-5 ">
-          <Typography
-           placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-            className="text-2xl md:text-3xl text-center font-bold "
-            color="white"
-          >
-            Join our community!
-          </Typography>
-          <Typography
-            color="white"
-            className=" md:w-7/12 text-center my-3 !text-base"
-            placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-          >
-            Get news in your inbox every week! We hate spam too, so no worries
-            about this.
-          </Typography>
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 md:flex-row">
-            <div className="w-80">
-              {/* @ts-ignore */}
-              <Input label="Email" color="white" />
-            </div>
-            <Button 
-              size="md" 
-              className="lg:w-32" 
-              fullWidth 
-              color="white" 
-              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-            >
-              subscribe
-            </Button>
-          </div>
+    <footer className="flex justify-center items-center p-8 bg-gray-900 text-gray-300">
+      {/* Tarjeta elegante y extendida */}
+      <div className="max-w-md w-full bg-gray-800 rounded-lg p-6 md:p-8 text-center shadow-xl">
+        <h3 className="text-xl font-semibold tracking-wide text-white">
+          Contacto - Área de Capacitación
+        </h3>
+        <p className="text-sm mt-2 text-gray-400">
+          Para consultas sobre capacitaciones, puedes contactar a:
+        </p>
+
+        <div className="mt-4">
+          <p className="text-lg font-medium text-white">Mariana Pérez</p>
+          <p className="text-sm text-gray-400">📧 mariana.perez@grupotarahumara.com.mx</p>
         </div>
 
-        <Typography
-         placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-          color="blue-gray"
-          className="text-center mt-12 font-normal !text-gray-700" 
-        >
-          &copy; {CURRENT_YEAR} Made by{" "}
-          <a href=" " target="_blank">
-          Sistemas Tarahumara
-          </a>
-          .
-        </Typography>
+        <div className="mt-4">
+          <p className="text-lg font-medium text-white">Néstor Bañuelos</p>
+          <p className="text-sm text-gray-400">📧 nestor.bañuelos@grupotarahumara.com.mx</p>
+        </div>
+
+        <div className="border-t border-gray-700 mt-6 pt-4">
+          <p className="text-xs text-gray-500">
+            &copy; {CURRENT_YEAR} Grupo Tarahumara - Todos los derechos reservados.
+          </p>
+        </div>
       </div>
     </footer>
   );

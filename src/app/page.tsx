@@ -152,6 +152,9 @@ export default function Campaign() {
           </Swiper>
         </motion.div>
       </motion.section>
+      <div>
+      <Footer />
+    </div>
     </>
   );
 }

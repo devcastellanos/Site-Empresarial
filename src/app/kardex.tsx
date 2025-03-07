@@ -376,23 +376,25 @@ const Kardex = () => {
         <div
           style={{
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            justifyContent: "center", // Centra horizontalmente
+            alignItems: "center", // Centra verticalmente
             marginBottom: "20px",
+            width: "100%", // Ocupa todo el ancho disponible
           }}
         >
           <Image
             width={150}
             height={150}
-            style={{ width: "180px", height: "auto" }}
+            style={{
+              width: "180px",
+              height: "auto",
+              display: "block", // Evita espacios innecesarios
+            }}
             src="https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_300,w_300,f_auto,q_auto/6088316/314367_858588.png"
             alt="Grupo Tarahumara"
-          ></Image>
-          <div style={{ textAlign: "right", fontSize: "16px" }}>
-            <p> Grupo Tarahumara</p>
-            <p> 2025</p>
-          </div>
+          />
         </div>
+
 
         {/* i want an input that you put the Numero/user.id and after that put the infomration of the personal in the labels*/}
         <h2
@@ -408,86 +410,112 @@ const Kardex = () => {
         </h2>
 
         <div
-          style={{ marginBottom: "20px", padding: "10px", borderRadius: "5px" }}
+          style={{
+            marginBottom: "20px",
+            padding: "10px",
+            borderRadius: "8px",
+            backgroundColor: "#f9f9f9",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+          }}
         >
-          <label htmlFor="userIdInput">
-            <strong>Número Empleado:</strong>
+          <label htmlFor="userIdInput" style={{ fontWeight: "bold" }}>
+            Número Empleado:
           </label>
           <input
             type="number"
             id="userIdInput"
             onChange={handleUserChange}
             style={{
-              marginLeft: "10px",
               padding: "5px",
               borderRadius: "5px",
               border: "1px solid #ccc",
+              width: "100px",
+              fontSize: "14px",
             }}
           />
         </div>
+
         {selectedUser && (
           <div
             key={selectedUser.Personal}
             style={{
               display: "flex",
-              justifyContent: "space-between",
               alignItems: "center",
-              marginBottom: "20px",
-              borderBottom: "1px solid #ccc",
-              paddingBottom: "20px",
+              gap: "20px",
+              padding: "20px",
+              borderRadius: "8px",
+              backgroundColor: "#fff",
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
             }}
           >
-            <div style={{ marginBottom: "20px" }}>
-              <p>
-                <strong>Nombre:</strong> {selectedUser.Nombre}
-              </p>
-              <p>
-                <strong>Apellido Paterno:</strong>{" "}
-                {selectedUser.ApellidoPaterno}
-              </p>
-              <p>
-                <strong>Apellido Materno:</strong>{" "}
-                {selectedUser.ApellidoMaterno}
-              </p>
-              <p>
-                <strong>Estatus:</strong> {selectedUser.Estatus}
-              </p>
-              <p>
-                <strong>Puesto:</strong> {selectedUser.Puesto}
-              </p>
-              <p>
-                <strong>Departamento:</strong> {selectedUser.Departamento}
-              </p>
-              <p>
-                <strong>Tipo de Pago:</strong> {selectedUser.PeriodoTipo}
-              </p>
+            {/* Foto del empleado */}
+            <div style={{ textAlign: "center", flexShrink: 0, width: "200px" }}>
+              <Image
+                width={180}
+                height={180}
+                src={`/api/employees/${formattedUserId}`}
+                alt="Foto del empleado"
+                style={{
+                  borderRadius: "50%",
+                  border: "3px solid #ddd",
+                  objectFit: "cover",
+                  display: "block",
+                  margin: "0 auto",
+                }}
+              />
+              {isAuthenticated && (
+                <div style={{ marginTop: "10px" }}>
+                  <Input type="file" accept="image/*" multiple onChange={handleChangeImage} />
+                </div>
+              )}
             </div>
 
-            <div>
-              <Image
-                width={150}
-                height={150}
-                src={`/api/employees/${formattedUserId}`}
-
-                alt="Foto del empleado"
-              ></Image>
-              {isAuthenticated ? (
-                <div style={{ textAlign: "center", marginTop: "10px" }}>
-                  <Input
-                    type="file"
-                    placeholder="Imagen"
-                    accept="image/*"
-                    multiple
-                    crossOrigin={""}
-                    onPointerEnterCapture={() => {}}
-                    onPointerLeaveCapture={() => {}}
-                    onChange={handleChangeImage}
-                  />
-                </div>
-              ) : null}
+            {/* Tabla de información del empleado */}
+            <div style={{ flex: 1 }}>
+              <table
+                style={{
+                  width: "100%",
+                  borderCollapse: "collapse",
+                  backgroundColor: "#fafafa",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <tbody>
+                  {[
+                    ["Nombre", selectedUser.Nombre],
+                    ["Apellido Paterno", selectedUser.ApellidoPaterno],
+                    ["Apellido Materno", selectedUser.ApellidoMaterno],
+                    ["Estatus", selectedUser.Estatus],
+                    ["Puesto", selectedUser.Puesto],
+                    ["Departamento", selectedUser.Departamento],
+                    ["Tipo de Pago", selectedUser.PeriodoTipo],
+                  ].map(([label, value]) => (
+                    <tr key={label} style={{ borderBottom: "1px solid #ddd" }}>
+                      <td
+                        style={{
+                          padding: "8px",
+                          fontWeight: "bold",
+                          backgroundColor: "#f0f0f0",
+                          textAlign: "left",
+                          width: "40%",
+                        }}
+                      >
+                        {label}:
+                      </td>
+                      <td style={{ padding: "8px", textAlign: "left" }}>{value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
+
 
         {/* Courses Section */}
 
@@ -688,19 +716,43 @@ const Kardex = () => {
             onChange={(e) => setNewCourseId(Number(e.target.value))}
             style={{
               width: "75%",
-              border: "1px solid #9A3324",
-              borderRadius: "5px",
-              padding: "10px",
-              marginRight: "10px",
+              border: "2px solid #9A3324",
+              borderRadius: "8px",
+              padding: "12px",
+              fontSize: "16px",
+              backgroundColor: "#fff",
+              color: "#333",
+              outline: "none",
+              cursor: "pointer",
+              transition: "all 0.3s ease-in-out",
+              boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0px 6px 12px rgba(0, 0, 0, 0.15)")}
+            onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)")}
+            onFocus={(e) => (e.currentTarget.style.backgroundColor = "#fdf2f2")}
+            onBlur={(e) => (e.currentTarget.style.backgroundColor = "#fff")}
           >
-      <option value="">Seleccionar Curso</option>
-      {cursosPresenciales.map((course) => (
-        <option key={course.id_course} value={course.id_course}>
-          {course.title}
-        </option>
-      ))}
-    </select>
+            <option value="" disabled style={{ fontWeight: "bold", color: "#9A3324" }}>
+              Seleccionar Curso
+            </option>
+            {cursosPresenciales.map((course) => (
+              <option
+                key={course.id_course}
+                value={course.id_course}
+                style={{
+                  padding: "10px",
+                  fontSize: "14px",
+                  backgroundColor: "#fff",
+                  transition: "background 0.3s",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f8e1e1")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#fff")}
+              >
+                {course.title}
+              </option>
+            ))}
+          </select>
+
 
     {newCourseId && (
       <div
