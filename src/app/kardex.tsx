@@ -468,7 +468,16 @@ const Kardex = () => {
               />
               {isAuthenticated && (
                 <div style={{ marginTop: "10px" }}>
-                  <Input type="file" accept="image/*" multiple onChange={handleChangeImage} />
+                  <Input 
+  type="file" 
+  accept="image/*" 
+  multiple 
+  onChange={handleChangeImage} 
+  crossOrigin="" 
+  onPointerEnterCapture={() => {}} 
+  onPointerLeaveCapture={() => {}} 
+/>
+
                 </div>
               )}
             </div>
