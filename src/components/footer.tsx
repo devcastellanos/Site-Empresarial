@@ -32,7 +32,12 @@ export function Footer() {
 }
 
 // Componente reutilizable para contactos
-function ContactCard({ name, email }) {
+interface ContactCardProps {
+  name: string;
+  email: string;
+}
+
+function ContactCard({ name, email }: ContactCardProps) {
   return (
     <div className="flex items-center gap-4 bg-gray-700/50 p-4 rounded-lg shadow-lg hover:bg-gray-600/50 transition-all duration-300 w-full max-w-sm md:max-w-none">
       <User className="w-8 h-8 text-gray-300" />
