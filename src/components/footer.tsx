@@ -3,6 +3,8 @@ import { Mail, User } from "lucide-react";
 const CURRENT_YEAR = new Date().getFullYear();
 
 export function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="flex justify-center p-10 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-gray-300">
       {/* Tarjeta extendida con Glassmorphism */}
@@ -23,7 +25,7 @@ export function Footer() {
         {/* Línea divisoria */}
         <div className="border-t border-gray-600 mt-6 pt-4">
           <p className="text-xs text-gray-500">
-            &copy; {CURRENT_YEAR} Grupo Tarahumara - Todos los derechos reservados.
+            &copy; {currentYear} Grupo Tarahumara - Todos los derechos reservados.
           </p>
         </div>
       </div>

@@ -89,12 +89,26 @@ export function Navbar() {
         {/* Botón de sesión */}
         <div className="hidden items-center gap-2 lg:flex">
           {isAuthenticated ? (
-            <button onClick={logout} color="blue-gray" className="mb-0">
+            <Button
+              onClick={logout}
+              color="blue-gray"
+              className="mb-0"
+              placeholder=""
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+            >
               Cerrar Sesión
-            </button>
+            </Button>
           ) : (
             <a href="/Login">
-              <button variant="text">Iniciar Sesión</button>
+              <Button
+                variant="text"
+                placeholder=""
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
+                Iniciar Sesión
+              </Button>
             </a>
           )}
         </div>
@@ -105,6 +119,9 @@ export function Navbar() {
           color="gray"
           onClick={handleOpen}
           className="ml-auto inline-block lg:hidden"
+          placeholder=""
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
         >
           {open ? <XMarkIcon strokeWidth={2} className="h-6 w-6" /> : <Bars3Icon strokeWidth={2} className="h-6 w-6" />}
         </IconButton>
