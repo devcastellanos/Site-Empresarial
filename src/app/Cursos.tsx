@@ -7,7 +7,7 @@ import { FaEye, FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import CourseCatalog2 from "./CrearCurso";
 import AssignDepartmentModal from "./Department"; // Asegúrate de que la ruta es correcta
 import { motion } from "framer-motion";
-import { Card } from "@material-tailwind/react";
+import { Card, Dialog } from "@material-tailwind/react";
 
 interface CourseJson {
   id_course: number;
@@ -28,7 +28,10 @@ interface Course {
 interface AssignDepartmentModalProps {
   course: { id_course: number; title: string };
   onClose: () => void;
-  onAssign: (course: { id_course: number; title: string }, department: string) => void;
+  onAssign: (
+    course: { id_course: number; title: string },
+    department: string
+  ) => void;
   departments: string[];
 }
 
@@ -260,22 +263,7 @@ function CourseCatalog() {
   const handleCloseAssignModal = () => {
     setIsAssignModalOpen(false);
     setSelectedCourse(null);
-    setUsersByDepartment([]); 
-  };
-
-  const getStatusStyle = (endDate: string) => {
-    const today = new Date();
-    const expirationDate = new Date(endDate);
-    const timeDiff = expirationDate.getTime() - today.getTime();
-    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-    if (daysDiff < 0) {
-      return styles.expired; // Curso expirado
-    } else if (daysDiff <= 7 && daysDiff >= 0) {
-      return styles.aboutToExpire; // Curso próximo a expirar (en 7 días o menos)
-    } else {
-      return styles.active; // Curso vigente
-    }
+    setUsersByDepartment([]);
   };
 
   return (
@@ -290,138 +278,163 @@ function CourseCatalog() {
         <source src="/image/background.mp4" type="video/mp4" />
       </motion.video>
 
-      <Card 
-        className="p-8 shadow-2xl bg-white/80 backdrop-blur-lg rounded-2xl w-3/4" 
-        placeholder="" 
-        onPointerEnterCapture={() => {}} 
-        onPointerLeaveCapture={() => {}}>
-      <div style={styles.container}>
-        <h1 style={styles.heading} className="text-3xl font-bold text-center mb-6 ">Cursos</h1>
-        <div style={styles.addButtonContainer}>
-          <button
-            onClick={handleAddCourse}
-            style={{ ...styles.addButton, marginRight: "20px" }}
+      <Card
+        className="p-8 shadow-2xl bg-white/80 backdrop-blur-lg rounded-2xl w-3/4"
+        placeholder=""
+        onPointerEnterCapture={() => {}}
+        onPointerLeaveCapture={() => {}}
+      >
+        <div style={styles.container}>
+          <h1
+            style={styles.heading}
+            className="text-3xl font-bold text-center mb-6 "
           >
-            <FaPlus style={{ marginRight: "8px" }} />
-            Agregar Curso
-          </button>
-          <div style={{ display: "flex", width: "100%" }}>
-            <input
-              type="text"
-              placeholder="Buscar por título o descripción"
-              value={searchTerm}
-              onChange={handleSearchChange}
-              style={{ ...styles.input, marginRight: "20px" }}
-            />
-          </div>
-        </div>
-        {/* Barra de búsqueda */}
-
-        {/* Tabla de cursos */}
-        <table style={styles.table}>
-          <thead>
-            <tr>
-              <th style={styles.th}>Título</th>
-              <th style={styles.th}>Descripción</th>
-              <th style={styles.th}>impartido por</th>
-              <th style={styles.th}>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCourses.length > 0 ? (
-              filteredCourses.map((course, index) => (
-                <tr
-                  key={
-                    course.id_course
-                      ? course.id_course
-                      : `${index}-${course.id_course}`
-                  }
-                >
-                  <td style={styles.td}>{course.title}</td>
-                  <td style={styles.td}>{course.description}</td>
-                  <td style={styles.td}>{course.tutor}</td>
-                  <td style={{ ...styles.td, width: "240px" }}>
-                    <button
-                      onClick={() => handleOpenDialog(course)}
-                      style={styles.viewButton}
-                    >
-                      <FaEye /> Ver
-                    </button>
-                    <button
-                      onClick={() => handleOpenEditDialog(course)}
-                      style={styles.editButton}
-                    >
-                      <FaEdit /> Editar
-                    </button>
-                    <button
-                      onClick={() => handleDeleteCourse(course)}
-                      style={styles.button}
-                    >
-                      <FaTrash /> Eliminar
-                    </button>
-                    <button
-                      onClick={() => handleOpenAssignModal(course)}
-                      style={{
-                        backgroundColor: "green",
-                        color: "white",
-                        padding: "5px 10px",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Asignar Departamento
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={5} style={styles.noResults}>
-                  No se encontraron cursos.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-
-        {/* Fondo borroso y diálogo para ver la información del curso */}
-        {selectedCourse && isDialogOpen && (
-          <div>
-            <div style={styles.blurBackground}></div>
-            <div style={styles.dialog}>
-              <h2>Detalles del Curso</h2>
-              <p>
-                <strong>Título:</strong> {selectedCourse.title}
-              </p>
-              <p>
-                <strong>Descripción:</strong> {selectedCourse.description}
-              </p>
-              <p>
-                <strong>Impartido por:</strong>
-                {selectedCourse.tutor}
-              </p>
-
-              <button onClick={handleCloseDialog} style={styles.closeButton}>
-                Cerrar
-              </button>
+            Cursos
+          </h1>
+          <div style={styles.addButtonContainer}>
+            <button
+              onClick={handleAddCourse}
+              style={{ ...styles.addButton, marginRight: "20px" }}
+            >
+              <FaPlus style={{ marginRight: "8px" }} />
+              Agregar Curso
+            </button>
+            <div style={{ display: "flex", width: "100%" }}>
+              <input
+                type="text"
+                placeholder="Buscar por título o descripción"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                style={{ ...styles.input, marginRight: "20px" }}
+              />
             </div>
           </div>
-        )}
+          {/* Barra de búsqueda */}
 
-        {/* Fondo borroso y diálogo para editar la información del curso */}
-        {editCourse && isEditDialogOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md space-y-4">
+          {/* Tabla de cursos */}
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.th}>Título</th>
+                <th style={styles.th}>Descripción</th>
+                <th style={styles.th}>impartido por</th>
+                <th style={styles.th}>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredCourses.length > 0 ? (
+                filteredCourses.map((course, index) => (
+                  <tr
+                    key={
+                      course.id_course
+                        ? course.id_course
+                        : `${index}-${course.id_course}`
+                    }
+                  >
+                    <td style={styles.td}>{course.title}</td>
+                    <td style={styles.td}>{course.description}</td>
+                    <td style={styles.td}>{course.tutor}</td>
+                    <td style={{ ...styles.td, width: "240px" }}>
+                      <button
+                        onClick={() => handleOpenDialog(course)}
+                        style={styles.viewButton}
+                      >
+                        <FaEye /> Ver
+                      </button>
+                      <button
+                        onClick={() => handleOpenEditDialog(course)}
+                        style={styles.editButton}
+                      >
+                        <FaEdit /> Editar
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCourse(course)}
+                        style={styles.button}
+                      >
+                        <FaTrash /> Eliminar
+                      </button>
+                      <button
+                        onClick={() => handleOpenAssignModal(course)}
+                        style={{
+                          backgroundColor: "green",
+                          color: "white",
+                          padding: "5px 10px",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Asignar Departamento
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} style={styles.noResults}>
+                    No se encontraron cursos.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+
+          {/* Fondo borroso y diálogo para ver la información del curso */}
+          <Dialog
+            open={isDialogOpen}
+            handler={handleCloseDialog}
+            size="md"
+            placeholder=""
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
+          >
+            <div className="p-6 bg-white rounded-xl  w-full ">
+              <h2 className="text-xl font-bold text-gray-800">
+                Detalles del Curso
+              </h2>
+
+              <p className="mt-4">
+                <strong>Título:</strong> {selectedCourse?.title}
+              </p>
+              <p className="mt-2">
+                <strong>Descripción:</strong> {selectedCourse?.description}
+              </p>
+              <p className="mt-2">
+                <strong>Impartido por:</strong> {selectedCourse?.tutor}
+              </p>
+
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={handleCloseDialog}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </Dialog>
+
+          <Dialog
+            open={isEditDialogOpen}
+            handler={handleCloseEditDialog}
+            size="md"
+            placeholder=""
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
+          >
+            <div className="p-6 bg-white rounded-xl shadow-lg w-full ">
               <h2 className="text-xl font-bold text-gray-800">Editar Curso</h2>
 
-              <div className="space-y-3">
+              <div className="space-y-3 mt-4">
                 <div>
                   <label className="block text-gray-700">Título</label>
                   <input
                     type="text"
-                    value={editCourse.title}
+                    value={editCourse?.title}
                     onChange={(e) =>
-                      setEditCourse({ ...editCourse, title: e.target.value })
+                      setEditCourse({
+                        ...editCourse!,
+                        title: e.target.value,
+                      } as CourseJson)
                     }
                     className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
@@ -430,12 +443,12 @@ function CourseCatalog() {
                 <div>
                   <label className="block text-gray-700">Descripción</label>
                   <textarea
-                    value={editCourse.description}
+                    value={editCourse?.description}
                     onChange={(e) =>
                       setEditCourse({
-                        ...editCourse,
+                        ...editCourse!,
                         description: e.target.value,
-                      })
+                      } as CourseJson)
                     }
                     className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
@@ -445,9 +458,12 @@ function CourseCatalog() {
                   <label className="block text-gray-700">Tutor</label>
                   <input
                     type="text"
-                    value={editCourse.tutor}
+                    value={editCourse?.tutor}
                     onChange={(e) =>
-                      setEditCourse({ ...editCourse, tutor: e.target.value })
+                      setEditCourse({
+                        ...editCourse!,
+                        tutor: e.target.value,
+                      } as CourseJson)
                     }
                     className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
@@ -469,43 +485,56 @@ function CourseCatalog() {
                 </button>
               </div>
             </div>
-          </div>
-        )}
-      </div>
-      {isModalOpen && (
-        <div style={styles.modalContainer}>
-          <div style={styles.modal}>
-            <CourseCatalog2 onAddCourse={handleNewCourse} />
-            <button onClick={handleCloseModal} style={styles.closeButton}>
-              Cerrar
-            </button>
-          </div>
-          <div style={styles.overlay}></div>
+          </Dialog>
         </div>
-      )}
+        <Dialog
+          open={isModalOpen}
+          handler={handleCloseModal}
+          size="lg"
+          onPointerEnterCapture
+          onPointerLeaveCapture
+          placeholder
+        >
+          <div style={styles.modalContainer}>
+            <div style={styles.modal}>
+              <CourseCatalog2 onAddCourse={handleNewCourse} />
+              <button onClick={handleCloseModal} style={styles.closeButton}>
+                Cerrar
+              </button>
+            </div>
+            <div style={styles.overlay}></div>
+          </div>
+        </Dialog>
 
-      {isAssignModalOpen && selectedCourse && (
-        <AssignDepartmentModal
-          course={{
-            id_course: selectedCourse.id_course,
-            title: selectedCourse.title,
-          }} 
-          onClose={handleCloseAssignModal}
-          onAssign={(course, department) =>
-            handleAssignDepartment(
-              { 
-                id_course: selectedCourse.id_course, 
-                title: selectedCourse.title, 
-                description: selectedCourse.description, 
-                tutor: selectedCourse.tutor, 
-                status: selectedCourse.status 
-              },
-              department
-            )
-          }
-          departments={departments} // 🔹 PASAMOS LOS DEPARTAMENTOS
-        />
-      )}
+        <Dialog
+          open={isAssignModalOpen}
+          handler={handleCloseAssignModal}
+          size="lg"
+          placeholder=""
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
+        >
+          <AssignDepartmentModal
+            course={{
+              id_course: selectedCourse?.id_course || 0,
+              title: selectedCourse?.title || "",
+            }}
+            onClose={handleCloseAssignModal}
+            onAssign={(course, department) =>
+              handleAssignDepartment(
+                {
+                  id_course: selectedCourse?.id_course || 0,
+                  title: selectedCourse?.title || "",
+                  description: selectedCourse?.description || "",
+                  tutor: selectedCourse?.tutor || "",
+                  status: selectedCourse?.status || "",
+                },
+                department
+              )
+            }
+            departments={departments} // 🔹 PASAMOS LOS DEPARTAMENTOS
+          />
+        </Dialog>
       </Card>
     </div>
   );
@@ -599,26 +628,12 @@ const styles: { [key: string]: CSSProperties } = {
     borderRadius: "5px",
     cursor: "pointer",
   },
-  dialog: {
-    position: "fixed",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
+  
+  modal: {
     backgroundColor: "#fff",
     padding: "20px",
-    border: "1px solid #ddd",
     borderRadius: "8px",
-    zIndex: 1000,
-  },
-  blurBackground: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
-    backdropFilter: "blur(5px)", // Aplicamos el filtro de desenfoque aquí
-    zIndex: 999, // Asegura que el fondo borroso esté detrás del diálogo
+    textAlign: "center",
   },
   closeButton: {
     marginTop: "20px",
@@ -629,46 +644,6 @@ const styles: { [key: string]: CSSProperties } = {
     borderRadius: "5px",
     cursor: "pointer",
   },
-  saveButton: {
-    marginTop: "20px",
-    padding: "10px",
-    backgroundColor: "#28a745",
-    color: "#fff",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-  textarea: {
-    width: "100%",
-    height: "100px",
-    padding: "10px",
-    borderRadius: "8px",
-    border: "1px solid #ddd",
-    fontSize: "16px",
-    marginTop: "10px",
-  },
-  modalContainer: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    zIndex: 1000,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modal: {
-    backgroundColor: "#fff",
-    padding: "20px",
-    borderRadius: "8px",
-    width: "60%",
-    textAlign: "center",
-  },
-  expired: { backgroundColor: "#ffcccc" }, // Estilo para cursos expirados
-  aboutToExpire: { backgroundColor: "#fff3cd" }, // Estilo para cursos próximos a expirar
-  active: { backgroundColor: "#ccffcc" }, // Estilo para cursos vigentes
 };
 
 export default CourseCatalog;

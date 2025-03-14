@@ -101,7 +101,8 @@ const Usuarios = () => {
   };
 
   return (
-    <Card className="h-full w-full" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+    <div className="flex justify-center items-center w-full pb-20">
+    <Card className="h-full w-3/4 top-32 mb-20" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
       <CardHeader floated={false} shadow={false} className="rounded-none" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
         <div className="mb-8 flex items-center justify-between">
           <Typography variant="h5" color="blue-gray" onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">Usuarios</Typography>
@@ -168,6 +169,7 @@ const Usuarios = () => {
         </DialogFooter>
       </Dialog>
     </Card>
+    </div>
   );
 };
 
