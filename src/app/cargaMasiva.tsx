@@ -5,10 +5,12 @@ import * as XLSX from "xlsx";
 import Swal from "sweetalert2";
 import { Card, Typography, Input, Button } from "@material-tailwind/react";
 import { da } from "date-fns/locale";
+import { motion } from "framer-motion";
 
 const ExcelUploader: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const [expirationDate, setExpirationDate] = useState<string>("");
+  const videoOpacity = 0.5;
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     data.length = 0;
@@ -115,8 +117,18 @@ const ExcelUploader: React.FC = () => {
   };
 
   return (
-    <Card
-      className="p-6 shadow-lg"
+    <div className="relative w-full h-auto flex items-top justify-center mt-40">
+    <motion.video
+        autoPlay
+        loop
+        muted
+        className="fixed top-0 left-0 w-full h-full object-cover -z-20"
+        style={{ opacity: videoOpacity }}
+      >
+        <source src="/image/background.mp4" type="video/mp4" />
+        Tu navegador no soporta videos.
+      </motion.video>
+    <Card className="p-8 shadow-2xl bg-white/80 backdrop-blur-lg rounded-2xl w-3/4"
       placeholder=""
       onPointerEnterCapture={() => {}}
       onPointerLeaveCapture={() => {}}
@@ -257,6 +269,7 @@ const ExcelUploader: React.FC = () => {
 
       
     </Card>
+    </div>
   );
 };
 

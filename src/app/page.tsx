@@ -5,7 +5,6 @@ import { Autoplay, Pagination } from "swiper/modules";
 import { motion, useScroll, useTransform } from "framer-motion";
 import "swiper/css";
 import "swiper/css/pagination";
-import { Button } from "@material-tailwind/react";
 import { useRef } from "react";
 
 const ARTICLES = [
@@ -53,7 +52,7 @@ export default function Campaign() {
         autoPlay 
         loop 
         muted 
-        className="fixed top-0 left-0 w-full h-full object-cover -z-10"
+        className="fixed top-0 left-0 w-full h-full object-cover -z-20"
         style={{ opacity: videoOpacity }}
       >
         <source src="/image/background.mp4" type="video/mp4" />
@@ -70,12 +69,14 @@ export default function Campaign() {
       >
         <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50"></div>
         <div className="relative z-10 w-full max-w-4xl px-8 text-white">
-          <h1 className="text-[64px] lg:text-[80px] font-extrabold leading-tight">
-            Capacitación Tarahumara
-          </h1>
+          <h1 className="text-[64px] lg:text-[80px] font-extrabold leading-tight mt-40">
+            Capacitación Tarahumara</h1>
           <p className="mt-2 text-xl lg:text-2xl text-gray-200">
             Descubre herramientas, presentaciones, guías y contenido multimedia diseñados para potenciar tu desarrollo profesional.
           </p>
+          <div className="mt-6 flex justify-center">
+            <img src="/image/logo.png" alt="Logo" className="w-64 h-auto" />
+          </div>
         </div>
       </motion.header>
       
@@ -109,7 +110,7 @@ export default function Campaign() {
             autoplay={{ delay: 3000, disableOnInteraction: false }}
             pagination={{ clickable: true }}
             loop={true}
-            spaceBetween={16}
+            spaceBetween={24} // Aumenté el espacio entre las tarjetas
             breakpoints={{
               640: { slidesPerView: 1 },
               768: { slidesPerView: 2 },
@@ -125,9 +126,9 @@ export default function Campaign() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: false }}
                   transition={{ duration: 0.5 }}
-                  className="relative rounded-lg overflow-hidden cursor-pointer"
+                  className="relative rounded-lg overflow-hidden cursor-pointer shadow-lg border border-gray-700 bg-gray-800 p-4"
                 >
-                  <div className="absolute top-0 left-0 w-full bg-black bg-opacity-70 p-4 z-10">
+                  <div className="absolute top-0 left-0 w-full bg-black bg-opacity-70 p-4 z-10 rounded-t-lg">
                     <h3 className="text-xl font-bold text-white">{article.title}</h3>
                   </div>
                   <img src={article.img} alt={article.title} className="w-full h-80 object-cover rounded-lg transition-transform duration-300" />
@@ -149,12 +150,11 @@ export default function Campaign() {
                 </motion.div>
               </SwiperSlide>
             ))}
+            <br/><br/>
           </Swiper>
+          <Footer />
         </motion.div>
       </motion.section>
-      <div>
-      <Footer />
-    </div>
     </>
   );
 }

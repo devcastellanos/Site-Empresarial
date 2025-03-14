@@ -6,6 +6,8 @@ import { FaEye, FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 // import NuevoCurso from "./CrearCurso";
 import CourseCatalog2 from "./CrearCurso";
 import AssignDepartmentModal from "./Department"; // Asegúrate de que la ruta es correcta
+import { motion } from "framer-motion";
+import { Card } from "@material-tailwind/react";
 
 interface CourseJson {
   id_course: number;
@@ -277,7 +279,22 @@ function CourseCatalog() {
   };
 
   return (
-    <div>
+    <div className="relative w-full h-auto flex items-top justify-center mt-40">
+      <motion.video
+        autoPlay
+        loop
+        muted
+        className="fixed top-0 left-0 w-full h-full object-cover -z-20"
+        style={{ opacity: 0.5 }} // Ajusta el valor según sea necesario
+      >
+        <source src="/image/background.mp4" type="video/mp4" />
+      </motion.video>
+
+      <Card 
+        className="p-8 shadow-2xl bg-white/80 backdrop-blur-lg rounded-2xl w-3/4" 
+        placeholder="" 
+        onPointerEnterCapture={() => {}} 
+        onPointerLeaveCapture={() => {}}>
       <div style={styles.container}>
         <h1 style={styles.heading} className="text-3xl font-bold text-center mb-6 ">Cursos</h1>
         <div style={styles.addButtonContainer}>
@@ -489,6 +506,7 @@ function CourseCatalog() {
           departments={departments} // 🔹 PASAMOS LOS DEPARTAMENTOS
         />
       )}
+      </Card>
     </div>
   );
 }

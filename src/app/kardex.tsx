@@ -15,6 +15,7 @@ import {
 } from "@material-tailwind/react";
 import axios from "axios";
 import sweetAlert from "sweetalert2";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Swal from "sweetalert2";
 // Ajusta la ruta según tu estructura de archivos
 
@@ -358,20 +359,35 @@ const Kardex = () => {
       alert("Hubo un problema al eliminar el curso.");
     }
   };
+  const { scrollYProgress } = useScroll();
+  const videoOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.3]);
 
   return (
-    <div>
-      <div
-        style={{
-          fontFamily: "Arial, sans-serif",
-          maxWidth: "1000px",
-          margin: "0 auto",
-          border: "1px solid black",
-          padding: "20px",
-          borderRadius: "10px",
-          backgroundColor: "#f9f9f9",
-        }}
-      >
+    <div style={{ marginTop: "150px" }}>
+      <motion.video 
+      autoPlay 
+      loop 
+      muted 
+      className="fixed top-0 left-0 w-full h-full object-cover -z-20"
+      style={{ opacity: videoOpacity }}
+    >
+      <source src="/image/background.mp4" type="video/mp4" />
+      Tu navegador no soporta videos.
+    </motion.video>
+
+        <div
+          style={{
+            fontFamily: "Arial, sans-serif",
+            maxWidth: "1000px",
+            margin: "0 auto",
+            border: "1px solid black",
+            padding: "20px",
+            borderRadius: "10px",
+            backgroundColor: "rgba(249, 249, 249, 0.7)", // Cambia el fondo con transparencia
+            backdropFilter: "blur(0px)", // Agrega un efecto de desenfoque opcional
+          }}
+        >
+
         {/* Header Section */}
         <div
           style={{
@@ -469,14 +485,14 @@ const Kardex = () => {
               {isAuthenticated && (
                 <div style={{ marginTop: "10px" }}>
                   <Input 
-  type="file" 
-  accept="image/*" 
-  multiple 
-  onChange={handleChangeImage} 
-  crossOrigin="" 
-  onPointerEnterCapture={() => {}} 
-  onPointerLeaveCapture={() => {}} 
-/>
+                    type="file" 
+                    accept="image/*" 
+                    multiple 
+                    onChange={handleChangeImage} 
+                    crossOrigin="" 
+                    onPointerEnterCapture={() => {}} 
+                    onPointerLeaveCapture={() => {}} 
+                  />
 
                 </div>
               )}

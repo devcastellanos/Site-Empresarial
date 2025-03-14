@@ -5,13 +5,17 @@ import {
   Button,
   Typography,
   Textarea,
+  Card,
+  CardBody,
+  CardHeader,
+  CardFooter,
 } from "@material-tailwind/react";
 import { ArrowSmallDownIcon } from "@heroicons/react/24/solid";
 import BlogPostCard from "@/components/blog-post-card";
 import Image from "next/image";
 import { Input, Select, Option, Carousel } from "@material-tailwind/react";
 import axios from "axios";
-
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useAuth } from "@/app/hooks/useAuth";
 import { id } from "date-fns/locale";
 import { Nanum_Pen_Script } from "next/font/google";
@@ -46,7 +50,6 @@ export function Posts() {
   );
 
   const [posts, setPosts] = React.useState<Post[]>([]);
- 
   const [imgFiles, setImgFiles] = useState<File[]>([]);
 
   const { isAuthenticated } = useAuth();
@@ -180,14 +183,31 @@ export function Posts() {
   };
 
   return (
-    <section className="grid min-h-screen place-items-center p-8">
-      <Image
-        width={1920}
-        height={1080}
-        src="/image/noti.png"
-        alt="background"
-        className="h-96 w-full rounded-lg object-cover lg:h-[21rem]"
-      />
+    <section className="grid min-h-screen place-items-center mt-20 p-20">
+      <motion.video
+        autoPlay
+        loop
+        muted
+        className="fixed top-0 left-0 w-full h-full object-cover -z-20"
+        style={{ opacity: 0.5 }} // Ajusta el valor según sea necesario
+      >
+        <source src="/image/background.mp4" type="video/mp4" />
+      </motion.video>
+
+        <Card className="p-8 shadow-2xl bg-white/80 backdrop-blur-lg rounded-2xl w-3/4" 
+          placeholder="" 
+          onPointerEnterCapture={() => {}} 
+          onPointerLeaveCapture={() => {}}>
+
+        <CardHeader floated={false} shadow={false} className="relative h-64" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+          <Image
+            width={1920}
+            height={1080}
+            src="/image/noti.png"
+            alt="background"
+            className="h-full w-full rounded-lg object-cover"
+          />
+        </CardHeader>
       {
       isAuthenticated ? (
         <section className="px-8 py-10 container mx-auto">
@@ -386,50 +406,45 @@ export function Posts() {
       ): null }
 
       <div className="py-10"></div>
-      <Typography variant="h1" className="mb-2 "  placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}  >
-        Ultimos posts
-      </Typography>
-      <Typography
-       placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-        variant="lead"
-        color="gray"
-        className="max-w-3xl mb-12 text-center text-gray-500"
-      >
-        Aquí puedes ver la ultima información y noticias de Grupo Tarahumara
-      </Typography>
-      <div className="container my-auto grid grid-cols-1 gap-x-8 gap-y-10 items-start lg:grid-cols-2">
-        {posts?.length > 0 ? (
-          posts.map(({ img, tag, title, desc, date, img_author, name_author, idBlog, num_empleado, likes }) => (
-            <div key={idBlog}>
-              <BlogPostCard
-                img={img}
-                tag={tag}
-                title={title}
-                desc={desc}
-                date={date}
-                author={{ img: img_author, name: name_author }}
-                idBlog={idBlog}
-                num_empleado={num_empleado}
-                likes={likes}
-                onPostEdit={handlePostEdit}
-                onPostDelete={handleDeletePost}
-              />
-            </div>
-          ))
-        ) : (
-          <p>No hay publicaciones</p>
-        )}
-      </div>
-      <Button
-      placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-        variant="text"
-        size="lg"
-        color="gray"
-        className="flex items-center gap-2 mt-12"
-      >
-        <ArrowSmallDownIcon className="h- w-5 font-bold text-gray-900" />
-        Ver mas
-      </Button>
+      <CardBody placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+          <Typography variant="h5" color="blue-gray" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+            Últimos posts
+          </Typography>
+          <Typography variant="lead" className="text-gray-600 mt-2" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+            Aquí puedes ver la última información y noticias de Grupo Tarahumara.
+          </Typography>
+      <div className="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-2">
+            {posts.length > 0 ? (
+              posts.map(({ img, tag, title, desc, date, img_author, name_author, idBlog, num_empleado, likes }) => (
+                <Card key={idBlog} className="shadow-md" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+                  <BlogPostCard
+                    img={img}
+                    tag={tag}
+                    title={title}
+                    desc={desc}
+                    date={date}
+                    author={{ img: img_author, name: name_author }}
+                    idBlog={idBlog}
+                    num_empleado={num_empleado}
+                    likes={likes}
+                    onPostEdit={() => {}}
+                    onPostDelete={() => {}}
+                  />
+                </Card>
+              ))
+            ) : (
+              <Typography variant="small" className="text-gray-500" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+                No hay publicaciones disponibles.
+              </Typography>
+            )}
+          </div>
+        </CardBody>
+        <CardFooter className="flex justify-center" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+          <Button variant="text" size="lg" color="gray" className="flex items-center gap-2" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+            <ArrowSmallDownIcon className="h-5 w-5 text-gray-900" /> Ver más
+          </Button>
+        </CardFooter>
+      </Card>
     </section>
   );
 }

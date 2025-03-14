@@ -9,7 +9,6 @@ import {
 import {
   RectangleStackIcon,
   UserCircleIcon,
-  CommandLineIcon,
   XMarkIcon,
   Bars3Icon,
   DocumentIcon,
@@ -35,9 +34,6 @@ function NavItem({ children, href, className }: NavItemProps) {
         variant="paragraph"
         color="gray"
         className={`flex items-center gap-2 font-medium text-gray-200 ${className}`}
-        placeholder=""
-        onPointerEnterCapture={() => {}}
-        onPointerLeaveCapture={() => {}}
       >
         {children}
       </Typography>
@@ -68,17 +64,14 @@ export function Navbar() {
     <MTNavbar
       shadow={false}
       fullWidth
-      className="bg-[#818181] bg-opacity-30 backdrop-blur-md border-0 sticky top-0 z-50 transition-all duration-300"
-      placeholder=""
-      onPointerEnterCapture={() => {}}
-      onPointerLeaveCapture={() => {}}
+      className="bg-[#818181] bg-opacity-30 backdrop-blur-md border-0 fixed top-0 left-0 right-0 z-50 transition-all duration-300"
     >
-      <div className="container mx-auto flex items-center justify-between">
+      <div className="container mx-auto flex items-center justify-between px-4 py-2">
         {/* Logo */}
-        <Image width={200} height={100} src={"/image/logo.png"} alt={"Grupo Tarahumara"} />
+        <Image width={150} height={100} src={"/image/logo.png"} alt={"Grupo Tarahumara"} />
 
         {/* Menú de navegación */}
-        <ul className="ml-10 hidden items-center gap-8 lg:flex">
+        <ul className="ml-5 hidden items-center gap-8 lg:flex">
           {NAV_MENU.map(({ name, icon: Icon, href }) => (
             <NavItem key={name} href={href} className="text-white">
               <Icon className="h-5 w-5" />
@@ -90,39 +83,22 @@ export function Navbar() {
         {/* Botón de sesión */}
         <div className="hidden items-center gap-2 lg:flex">
           {isAuthenticated ? (
-            <Button
-              onClick={logout}
-              color="blue-gray"
-              className="mb-4"
-              placeholder=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-            >
+            <Button onClick={logout} color="blue-gray" className="mb-0">
               Cerrar Sesión
             </Button>
           ) : (
             <a href="/Login">
-              <Button
-                variant="text"
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
-              >
-                Iniciar Sesión
-              </Button>
+              <Button variant="text">Iniciar Sesión</Button>
             </a>
           )}
         </div>
 
         {/* Menú móvil */}
         <IconButton
-        variant="text"
-        color="gray"
-        onClick={handleOpen}
-        className="ml-auto inline-block lg:hidden"
-        placeholder=""
-        onPointerEnterCapture={() => {}}
-        onPointerLeaveCapture={() => {}}
+          variant="text"
+          color="gray"
+          onClick={handleOpen}
+          className="ml-auto inline-block lg:hidden"
         >
           {open ? <XMarkIcon strokeWidth={2} className="h-6 w-6" /> : <Bars3Icon strokeWidth={2} className="h-6 w-6" />}
         </IconButton>
@@ -130,10 +106,10 @@ export function Navbar() {
 
       {/* Menú desplegable móvil */}
       <Collapse open={open}>
-        <div className="container mx-auto mt-3 border-t border-gray-200 px-2 pt-4 bg-[#818181] bg-opacity-90">
+        <div className="bg-[#818181] bg-opacity-90 border-t border-gray-200 px-4 py-4">
           <ul className="flex flex-col gap-4">
-            {NAV_MENU.map(({ name, icon: Icon }) => (
-              <NavItem key={name}>
+            {NAV_MENU.map(({ name, icon: Icon, href }) => (
+              <NavItem key={name} href={href}>
                 <Icon className="h-5 w-5" />
                 {name}
               </NavItem>
