@@ -30,9 +30,9 @@ interface BlogPostCardProps {
   idBlog: number;
   num_empleado: number;
   likes: number;
+  videoUrl?: string;
   onPostEdit: (post: Post) => void;
   onPostDelete: (idBlog: number) => void;
-  videoUrl?: string; 
 }
 
 export function BlogPostCard({
@@ -45,6 +45,7 @@ export function BlogPostCard({
   idBlog,
   num_empleado,
   likes,
+  videoUrl,
   onPostEdit,
   onPostDelete,
 }: BlogPostCardProps) {
@@ -54,7 +55,6 @@ export function BlogPostCard({
   const [post, setPost] = useState<Post>({
     idBlog: idBlog,
     img: Array.isArray(img) ? img : [],
-    videoUrl: "", // Add default value for videoUrl
     tag: tag,
     title: title,
     desc: desc,
@@ -63,6 +63,7 @@ export function BlogPostCard({
     name_author: author.name,
     num_empleado: num_empleado,
     likes: likes,
+    videoUrl: videoUrl,
   });
 
   // Estado para las imágenes nuevas seleccionadas durante la edición
@@ -73,7 +74,6 @@ export function BlogPostCard({
     const match = url.match(regExp);
     return match && match[1] ? match[1] : "";
   };
-  
 
   const { isAuthenticated } = useAuth();
 
@@ -97,7 +97,7 @@ export function BlogPostCard({
   const handleEdit = async () => {
     // Toma las imágenes actuales (ya con las eliminaciones realizadas)
     let updatedImages = [...post.img];
-  
+
     // Si se seleccionaron nuevas imágenes, se suben y se concatenan
     if (newImgFiles.length > 0) {
       const formData = new FormData();
@@ -120,27 +120,30 @@ export function BlogPostCard({
         return;
       }
     }
-  
+
     // Construir el objeto actualizado con el arreglo completo de imágenes y videoUrl
     const updatedPost = {
       ...post,
       img: updatedImages,
       videoUrl: post.videoUrl || "", // 👈 Aseguramos que se incluya el video
     };
-  
+
     try {
-      const response = await fetch("http://api-cursos.192.168.29.40.sslip.io/ActualizarPost", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedPost),
-      });
-  
+      const response = await fetch(
+        "http://api-cursos.192.168.29.40.sslip.io/ActualizarPost",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedPost),
+        }
+      );
+
       if (!response.ok) {
         throw new Error("Error en la solicitud");
       }
-  
+
       const data = await response.json();
       console.log("Post actualizado:", data);
       setOpenModal(false);
@@ -149,57 +152,72 @@ export function BlogPostCard({
       console.error("Error al actualizar post:", error);
     }
   };
-  
 
   return (
     <>
-      <Card shadow={true}
-      placeholder=""
-      onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+      <Card
+        shadow={true}
+        placeholder=""
+        onPointerEnterCapture={() => {}}
+        onPointerLeaveCapture={() => {}}
+      >
         <CardHeader
-        placeholder=""
-        onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-          {Array.isArray(post.img) && post.img.length > 0 && (
-            <Carousel
-            placeholder=""
-      onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-              {post.img.map((imgUrl, index) => (
-                <div key={index} className="relative">
-                  <Image
-                    src={`/api/images/${imgUrl.split("/").pop()}`}
-                    alt={`Imagen ${index + 1}`}
-                    width={600}
-                    height={600}
-                    className="h-full w-full object-cover"
-                  />
-                  {post.videoUrl && (
-                    <div className="aspect-video mt-4">
-                      <iframe
-                        className="w-full h-full rounded"
-                        src={`https://www.youtube.com/embed/${extractYouTubeID(post.videoUrl)}`}
-                        title="YouTube video"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      ></iframe>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </Carousel>
-          )}
-        </CardHeader>
-        <CardBody className="p-6"
-        placeholder=""
-        onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-          <Typography variant="small" color="blue" className="mb-2 !font-medium"
           placeholder=""
-          onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
+        >
+          <Carousel
+            className="rounded-xl"
+            placeholder=""
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
+          >
+            {post.videoUrl && (
+              <div className="aspect-video w-full h-full">
+                <iframe
+                  className="w-full h-full"
+                  src={`https://www.youtube.com/embed/${extractYouTubeID(
+                    post.videoUrl
+                  )}`}
+                  title="YouTube video"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            )}
+            {post.img.map((imgUrl, index) => (
+              <Image
+                key={index}
+                src={`/api/images/${imgUrl.split("/").pop()}`}
+                alt={`Imagen ${index + 1}`}
+                width={600}
+                height={600}
+                className="w-full object-cover "
+              />
+            ))}
+          </Carousel>
+        </CardHeader>
+        <CardBody
+          className="p-6"
+          placeholder=""
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
+        >
+          <Typography
+            variant="small"
+            color="blue"
+            className="mb-2 !font-medium"
+            placeholder=""
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
+          >
             {tag}
           </Typography>
           <Typography
-          placeholder=""
-          onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+            placeholder=""
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
             as="a"
             href="#"
             variant="h5"
@@ -208,9 +226,12 @@ export function BlogPostCard({
           >
             {title}
           </Typography>
-          <Typography className="mb-6 font-normal !text-gray-500"
-          placeholder=""
-          onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+          <Typography
+            className="mb-6 font-normal !text-gray-500"
+            placeholder=""
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
+          >
             {desc}
           </Typography>
           <div className="flex items-center gap-4">
@@ -220,40 +241,64 @@ export function BlogPostCard({
               src={`/fotos/${formattedUserId}.jpg`}
               alt={author.name}
               placeholder=""
-      onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
             />
             <div>
-              <Typography variant="small" color="blue-gray" className="mb-0.5 !font-medium"
-              placeholder=""
-              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="mb-0.5 !font-medium"
+                placeholder=""
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
                 {author.name}
               </Typography>
-              <Typography variant="small" color="gray" className="text-xs !text-gray-500 font-normal"
-              placeholder=""
-              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+              <Typography
+                variant="small"
+                color="gray"
+                className="text-xs !text-gray-500 font-normal"
+                placeholder=""
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
                 {date}
               </Typography>
             </div>
             {isAuthenticated && (
               <div>
-                <Button onClick={() => onPostDelete(idBlog)}
+                <Button
+                  onClick={() => onPostDelete(idBlog)}
                   placeholder=""
-                  onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>Eliminar</Button>
-                <Button className="ml-auto" onClick={handleEditClick}
-                placeholder=""
-                onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
+                  Eliminar
+                </Button>
+                <Button
+                  className="ml-auto"
+                  onClick={handleEditClick}
+                  placeholder=""
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
                   Editar
                 </Button>
               </div>
             )}
             {statusLike ? (
               <IconButton
-              placeholder=""
-      onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+                placeholder=""
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
                 onClick={() => {
-                  fetch(`http://api-cursos.192.168.29.40.sslip.io/dislike/${idBlog}`, {
-                    method: "PUT",
-                  })
+                  fetch(
+                    `http://api-cursos.192.168.29.40.sslip.io/dislike/${idBlog}`,
+                    {
+                      method: "PUT",
+                    }
+                  )
                     .then((res) => res.json())
                     .then((data) => {
                       console.log(data);
@@ -270,12 +315,16 @@ export function BlogPostCard({
               </IconButton>
             ) : (
               <IconButton
-              placeholder=""
-      onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+                placeholder=""
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
                 onClick={() => {
-                  fetch(`http://api-cursos.192.168.29.40.sslip.io/like/${idBlog}`, {
-                    method: "PUT",
-                  })
+                  fetch(
+                    `http://api-cursos.192.168.29.40.sslip.io/like/${idBlog}`,
+                    {
+                      method: "PUT",
+                    }
+                  )
                     .then((res) => res.json())
                     .then((data) => {
                       console.log(data);
@@ -297,17 +346,24 @@ export function BlogPostCard({
       </Card>
 
       {/* Modal para editar información */}
-      <Dialog open={openModal} handler={handleCloseModal}
-      placeholder=""
-      onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} 
+      <Dialog
+        open={openModal}
+        handler={handleCloseModal}
+        placeholder=""
+        onPointerEnterCapture={() => {}}
+        onPointerLeaveCapture={() => {}}
       >
         <DialogHeader
-        onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-        placeholder=""
-        >Editar la información</DialogHeader>
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
+          placeholder=""
+        >
+          Editar la información
+        </DialogHeader>
         <DialogBody
-        onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} 
-        placeholder=""
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
+          placeholder=""
         >
           <div>
             {/* Campos de edición de texto */}
@@ -317,7 +373,8 @@ export function BlogPostCard({
               value={post.title}
               onChange={(e) => setPost({ ...post, title: e.target.value })}
               className="w-full p-2 border rounded mb-4"
-              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} 
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
               crossOrigin=""
             />
             <Input
@@ -325,7 +382,8 @@ export function BlogPostCard({
               value={post.desc}
               onChange={(e) => setPost({ ...post, desc: e.target.value })}
               className="w-full p-2 border rounded mb-4"
-              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} 
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
               crossOrigin=""
             />
             <Input
@@ -334,7 +392,8 @@ export function BlogPostCard({
               value={post.tag}
               onChange={(e) => setPost({ ...post, tag: e.target.value })}
               className="w-full p-2 border rounded mb-4"
-              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} 
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
               crossOrigin=""
             />
             <Input
@@ -343,16 +402,21 @@ export function BlogPostCard({
               value={post.videoUrl || ""}
               onChange={(e) => setPost({ ...post, videoUrl: e.target.value })}
               className="w-full p-2 border rounded mb-4"
-              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} 
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
               crossOrigin=""
             />
 
-
             {/* Sección para editar imágenes */}
             <div className="mb-4">
-              <Typography variant="small" color="blue-gray" className="mb-2"
-              placeholder=""
-              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="mb-2"
+                placeholder=""
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
                 Imágenes actuales:
               </Typography>
               <div className="flex flex-wrap gap-2">
@@ -378,13 +442,18 @@ export function BlogPostCard({
             </div>
 
             <div className="mb-4">
-              <Typography variant="small" color="blue-gray" className="mb-2"
-              placeholder=""
-              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="mb-2"
+                placeholder=""
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
                 Agregar nuevas imágenes:
               </Typography>
               <Input
-              crossOrigin=""
+                crossOrigin=""
                 type="file"
                 multiple
                 onChange={(e) => {
@@ -393,22 +462,34 @@ export function BlogPostCard({
                   }
                 }}
                 className="w-full p-2 border rounded"
-                onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} 
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
               />
             </div>
           </div>
         </DialogBody>
         <DialogFooter
-        placeholder=""
-        onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
-          <Button variant="text" color="red" onClick={handleCloseModal}
           placeholder=""
-          onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
+        >
+          <Button
+            variant="text"
+            color="red"
+            onClick={handleCloseModal}
+            placeholder=""
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
+          >
             Cerrar
           </Button>
-          <Button variant="gradient" onClick={handleEdit}
-          placeholder=""
-          onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
+          <Button
+            variant="gradient"
+            onClick={handleEdit}
+            placeholder=""
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
+          >
             Guardar
           </Button>
         </DialogFooter>

@@ -48,6 +48,7 @@ export function Posts() {
       name_author: "",
       num_empleado: 0,
       likes: 0,
+      videoUrl: "",
     }
   );
 
@@ -139,6 +140,7 @@ export function Posts() {
     formData.append("desc", post.desc);
     formData.append("tag", post.tag);
     formData.append("date", post.date);
+    formData.append("videoUrl", post.videoUrl || "");
 
     try {
       console.log("Guardando imagen...");
@@ -367,6 +369,26 @@ export function Posts() {
               />
             </div>
           </div>
+
+          <div className="mb-6">
+            <Typography
+              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+              variant="small"
+              color="blue-gray"
+              className="mb-2 font-medium"
+            >
+              Video de YouTube (URL)
+            </Typography>
+            <Input
+              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+              crossOrigin=""
+              size="lg"
+              placeholder="https://www.youtube.com/watch?v=..."
+              value={post.videoUrl || ""}
+              onChange={(e) => setPost({ ...post, videoUrl: e.target.value })}
+              className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
+            />
+          </div>
                 
           <div>
           <Input
@@ -390,25 +412,7 @@ export function Posts() {
               className="object-cover self-center"
             />
           )}
-          <div className="mb-6">
-            <Typography
-              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-              variant="small"
-              color="blue-gray"
-              className="mb-2 font-medium"
-            >
-              Video de YouTube (URL)
-            </Typography>
-            <Input
-              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-              crossOrigin=""
-              size="lg"
-              placeholder="https://www.youtube.com/watch?v=..."
-              value={post.videoUrl || ""}
-              onChange={(e) => setPost({ ...post, videoUrl: e.target.value })}
-              className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
-            />
-          </div>
+
 
           </div>
             <div className="flex justify-center mt-4">
@@ -438,7 +442,7 @@ export function Posts() {
           </Typography>
       <div className="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-2">
             {posts.length > 0 ? (
-              posts.map(({ img, tag, title, desc, date, img_author, name_author, idBlog, num_empleado, likes }) => (
+              posts.map(({ img, tag, title, desc, date, img_author, name_author, idBlog, num_empleado, likes, videoUrl }) => (
                 <Card key={idBlog} className="shadow-md" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
                   <BlogPostCard
                     img={img}
@@ -450,9 +454,9 @@ export function Posts() {
                     idBlog={idBlog}
                     num_empleado={num_empleado}
                     likes={likes}
-                    videoUrl={post.videoUrl}
+                    videoUrl={videoUrl}
                     onPostEdit={() => {}}
-                    onPostDelete={() => {}}
+                    onPostDelete={() => handleDeletePost(idBlog)}
                   />
                 </Card>
               ))
