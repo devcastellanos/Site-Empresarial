@@ -122,70 +122,77 @@ export function Posts() {
 
   const handleAddPost = async () => {
 
-    if (!imgFiles.length || !post?.num_empleado) {
-      alert("Por favor, sube una imagen y proporciona el número de empleado.");
+    if ((!imgFiles.length && !post.videoUrl) || !post?.num_empleado) {
+      alert("Por favor, sube una imagen o proporciona un enlace de video y proporciona el número de empleado.");
       return;
     }
 
     const formData = new FormData();
 
-    imgFiles.forEach((file, index) => {
-    if (file instanceof File) {
-      formData.append("images", file); // 👈 Agrega múltiples imágenes con el mismo key
-    }
-    });
-    formData.append("num_empleado", post.num_empleado.toString());
-    formData.append("name_author", post.name_author);
-    formData.append("title", post.title);
-    formData.append("desc", post.desc);
-    formData.append("tag", post.tag);
-    formData.append("date", post.date);
-    formData.append("videoUrl", post.videoUrl || "");
-
-    try {
-      console.log("Guardando imagen...");
-      const res = await axios.post("/api/uploadImages", formData,
-        {
+    let imageUrls: string[] = [];
+    if (imgFiles.length > 0) {
+      const formData = new FormData();
+  
+      imgFiles.forEach((file) => {
+        if (file instanceof File) {
+          formData.append("images", file);
+        }
+      });
+  
+      formData.append("num_empleado", post.num_empleado.toString());
+  
+      try {
+        console.log("Subiendo imágenes...");
+        const res = await axios.post("/api/uploadImages", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
+  
+        console.log("Imágenes subidas correctamente");
+        imageUrls = res.data.imageUrls;
+      } catch (error) {
+        console.error("Error al subir imágenes:", error);
+        return;
+      }
+    }
 
-      console.log("Imagenes guardada correctamente");
+    const newPost = {
+      ...post,
+      img: imageUrls,
+      videoUrl: post.videoUrl || "",
+    };
+  
 
-      const newPost = {
-        ...post,
-        img: res.data.imageUrls,
-        videoUrl: post.videoUrl || "",
-      };
-
-      const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/Agregarpost', {
-        method: 'POST',
+    try {
+      const response = await fetch("http://api-cursos.192.168.29.40.sslip.io/Agregarpost", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(newPost),
       });
-
+  
       if (!response.ok) {
-        throw new Error('Error en la solicitud');
+        throw new Error("Error en la solicitud");
       }
-
+  
       const result = await response.json();
-      console.log('Post agregado con éxito', result);
-
+      console.log("Post agregado con éxito", result);
+  
       const postWithId = {
         ...newPost,
-        idBlog: result.idBlog, 
-      };  
-
+        idBlog: result.insertId || result.idBlog, // Asegura compatibilidad con ambos formatos de respuesta
+      };
+  
       setPosts((prevPosts) => [...prevPosts, postWithId]);
-      console.log('Post agregado:', postWithId);
+      console.log("Post agregado:", postWithId);
       window.location.reload();
     } catch (error) {
-      console.error('Error al agregar post:', error);
+      console.error("Error al agregar post:", error);
     }
   };
+  
 
   return (
     <section className="grid min-h-screen place-items-center mt-20 p-20">
