@@ -21,19 +21,19 @@ const ARTICLES = [
     link: "",
   },
   {
-    img: "/image/asistencia.png",
+    img: "/image/Asistencia.png",
     title: "Asistencia",
     desc: "Da clic aquí para descargar la lista de asistencia de la capacitación de Tarahumara.",
     link: "https://gpotarahumara-my.sharepoint.com/...",
   },
   {
-    img: "/image/Convenio.png",
+    img: "/image/Convenios.png",
     title: "Convenios Educativos",
     desc: "Da clic aquí para conocer los convenios educativos que tenemos.",
     link: "/Convenios",
   },
   {
-    img: "/image/solicitud.jpg",
+    img: "/image/solicitud.png",
     title: "Formato de solicitud",
     desc: "Da clic aquí para descargar el formato de solicitud de cursos.",
     link: 'https://gpotarahumara-my.sharepoint.com/...',

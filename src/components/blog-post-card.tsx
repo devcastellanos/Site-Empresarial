@@ -32,6 +32,7 @@ interface BlogPostCardProps {
   likes: number;
   onPostEdit: (post: Post) => void;
   onPostDelete: (idBlog: number) => void;
+  videoUrl?: string; 
 }
 
 export function BlogPostCard({
@@ -53,6 +54,7 @@ export function BlogPostCard({
   const [post, setPost] = useState<Post>({
     idBlog: idBlog,
     img: Array.isArray(img) ? img : [],
+    videoUrl: "", // Add default value for videoUrl
     tag: tag,
     title: title,
     desc: desc,
@@ -65,6 +67,13 @@ export function BlogPostCard({
 
   // Estado para las imágenes nuevas seleccionadas durante la edición
   const [newImgFiles, setNewImgFiles] = useState<File[]>([]);
+
+  const extractYouTubeID = (url: string) => {
+    const regExp = /(?:youtube\.com.*(?:\?|&)v=|youtu\.be\/)([^&#]*)/;
+    const match = url.match(regExp);
+    return match && match[1] ? match[1] : "";
+  };
+  
 
   const { isAuthenticated } = useAuth();
 
@@ -88,7 +97,7 @@ export function BlogPostCard({
   const handleEdit = async () => {
     // Toma las imágenes actuales (ya con las eliminaciones realizadas)
     let updatedImages = [...post.img];
-
+  
     // Si se seleccionaron nuevas imágenes, se suben y se concatenan
     if (newImgFiles.length > 0) {
       const formData = new FormData();
@@ -111,10 +120,14 @@ export function BlogPostCard({
         return;
       }
     }
-
-    // Construir el objeto actualizado con el arreglo completo de imágenes
-    const updatedPost = { ...post, img: updatedImages };
-
+  
+    // Construir el objeto actualizado con el arreglo completo de imágenes y videoUrl
+    const updatedPost = {
+      ...post,
+      img: updatedImages,
+      videoUrl: post.videoUrl || "", // 👈 Aseguramos que se incluya el video
+    };
+  
     try {
       const response = await fetch("http://api-cursos.192.168.29.40.sslip.io/ActualizarPost", {
         method: "PUT",
@@ -123,9 +136,11 @@ export function BlogPostCard({
         },
         body: JSON.stringify(updatedPost),
       });
+  
       if (!response.ok) {
         throw new Error("Error en la solicitud");
       }
+  
       const data = await response.json();
       console.log("Post actualizado:", data);
       setOpenModal(false);
@@ -134,6 +149,7 @@ export function BlogPostCard({
       console.error("Error al actualizar post:", error);
     }
   };
+  
 
   return (
     <>
@@ -156,6 +172,18 @@ export function BlogPostCard({
                     height={600}
                     className="h-full w-full object-cover"
                   />
+                  {post.videoUrl && (
+                    <div className="aspect-video mt-4">
+                      <iframe
+                        className="w-full h-full rounded"
+                        src={`https://www.youtube.com/embed/${extractYouTubeID(post.videoUrl)}`}
+                        title="YouTube video"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  )}
                 </div>
               ))}
             </Carousel>
@@ -309,6 +337,16 @@ export function BlogPostCard({
               onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} 
               crossOrigin=""
             />
+            <Input
+              type="text"
+              placeholder="Enlace de YouTube"
+              value={post.videoUrl || ""}
+              onChange={(e) => setPost({ ...post, videoUrl: e.target.value })}
+              className="w-full p-2 border rounded mb-4"
+              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} 
+              crossOrigin=""
+            />
+
 
             {/* Sección para editar imágenes */}
             <div className="mb-4">

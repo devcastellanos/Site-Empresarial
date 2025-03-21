@@ -31,7 +31,9 @@ export interface Post {
   name_author: string;
   num_empleado: number;
   likes: number;
+  videoUrl?: string;
 }
+
 
 export function Posts() {
   const [post, setPost] = React.useState<Post>(
@@ -152,6 +154,7 @@ export function Posts() {
       const newPost = {
         ...post,
         img: res.data.imageUrls,
+        videoUrl: post.videoUrl || "",
       };
 
       const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/Agregarpost', {
@@ -387,6 +390,26 @@ export function Posts() {
               className="object-cover self-center"
             />
           )}
+          <div className="mb-6">
+            <Typography
+              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+              variant="small"
+              color="blue-gray"
+              className="mb-2 font-medium"
+            >
+              Video de YouTube (URL)
+            </Typography>
+            <Input
+              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+              crossOrigin=""
+              size="lg"
+              placeholder="https://www.youtube.com/watch?v=..."
+              value={post.videoUrl || ""}
+              onChange={(e) => setPost({ ...post, videoUrl: e.target.value })}
+              className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
+            />
+          </div>
+
           </div>
             <div className="flex justify-center mt-4">
             <Button
@@ -427,6 +450,7 @@ export function Posts() {
                     idBlog={idBlog}
                     num_empleado={num_empleado}
                     likes={likes}
+                    videoUrl={post.videoUrl}
                     onPostEdit={() => {}}
                     onPostDelete={() => {}}
                   />
