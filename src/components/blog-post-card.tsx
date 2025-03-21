@@ -172,12 +172,12 @@ export function BlogPostCard({
             onPointerEnterCapture={() => {}}
             onPointerLeaveCapture={() => {}}
           >
-            {post.videoUrl && (
+            {post.videoUrl != "" && (
               <div className="aspect-video w-full h-full">
                 <iframe
                   className="w-full h-full"
                   src={`https://www.youtube.com/embed/${extractYouTubeID(
-                    post.videoUrl
+                    post.videoUrl || ""
                   )}`}
                   title="YouTube video"
                   frameBorder="0"
