@@ -291,92 +291,80 @@ function CourseCatalog() {
           >
             Cursos
           </h1>
-          <div style={styles.addButtonContainer}>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+            <input
+              type="text"
+              placeholder="Buscar por título o descripción"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="w-full md:w-2/3 px-4 py-2 rounded-lg bg-white/70 backdrop-blur border border-gray-300 text-blue-gray-800 placeholder:text-blue-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            />
+
             <button
               onClick={handleAddCourse}
-              style={{ ...styles.addButton, marginRight: "20px" }}
+              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 transition"
+              title="Agregar nuevo curso"
             >
-              <FaPlus style={{ marginRight: "8px" }} />
-              Agregar Curso
+              <FaPlus />
+              <span className="hidden sm:inline">Agregar Curso</span>
             </button>
-            <div style={{ display: "flex", width: "100%" }}>
-              <input
-                type="text"
-                placeholder="Buscar por título o descripción"
-                value={searchTerm}
-                onChange={handleSearchChange}
-                style={{ ...styles.input, marginRight: "20px" }}
-              />
-            </div>
           </div>
-          {/* Barra de búsqueda */}
 
           {/* Tabla de cursos */}
-          <table style={styles.table}>
-            <thead>
-              <tr>
-                <th style={styles.th}>Título</th>
-                <th style={styles.th}>Descripción</th>
-                <th style={styles.th}>impartido por</th>
-                <th style={styles.th}>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredCourses.length > 0 ? (
-                filteredCourses.map((course, index) => (
-                  <tr
-                    key={
-                      course.id_course
-                        ? course.id_course
-                        : `${index}-${course.id_course}`
-                    }
-                  >
-                    <td style={styles.td}>{course.title}</td>
-                    <td style={styles.td}>{course.description}</td>
-                    <td style={styles.td}>{course.tutor}</td>
-                    <td style={{ ...styles.td, width: "240px" }}>
-                      <button
-                        onClick={() => handleOpenDialog(course)}
-                        style={styles.viewButton}
-                      >
-                        <FaEye /> Ver
-                      </button>
-                      <button
-                        onClick={() => handleOpenEditDialog(course)}
-                        style={styles.editButton}
-                      >
-                        <FaEdit /> Editar
-                      </button>
-                      <button
-                        onClick={() => handleDeleteCourse(course)}
-                        style={styles.button}
-                      >
-                        <FaTrash /> Eliminar
-                      </button>
-                      <button
-                        onClick={() => handleOpenAssignModal(course)}
-                        style={{
-                          backgroundColor: "green",
-                          color: "white",
-                          padding: "5px 10px",
-                          borderRadius: "5px",
-                          cursor: "pointer",
-                        }}
-                      >
-                        Asignar Departamento
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} style={styles.noResults}>
-                    No se encontraron cursos.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <div className="mt-6 w-full space-y-4">
+            <div className="grid grid-cols-4 gap-4 px-4 py-3 bg-white/60 rounded-lg font-semibold text-blue-gray-900 backdrop-blur-md shadow">
+              <span>Título</span>
+              <span>Descripción</span>
+              <span>Impartido por</span>
+              <span className="text-center">Acciones</span>
+            </div>
+
+            {filteredCourses.length > 0 ? (
+              filteredCourses.map((course) => (
+                <div
+                  key={course.id_course}
+                  className="grid grid-cols-4 gap-4 items-center px-4 py-3 bg-white/40 rounded-lg text-blue-gray-800 backdrop-blur-lg hover:bg-white/60 transition-all"
+                >
+                  <span>{course.title}</span>
+                  <span>{course.description}</span>
+                  <span>{course.tutor}</span>
+                  <div className="flex justify-center gap-2">
+                    <button
+                      onClick={() => handleOpenDialog(course)}
+                      className="p-2 rounded-full bg-white/30 hover:bg-white/70 transition border border-black/10"
+                      title="Ver curso"
+                    >
+                      <FaEye size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleOpenEditDialog(course)}
+                      className="p-2 rounded-full bg-white/30 hover:bg-white/70 transition border border-black/10"
+                      title="Editar curso"
+                    >
+                      <FaEdit size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteCourse(course)}
+                      className="p-2 rounded-full bg-white/30 hover:bg-white/70 transition border border-black/10"
+                      title="Eliminar curso"
+                    >
+                      <FaTrash size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleOpenAssignModal(course)}
+                      className="p-2 rounded-full bg-green-500/80 hover:bg-green-600 text-white transition"
+                      title="Asignar Departamento"
+                    >
+                      <FaPlus size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center text-gray-600 mt-4">No se encontraron cursos.</div>
+            )}
+          </div>
+
 
           {/* Fondo borroso y diálogo para ver la información del curso */}
           <Dialog
@@ -582,51 +570,45 @@ const styles: { [key: string]: CSSProperties } = {
   },
   table: {
     width: "100%",
-    borderCollapse: "collapse",
+    borderCollapse: "separate",
+    borderSpacing: "0 12px",
   },
   th: {
-    backgroundColor: "#f2f2f2",
-    padding: "10px",
-    border: "1px solid #ddd",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    padding: "12px",
+    borderBottom: "1px solid #ccc",
     textAlign: "left",
-    fontWeight: "bold",
+    fontWeight: 600,
+    color: "#333",
+    backdropFilter: "blur(6px)",
   },
   td: {
-    padding: "10px",
-    border: "1px solid #ddd",
+    padding: "12px",
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
+    backdropFilter: "blur(4px)",
+    borderBottom: "1px solid rgba(0,0,0,0.05)",
+    borderRadius: "8px",
+    color: "#333",
   },
   noResults: {
     textAlign: "center",
     padding: "20px",
     color: "#888",
   },
-  viewButton: {
-    margin: "0 5px",
-    padding: "5px 10px",
-    backgroundColor: "#17a2b8",
-    color: "#fff",
-    border: "none",
-    borderRadius: "5px",
+  actionButton: {
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    border: "1px solid rgba(0, 0, 0, 0.1)",
+    borderRadius: "50%",
+    padding: "8px",
+    margin: "0 4px",
     cursor: "pointer",
+    transition: "all 0.3s ease",
+    backdropFilter: "blur(4px)",
+    color: "#333",
   },
-  editButton: {
-    margin: "0 5px",
-    padding: "5px 10px",
-    backgroundColor: "#ffc107",
-    color: "#fff",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-  button: {
-    margin: "0 5px",
-    padding: "5px 10px",
-
-    backgroundColor: "#dc3545",
-    color: "#fff",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
+  actionButtonHover: {
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
+    transform: "scale(1.1)",
   },
   
   modal: {

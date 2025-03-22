@@ -13,7 +13,7 @@ const ARTICLES = [
     link: "https://www.crehana.com/entrar/",
   },
   {
-    img: "/image/Plan.webp",
+    img: "/image/cap.png",
     title: "Plan de Capacitación",
     desc: "Da clic para conocer el Plan anual de capacitación actualizada.",
     link: "",
@@ -25,7 +25,7 @@ const ARTICLES = [
     link: "https://gpotarahumara-my.sharepoint.com/...",
   },
   {
-    img: "/image/Convenios.png",
+    img: "/image/convenio.png",
     title: "Convenios Educativos",
     desc: "Da clic aquí para conocer los convenios educativos que tenemos.",
     link: "/Convenios",
@@ -97,37 +97,49 @@ export default function Campaign() {
           </h2>
         </motion.div>
 
-        <div className="mt-12 max-w-4xl mx-auto text-left">
-          <Accordion type="single" collapsible className="w-full">
-            {ARTICLES.map((article, idx) => (
-              <AccordionItem value={`item-${idx}`} key={idx}>
-                <AccordionTrigger className="text-white text-xl font-semibold">
-                  {article.title}
-                </AccordionTrigger>
-                <AccordionContent className="bg-gray-800 text-white rounded-b-lg px-4 py-6">
-                  <Image
-                    src={article.img}
-                    alt={article.title}
-                    className="w-full h-[600px] object-contain mb-4 rounded-lg"
-                    width={500}
-                    height={1000}
-                  />
-
-                  <p className="mb-4">{article.desc}</p>
+        <motion.div
+          className="mt-12 max-w-8xl mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          transition={{ staggerChildren: 0.15 }}
+        >
+          {ARTICLES.map((article, idx) => (
+            <motion.div
+              key={idx}
+              variants={{
+                hidden: { opacity: 0, y: 50 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="bg-gray-800 rounded-2xl overflow-hidden shadow-lg shadow-black/30 hover:shadow-xl transition-all duration-300 group"
+            >
+              <Image
+                src={article.img}
+                alt={article.title}
+                width={600}
+                height={400}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-4">
+                <h3 className="text-white text-xl font-semibold mb-2">{article.title}</h3>
+                <div className="overflow-hidden max-h-0 group-hover:max-h-40 transition-all duration-500 ease-in-out">
+                  <p className="text-gray-300 text-sm">{article.desc}</p>
                   {article.link && (
                     <a
                       href={article.link}
                       target="_blank"
-                      className="inline-block bg-blue-500 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition"
+                      className="inline-block mt-4 bg-blue-500 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm transition"
                     >
                       Ver más
                     </a>
                   )}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
 
         <div className="mt-16">
           <Footer />

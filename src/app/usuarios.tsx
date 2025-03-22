@@ -102,72 +102,112 @@ const Usuarios = () => {
 
   return (
     <div className="flex justify-center items-center w-full pb-20">
-    <Card className="h-full w-3/4 top-32 mb-20" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-      <CardHeader floated={false} shadow={false} className="rounded-none" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-        <div className="mb-8 flex items-center justify-between">
-          <Typography variant="h5" color="blue-gray" onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">Usuarios</Typography>
-          <Button className="flex items-center gap-3" size="sm" onClick={() => handleOpenModal()} onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">
-            <UserPlusIcon className="h-4 w-4" /> Add member
-          </Button>
+    <Card className="w-full max-w-6xl mt-32 bg-white/70 backdrop-blur-md shadow-xl rounded-xl p-6" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+      <CardHeader
+        floated={false}
+        shadow={false}
+        className="rounded-xl mb-6 bg-white/70 backdrop-blur-md shadow-lg"
+        placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+      >
+        <div className="flex items-center justify-between px-6 py-4">
+          <Typography variant="h4" className="text-blue-gray-900 font-semibold" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+            Gestión de Usuarios
+          </Typography>
+          <IconButton
+            onClick={() => handleOpenModal()}
+            className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+            title="Agregar usuario"
+            placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+          >
+            <UserPlusIcon className="h-5 w-5" />
+          </IconButton>
         </div>
       </CardHeader>
-      <CardBody className="overflow-scroll px-0" onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">
-        <table className="w-full min-w-max table-auto text-left">
-          <thead>
-            <tr>
-              {TABLE_HEAD.map((head) => (
-                <th key={head} className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
-                  <Typography variant="small" color="blue-gray" className="font-normal opacity-70" onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">{head}</Typography>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {usuarios.map(({ id, name, email, status }) => (
-              <tr key={id} className="border-b border-blue-gray-50">
-                <td className="p-4">
-                  <Typography variant="small" color="blue-gray" onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">{name}</Typography>
-                  <Typography variant="small" color="blue-gray" onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="" className="opacity-70">{email}</Typography>
-                </td>
-                <td className="p-4">{name}</td>
-                <td className="p-4">
-                  <Chip variant="ghost" size="sm" value={status} color={status === "Activo" ? "green" : "blue-gray"} />
-                </td>
-                <td className="p-4">
-                  { status === 'Activo' ? (<div>
-                    <Tooltip content="Edit User">
-                      <IconButton variant="text" onClick={() => handleOpenModal({ id, name, email, status })} onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">
-                        <PencilIcon className="h-4 w-4" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip content="Delete User">
-                      <IconButton variant="text" onClick={() => id !== undefined && handleDeleteUsuario(id)} onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">
-                        <TrashIcon className="h-4 w-4" />
-                      </IconButton>
-                    </Tooltip>
-                  </div>) : null}
-                  
-                  
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </CardBody>
-      <Dialog open={openModal} handler={() => handleOpenModal()} onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder=""> 
-        <DialogHeader onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">{currentUsuario.id ? "Edit User" : "Add User"}</DialogHeader>
-        <DialogBody onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">
-          <div className="flex flex-col gap-4">
-            <Input label="Name" value={currentUsuario.name} onChange={(e) => setCurrentUsuario({ ...currentUsuario, name: e.target.value })} onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="" crossOrigin="" />
-            <Input label="Email" value={currentUsuario.email} onChange={(e) => setCurrentUsuario({ ...currentUsuario, email: e.target.value })} onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="" crossOrigin=""/>
-            <Input label="Password" type="password" value={currentUsuario.password || ""} onChange={(e) => setCurrentUsuario({ ...currentUsuario, password: e.target.value })}onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="" crossOrigin="" />
-          </div>
-        </DialogBody>
-        <DialogFooter onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">
-          <Button variant="text" color="red" onClick={() => handleOpenModal()} onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">Cancel</Button>
-          <Button variant="gradient" color="green" onClick={() => handleSaveUsuario(currentUsuario)} onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">Save</Button>
-        </DialogFooter>
-      </Dialog>
+
+      <CardBody className="px-4 space-y-3" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+        <div className="grid grid-cols-12 px-4 py-2 bg-white/50 backdrop-blur-md rounded-md font-semibold text-blue-gray-700 text-center">
+          <div className="col-span-3 text-center">Nombre</div>
+          <div className="col-span-5">Correo electrónico</div>
+          <div className="col-span-2 text-center">Estado</div>
+          <div className="col-span-2 text-center">Acciones</div>
+        </div>
+
+          {usuarios.length > 0 ? (
+            usuarios.map(({ id, name, email, status }) => (
+              <div
+                key={id}
+                className="grid grid-cols-12 items-center bg-white/40 backdrop-blur-md rounded-lg px-4 py-3 shadow-sm hover:bg-white/60 transition"
+              >
+                {/* Nombre */}
+                <div className="col-span-3">
+                  <Typography className="font-semibold text-blue-gray-900 text-center" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>{name}</Typography>
+                </div>
+
+                {/* Email (más grande) */}
+                <div className="col-span-5">
+                  <Typography className="text-sm text-blue-gray-700 opacity-80 truncate" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>{email}</Typography>
+                </div>
+
+                {/* Estado (más pequeño) */}
+                <div className="col-span-2">
+                  <Chip
+                    variant="ghost"
+                    size="sm"
+                    value={status}
+                    color={status === "Activo" ? "green" : "blue-gray"}
+                    className="w-full text-center text-xs px-1 py-0.5 font-medium"
+                  />
+                </div>
+
+                {/* Iconos (más pequeños y ajustados) */}
+                <div className="col-span-2 flex justify-end gap-2">
+                  {status === "Activo" && (
+                    <>
+                      <Tooltip content="Editar">
+                        <IconButton
+                          variant="text"
+                          className="hover:bg-white/70 p-1"
+                          onClick={() => handleOpenModal({ id, name, email, status })}
+                          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+                        >
+                          <PencilIcon className="h-3.5 w-3.5 text-blue-gray-800" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip content="Eliminar">
+                        <IconButton
+                          variant="text"
+                          className="hover:bg-white/70 p-1"
+                          onClick={() => id !== undefined && handleDeleteUsuario(id)}
+                          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+                        >
+                          <TrashIcon className="h-3.5 w-3.5 text-red-600" />
+                        </IconButton>
+                      </Tooltip>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))
+          ) : (
+            <Typography className="text-center text-blue-gray-600" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+              No hay usuarios disponibles.
+            </Typography>
+          )}
+        </CardBody>
+
+
+        <Dialog open={openModal} handler={() => handleOpenModal()} className="bg-white/80 backdrop-blur-xl rounded-xl shadow-lg p-6" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+          <DialogHeader className="text-blue-gray-800" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>{currentUsuario.id ? "Editar usuario" : "Agregar usuario"}</DialogHeader>
+          <DialogBody className="space-y-4" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+            <Input label="Nombre" value={currentUsuario.name} placeholder="" crossOrigin="anonymous" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} onChange={(e) => setCurrentUsuario({ ...currentUsuario, name: e.target.value })} />
+            <Input label="Correo" value={currentUsuario.email} placeholder="" crossOrigin="anonymous" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} onChange={(e) => setCurrentUsuario({ ...currentUsuario, email: e.target.value })} />
+            <Input label="Contraseña" type="password" value={currentUsuario.password || ""} placeholder="" crossOrigin="anonymous" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} onChange={(e) => setCurrentUsuario({ ...currentUsuario, password: e.target.value })} />
+          </DialogBody>
+          <DialogFooter className="mt-4" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+            <Button variant="text" color="red" onClick={() => handleOpenModal()} placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>Cancelar</Button>
+            <Button variant="gradient" color="green" onClick={() => handleSaveUsuario(currentUsuario)} placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>Guardar</Button>
+          </DialogFooter>
+        </Dialog>
     </Card>
     </div>
   );

@@ -4,27 +4,15 @@ import Swal from 'sweetalert2';
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import axios from 'axios';
 import { useRouter } from "next/navigation";
-import { useAuth }  from '../app/hooks/useAuth';
+import { useAuth } from '../app/hooks/useAuth';
+import { motion } from "framer-motion";
 
 export function Login() {
-  const { isAuthenticated, login,  logout} = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
-  const getProfile = async () => {
-    const response = await axios.get('/api/auth/profile', { withCredentials: true });
-    console.log(response);
-    console.log(response.data.user.email);
-  }
-
-  const handleSubmit = async () => {
-    console.log(email, password);
-    const response = await axios.post('/api/auth/login', { email, password }, { withCredentials: true });
-    console.log(response);
-    
-  };
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -40,7 +28,6 @@ export function Login() {
     try {
       const response = await axios.post('/api/auth/login', { email, password }, { withCredentials: true });
       login();
-      
 
       if (response.status !== 200) {
         Swal.fire({
@@ -63,70 +50,94 @@ export function Login() {
         title: 'Error',
         text: 'Hubo un problema al intentar iniciar sesión. Inténtalo nuevamente.',
       });
-      
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Card color="transparent" shadow={false} placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-      <Typography variant="h4" color="blue-gray" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-        Inicio de Sesion
-      </Typography>
-      <Typography color="gray" className="mt-1 font-normal"  placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-        Bienvenido administrador, ingresa tus datos para continuar
-      </Typography>
-      <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
-        <div className="mb-1 flex flex-col gap-6">
-          <Typography variant="h6" color="blue-gray" className="-mb-3"  placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-            Correo Electronico
-          </Typography>
-          <Input
-          crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-            size="lg"
-            type="email"
-            placeholder="nombre@grupotarahumara.com.mx"
-            className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-            labelProps={{
-              className: "before:content-none after:content-none",
-            }}
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Typography variant="h6" color="blue-gray" className="-mb-3"  placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-            Contraseña
-          </Typography>
-          <Input
-          crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-            type="password"
-            size="lg"
-            placeholder="********"
-            className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-            labelProps={{
-              className: "before:content-none after:content-none",
-            }}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+    <div className="min-h-screen flex items-center justify-center bg-neutral-900">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="flex justify-center mb-2">
+          <div className="bg-white/70 rounded-xl px-6 py-1 shadow-md">
+            <img
+              src="/image/logo.png"
+              alt="Logo"
+              className="h-auto w-auto"
+            />
+          </div>
         </div>
-        <Button
-        placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
-          className="mt-6"
-          fullWidth
-          size="lg"
-          onClick={handleLogin}
-          // onClick={handleSubmit}
-          disabled={isLoading}
+
+        <Card
+          shadow={false}
+          className="backdrop-blur-sm bg-black/60 border border-white/10 text-white p-8 rounded-xl w-full max-w-md"
+          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
         >
-          {isLoading ? 'Cargando...' : 'Iniciar Sesión'}
-        </Button>
-        <Typography color="gray" className="mt-4 text-center font-normal"  placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-          Si no tienes cuenta de administrador comunicate con soporte{" "}
-        </Typography>
-      </form>
-    </Card>
+
+          <Typography variant="h3" color="white" className="text-center mb-2" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+            Inicio de Sesión
+          </Typography>
+          <Typography className="text-gray-300 text-center text-sm mb-6" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+            Bienvenido administrador, ingresa tus datos para continuar
+          </Typography>
+
+          <form className="space-y-6">
+            <div>
+              <Typography variant="h6" className="text-white mb-1" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+                Correo Electrónico
+              </Typography>
+              <Input
+                type="email"
+                size="lg"
+                placeholder="nombre@grupotarahumara.com.mx"
+                crossOrigin="anonymous"
+                onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+                className="text-white placeholder:text-gray-400 bg-white/10 focus:!border-white"
+                labelProps={{ className: "before:content-none after:content-none" }}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <Typography variant="h6" className="text-white mb-1" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+                Contraseña
+              </Typography>
+              <Input
+                type="password"
+                size="lg"
+                placeholder="********"
+                crossOrigin=""
+                onPointerEnterCapture={() => {}} 
+                onPointerLeaveCapture={() => {}}
+                className="text-white placeholder:text-gray-400 bg-white/10 focus:!border-white"
+                labelProps={{ className: "before:content-none after:content-none" }}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            <Button
+              fullWidth
+              size="lg"
+              className="bg-white text-black font-bold hover:bg-gray-200 transition-colors"
+              onClick={handleLogin}
+              disabled={isLoading}
+              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+            >
+              {isLoading ? 'Cargando...' : 'Iniciar Sesión'}
+            </Button>
+
+            <Typography className="text-center text-gray-400 text-sm mt-4" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+              Si no tienes cuenta de administrador, comunícate con soporte
+            </Typography>
+          </form>
+        </Card>
+      </motion.div>
+    </div>
   );
 }
-

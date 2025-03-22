@@ -195,18 +195,18 @@ export function Posts() {
   
 
   return (
-    <section className="grid min-h-screen place-items-center mt-20 p-20">
+    <section className="grid min-h-screen place-items-center mt-20 p-10">
       <motion.video
         autoPlay
         loop
         muted
         className="fixed top-0 left-0 w-full h-full object-cover -z-20"
-        style={{ opacity: 0.5 }} // Ajusta el valor según sea necesario
+        style={{ opacity: 0.4 }}
       >
         <source src="/image/background.mp4" type="video/mp4" />
       </motion.video>
 
-        <Card className="p-8 shadow-2xl bg-white/80 backdrop-blur-lg rounded-2xl w-3/4" 
+      <Card className="p-10 shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl w-[90%] max-w-full"
           placeholder="" 
           onPointerEnterCapture={() => {}} 
           onPointerLeaveCapture={() => {}}>
@@ -222,8 +222,13 @@ export function Posts() {
         </CardHeader>
       {
       isAuthenticated ? (
+        
         <section className="px-8 py-10 container mx-auto">
-        <Typography variant="h5" color="blue-gray"  placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
+          <Card className="p-10 shadow-2xl bg-white/80 backdrop-blur-lg rounded-2xl w-[100%] max-w-7xl"
+          placeholder="" 
+          onPointerEnterCapture={() => {}} 
+          onPointerLeaveCapture={() => {}}>
+        <Typography variant="h4" color="blue-gray" className="text-3xl font-bold text-blue-gray-900" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
           New Post
         </Typography>
         <Typography
@@ -245,16 +250,17 @@ export function Posts() {
                 Titulo
               </Typography>
               <Input
-                crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+                crossOrigin=""
                 size="lg"
-                placeholder="Titulo del post"
+                placeholder="Título del post" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
                 value={post?.title}
                 onChange={(e) => setPost({ ...post!, title: e.target.value })}
                 labelProps={{
                   className: "hidden",
                 }}
-                className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
+                className="w-full text-blue-gray-800 placeholder:text-blue-gray-500 placeholder:font-medium focus:border-t-blue-800 border-t-blue-gray-600 bg-white/90"
               />
+
             </div>
             <div className="w-full">
               <Typography
@@ -274,7 +280,7 @@ export function Posts() {
                 labelProps={{
                   className: "hidden",
                 }}
-                className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
+                className="w-full text-blue-gray-800 placeholder:text-blue-gray-500 placeholder:font-medium focus:border-t-blue-800 border-t-blue-gray-600 bg-white/90"
               />
             </div>
           </div>
@@ -289,10 +295,10 @@ export function Posts() {
                 Tags
               </Typography>
               <Select
-              onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+                onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
                 size="lg"
                 labelProps={{ className: "hidden" }}
-                className="border-t-blue-gray-200 aria-[expanded=true]:border-t-primary"
+                className="w-full text-blue-gray-800 placeholder:text-blue-gray-500 placeholder:font-medium focus:border-t-blue-800 border-t-blue-gray-600 bg-white/90"
                 placeholder="Tag"
                 value={post.tag}
                 onChange={(value: string | undefined) => {
@@ -326,7 +332,7 @@ export function Posts() {
                 type="date"
                 value={post?.date}
                 onChange={(e) => setPost({ ...post!, date: e.target.value })}
-                className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
+                className="w-full text-blue-gray-800 placeholder:text-blue-gray-500 placeholder:font-medium focus:border-t-blue-800 border-t-blue-gray-600 bg-white/90"
               />
             </div>
             <div className="w-full">
@@ -347,7 +353,7 @@ export function Posts() {
                 labelProps={{
                   className: "hidden",
                 }}
-                className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
+                className="w-full text-blue-gray-800 placeholder:text-blue-gray-500 placeholder:font-medium focus:border-t-blue-800 border-t-blue-gray-600 bg-white/90"
               />
 
             </div>
@@ -372,7 +378,7 @@ export function Posts() {
                 labelProps={{
                   className: "hidden",
                 }}
-                className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
+                className="w-full text-blue-gray-800 placeholder:text-blue-gray-500 placeholder:font-medium focus:border-t-blue-800 border-t-blue-gray-600 bg-white/90"
               />
             </div>
           </div>
@@ -393,7 +399,7 @@ export function Posts() {
               placeholder="https://www.youtube.com/watch?v=..."
               value={post.videoUrl || ""}
               onChange={(e) => setPost({ ...post, videoUrl: e.target.value })}
-              className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
+              className="w-full text-blue-gray-800 placeholder:text-blue-gray-500 placeholder:font-medium focus:border-t-blue-800 border-t-blue-gray-600 bg-white/90"
             />
           </div>
                 
@@ -435,6 +441,7 @@ export function Posts() {
             </div>
 
         </div>
+        </Card>
       </section>
 
       ): null }
@@ -447,7 +454,7 @@ export function Posts() {
           <Typography variant="lead" className="text-gray-600 mt-2" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
             Aquí puedes ver la última información y noticias de Grupo Tarahumara.
           </Typography>
-      <div className="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-2 xl:grid-cols-2">
             {posts.length > 0 ? (
               posts.map(({ img, tag, title, desc, date, img_author, name_author, idBlog, num_empleado, likes, videoUrl }) => (
                 <Card key={idBlog} className="shadow-md" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
