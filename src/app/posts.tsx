@@ -454,7 +454,7 @@ export function Posts() {
           <Typography variant="lead" className="text-gray-600 mt-2" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
             Aquí puedes ver la última información y noticias de Grupo Tarahumara.
           </Typography>
-      <div className="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-2 xl:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 mt-6 ">
             {posts.length > 0 ? (
               posts.map(({ img, tag, title, desc, date, img_author, name_author, idBlog, num_empleado, likes, videoUrl }) => (
                 <Card key={idBlog} className="shadow-md" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>

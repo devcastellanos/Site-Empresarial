@@ -25,15 +25,7 @@ interface Course {
   status: string;
 }
 
-interface AssignDepartmentModalProps {
-  course: { id_course: number; title: string };
-  onClose: () => void;
-  onAssign: (
-    course: { id_course: number; title: string },
-    department: string
-  ) => void;
-  departments: string[];
-}
+
 
 function CourseCatalog() {
   const [formatJson, setFormatJson] = useState<CourseJson[]>([]);
@@ -44,7 +36,7 @@ function CourseCatalog() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [departments, setDepartments] = useState<string[]>([]);
-  const [usersByDepartment, setUsersByDepartment] = useState([]);
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -107,18 +99,6 @@ function CourseCatalog() {
   useEffect(() => {
     fetchDepartments();
   }, []);
-
-  // const fetchUsersByDepartment = async (department: string) => {
-  //   try {
-  //       const response = await fetch(`http://tu-api.com/api/users/by-department?department=${department}`); // Ajusta la URL
-  //       const data = await response.json();
-  //       setUsersByDepartment(data[department] || []); // Accede al array del departamento específico
-  //   } catch (error) {
-  //       console.error("Error al obtener usuarios del departamento:", error);
-  //   }
-  // };
-
-  // Cargar departamentos al montar el componente
 
   const handleAssignDepartment = (course: CourseJson, department: string) => {
     console.log(
@@ -263,7 +243,7 @@ function CourseCatalog() {
   const handleCloseAssignModal = () => {
     setIsAssignModalOpen(false);
     setSelectedCourse(null);
-    setUsersByDepartment([]);
+
   };
 
   return (
@@ -485,7 +465,7 @@ function CourseCatalog() {
         >
           <div style={styles.modalContainer}>
             <div style={styles.modal}>
-              <CourseCatalog2 onAddCourse={handleNewCourse} />
+              <CourseCatalog2 onAddCourse={handleNewCourse} onClose={handleCloseModal}/>
               <button onClick={handleCloseModal} style={styles.closeButton}>
                 Cerrar
               </button>

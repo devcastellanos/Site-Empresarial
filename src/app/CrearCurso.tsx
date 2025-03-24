@@ -16,9 +16,10 @@ interface Course {
 }
 interface Props {
   onAddCourse: (course: Course) => void; // Callback para enviar datos al padre
+  onClose: () => void;
 }
 
-function CourseCatalog({ onAddCourse }: Props) {
+function CourseCatalog({ onAddCourse, onClose }: Props) {
   // El estado debe estar dentro del componente
   const [newCourse, setNewCourse] = useState<Course>({
     id_course: 0,
@@ -66,6 +67,7 @@ function CourseCatalog({ onAddCourse }: Props) {
         return;
        }
       onAddCourse(newCourse); 
+      onClose();
     }catch(e){
       console.log("no se pudo agregar el curso ")
     }  
