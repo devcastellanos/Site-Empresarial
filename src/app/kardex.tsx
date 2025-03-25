@@ -17,6 +17,7 @@ import axios from "axios";
 import sweetAlert from "sweetalert2";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Swal from "sweetalert2";
+import { Combobox } from "@headlessui/react";
 // Ajusta la ruta según tu estructura de archivos
 
 interface CursoTomado {
@@ -83,13 +84,20 @@ const Kardex = () => {
   });
   const [selectedUserId, setSelectedUserId] = useState<number | "">("");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-
+  const [selectedCourse, setSelectedCourse] = useState<CursosPresencialesJson | null>(null);
   const [cursosTomados, setCursosTomados] = useState<CursoTomado[]>([]);
   const [selectedCourses, setSelectedCourses] = useState<CursoTomado[]>([]);
-
+  const [query, setQuery] = useState("");
   const [cursosPresenciales, setCursosPresenciales] = useState<
     CursosPresencialesJson[]
   >([]);
+
+  const filteredCourses =
+    query === ""
+      ? cursosPresenciales
+      : cursosPresenciales.filter((course) =>
+          course.title.toLowerCase().includes(query.toLowerCase())
+        );
 
   const fetchUsers = async () => {
     try {
@@ -129,7 +137,7 @@ const Kardex = () => {
     try {
       const selectedCourse = cursosPresenciales.find(
         (course) => course.id_course === newCourseId
-      );
+      );      
       if ( startDate === ""){
         Swal.fire({
           icon: "error",
@@ -736,113 +744,113 @@ const Kardex = () => {
             flexWrap: "wrap", // Permite que los elementos pasen a la siguiente línea si es necesario
           }}
         >
-          <select
-            value={newCourseId}
-            onChange={(e) => setNewCourseId(Number(e.target.value))}
-            style={{
-              width: "75%",
-              border: "2px solid #9A3324",
-              borderRadius: "8px",
-              padding: "12px",
-              fontSize: "16px",
-              backgroundColor: "#fff",
-              color: "#333",
-              outline: "none",
-              cursor: "pointer",
-              transition: "all 0.3s ease-in-out",
-              boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0px 6px 12px rgba(0, 0, 0, 0.15)")}
-            onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)")}
-            onFocus={(e) => (e.currentTarget.style.backgroundColor = "#fdf2f2")}
-            onBlur={(e) => (e.currentTarget.style.backgroundColor = "#fff")}
-          >
-            <option value="" disabled style={{ fontWeight: "bold", color: "#9A3324" }}>
-              Seleccionar Curso
-            </option>
-            {cursosPresenciales.map((course) => (
-              <option
-                key={course.id_course}
-                value={course.id_course}
-                style={{
-                  padding: "10px",
-                  fontSize: "14px",
-                  backgroundColor: "#fff",
-                  transition: "background 0.3s",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f8e1e1")}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#fff")}
+          <div className="relative w-full max-w-md">
+            <Combobox
+              value={selectedCourse}
+              onChange={(course: CursosPresencialesJson) => {
+                setSelectedCourse(course);
+                setNewCourseId(course?.id_course ?? "");
+              }}
+            >
+              <Combobox.Input
+                className="w-full border-2 border-[#9A3324] rounded-lg p-3 text-[16px] text-[#333] shadow-md focus:outline-none focus:bg-[#fdf2f2] transition-all"
+                onChange={(event) => setQuery(event.target.value)}
+                displayValue={(course: CursosPresencialesJson | null) =>
+                  course?.title || ""
+                }
+                placeholder="Seleccionar Curso"
+              />
+
+              <Combobox.Options
+                className="absolute bottom-full mb-2 z-50 max-h-60 w-full overflow-auto rounded-md border border-gray-200 bg-white py-1 shadow-xl"
               >
-                {course.title}
-              </option>
-            ))}
-          </select>
+                {filteredCourses.length === 0 ? (
+                  <div className="cursor-default select-none py-2 px-4 text-gray-500">
+                    No se encontró ningún curso.
+                  </div>
+                ) : (
+                  filteredCourses.map((course) => (
+                    <Combobox.Option
+                      key={course.id_course}
+                      value={course}
+                      className={({ active }) =>
+                        `cursor-pointer select-none px-4 py-2 text-sm ${
+                          active ? "bg-[#f8e1e1] text-[#9A3324]" : "text-gray-900"
+                        }`
+                      }
+                    >
+                      {course.title}
+                    </Combobox.Option>
+                  ))
+                )}
+              </Combobox.Options>
+            </Combobox>
+          </div>
 
+            {newCourseId && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px", // Espacio entre los inputs
+                }}
+              >
+                <Input
+                  type="number"
+                  label="Progreso"
+                  value={newProgress}
+                  onChange={(e) => {
+                    let value = Number(e.target.value);
+                    if (value < 0) value = 0;
+                    if (value > 100) value = 100;
+                    setNewProgress(value);
+                  }}
+                  crossOrigin=""
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                />
 
-    {newCourseId && (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px", // Espacio entre los inputs
-        }}
-      >
-        <Input
-          type="number"
-          label="Progreso"
-          value={newProgress}
-          onChange={(e) => {
-            let value = Number(e.target.value);
-            if (value < 0) value = 0;
-            if (value > 100) value = 100;
-            setNewProgress(value);
-          }}
-          crossOrigin=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
-        />
+                <Input
+                  type="date"
+                  label="Fecha de impartición"
+                  required
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  crossOrigin=""
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                />
 
-        <Input
-          type="date"
-          label="Fecha de impartición"
-          required
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          crossOrigin=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
-        />
+                <Input
+                  type="date"
+                  label="Fecha de finalización"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  crossOrigin=""
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                />
+              </div>
+            )}
 
-        <Input
-          type="date"
-          label="Fecha de finalización"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          crossOrigin=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
-        />
-      </div>
-    )}
-
-    <button
-      style={{
-        backgroundColor: "#9A3324",
-        color: "white",
-        border: "none",
-        borderRadius: "5px",
-        padding: "10px 20px",
-        cursor: "pointer",
-        marginLeft: "auto", // Empuja el botón hacia la derecha
-        minWidth: "120px", // Evita que el botón se encoja demasiado
-      }}
-      onClick={handleAddCourse}
-      disabled={!newCourseId}
-    >
-      Agregar Curso
-    </button>
-  </div>
-) : null}
+            <button
+              style={{
+                backgroundColor: "#9A3324",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                padding: "10px 20px",
+                cursor: "pointer",
+                marginLeft: "auto", // Empuja el botón hacia la derecha
+                minWidth: "120px", // Evita que el botón se encoja demasiado
+              }}
+              onClick={handleAddCourse}
+              disabled={!selectedCourse}
+            >
+              Agregar Curso
+            </button>
+          </div>
+        ) : null}
 
         {/* Course Information Dialog */}
         {dialogInfo.isOpen && (
