@@ -651,7 +651,7 @@ const Kardex = () => {
                         <Typography
                           color="blue-gray"
                           variant="h6"
-                          placeholder=""
+                          
                           onPointerEnterCapture={() => {}}
                           onPointerLeaveCapture={() => {}}
                         >
@@ -660,7 +660,7 @@ const Kardex = () => {
                         <Typography
                           color="blue-gray"
                           variant="h6"
-                          placeholder=""
+                          
                           onPointerEnterCapture={() => {}}
                           onPointerLeaveCapture={() => {}}
                         >
@@ -669,7 +669,7 @@ const Kardex = () => {
                       </div>
                       <Progress
                         value={Number(course.progress)}
-                        placeholder=""
+                        
                         onPointerEnterCapture={() => {}}
                         onPointerLeaveCapture={() => {}}
                       />
@@ -806,8 +806,7 @@ const Kardex = () => {
                     setNewProgress(value);
                   }}
                   crossOrigin=""
-                  onPointerEnterCapture={() => {}}
-                  onPointerLeaveCapture={() => {}}
+{...({} as any)}
                 />
 
                 <Input
@@ -817,8 +816,7 @@ const Kardex = () => {
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                   crossOrigin=""
-                  onPointerEnterCapture={() => {}}
-                  onPointerLeaveCapture={() => {}}
+{...({} as any)}
                 />
 
                 <Input
@@ -827,8 +825,7 @@ const Kardex = () => {
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                   crossOrigin=""
-                  onPointerEnterCapture={() => {}}
-                  onPointerLeaveCapture={() => {}}
+{...({} as any)}
                 />
               </div>
             )}
@@ -857,21 +854,18 @@ const Kardex = () => {
           <Dialog
             open={dialogInfo.isOpen}
             handler={() => toggleDialog(null)}
-            onPointerLeaveCapture={() => {}}
-            onPointerEnterCapture={() => {}}
-            placeholder=""
+{...({} as any)}
+            
           >
             <DialogHeader
-              placeholder=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
+{...({} as any)}
             >
               Detalles del Curso
             </DialogHeader>
             <DialogBody
               onPointerLeaveCapture={() => {}}
               onPointerEnterCapture={() => {}}
-              placeholder=""
+              
             >
               <p>
                 <strong>Curso:</strong> {dialogInfo.course.title}
@@ -886,9 +880,8 @@ const Kardex = () => {
                 <Typography
                   color="blue-gray"
                   variant="h6"
-                  placeholder=""
-                  onPointerEnterCapture={() => {}}
-                  onPointerLeaveCapture={() => {}}
+                  
+{...({} as any)}
                 >
                   Fecha de Impartición: {dialogInfo.course.start_date}
                 </Typography>
@@ -897,9 +890,8 @@ const Kardex = () => {
                 <Typography
                   color="blue-gray"
                   variant="h6"
-                  placeholder=""
-                  onPointerEnterCapture={() => {}}
-                  onPointerLeaveCapture={() => {}}
+                  
+{...({} as any)}
                 >
                   Fecha de Vencimiento {dialogInfo.course.end_date}
                 </Typography>
@@ -917,7 +909,7 @@ const Kardex = () => {
                     min={0}
                     max={100}
                     step={1}
-                    placeholder=""
+                    
                     onPointerEnterCapture={() => {}}
                     onPointerLeaveCapture={() => {}}
                   />
@@ -940,16 +932,13 @@ const Kardex = () => {
             </DialogBody>
 
             <DialogFooter
-              placeholder=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
+{...({} as any)}
             >
               <Button
                 color="red"
                 onClick={() => toggleDialog(null)}
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
+                
+{...({} as any)}
               >
                 Cerrar
               </Button>
@@ -959,7 +948,7 @@ const Kardex = () => {
                   onClick={updateProgress}
                   onPointerLeaveCapture={() => {}}
                   onPointerEnterCapture={() => {}}
-                  placeholder=""
+                  
                 >
                   Actualizar
                 </Button>

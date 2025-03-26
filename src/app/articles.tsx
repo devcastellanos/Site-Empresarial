@@ -45,12 +45,12 @@ export function Articles() {
     <section className="w-full min-h-screen bg-gray-900 bg-opacity-95 text-center py-10 px-4 md:px-16">
       
       {/* Título */}
-      <Typography color="white" className="text-[36px] lg:text-[50px] font-bold leading-tight" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+      <Typography color="white" className="text-[36px] lg:text-[50px] font-bold leading-tight" {...({} as any)}>
         Herramientas y Plataformas
       </Typography>
 
       {/* Descripción */}
-      <Typography variant="lead" color="white" className="mt-2 text-sm lg:text-base" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+      <Typography variant="lead" color="white" className="mt-2 text-sm lg:text-base" {...({} as any)}>
         Herramientas y plataformas que te ayudarán a potenciar tu desarrollo profesional en tu área laboral.
       </Typography>
 

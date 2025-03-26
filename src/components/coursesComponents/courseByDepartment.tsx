@@ -71,11 +71,11 @@ const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, o
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-      <Card className="w-full max-w-lg p-6 bg-white shadow-xl rounded-lg overflow-y-auto max-h-[90vh]" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+      <Card className="w-full max-w-lg p-6 bg-white shadow-xl rounded-lg overflow-y-auto max-h-[90vh]" {...({} as any)}>
         <CardBody
-        placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+        {...({} as any)}>
           <Typography variant="h5" className="text-center text-blue-600 mb-4"
-          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+          {...({} as any)}>
             {`Asignar Curso: ${course.title}`}
           </Typography>
           <div className="space-y-4">
@@ -107,7 +107,7 @@ const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, o
           {selectedDepartment && users.length > 0 && (
             <div className="mt-4 max-h-40 overflow-y-auto">
               <Typography variant="h6" className="text-gray-700"
-              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+              {...({} as any)}>
                 Usuarios en {selectedDepartment}:
               </Typography>
               {users.map((user) => (
@@ -120,7 +120,7 @@ const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, o
                     onPointerLeaveCapture={() => {}}
                   />
                   <Typography
-                  placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+                  {...({} as any)}>
                     {user.Nombre} {user.ApellidoPaterno} {user.ApellidoMaterno} - {user.Puesto}
                   </Typography>
                 </div>
@@ -130,11 +130,11 @@ const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, o
 
           <div className="mt-6 flex justify-between">
             <Button color="blue" onClick={handleAssign} className="w-full mr-2"
-            placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+            {...({} as any)}>
               Asignar
             </Button>
             <Button color="red" onClick={onClose} className="w-full"
-            placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+            {...({} as any)}>
               Cerrar
             </Button>
           </div>

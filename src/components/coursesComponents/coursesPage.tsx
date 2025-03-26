@@ -260,9 +260,8 @@ function CourseCatalog() {
 
       <Card
         className="p-8 shadow-2xl bg-white/80 backdrop-blur-lg rounded-2xl w-3/4"
-        placeholder=""
-        onPointerEnterCapture={() => {}}
-        onPointerLeaveCapture={() => {}}
+        
+{...({} as any)}
       >
         <div style={styles.container}>
           <h1
@@ -351,9 +350,7 @@ function CourseCatalog() {
             open={isDialogOpen}
             handler={handleCloseDialog}
             size="md"
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+{...({} as any)}
           >
             <div className="p-6 bg-white rounded-xl  w-full ">
               <h2 className="text-xl font-bold text-gray-800">
@@ -385,9 +382,7 @@ function CourseCatalog() {
             open={isEditDialogOpen}
             handler={handleCloseEditDialog}
             size="md"
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+{...({} as any)}
           >
             <div className="p-6 bg-white rounded-xl shadow-lg w-full ">
               <h2 className="text-xl font-bold text-gray-800">Editar Curso</h2>
@@ -476,9 +471,7 @@ function CourseCatalog() {
           open={isAssignModalOpen}
           handler={handleCloseAssignModal}
           size="lg"
-          placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+{...({} as any)}
         >
           <AssignDepartmentModal
             course={{

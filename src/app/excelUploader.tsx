@@ -161,9 +161,7 @@
               accept=".xlsx, .xls"
               onChange={handleFileUpload}
               className="focus:ring-2 focus:ring-blue-500 "
-              crossOrigin=""
-              onPointerLeaveCapture={() => {}}
-              onPointerEnterCapture={() => {}}
+{...({} as any)}
             />
 
             <label className="block mt-4 mb-2 text-sm font-medium text-gray-700">
@@ -182,9 +180,7 @@
                   }))
                 );
               }}
-              crossOrigin=""
-              onPointerLeaveCapture={() => {}}
-              onPointerEnterCapture={() => {}}
+{...({} as any)}
             />
 
             <label className="block mt-4 mb-2 text-sm font-medium text-gray-700">
@@ -200,18 +196,14 @@
                   prevData.map((item) => ({ ...item, end_date: e.target.value }))
                 );
               }}
-              crossOrigin=""
-              onPointerLeaveCapture={() => {}}
-              onPointerEnterCapture={() => {}}
+{...({} as any)}
             />
 
             <Button
               color="blue"
               className="mt-4"
               onClick={handleUpload}
-              placeholder=""
-              onPointerLeaveCapture={() => {}}
-              onPointerEnterCapture={() => {}}
+{...({} as any)}
             >
               Cargar datos
             </Button>
@@ -219,10 +211,8 @@
             <Button
               color="red"
               className="mt-4"
-              placeholder=""
               onClick={DownloadTemplate}
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
+{...({} as any)}
             >
               Descargar plantilla
             </Button>
@@ -232,9 +222,8 @@
             variant="h5"
             color="blue-gray"
             className="mb-4 text-center"
-            placeholder=""
-            onPointerLeaveCapture={() => {}}
-            onPointerEnterCapture={() => {}}
+            
+{...({} as any)}
           >
             Datos cargados:
           </Typography>
@@ -275,9 +264,7 @@
               variant="paragraph"
               color="gray"
               className="mt-4"
-              placeholder=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
+{...({} as any)}
             >
               No se han cargado datos aún.
             </Typography>

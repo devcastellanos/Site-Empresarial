@@ -104,13 +104,13 @@ export function Convenio() {
       <Image width={1920} height={1080} src="/image/background-convenios.webp" alt="background" className="h-96 w-full rounded-lg object-cover lg:h-[21rem]" />
       {isAuthenticated && (
         <section className="px-8 py-10 container mx-auto">
-          <Typography variant="h5" color="blue-gray" onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="Nuevo Convenio">Nuevo Convenio</Typography>
+          <Typography variant="h5" color="blue-gray" {...({} as any)} placeholder="Nuevo Convenio">Nuevo Convenio</Typography>
           <Typography variant="small" className="text-gray-600 font-normal mt-1"
-          onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">Llena los campos para agregar un nuevo convenio</Typography>
+          {...({} as any)} >Llena los campos para agregar un nuevo convenio</Typography>
           <div className="flex flex-col mt-8">
             <div className="mb-6">
               <Typography variant="small" color="blue-gray" className="mb-2 font-medium"
-              onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">Título</Typography>
+              {...({} as any)} >Título</Typography>
               <Input 
                 size="lg" 
                 placeholder="Título del Convenio" 
@@ -122,7 +122,7 @@ export function Convenio() {
               />
 
               <Typography variant="small" color="blue-gray" className="mb-2 font-medium"
-                onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">Link</Typography>
+                {...({} as any)} >Link</Typography>
                 <Input
                     size="lg"
                     placeholder="Link del Convenio"
@@ -136,7 +136,7 @@ export function Convenio() {
             </div>
             <div className="mb-6">
               <Typography variant="small" color="blue-gray" className="mb-2 font-medium"
-              onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">Descripción</Typography>
+              {...({} as any)} >Descripción</Typography>
               <Textarea 
                 size="lg" 
                 placeholder="Descripción" 
@@ -172,9 +172,9 @@ export function Convenio() {
         </section>
       )}
       <Typography variant="h1" className="mb-2"
-      onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">Convenios</Typography>
+      {...({} as any)} >Convenios</Typography>
       <Typography variant="lead" color="gray" className="max-w-3xl mb-12 text-center text-gray-500"
-      onPointerLeaveCapture={() => {}} onPointerEnterCapture={() => {}} placeholder="">Aquí puedes ver los convenios actuales de Grupo Tarahumara</Typography>
+      {...({} as any)} >Aquí puedes ver los convenios actuales de Grupo Tarahumara</Typography>
       <div className="container grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-2">
         {convenios.length > 0 ? convenios.map(({ img, titulo, descripcion, link, idConvenio }) => (
           <ConvenioCard  key={idConvenio} img={img} titulo={titulo} descripcion={descripcion} link={link} idConvenio={idConvenio} onConvenioEdit={(convenio) => {}} onConvenioDelete={handleDeleteConvenio} />

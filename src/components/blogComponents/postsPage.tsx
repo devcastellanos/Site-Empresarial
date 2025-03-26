@@ -206,12 +206,13 @@ export function Posts() {
         <source src="/image/background.mp4" type="video/mp4" />
       </motion.video>
 
-      <Card className="p-10 shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl w-[90%] max-w-full"
-          placeholder="" 
-          onPointerEnterCapture={() => {}} 
-          onPointerLeaveCapture={() => {}}>
+      <Card className="p-10 shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl w-[90%] max-w-full"{...({} as any)}>
 
-        <CardHeader floated={false} shadow={false} className="relative h-64" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+        <CardHeader 
+          floated={false} 
+          shadow={false} 
+          className="relative h-64" 
+          {...({} as any)}>
           <Image
             width={1920}
             height={1080}
@@ -225,14 +226,13 @@ export function Posts() {
         
         <section className="px-8 py-10 container mx-auto">
           <Card className="p-10 shadow-2xl bg-white/80 backdrop-blur-lg rounded-2xl w-[100%] max-w-7xl"
-          placeholder="" 
-          onPointerEnterCapture={() => {}} 
-          onPointerLeaveCapture={() => {}}>
-        <Typography variant="h4" color="blue-gray" className="text-3xl font-bold text-blue-gray-900" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} >
+           
+{...({} as any)}>
+        <Typography variant="h4" color="blue-gray" className="text-3xl font-bold text-blue-gray-900" {...({} as any)} >
           New Post
         </Typography>
         <Typography
-         placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+         {...({} as any)}
           variant="small"
           className="text-gray-600 font-normal mt-1"   
         >
@@ -242,7 +242,7 @@ export function Posts() {
           <div className="mb-6 flex flex-col items-end gap-4 md:flex-row">
             <div className="w-full">
               <Typography
-               placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+               {...({} as any)}
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"   
@@ -264,7 +264,7 @@ export function Posts() {
             </div>
             <div className="w-full">
               <Typography
-               placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+               {...({} as any)}
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"   
@@ -290,7 +290,7 @@ export function Posts() {
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"
-                placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+                {...({} as any)}
               >
                 Tags
               </Typography>
@@ -322,7 +322,7 @@ export function Posts() {
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"
-                placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+                {...({} as any)}
               >
                 Fecha
               </Typography>
@@ -340,7 +340,7 @@ export function Posts() {
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"
-                placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+                {...({} as any)}
               >
                 Número de empleado
               </Typography>
@@ -365,7 +365,7 @@ export function Posts() {
                 variant="small"
                 color="blue-gray"
                 className="mb-2 font-medium"
-                placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+                {...({} as any)}
               >
                 Descripción
               </Typography>
@@ -385,7 +385,7 @@ export function Posts() {
 
           <div className="mb-6">
             <Typography
-              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+              {...({} as any)}
               variant="small"
               color="blue-gray"
               className="mb-2 font-medium"
@@ -430,7 +430,7 @@ export function Posts() {
           </div>
             <div className="flex justify-center mt-4">
             <Button
-            placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+            {...({} as any)}
               variant="filled"
               color="blue"
               size="sm"
@@ -447,17 +447,17 @@ export function Posts() {
       ): null }
 
       <div className="py-10"></div>
-      <CardBody placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-          <Typography variant="h5" color="blue-gray" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+      <CardBody {...({} as any)}>
+          <Typography variant="h5" color="blue-gray" {...({} as any)}>
             Últimos posts
           </Typography>
-          <Typography variant="lead" className="text-gray-600 mt-2" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+          <Typography variant="lead" className="text-gray-600 mt-2" {...({} as any)}>
             Aquí puedes ver la última información y noticias de Grupo Tarahumara.
           </Typography>
       <div className="grid grid-cols-1 gap-6 mt-6 ">
             {posts.length > 0 ? (
               posts.map(({ img, tag, title, desc, date, img_author, name_author, idBlog, num_empleado, likes, videoUrl }) => (
-                <Card key={idBlog} className="shadow-md" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+                <Card key={idBlog} className="shadow-md" {...({} as any)}>
                   <BlogPostCard
                     img={img}
                     tag={tag}
@@ -475,14 +475,14 @@ export function Posts() {
                 </Card>
               ))
             ) : (
-              <Typography variant="small" className="text-gray-500" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+              <Typography variant="small" className="text-gray-500" {...({} as any)}>
                 No hay publicaciones disponibles.
               </Typography>
             )}
           </div>
         </CardBody>
-        <CardFooter className="flex justify-center" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-          <Button variant="text" size="lg" color="gray" className="flex items-center gap-2" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+        <CardFooter className="flex justify-center" {...({} as any)}>
+          <Button variant="text" size="lg" color="gray" className="flex items-center gap-2" {...({} as any)}>
             <ArrowSmallDownIcon className="h-5 w-5 text-gray-900" /> Ver más
           </Button>
         </CardFooter>

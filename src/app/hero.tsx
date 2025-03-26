@@ -31,9 +31,7 @@ function Hero() {
         <Typography
           color="white"
           className="text-[36px] lg:text-[50px] font-bold leading-tight"
-          placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+{...({} as any)}
         >
           Capacitacion Tarahumara
         </Typography>
@@ -41,9 +39,7 @@ function Hero() {
         <Typography
           variant="lead"
           className="mt-2 text-sm lg:text-base text-gray-200"
-          placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+{...({} as any)}
         >
           Descubre herramientas, presentaciones, guías y contenido multimedia diseñados para potenciar tu desarrollo profesional en tu área laboral.
           {'\n'}¡Aquí tienes todo lo necesario para crecer y avanzar!

@@ -34,9 +34,8 @@ function NavItem({ children, href, className }: NavItemProps) {
         variant="paragraph"
         color="gray"
         className={`flex items-center gap-2 font-medium text-gray-200 ${className}`}
-        onPointerLeaveCapture={() => {}}
-        onPointerEnterCapture={() => {}}
-        placeholder=""
+{...({} as any)}
+        
       >
         {children}
       </Typography>
@@ -68,9 +67,8 @@ export function Navbar() {
       shadow={false}
       fullWidth
       className="bg-[#818181] bg-opacity-30 backdrop-blur-md border-0 fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-      placeholder=""
-      onPointerEnterCapture={() => {}}
-      onPointerLeaveCapture={() => {}}
+      
+{...({} as any)}
     >
       <div className="container mx-auto flex items-center justify-between px-4 py-2">
         {/* Logo */}
@@ -93,9 +91,7 @@ export function Navbar() {
               onClick={logout}
               color="blue-gray"
               className="mb-0"
-              placeholder=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
+{...({} as any)}
             >
               Cerrar Sesión
             </Button>
@@ -103,9 +99,8 @@ export function Navbar() {
             <a href="/Login">
               <Button
                 variant="text"
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
+                
+{...({} as any)}
               >
                 Iniciar Sesión
               </Button>
@@ -119,9 +114,7 @@ export function Navbar() {
           color="gray"
           onClick={handleOpen}
           className="ml-auto inline-block lg:hidden"
-          placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+{...({} as any)}
         >
           {open ? <XMarkIcon strokeWidth={2} className="h-6 w-6" /> : <Bars3Icon strokeWidth={2} className="h-6 w-6" />}
         </IconButton>

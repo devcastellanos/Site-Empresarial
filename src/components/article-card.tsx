@@ -22,9 +22,8 @@ export function ArticleCard({ img, title, desc, link }: ArticleCardProps) {
   return (
     <Card
       className="relative w-full rounded-xl shadow-lg overflow-hidden bg-gray-800"
-      placeholder=""
-      onPointerEnterCapture={() => {}}
-      onPointerLeaveCapture={() => {}}
+      
+{...({} as any)}
     >
       {/* Imagen del artículo */}
       <div className="relative">
@@ -46,11 +45,9 @@ export function ArticleCard({ img, title, desc, link }: ArticleCardProps) {
         <AccordionHeader
           onClick={() => setOpen(!open)}
           className="bg-gray-900 text-white px-4 py-3 cursor-pointer"
-          placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+{...({} as any)}
         >
-          <Typography variant="h5" className="text-white" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+          <Typography variant="h5" className="text-white" {...({} as any)}>
             {title}
           </Typography>
         </AccordionHeader>
@@ -59,9 +56,7 @@ export function ArticleCard({ img, title, desc, link }: ArticleCardProps) {
         <AccordionBody className="bg-gray-700 text-gray-200 p-4">
           <Typography
             variant="paragraph"
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+{...({} as any)}
           >
             {desc}
           </Typography>

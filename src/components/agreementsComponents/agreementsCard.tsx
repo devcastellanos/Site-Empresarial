@@ -81,9 +81,8 @@ export function ConvenioCard({
     <>
       <Card
         shadow={true}
-        placeholder=""
-        onPointerEnterCapture={() => {}}
-        onPointerLeaveCapture={() => {}}
+        
+{...({} as any)}
       >
         <CardHeader
           {...({} as any)}
@@ -100,14 +99,10 @@ export function ConvenioCard({
         </CardHeader>
         <CardBody
           className="p-6"
-          placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+{...({} as any)}
         >
           <Typography
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+{...({} as any)}
             as="a"
             href="#"
             variant="h5"
@@ -117,9 +112,7 @@ export function ConvenioCard({
             {titulo}
           </Typography>
           <Typography
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+{...({} as any)}
             className="mb-6 font-normal !text-gray-500"
           >
             {descripcion}
@@ -128,18 +121,16 @@ export function ConvenioCard({
             {isAuthenticated && (
               <div>
                 <Button
-                  placeholder=""
-                  onPointerEnterCapture={() => {}}
-                  onPointerLeaveCapture={() => {}}
+                  
+{...({} as any)}
                   onClick={() => onConvenioDelete(idConvenio)}
                 >
                   Eliminar
                 </Button>
                 <Button
                   className="ml-auto"
-                  placeholder=""
-                  onPointerEnterCapture={() => {}}
-                  onPointerLeaveCapture={() => {}}
+                  
+{...({} as any)}
                   onClick={handleEditClick}
                 >
                   Editar
@@ -152,23 +143,18 @@ export function ConvenioCard({
 
       {/* Modal para editar información */}
       <Dialog
-        placeholder=""
-        onPointerEnterCapture={() => {}}
-        onPointerLeaveCapture={() => {}}
+        
+{...({} as any)}
         open={openModal}
         handler={handleCloseModal}
       >
         <DialogHeader
-          placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+{...({} as any)}
         >
           Edita la información
         </DialogHeader>
         <DialogBody
-          placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+{...({} as any)}
         >
           <div>
             {/* Aquí puedes agregar los campos del formulario de edición */}
@@ -209,9 +195,7 @@ export function ConvenioCard({
           </div>
         </DialogBody>
         <DialogFooter
-          placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+{...({} as any)}
         >
           <Button
             variant="text"
@@ -219,9 +203,7 @@ export function ConvenioCard({
             onClick={() => {
               handleCloseModal();
             }}
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+{...({} as any)}
           >
             Cerrar
           </Button>
@@ -231,9 +213,7 @@ export function ConvenioCard({
               handleEdit();
               handleCloseModal();
             }}
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+{...({} as any)}
           >
             Guardar
           </Button>

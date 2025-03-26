@@ -158,20 +158,15 @@ export function BlogPostCard({
       <Card
         className="pt-10"
         shadow={true}
-        placeholder=""
-        onPointerEnterCapture={() => {}}
-        onPointerLeaveCapture={() => {}}
+        
+{...({} as any)}
       >
         <CardHeader
-          placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+{...({} as any)}
         >
           <Carousel
             className="rounded-xl"
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+{...({} as any)}
           >
             {post.videoUrl != "" && (
               <div className="aspect-video w-full h-full">
@@ -201,24 +196,18 @@ export function BlogPostCard({
         </CardHeader>
         <CardBody
           className="p-6"
-          placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+{...({} as any)}
         >
           <Typography
             variant="small"
             color="blue"
             className="mb-2 !font-medium"
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+{...({} as any)}
           >
             {tag}
           </Typography>
           <Typography
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+{...({} as any)}
             as="a"
             href="#"
             variant="h5"
@@ -229,9 +218,7 @@ export function BlogPostCard({
           </Typography>
           <Typography
             className="mb-6 font-normal !text-gray-500"
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+{...({} as any)}
           >
             {desc}
           </Typography>
@@ -241,18 +228,15 @@ export function BlogPostCard({
               variant="circular"
               src={`/fotos/${formattedUserId}.jpg`}
               alt={author.name}
-              placeholder=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
+{...({} as any)}
             />
             <div>
               <Typography
                 variant="small"
                 color="blue-gray"
                 className="mb-0.5 !font-medium"
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
+                
+{...({} as any)}
               >
                 {author.name}
               </Typography>
@@ -260,9 +244,8 @@ export function BlogPostCard({
                 variant="small"
                 color="gray"
                 className="text-xs !text-gray-500 font-normal"
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
+                
+{...({} as any)}
               >
                 {date}
               </Typography>
@@ -271,18 +254,16 @@ export function BlogPostCard({
               <div>
                 <Button
                   onClick={() => onPostDelete(idBlog)}
-                  placeholder=""
-                  onPointerEnterCapture={() => {}}
-                  onPointerLeaveCapture={() => {}}
+                  
+{...({} as any)}
                 >
                   Eliminar
                 </Button>
                 <Button
                   className="ml-auto"
                   onClick={handleEditClick}
-                  placeholder=""
-                  onPointerEnterCapture={() => {}}
-                  onPointerLeaveCapture={() => {}}
+                  
+{...({} as any)}
                 >
                   Editar
                 </Button>
@@ -290,9 +271,8 @@ export function BlogPostCard({
             )}
             {statusLike ? (
               <IconButton
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
+                
+{...({} as any)}
                 onClick={() => {
                   fetch(
                     `http://api-cursos.192.168.29.40.sslip.io/dislike/${idBlog}`,
@@ -328,9 +308,8 @@ export function BlogPostCard({
               </IconButton>
             ) : (
               <IconButton
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
+                
+{...({} as any)}
                 onClick={() => {
                   fetch(
                     `http://api-cursos.192.168.29.40.sslip.io/like/${idBlog}`,
@@ -376,9 +355,8 @@ export function BlogPostCard({
       <Dialog
         open={openModal}
         handler={handleCloseModal}
-        placeholder=""
-        onPointerEnterCapture={() => {}}
-        onPointerLeaveCapture={() => {}}
+        
+{...({} as any)}
       >
         <DialogHeader
           {...({} as any)}
@@ -436,9 +414,8 @@ export function BlogPostCard({
                 variant="small"
                 color="blue-gray"
                 className="mb-2"
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
+                
+{...({} as any)}
               >
                 Imágenes actuales:
               </Typography>
@@ -469,9 +446,8 @@ export function BlogPostCard({
                 variant="small"
                 color="blue-gray"
                 className="mb-2"
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
+                
+{...({} as any)}
               >
                 Agregar nuevas imágenes:
               </Typography>
@@ -485,33 +461,26 @@ export function BlogPostCard({
                   }
                 }}
                 className="w-full p-2 border rounded"
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
+{...({} as any)}
               />
             </div>
           </div>
         </DialogBody>
         <DialogFooter
-          placeholder=""
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
+{...({} as any)}
         >
           <Button
             variant="text"
             color="red"
             onClick={handleCloseModal}
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+{...({} as any)}
           >
             Cerrar
           </Button>
           <Button
             variant="gradient"
             onClick={handleEdit}
-            placeholder=""
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+{...({} as any)}
           >
             Guardar
           </Button>

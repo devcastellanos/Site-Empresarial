@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useRouter } from "next/navigation";
 import { useAuth } from '../hooks/useAuth';
 import { motion } from "framer-motion";
+import Image from 'next/image';
 
 export function Login() {
   const { login } = useAuth();
@@ -64,7 +65,7 @@ export function Login() {
       >
         <div className="flex justify-center mb-2">
           <div className="bg-white/70 rounded-xl px-6 py-1 shadow-md">
-            <img
+            <Image
               src="/image/logo.png"
               alt="Logo"
               className="h-auto w-auto"
@@ -75,19 +76,19 @@ export function Login() {
         <Card
           shadow={false}
           className="backdrop-blur-sm bg-black/60 border border-white/10 text-white p-8 rounded-xl w-full max-w-md"
-          placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+          {...({} as any)}
         >
 
-          <Typography variant="h3" color="white" className="text-center mb-2" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+          <Typography variant="h3" color="white" className="text-center mb-2" {...({} as any)}>
             Inicio de Sesión
           </Typography>
-          <Typography className="text-gray-300 text-center text-sm mb-6" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+          <Typography className="text-gray-300 text-center text-sm mb-6" {...({} as any)}>
             Bienvenido administrador, ingresa tus datos para continuar
           </Typography>
 
           <form className="space-y-6">
             <div>
-              <Typography variant="h6" className="text-white mb-1" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+              <Typography variant="h6" className="text-white mb-1" {...({} as any)}>
                 Correo Electrónico
               </Typography>
               <Input
@@ -104,7 +105,7 @@ export function Login() {
             </div>
 
             <div>
-              <Typography variant="h6" className="text-white mb-1" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+              <Typography variant="h6" className="text-white mb-1" {...({} as any)}>
                 Contraseña
               </Typography>
               <Input
@@ -127,12 +128,12 @@ export function Login() {
               className="bg-white text-black font-bold hover:bg-gray-200 transition-colors"
               onClick={handleLogin}
               disabled={isLoading}
-              placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+              {...({} as any)}
             >
               {isLoading ? 'Cargando...' : 'Iniciar Sesión'}
             </Button>
 
-            <Typography className="text-center text-gray-400 text-sm mt-4" placeholder="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
+            <Typography className="text-center text-gray-400 text-sm mt-4" {...({} as any)}>
               Si no tienes cuenta de administrador, comunícate con soporte
             </Typography>
           </form>
