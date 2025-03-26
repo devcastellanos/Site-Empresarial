@@ -18,42 +18,9 @@ import sweetAlert from "sweetalert2";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Swal from "sweetalert2";
 import { Combobox } from "@headlessui/react";
+
+import { User, CursoTomado, CursosPresencialesJson } from "@/lib/interfaces";
 // Ajusta la ruta según tu estructura de archivos
-
-interface CursoTomado {
-  id: number;
-  id_course: number;
-  id_usuario: number;
-  title: string;
-  description: string;
-  tutor: string;
-  progress: string;
-  status: string;
-  start_date: string;
-  end_date?: string;
-}
-
-interface CursosPresencialesJson {
-  id_course: number;
-  title: string;
-  description: string;
-  tutor: string;
-  progress: string;
-  status: string;
-  start_date: string;
-  end_date?: string;
-}
-
-interface User {
-  Personal: number;
-  ApellidoPaterno: string;
-  ApellidoMaterno: string;
-  Nombre: string;
-  Estatus: string;
-  Puesto: string;
-  Departamento: string;
-  PeriodoTipo: string;
-}
 
 const Kardex = () => {
   const { isAuthenticated } = useAuth();
@@ -651,27 +618,21 @@ const Kardex = () => {
                         <Typography
                           color="blue-gray"
                           variant="h6"
-                          
-                          onPointerEnterCapture={() => {}}
-                          onPointerLeaveCapture={() => {}}
+                          {...({} as any)}
                         >
                           Completado
                         </Typography>
                         <Typography
                           color="blue-gray"
                           variant="h6"
-                          
-                          onPointerEnterCapture={() => {}}
-                          onPointerLeaveCapture={() => {}}
+                          {...({} as any)}
                         >
                           {course.progress}%
                         </Typography>
                       </div>
                       <Progress
                         value={Number(course.progress)}
-                        
-                        onPointerEnterCapture={() => {}}
-                        onPointerLeaveCapture={() => {}}
+                        {...({} as any)}
                       />
                     </div>
                   </td>
@@ -863,8 +824,7 @@ const Kardex = () => {
               Detalles del Curso
             </DialogHeader>
             <DialogBody
-              onPointerLeaveCapture={() => {}}
-              onPointerEnterCapture={() => {}}
+              {...({} as any)}
               
             >
               <p>
@@ -909,9 +869,7 @@ const Kardex = () => {
                     min={0}
                     max={100}
                     step={1}
-                    
-                    onPointerEnterCapture={() => {}}
-                    onPointerLeaveCapture={() => {}}
+                    {...({} as any)}
                   />
 
                   <Input
@@ -946,9 +904,7 @@ const Kardex = () => {
                 <Button
                   color="blue"
                   onClick={updateProgress}
-                  onPointerLeaveCapture={() => {}}
-                  onPointerEnterCapture={() => {}}
-                  
+                  {...({} as any)}
                 >
                   Actualizar
                 </Button>

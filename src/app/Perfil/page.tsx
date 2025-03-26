@@ -1,6 +1,6 @@
 // components
 import { Navbar } from "@/components";
-import ProfilePage from "@/components/profileComponents/profilePage";
+import ProfilePage from "@/components/profileComponents/sideBarProfile";
 
 // sections
 
