@@ -2,7 +2,7 @@
 import { Navbar, Footer, BlogPostCard } from "@/components";
 
 // sections
-import Kardex from "../kardex";
+import Kardex from "../kardexPage";
 
 
 export default function Campaign() {

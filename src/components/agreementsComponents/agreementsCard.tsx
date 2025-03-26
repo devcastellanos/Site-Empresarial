@@ -15,9 +15,9 @@ import {
   Carousel,
 } from "@material-tailwind/react";
 
-import { Convenio } from "../app/convenio";
+import { Convenio } from "./convenio";
 
-import { useAuth } from "@/app/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ConvenioCardProps {
   idConvenio: number;
@@ -86,9 +86,7 @@ export function ConvenioCard({
         onPointerLeaveCapture={() => {}}
       >
         <CardHeader
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
-          placeholder=""
+          {...({} as any)}
         >
           <a href={link} target="_blank" rel="noopener noreferrer">
                 <Image

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { MagnifyingGlassIcon, PencilIcon, UserPlusIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { PencilIcon, UserPlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
@@ -10,11 +10,6 @@ import {
   Button,
   CardBody,
   Chip,
-  CardFooter,
-  Tabs,
-  TabsHeader,
-  Tab,
-  Avatar,
   IconButton,
   Tooltip,
   Dialog,
@@ -23,10 +18,7 @@ import {
   DialogFooter,
 } from "@material-tailwind/react";
 
-import { useAuth } from './hooks/useAuth';
-
-const TABLE_HEAD = ["Usuarios", "Nombre", "Status", "Acciones"];
-
+import { useAuth } from '../../hooks/useAuth';
 interface Usuario {
   id?: number;
   name: string;
@@ -35,7 +27,7 @@ interface Usuario {
   status: string;
 }
 
-const Usuarios = () => {
+const UsuariosPage = () => {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [currentUsuario, setCurrentUsuario] = useState<Usuario>({ id: 0, name: "", email: "", password: "", status: "Activo" });
@@ -213,4 +205,4 @@ const Usuarios = () => {
   );
 };
 
-export default Usuarios;
+export default UsuariosPage;

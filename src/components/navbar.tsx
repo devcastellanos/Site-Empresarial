@@ -17,7 +17,7 @@ import {
   BookOpenIcon,
 } from "@heroicons/react/24/solid";
 import Image from "next/image";
-import { useAuth } from "../app/hooks/useAuth";
+import { useAuth } from "../hooks/useAuth";
 
 interface NavItemProps {
   children: React.ReactNode;
@@ -36,7 +36,7 @@ function NavItem({ children, href, className }: NavItemProps) {
         className={`flex items-center gap-2 font-medium text-gray-200 ${className}`}
         onPointerLeaveCapture={() => {}}
         onPointerEnterCapture={() => {}}
-        placeholder
+        placeholder=""
       >
         {children}
       </Typography>

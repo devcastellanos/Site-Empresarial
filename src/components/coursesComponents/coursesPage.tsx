@@ -4,8 +4,8 @@ import React, { useState, useEffect } from "react";
 import { CSSProperties } from "react";
 import { FaEye, FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 // import NuevoCurso from "./CrearCurso";
-import CourseCatalog2 from "./CrearCurso";
-import AssignDepartmentModal from "./Department"; // Asegúrate de que la ruta es correcta
+import CourseCatalog2 from "./createCourse";
+import AssignDepartmentModal from "./courseByDepartment"; // Asegúrate de que la ruta es correcta
 import { motion } from "framer-motion";
 import { Card, Dialog } from "@material-tailwind/react";
 
@@ -459,9 +459,7 @@ function CourseCatalog() {
           open={isModalOpen}
           handler={handleCloseModal}
           size="lg"
-          onPointerEnterCapture
-          onPointerLeaveCapture
-          placeholder
+          {...({} as any)}
         >
           <div style={styles.modalContainer}>
             <div style={styles.modal}>

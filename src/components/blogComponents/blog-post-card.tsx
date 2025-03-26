@@ -17,8 +17,8 @@ import {
   IconButton,
 } from "@material-tailwind/react";
 
-import { Post } from "../app/posts";
-import { useAuth } from "@/app/hooks/useAuth";
+import { Post } from "./postsPage";
+import { useAuth } from "@/hooks/useAuth";
 
 interface BlogPostCardProps {
   img: string[];
@@ -308,7 +308,19 @@ export function BlogPostCard({
                         likes: prevPost.likes + 1,
                       }));
                       setStatusLike(!statusLike);
-                      onPostEdit(post);
+                      onPostEdit({
+                        title: title,
+                        desc: desc,
+                        tag: tag,
+                        videoUrl: videoUrl,
+                        img: img,
+                        likes: likes,
+                        idBlog: idBlog,
+                        date: date,
+                        num_empleado: num_empleado,
+                        name_author: author.name,
+                        img_author: author.img,
+                      });
                     });
                 }}
               >
@@ -334,7 +346,21 @@ export function BlogPostCard({
                         likes: prevPost.likes - 1,
                       }));
                       setStatusLike(!statusLike);
-                      onPostEdit(post);
+                      onPostEdit(
+                        {
+                          title: title,
+                          desc: desc,
+                          tag: tag,
+                          videoUrl: videoUrl,
+                          img: img,
+                          likes: likes,
+                          idBlog: idBlog,
+                          date: date,
+                          num_empleado: num_empleado,
+                          img_author: author.img,
+                          name_author: author.name,
+                        }
+                      );
                     });
                 }}
               >
@@ -355,16 +381,12 @@ export function BlogPostCard({
         onPointerLeaveCapture={() => {}}
       >
         <DialogHeader
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
-          placeholder=""
+          {...({} as any)}
         >
           Editar la información
         </DialogHeader>
         <DialogBody
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
-          placeholder=""
+          {...({} as any)}
         >
           <div>
             {/* Campos de edición de texto */}

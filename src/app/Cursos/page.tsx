@@ -3,7 +3,7 @@ import { Navbar, Footer, BlogPostCard } from "@/components";
 
 // sections
 import Hero from "../hero";
-import Curso from "../Cursos";
+import Curso from "../../components/coursesComponents/coursesPage";
 import Articles from "../articles";
 
 

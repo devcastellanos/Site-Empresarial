@@ -40,9 +40,7 @@ export function ArticleCard({ img, title, desc, link }: ArticleCardProps) {
       {/* Accordion para la información */}
       <Accordion
         open={open}
-        placeholder=""
-        onPointerEnterCapture={() => {}}
-        onPointerLeaveCapture={() => {}}
+        {...({} as any)}
       >
         {/* Título con botón para expandir */}
         <AccordionHeader

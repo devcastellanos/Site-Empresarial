@@ -3,7 +3,7 @@ import { Navbar, Footer, BlogPostCard } from "@/components";
 
 // sections
 
-import Convenio from "../convenio";
+import Convenio from "@/components/agreementsComponents/convenio";
 
 
 

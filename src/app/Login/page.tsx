@@ -1,5 +1,4 @@
 import { Login } from '../signup';
-import { Navbar, Footer, BlogPostCard } from "@/components";
 
 export default function Campaign() {
     return (

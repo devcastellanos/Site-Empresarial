@@ -8,10 +8,10 @@ import {
   Input,
 } from "@material-tailwind/react";
 import { ArrowSmallDownIcon } from "@heroicons/react/24/solid";
-import ConvenioCard from "@/components/convenio-card";
+import ConvenioCard from "@/components/agreementsComponents/agreementsCard";
 import Image from "next/image";
 import axios from "axios";
-import { useAuth } from "@/app/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 
 export interface Convenio {
   idConvenio: number;

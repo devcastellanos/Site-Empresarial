@@ -11,12 +11,12 @@ import {
   CardFooter,
 } from "@material-tailwind/react";
 import { ArrowSmallDownIcon } from "@heroicons/react/24/solid";
-import BlogPostCard from "@/components/blog-post-card";
+import BlogPostCard from "@/components/blogComponents/blog-post-card";
 import Image from "next/image";
 import { Input, Select, Option, Carousel } from "@material-tailwind/react";
 import axios from "axios";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useAuth } from "@/app/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { id } from "date-fns/locale";
 import { Nanum_Pen_Script } from "next/font/google";
 
@@ -469,7 +469,7 @@ export function Posts() {
                     num_empleado={num_empleado}
                     likes={likes}
                     videoUrl={videoUrl}
-                    onPostEdit={() => {}}
+                    onPostEdit={handlePostEdit}
                     onPostDelete={() => handleDeletePost(idBlog)}
                   />
                 </Card>

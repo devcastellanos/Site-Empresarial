@@ -1,11 +1,8 @@
 // components
-import { Navbar, Footer, BlogPostCard } from "@/components";
+import { Navbar} from "@/components";
 
-// sections
-import Hero from "../hero";
 
-import Articles from "../articles";
-import Usuarios from "../usuarios";
+import UsuariosPage from "../../components/usersComponents/usersPage";
 
 
 export default function Campaign() {
@@ -13,7 +10,7 @@ export default function Campaign() {
     <>
       <Navbar />
 
-      <Usuarios />
+      <UsuariosPage />
     </>
 
   );

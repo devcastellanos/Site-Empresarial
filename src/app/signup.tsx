@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import axios from 'axios';
 import { useRouter } from "next/navigation";
-import { useAuth } from '../app/hooks/useAuth';
+import { useAuth } from '../hooks/useAuth';
 import { motion } from "framer-motion";
 
 export function Login() {
