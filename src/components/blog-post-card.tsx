@@ -156,6 +156,7 @@ export function BlogPostCard({
   return (
     <>
       <Card
+        className="pt-10"
         shadow={true}
         placeholder=""
         onPointerEnterCapture={() => {}}

@@ -74,7 +74,7 @@ export default function Campaign() {
             Descubre herramientas, presentaciones, guías y contenido multimedia diseñados para potenciar tu desarrollo profesional.
           </p>
           <div className="mt-6 flex justify-center">
-            <img src="/image/logo.png" alt="Logo" className="w-64 h-auto" />
+            <Image src="/image/logo.png" alt="Logo" width={256} height={256} className="w-64 h-auto" />
           </div>
         </div>
       </motion.header>

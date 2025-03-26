@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
 
-export async function GET(req, { params }) {
+export async function GET(_, context) {
   try {
     // Extraer el nombre de la imagen desde los parámetros de la URL
-    const { imageName } = params;
+    const { imageName } = await context.params;
 
     if (!imageName) {
       return NextResponse.json({ message: "Nombre de imagen no proporcionado" }, { status: 400 });
@@ -15,7 +15,11 @@ export async function GET(req, { params }) {
     console.log("Buscando imagen en:", imagePath);
 
     // Verificar si la imagen existe antes de leerla
-    await fs.access(imagePath);
+    try {
+      await fs.access(imagePath);
+    } catch (error) {
+      return NextResponse.json({ message: "Imagen no encontrada" }, { status: 404 });
+    }
 
     const imageBuffer = await fs.readFile(imagePath);
     const ext = path.extname(imageName).toLowerCase();

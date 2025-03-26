@@ -6,11 +6,22 @@ import Swal from "sweetalert2";
 import { Card, Typography, Input, Button } from "@material-tailwind/react";
 import { da } from "date-fns/locale";
 import { motion } from "framer-motion";
+import { Download } from "lucide-react";
 
 const ExcelUploader: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const [expirationDate, setExpirationDate] = useState<string>("");
   const videoOpacity = 0.5;
+  
+  const DownloadTemplate = () => {
+    const templateData = [
+      ["Numero de Empleado", "Puesto", "Departamento", "Nombre del curso", "Impartido por", "Progreso"],
+    ];
+    const worksheet = XLSX.utils.aoa_to_sheet(templateData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Registro Masivo");
+    XLSX.writeFile(workbook, "Registro_Masivo.xlsx");
+  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     data.length = 0;
@@ -207,6 +218,17 @@ const ExcelUploader: React.FC = () => {
             onPointerEnterCapture={() => {}}
           >
             Cargar datos
+          </Button>
+
+          <Button
+            color="red"
+            className="mt-4"
+            placeholder=""
+            onClick={DownloadTemplate}
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
+          >
+            Descargar plantilla
           </Button>
         </div>
         <div className="flex-1 ml-8">
