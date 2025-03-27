@@ -42,7 +42,7 @@ function Courses() {
 
       <div className="space-y-6">
         {cursosTomados.map((curso) => (
-          <Card key={`${curso.id_course}-${curso.id_usuario}`} className="shadow-sm">
+          <Card key={`${curso.id_course}-${curso.start_date}`} className="shadow-sm">
             <CardHeader className="pb-2">
               <div className="flex justify-between items-start">
                 <div>
