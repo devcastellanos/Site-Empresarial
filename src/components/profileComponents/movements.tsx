@@ -66,6 +66,10 @@ function Movements() {
     }, 1500);
   };
 
+  const handleMultipleDateSelect = (dates: Date[] | undefined) => {
+    setSelectedDates(dates ?? []);
+  };
+
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
       <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
@@ -143,7 +147,7 @@ function Movements() {
                 <Calendar
                   mode="multiple"
                   selected={selectedDates}
-                  onSelect={setSelectedDates}
+                  onSelect={handleMultipleDateSelect}
                   className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
                   locale={es}
                 />
