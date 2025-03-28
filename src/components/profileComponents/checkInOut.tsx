@@ -31,9 +31,17 @@ function RegisterCheckInCheckOut() {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-      {/* LADO IZQUIERDO */}
-      <Card className="md:col-span-1 shadow-md">
+    <div className="max-w-5xl mx-auto p-6 space-y-6">
+      <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
+        <div className="flex items-center gap-4">
+          <span className="text-3xl">⏱️</span>
+          <h1 className="text-4xl font-bold tracking-tight text-gray-800 drop-shadow-sm">
+            Registro Entrada/Salida
+          </h1>
+        </div>
+      </Card>
+
+      <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
         <CardHeader>
           <CardTitle>Información del Empleado</CardTitle>
         </CardHeader>
@@ -66,7 +74,7 @@ function RegisterCheckInCheckOut() {
       </Card>
 
       {/* LADO DERECHO */}
-      <Card className="md:col-span-2 shadow-md">
+      <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
             <CardTitle className="text-lg text-center sm:text-left w-full sm:w-auto">
                 Registros de Asistencia

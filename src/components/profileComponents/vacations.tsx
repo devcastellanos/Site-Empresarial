@@ -53,12 +53,12 @@ function Vacations() {
 
   // Datos simulados del empleado
   const [employeeData, setEmployeeData] = useState({
-    hireDate: new Date(2021, 0, 15),
+    hireDate: new Date(2024, 1, 1),
     eligible: true,
     totalDays: 12,
     takenDays: 5,
     remainingDays: 7,
-    nextVacationIncrement: new Date(2024, 0, 15),
+    nextVacationIncrement: new Date(2026, 1, 1),
   });
 
   // Tipos de movimiento
@@ -97,10 +97,9 @@ function Vacations() {
 
   // Calcular días hasta próximo incremento
   const today = new Date();
-  const daysUntilNextIncrement = differenceInDays(
-    employeeData.nextVacationIncrement,
-    today
-  );
+  const rawDays = differenceInDays(employeeData.nextVacationIncrement, today);
+  const daysUntilNextIncrement = rawDays > 0 ? rawDays : 0;
+
   const progressValue = ((365 - daysUntilNextIncrement) / 365) * 100;
 
   // Manejar selección de fechas
@@ -153,13 +152,18 @@ function Vacations() {
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-bold flex items-center gap-2">
-        <Info className="w-6 h-6" />
-        <span>Vacaciones</span>
-      </h1>
+      <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
+        <div className="flex items-center gap-4">
+          <Info className="w-8 h-8 text-blue-600" />
+          <h1 className="text-4xl font-bold tracking-tight text-gray-800 drop-shadow-sm">
+            Vacaciones
+          </h1>
+        </div>
+      </Card>
+
 
       {/* Información del empleado y cláusulas legales */}
-      <Card>
+      <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
         <CardHeader>
           <CardTitle>Información de Vacaciones</CardTitle>
         </CardHeader>
@@ -229,24 +233,24 @@ function Vacations() {
       </Card>
 
       {/* Selección de fechas de vacaciones */}
-      <Card>
+      <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
         <CardHeader>
           <CardTitle>Selección de días de vacaciones</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1">
-              <Calendar
-                mode="multiple"
-                selected={selectedDates}
-                onSelect={handleDateSelect}
-                className="rounded-md border w-full"
-                locale={es}
-                disabled={(date) =>
-                  isBefore(date, today) ||
-                  selectedDates.length >= employeeData.remainingDays
-                }
-              />
+            <Calendar
+              mode="multiple"
+              selected={selectedDates}
+              onSelect={handleDateSelect}
+              className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
+              locale={es}
+              disabled={(date) =>
+                isBefore(date, today) ||
+                selectedDates.length >= employeeData.remainingDays
+              }
+            />
             </div>
 
             <div className="flex-1 space-y-4">
@@ -255,7 +259,7 @@ function Vacations() {
                 {selectedDates.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1">
                     {selectedDates.map((date, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
+                      <Badge key={index} variant="outline" className="text-xs bg-white/95 shadow-md backdrop-blur-sm">
                         {format(date, "dd MMM", { locale: es })}
                       </Badge>
                     ))}
@@ -266,7 +270,7 @@ function Vacations() {
               <div className="space-y-2">
                 <Label>Rango seleccionado:</Label>
                 {selectedDates.length > 0 ? (
-                  <p>
+                  <p className="text-center w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm">
                     {format(selectedDates[0], "PPP", { locale: es })} -{" "}
                     {format(selectedDates[selectedDates.length - 1], "PPP", {
                       locale: es,
@@ -280,118 +284,21 @@ function Vacations() {
               </div>
 
               <div className="pt-2 border-t">
-                <Label>Días restantes después de esta solicitud:</Label>
-                <p className="text-lg font-semibold">
+                <Label className="text-center">Días restantes después de esta solicitud:</Label>
+                <p className="text-lg font-semibold text-center">
                   {employeeData.remainingDays - selectedDates.length} días
                 </p>
               </div>
             </div>
           </div>
         </CardContent>
-      </Card>
-
-      {/* Solicitud de autorización */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Solicitud de Autorización</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid sm:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="employee">Número de empleado *</Label>
-              <Input
-                id="employee"
-                value={employeeNumber}
-                onChange={(e) => setEmployeeNumber(e.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <Label>Fecha de incidencia *</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className="w-full justify-start text-left font-normal"
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {incidentDate ? (
-                      format(incidentDate, "PPP", { locale: es })
-                    ) : (
-                      <span>Selecciona una fecha</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={incidentDate}
-                    onSelect={setIncidentDate}
-                    initialFocus
-                    locale={es}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            <div>
-              <Label>Tipo de movimiento *</Label>
-              <Select value={movementType} onValueChange={setMovementType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecciona un movimiento" />
-                </SelectTrigger>
-                <SelectContent>
-                  {movements.map((mov, i) => (
-                    <SelectItem key={i} value={mov}>
-                      {mov}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Campos condicionales para vacaciones */}
-          {movementType === "Vacaciones" && (
-            <div className="space-y-4">
-              <div>
-                <Label>Persona que autoriza *</Label>
-                <Input
-                  value={authorizer}
-                  onChange={(e) => setAuthorizer(e.target.value)}
-                  placeholder="Nombre del supervisor/autorizador"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label>Comentarios adicionales</Label>
-                <Textarea
-                  rows={3}
-                  placeholder="Motivo o detalles adicionales..."
-                  value={comments}
-                  onChange={(e) => setComments(e.target.value)}
-                />
-              </div>
-
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Info className="w-4 h-4" />
-                <span>
-                  Estás solicitando {selectedDates.length} días de vacaciones
-                </span>
-              </div>
-            </div>
-          )}
-        </CardContent>
-        <CardFooter className="flex justify-end">
+        <CardFooter className="flex justify-end mt-4">
           <Button
             onClick={handleSubmit}
-            disabled={!canSubmit || requestStatus === "submitting"}
+            disabled={selectedDates.length === 0}
+            className="px-6 py-2 rounded-xl text-white font-semibold bg-blue-600 hover:bg-blue-700 transition-all shadow-md backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {requestStatus === "submitting"
-              ? "Enviando..."
-              : "Enviar solicitud"}
+            🚀 Enviar solicitud
           </Button>
         </CardFooter>
       </Card>
