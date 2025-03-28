@@ -25,12 +25,13 @@ interface Usuario {
   email: string;
   password?: string;
   status: string;
+  num_empleado: number;
 }
 
 const UsuariosPage = () => {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [openModal, setOpenModal] = useState(false);
-  const [currentUsuario, setCurrentUsuario] = useState<Usuario>({ id: 0, name: "", email: "", password: "", status: "Activo" });
+  const [currentUsuario, setCurrentUsuario] = useState<Usuario>({ id: 0, name: "", email: "", password: "", status: "Activo", num_empleado: 0 });
   const { isAuthenticated } = useAuth();
 
   const fetchUsuarios = async () => {
@@ -50,7 +51,7 @@ const UsuariosPage = () => {
   }, []);
 
   const handleOpenModal = (usuario?: Usuario) => {
-    setCurrentUsuario(usuario || { id: 0, name: "", email: "", password: "", status: "Activo" });
+    setCurrentUsuario(usuario || { id: 0, name: "", email: "", password: "", status: "Activo", num_empleado: 0 });
     setOpenModal(!openModal);
   };
 
@@ -159,7 +160,7 @@ const UsuariosPage = () => {
                         <IconButton
                           variant="text"
                           className="hover:bg-white/70 p-1"
-                          onClick={() => handleOpenModal({ id, name, email, status })}
+                          onClick={() => handleOpenModal({ id, name, email, status, num_empleado: 0 })}
                           {...({} as any)}
                         >
                           <PencilIcon className="h-3.5 w-3.5 text-blue-gray-800" />
@@ -191,9 +192,10 @@ const UsuariosPage = () => {
         <Dialog open={openModal} handler={() => handleOpenModal()} className="bg-white/80 backdrop-blur-xl rounded-xl shadow-lg p-6" {...({} as any)}>
           <DialogHeader className="text-blue-gray-800" {...({} as any)}>{currentUsuario.id ? "Editar usuario" : "Agregar usuario"}</DialogHeader>
           <DialogBody className="space-y-4" {...({} as any)}>
-            <Input label="Nombre" value={currentUsuario.name} crossOrigin="anonymous" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} onChange={(e) => setCurrentUsuario({ ...currentUsuario, name: e.target.value })} />
-            <Input label="Correo" value={currentUsuario.email} crossOrigin="anonymous" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} onChange={(e) => setCurrentUsuario({ ...currentUsuario, email: e.target.value })} />
-            <Input label="Contraseña" type="password" value={currentUsuario.password || ""} crossOrigin="anonymous" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} onChange={(e) => setCurrentUsuario({ ...currentUsuario, password: e.target.value })} />
+            <Input label="Nombre" value={currentUsuario.name}  {...({} as any)} onChange={(e) => setCurrentUsuario({ ...currentUsuario, name: e.target.value })} />
+            <Input label="Correo" value={currentUsuario.email}  {...({} as any)} onChange={(e) => setCurrentUsuario({ ...currentUsuario, email: e.target.value })} />
+            <Input label="Contraseña" type="password" value={currentUsuario.password || ""}  {...({} as any)} onChange={(e) => setCurrentUsuario({ ...currentUsuario, password: e.target.value })} />
+            <Input label="Número de empleado" type="number" value={currentUsuario.num_empleado}  {...({} as any)} onChange={(e) => setCurrentUsuario({ ...currentUsuario, num_empleado: Number(e.target.value) })} />
           </DialogBody>
           <DialogFooter className="mt-4" {...({} as any)}>
             <Button variant="text" color="red" onClick={() => handleOpenModal()} {...({} as any)}>Cancelar</Button>

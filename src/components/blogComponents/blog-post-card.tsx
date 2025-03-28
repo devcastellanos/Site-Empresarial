@@ -16,9 +16,12 @@ import {
   Carousel,
   IconButton,
 } from "@material-tailwind/react";
+import { HeartIcon } from "@heroicons/react/24/solid";
+import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
 
-import { Post } from "./postsPage";
+import { Post } from "@/lib/interfaces";
 import { useAuth } from "@/hooks/useAuth";
+import ComentariosPost from "./comentariosPost";
 
 interface BlogPostCardProps {
   img: string[];
@@ -53,21 +56,28 @@ export function BlogPostCard({
   const [openModal, setOpenModal] = useState(false);
   const [statusLike, setStatusLike] = useState(false);
   const [post, setPost] = useState<Post>({
-    idBlog: idBlog,
+    idBlog,
     img: Array.isArray(img) ? img : [],
-    tag: tag,
-    title: title,
-    desc: desc,
-    date: date,
+    tag,
+    title,
+    desc,
+    date,
     img_author: author.img,
     name_author: author.name,
-    num_empleado: num_empleado,
-    likes: likes,
-    videoUrl: videoUrl,
+    num_empleado,
+    likes,
+    videoUrl,
+    impact: "bajo",
   });
 
-  // Estado para las imágenes nuevas seleccionadas durante la edición
   const [newImgFiles, setNewImgFiles] = useState<File[]>([]);
+
+  const getProfile = async () => {
+    const response = await axios.get('/api/auth/profile', { withCredentials: true });
+    console.log(response);
+    console.log(response.data.user.email);
+    return response.data.user;
+  }
 
   const extractYouTubeID = (url: string) => {
     const regExp = /(?:youtube\.com.*(?:\?|&)v=|youtu\.be\/)([^&#]*)/;
@@ -77,17 +87,13 @@ export function BlogPostCard({
 
   const { isAuthenticated } = useAuth();
 
-  const handleEditClick = () => {
-    setOpenModal(true);
-  };
+  const handleEditClick = () => setOpenModal(true);
 
   const handleCloseModal = () => {
     setOpenModal(false);
-    // Limpiar las imágenes nuevas al cerrar el modal
     setNewImgFiles([]);
   };
 
-  // Función para eliminar una imagen de la lista actual
   const handleRemoveImage = (index: number) => {
     const updatedImages = [...post.img];
     updatedImages.splice(index, 1);
@@ -95,25 +101,16 @@ export function BlogPostCard({
   };
 
   const handleEdit = async () => {
-    // Toma las imágenes actuales (ya con las eliminaciones realizadas)
     let updatedImages = [...post.img];
 
-    // Si se seleccionaron nuevas imágenes, se suben y se concatenan
     if (newImgFiles.length > 0) {
       const formData = new FormData();
-      newImgFiles.forEach((file) => {
-        formData.append("images", file);
-      });
+      newImgFiles.forEach((file) => formData.append("images", file));
       formData.append("num_empleado", num_empleado.toString());
       try {
-        console.log("Subiendo nuevas imágenes...");
         const res = await axios.post("/api/uploadImages", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         });
-        console.log("Imágenes subidas correctamente:", res.data.imageUrls);
-        // Concatenar las imágenes ya existentes con las nuevas subidas
         updatedImages = [...updatedImages, ...res.data.imageUrls];
       } catch (error) {
         console.error("Error al subir nuevas imágenes:", error);
@@ -121,60 +118,59 @@ export function BlogPostCard({
       }
     }
 
-    // Construir el objeto actualizado con el arreglo completo de imágenes y videoUrl
-    const updatedPost = {
-      ...post,
-      img: updatedImages,
-      videoUrl: post.videoUrl || "", // 👈 Aseguramos que se incluya el video
-    };
+    const updatedPost = { ...post, img: updatedImages, videoUrl: post.videoUrl || "" };
 
     try {
       const response = await fetch(
         "http://api-cursos.192.168.29.40.sslip.io/ActualizarPost",
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedPost),
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Error en la solicitud");
-      }
+      if (!response.ok) throw new Error("Error en la solicitud");
 
       const data = await response.json();
       console.log("Post actualizado:", data);
       setOpenModal(false);
+      setPost(updatedPost);
       onPostEdit(updatedPost);
     } catch (error) {
       console.error("Error al actualizar post:", error);
     }
   };
 
+  const toggleLike = async (action: "like" | "dislike") => {
+    const url = `http://api-cursos.192.168.29.40.sslip.io/${action}/${idBlog}`;
+    const delta = action === "like" ? 1 : -1;
+
+    try {
+      const res = await fetch(url, { method: "PUT" });
+      const data = await res.json();
+      console.log(data);
+
+      setPost((prev) => ({ ...prev, likes: prev.likes + delta }));
+      setStatusLike((prev) => !prev);
+    } catch (error) {
+      console.error("Error al actualizar like:", error);
+    }
+  };
+
+
+
+
   return (
     <>
-      <Card
-        className="pt-10"
-        shadow={true}
-        
-{...({} as any)}
-      >
-        <CardHeader
-{...({} as any)}
-        >
-          <Carousel
-            className="rounded-xl"
-{...({} as any)}
-          >
-            {post.videoUrl != "" && (
+      <Card className="pt-10" shadow={true} {...({} as any)}>
+        <CardHeader {...({} as any)}>
+          <Carousel className="rounded-xl" {...({} as any)}>
+            {post.videoUrl && (
               <div className="aspect-video w-full h-full">
                 <iframe
                   className="w-full h-full"
-                  src={`https://www.youtube.com/embed/${extractYouTubeID(
-                    post.videoUrl || ""
-                  )}`}
+                  src={`https://www.youtube.com/embed/${extractYouTubeID(post.videoUrl)}`}
                   title="YouTube video"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -189,301 +185,84 @@ export function BlogPostCard({
                 alt={`Imagen ${index + 1}`}
                 width={600}
                 height={600}
-                className="w-full object-cover "
+                className="w-full object-cover"
               />
             ))}
           </Carousel>
         </CardHeader>
-        <CardBody
-          className="p-6"
-{...({} as any)}
-        >
-          <Typography
-            variant="small"
-            color="blue"
-            className="mb-2 !font-medium"
-{...({} as any)}
-          >
+        <CardBody className="p-6" {...({} as any)}>
+          <Typography variant="small" color="blue" className="mb-2 font-medium"{...({} as any)}>
             {tag}
           </Typography>
-          <Typography
-{...({} as any)}
-            as="a"
-            href="#"
-            variant="h5"
-            color="blue-gray"
-            className="mb-2 normal-case transition-colors hover:text-gray-900"
-          >
+          <Typography as="a" href="#" variant="h5" color="blue-gray" className="mb-2 hover:text-gray-900" {...({} as any)}>
             {title}
           </Typography>
-          <Typography
-            className="mb-6 font-normal !text-gray-500"
-{...({} as any)}
-          >
+          <Typography className="mb-6 text-gray-500 font-normal" {...({} as any)}>
             {desc}
           </Typography>
           <div className="flex items-center gap-4">
-            <Avatar
-              size="sm"
-              variant="circular"
-              src={`/fotos/${formattedUserId}.jpg`}
-              alt={author.name}
-{...({} as any)}
-            />
+            <Avatar size="sm" variant="circular" src={`/fotos/${formattedUserId}.jpg`} alt={author.name}{...({} as any)} />
             <div>
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="mb-0.5 !font-medium"
-                
-{...({} as any)}
-              >
+              <Typography variant="small" color="blue-gray" className="font-medium" {...({} as any)}>
                 {author.name}
               </Typography>
-              <Typography
-                variant="small"
-                color="gray"
-                className="text-xs !text-gray-500 font-normal"
-                
-{...({} as any)}
-              >
+              <Typography variant="small" color="gray" className="text-xs font-normal"{...({} as any)}>
                 {date}
               </Typography>
             </div>
             {isAuthenticated && (
-              <div>
-                <Button
-                  onClick={() => onPostDelete(idBlog)}
-                  
-{...({} as any)}
-                >
+              <div className="ml-auto flex gap-2">
+                <Button onClick={() => onPostDelete(idBlog)} color="red" size="sm"{...({} as any)}>
                   Eliminar
                 </Button>
-                <Button
-                  className="ml-auto"
-                  onClick={handleEditClick}
-                  
-{...({} as any)}
-                >
+                <Button onClick={handleEditClick} size="sm"{...({} as any)}>
                   Editar
                 </Button>
               </div>
             )}
-            {statusLike ? (
-              <IconButton
-                
-{...({} as any)}
-                onClick={() => {
-                  fetch(
-                    `http://api-cursos.192.168.29.40.sslip.io/dislike/${idBlog}`,
-                    {
-                      method: "PUT",
-                    }
-                  )
-                    .then((res) => res.json())
-                    .then((data) => {
-                      console.log(data);
-                      setPost((prevPost) => ({
-                        ...prevPost,
-                        likes: prevPost.likes + 1,
-                      }));
-                      setStatusLike(!statusLike);
-                      onPostEdit({
-                        title: title,
-                        desc: desc,
-                        tag: tag,
-                        videoUrl: videoUrl,
-                        img: img,
-                        likes: likes,
-                        idBlog: idBlog,
-                        date: date,
-                        num_empleado: num_empleado,
-                        name_author: author.name,
-                        img_author: author.img,
-                      });
-                    });
-                }}
-              >
-                <i className="fas fa-heart" />
+            <div className="ml-auto flex items-center gap-2">
+              <IconButton onClick={() => toggleLike(statusLike ? "dislike" : "like")}{...({} as any)}>
+                {statusLike ? (
+                  <HeartIcon className="h-5 w-5 text-red-500" />
+                ) : (
+                  <HeartOutline className="h-5 w-5 text-gray-500" />
+                )}
               </IconButton>
-            ) : (
-              <IconButton
-                
-{...({} as any)}
-                onClick={() => {
-                  fetch(
-                    `http://api-cursos.192.168.29.40.sslip.io/like/${idBlog}`,
-                    {
-                      method: "PUT",
-                    }
-                  )
-                    .then((res) => res.json())
-                    .then((data) => {
-                      console.log(data);
-                      setPost((prevPost) => ({
-                        ...prevPost,
-                        likes: prevPost.likes - 1,
-                      }));
-                      setStatusLike(!statusLike);
-                      onPostEdit(
-                        {
-                          title: title,
-                          desc: desc,
-                          tag: tag,
-                          videoUrl: videoUrl,
-                          img: img,
-                          likes: likes,
-                          idBlog: idBlog,
-                          date: date,
-                          num_empleado: num_empleado,
-                          img_author: author.img,
-                          name_author: author.name,
-                        }
-                      );
-                    });
-                }}
-              >
-                <i className="far fa-heart" />
-              </IconButton>
-            )}
-            {likes}
+              <Typography variant="small" color="gray" {...({} as any)}>
+                {post.likes}
+              </Typography>
+            </div>
           </div>
+          <ComentariosPost idBlog={idBlog} isAdmin={isAuthenticated} />
         </CardBody>
       </Card>
 
-      {/* Modal para editar información */}
-      <Dialog
-        open={openModal}
-        handler={handleCloseModal}
-        
-{...({} as any)}
-      >
-        <DialogHeader
-          {...({} as any)}
-        >
-          Editar la información
-        </DialogHeader>
-        <DialogBody
-          {...({} as any)}
-        >
-          <div>
-            {/* Campos de edición de texto */}
-            <Input
-              type="text"
-              placeholder="Título"
-              value={post.title}
-              onChange={(e) => setPost({ ...post, title: e.target.value })}
-              className="w-full p-2 border rounded mb-4"
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-              crossOrigin=""
-            />
-            <Input
-              placeholder="Descripción"
-              value={post.desc}
-              onChange={(e) => setPost({ ...post, desc: e.target.value })}
-              className="w-full p-2 border rounded mb-4"
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-              crossOrigin=""
-            />
-            <Input
-              type="text"
-              placeholder="Tag"
-              value={post.tag}
-              onChange={(e) => setPost({ ...post, tag: e.target.value })}
-              className="w-full p-2 border rounded mb-4"
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-              crossOrigin=""
-            />
-            <Input
-              type="text"
-              placeholder="Enlace de YouTube"
-              value={post.videoUrl || ""}
-              onChange={(e) => setPost({ ...post, videoUrl: e.target.value })}
-              className="w-full p-2 border rounded mb-4"
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-              crossOrigin=""
-            />
+      <Dialog open={openModal} handler={handleCloseModal}{...({} as any)}>
+        <DialogHeader {...({} as any)}>Editar la información</DialogHeader>
+        <DialogBody {...({} as any)}>
+          <Input type="text" placeholder="Título" value={post.title} onChange={(e) => setPost({ ...post, title: e.target.value })} className="mb-4"{...({} as any)} />
+          <Input placeholder="Descripción" value={post.desc} onChange={(e) => setPost({ ...post, desc: e.target.value })} className="mb-4"{...({} as any)} />
+          <Input type="text" placeholder="Tag" value={post.tag} onChange={(e) => setPost({ ...post, tag: e.target.value })} className="mb-4"{...({} as any)} />
+          <Input type="text" placeholder="Enlace de YouTube" value={post.videoUrl || ""} onChange={(e) => setPost({ ...post, videoUrl: e.target.value })} className="mb-4"{...({} as any)} />
 
-            {/* Sección para editar imágenes */}
-            <div className="mb-4">
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="mb-2"
-                
-{...({} as any)}
-              >
-                Imágenes actuales:
-              </Typography>
-              <div className="flex flex-wrap gap-2">
-                {post.img.map((imgUrl, index) => (
-                  <div key={index} className="relative">
-                    <Image
-                      src={`/api/images/${imgUrl.split("/").pop()}`}
-                      alt={`Imagen ${index + 1}`}
-                      width={100}
-                      height={100}
-                      className="object-cover rounded"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                    >
-                      x
-                    </button>
-                  </div>
-                ))}
+          <Typography variant="small" color="blue-gray" className="mb-2"{...({} as any)}>Imágenes actuales:</Typography>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {post.img.map((imgUrl, index) => (
+              <div key={index} className="relative">
+                <Image src={`/api/images/${imgUrl.split("/").pop()}`} alt={`Imagen ${index + 1}`} width={100} height={100} className="rounded" />
+                <button type="button" onClick={() => handleRemoveImage(index)} className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                  x
+                </button>
               </div>
-            </div>
-
-            <div className="mb-4">
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="mb-2"
-                
-{...({} as any)}
-              >
-                Agregar nuevas imágenes:
-              </Typography>
-              <Input
-                crossOrigin=""
-                type="file"
-                multiple
-                onChange={(e) => {
-                  if (e.target.files) {
-                    setNewImgFiles(Array.from(e.target.files));
-                  }
-                }}
-                className="w-full p-2 border rounded"
-{...({} as any)}
-              />
-            </div>
+            ))}
           </div>
+
+          <Typography variant="small" color="blue-gray" className="mb-2"{...({} as any)}>Agregar nuevas imágenes:</Typography>
+          <Input type="file" multiple onChange={(e) => { if (e.target.files) setNewImgFiles(Array.from(e.target.files)); }} {...({} as any)}/>
         </DialogBody>
-        <DialogFooter
-{...({} as any)}
-        >
-          <Button
-            variant="text"
-            color="red"
-            onClick={handleCloseModal}
-{...({} as any)}
-          >
-            Cerrar
-          </Button>
-          <Button
-            variant="gradient"
-            onClick={handleEdit}
-{...({} as any)}
-          >
-            Guardar
-          </Button>
+        <DialogFooter{...({} as any)}>
+          <Button variant="text" color="red" onClick={handleCloseModal}{...({} as any)}>Cerrar</Button>
+          <Button variant="gradient" onClick={handleEdit}{...({} as any)}>Guardar</Button>
         </DialogFooter>
       </Dialog>
     </>

@@ -116,9 +116,9 @@ export function Convenio() {
                 placeholder="Título del Convenio" 
                 value={convenio.titulo} 
                 onChange={(e) => setConvenio({ ...convenio, titulo: e.target.value })} 
-                crossOrigin="" 
-                onPointerLeaveCapture={() => {}} 
-                onPointerEnterCapture={() => {}} 
+                 
+                 
+                {...({} as any)} 
               />
 
               <Typography variant="small" color="blue-gray" className="mb-2 font-medium"
@@ -128,9 +128,9 @@ export function Convenio() {
                     placeholder="Link del Convenio"
                     value={convenio.link}
                     onChange={(e) => setConvenio({ ...convenio, link: e.target.value })}
-                    crossOrigin=""
-                    onPointerLeaveCapture={() => {}}
-                    onPointerEnterCapture={() => {}}
+                    
+                    
+                    {...({} as any)}
                 />
 
             </div>
@@ -142,8 +142,8 @@ export function Convenio() {
                 placeholder="Descripción" 
                 value={convenio.descripcion} 
                 onChange={(e) => setConvenio({ ...convenio, descripcion: e.target.value })} 
-                onPointerLeaveCapture={() => {}} 
-                onPointerEnterCapture={() => {}} 
+                 
+                {...({} as any)} 
               />
             </div>
             <div className="mb-6">
@@ -151,9 +151,9 @@ export function Convenio() {
                 type="file" 
                 accept="image/*" 
                 onChange={(e) => setImgFile(e.target.files ? e.target.files[0] : null)} 
-                crossOrigin="" 
-                onPointerLeaveCapture={() => {}} 
-                onPointerEnterCapture={() => {}} 
+                 
+                 
+                {...({} as any)} 
               />
               {imgFile && <Image src={URL.createObjectURL(imgFile)} alt="Imagen de Convenio" width={200} height={200} className="object-cover self-center" />}
             </div>
@@ -162,8 +162,8 @@ export function Convenio() {
               color="blue" 
               size="sm" 
               onClick={handleAddConvenio} 
-              onPointerLeaveCapture={() => {}} 
-              onPointerEnterCapture={() => {}} 
+               
+              {...({} as any)} 
               placeholder="Agregar"
             >
               Agregar

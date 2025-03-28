@@ -98,10 +98,10 @@ const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, o
               value={progress}
               onChange={(e) => setProgress(Number(e.target.value))}
               className="w-full"
-              crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+               {...({} as any)}
             />
-            <Input type="date" label="Fecha de inicio" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full" crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} />
-            <Input type="date" label="Fecha de finalización" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full" crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} />
+            <Input type="date" label="Fecha de inicio" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full"  {...({} as any)} />
+            <Input type="date" label="Fecha de finalización" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full"  {...({} as any)} />
           </div>
 
           {selectedDepartment && users.length > 0 && (
@@ -115,9 +115,9 @@ const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, o
                   <Checkbox
                     checked={selectedUsers.has(user.Personal)}
                     onChange={() => handleCheckboxChange(user.Personal)}
-                    crossOrigin=""
-                    onPointerEnterCapture={() => {}}
-                    onPointerLeaveCapture={() => {}}
+                    
+                    {...({} as any)}
+                    
                   />
                   <Typography
                   {...({} as any)}>

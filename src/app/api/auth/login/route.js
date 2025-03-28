@@ -4,68 +4,60 @@ import { NextResponse } from 'next/server';
 import {serialize} from 'cookie';
 
 export async function POST(req) {
+  try {
+    const { email, num_empleado, password } = await req.json();
+    const userIdentifier = email || num_empleado;
+    console.log(`[LOG] Intento de inicio de sesión: ${userIdentifier}`);
 
-    try {
-        // Leer el cuerpo de la solicitud
-        const { email, password } = await req.json();
-        console.log(`[LOG] Intento de inicio de sesión: ${email}`);
-        // Validación de campos
-        if (!email || !password) {
-          return NextResponse.json(
-            { success: false, message: 'Por favor, ingresa tu email y contraseña.' },
-            { status: 400 }
-          );
-        }
+    if (!userIdentifier || !password) {
+      return NextResponse.json(
+        { success: false, message: 'Por favor, ingresa tu correo o número de empleado y contraseña.' },
+        { status: 400 }
+      );
+    }
 
-        const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password }),
-        });
-    
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error(`[LOG] Error en la autenticación: ${errorText}`);
-          return NextResponse.json(
-            { success: false, message: errorText || 'Credenciales incorrectas.' },
-            { status: 401 }
-          );
-        }
-        const user = await response.json();
-        // console.log(`[LOG] Usuario autenticado: ${user.data.name}`);
-        // console.log('[LOG] Respuesta completa de login:', user);
+    const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, num_empleado, password }),
+    });
 
-        const token = jwt.sign({
-            exp: Math.floor(Date.now() / 1000) + 60*60*24*30,
-            email: email,
-            user: user.data.name,
-        },'secret')
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`[LOG] Error en la autenticación: ${errorText}`);
+      return NextResponse.json(
+        { success: false, message: errorText || 'Credenciales incorrectas.' },
+        { status: 401 }
+      );
+    }
 
-        const serialized = serialize('myToken', token, {
-            httpOnly: true,
-            // secure: process.env.NODE_ENV === 'production',
-            secure: false,
-            sameSite: 'Lax',
-            maxAge: 1000*60*60*24*30,
-            path: '/',
-        });
+    const user = await response.json();
+    const token = jwt.sign({
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
+      email: user.data.email,
+      user: user.data.name,
+      num_empleado: user.data.num_empleado,
+      rol: user.data.rol,
+    }, 'secret');
 
-        console.log(`[LOG] Cookie generada: ${serialized}`);
-        const res = NextResponse.json(
-            { success: true, message: 'Inicio de sesión exitoso.' },
-            { status: 200 }
-          );
-          res.headers.set('Set-Cookie', serialized);
-      
-          return res;
+    const serialized = serialize('myToken', token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'Lax',
+      maxAge: 60 * 60 * 24 * 30,
+      path: '/',
+    });
 
-      } catch (error) {
-        console.error('[LOG] Error en el servidor:', error);
-        return NextResponse.json(
-          { success: false, message: 'Hubo un error al procesar tu solicitud.' },
-          { status: 500 }
-        );
-      }
+    const res = NextResponse.json({ success: true, message: 'Inicio de sesión exitoso.' }, { status: 200 });
+    res.headers.set('Set-Cookie', serialized);
+
+    return res;
+
+  } catch (error) {
+    console.error('[LOG] Error en el servidor:', error);
+    return NextResponse.json(
+      { success: false, message: 'Hubo un error al procesar tu solicitud.' },
+      { status: 500 }
+    );
+  }
 }

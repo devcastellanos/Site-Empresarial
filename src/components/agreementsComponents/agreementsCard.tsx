@@ -159,9 +159,8 @@ export function ConvenioCard({
           <div>
             {/* Aquí puedes agregar los campos del formulario de edición */}
             <Input
-              crossOrigin=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
+              
+{...({} as any)}
               type="text"
               placeholder="Título"
               value={convenio.titulo}
@@ -171,9 +170,8 @@ export function ConvenioCard({
               className="w-full p-2 border rounded mb-4"
             />
             <Input
-              crossOrigin=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
+              
+{...({} as any)}
               placeholder="Descripción"
               value={convenio.descripcion}
               onChange={(e) =>
@@ -182,9 +180,8 @@ export function ConvenioCard({
               className="w-full p-2 border rounded mb-4"
             />
             <Input
-              crossOrigin=""
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
+              
+{...({} as any)}
               placeholder="Link"
               value={convenio.link}
               onChange={(e) =>

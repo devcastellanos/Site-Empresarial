@@ -464,9 +464,7 @@ const Kardex = () => {
                     accept="image/*" 
                     multiple 
                     onChange={handleChangeImage} 
-                    crossOrigin="" 
-                    onPointerEnterCapture={() => {}} 
-                    onPointerLeaveCapture={() => {}} 
+{...({} as any)}
                   />
 
                 </div>
@@ -766,7 +764,7 @@ const Kardex = () => {
                     if (value > 100) value = 100;
                     setNewProgress(value);
                   }}
-                  crossOrigin=""
+                  
 {...({} as any)}
                 />
 
@@ -776,7 +774,7 @@ const Kardex = () => {
                   required
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  crossOrigin=""
+                  
 {...({} as any)}
                 />
 
@@ -785,7 +783,7 @@ const Kardex = () => {
                   label="Fecha de finalización"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  crossOrigin=""
+                  
 {...({} as any)}
                 />
               </div>
@@ -878,9 +876,7 @@ const Kardex = () => {
                     type="number"
                     min="0"
                     max="100"
-                    onPointerEnterCapture={() => {}}
-                    onPointerLeaveCapture={() => {}}
-                    crossOrigin={undefined}
+{...({} as any)}
                   />
                 </div>
               ) : null}
