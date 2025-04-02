@@ -26,7 +26,7 @@ function PatronCard() {
       setUsers(mappedUsers);
 
       // Buscar usuario directamente después de obtener los datos
-      const dataUser = mappedUsers.find((u: User) => u.Personal === 135);
+      const dataUser = mappedUsers.find((u: User) => u.Personal === 2294);
       setUser(dataUser || null);
 
       if (dataUser) {
