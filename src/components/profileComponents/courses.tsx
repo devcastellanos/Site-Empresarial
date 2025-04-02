@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 
@@ -14,6 +9,7 @@ import { useEffect, useState } from "react";
 
 function Courses() {
   const [cursosTomados, setCursosTomados] = useState<CursoTomado[]>([]);
+  const [filtroStatus, setFiltroStatus] = useState("todos");
 
   const fetchCourses = async () => {
     try {
@@ -21,9 +17,9 @@ function Courses() {
         "http://api-cursos.192.168.29.40.sslip.io/cursostomados"
       );
       const data = await datacourse.json();
-      const dataUser = data.filter(
-        (course: CursoTomado) => course.id_usuario === 2294
-      );
+      const dataUser = data
+        .filter((course: CursoTomado) => course.id_usuario === 2294)
+        .filter((course: CursoTomado) => course.status === "true");
       setCursosTomados(dataUser);
     } catch (error) {
       console.error(error);
@@ -56,18 +52,38 @@ function Courses() {
     }
   };
 
+  const cursosFiltrados = cursosTomados.filter((curso) => {
+    const progress = parseInt(curso.progress || "0");
+  
+    if (filtroStatus === "pendiente") return progress === 0;
+    if (filtroStatus === "progreso") return progress > 0 && progress < 100;
+    if (filtroStatus === "completado") return progress === 100;
+  
+    return true; // "todos"
+  });
+
   return (
     <div className="max-w-5xl mx-auto p-6">
       <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
+        <div className="flex items-center justify-between mb-4">
           <h1 className="text-4xl font-bold tracking-tight text-gray-800 drop-shadow-sm flex items-center gap-3">
             🎓 Mis Cursos
           </h1>
-        </Card>
-
-
+          <select
+            value={filtroStatus}
+            onChange={(e) => setFiltroStatus(e.target.value)}
+            className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm shadow-sm"
+          >
+            <option value="todos">Todos</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="progreso">En progreso</option>
+            <option value="completado">Completado</option>
+          </select>
+        </div>
+      </Card>
 
       <div className="space-y-6">
-        {cursosTomados.map((curso) => {
+        {cursosFiltrados.map((curso) => {
           const progress = parseInt(curso.progress || "0");
 
           return (
