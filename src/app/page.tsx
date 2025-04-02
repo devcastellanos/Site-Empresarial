@@ -59,7 +59,7 @@ export default function Campaign() {
 
       <motion.header
         ref={ref}
-        className="relative w-full h-screen flex flex-col items-center justify-start text-center pt-32 overflow-hidden"
+        className="relative w-full h-screen flex flex-col items-center justify-start text-center overflow-hidden"
         initial={{ opacity: 0, y: -50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false }}

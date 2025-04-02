@@ -43,7 +43,7 @@ const ComentariosPost: React.FC<ComentariosPostProps> = ({ idBlog, isAdmin = fal
   
 
 
-  const fetchComentarios = async () => {
+  const fetchComentarios = React.useCallback(async () => {
     try {
       const res = await axios.get(`http://api-cursos.192.168.29.40.sslip.io/comentarios`, {
         params: { post: idBlog },
@@ -52,11 +52,11 @@ const ComentariosPost: React.FC<ComentariosPostProps> = ({ idBlog, isAdmin = fal
     } catch (error) {
       console.error("Error cargando comentarios:", error);
     }
-  };
-
+  }, [idBlog]);  // Add dependencies here
+  
   useEffect(() => {
     if (idBlog) fetchComentarios();
-  }, [idBlog]);
+  }, [idBlog, fetchComentarios]); 
 
   const handleAgregar = async () => {
 

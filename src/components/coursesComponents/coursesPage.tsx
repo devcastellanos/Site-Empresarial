@@ -25,8 +25,6 @@ interface Course {
   status: string;
 }
 
-
-
 function CourseCatalog() {
   const [formatJson, setFormatJson] = useState<CourseJson[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -36,7 +34,7 @@ function CourseCatalog() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [departments, setDepartments] = useState<string[]>([]);
-
+  const [visibleCourses, setVisibleCourses] = useState(5);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -243,7 +241,11 @@ function CourseCatalog() {
   const handleCloseAssignModal = () => {
     setIsAssignModalOpen(false);
     setSelectedCourse(null);
+  };
 
+  //show more courses
+  const handleShowMore = () => {
+    setVisibleCourses((prev) => prev + 5); // Aumenta de 5 en 5
   };
 
   return (
@@ -260,8 +262,7 @@ function CourseCatalog() {
 
       <Card
         className="p-8 shadow-2xl bg-white/80 backdrop-blur-lg rounded-2xl w-3/4"
-        
-{...({} as any)}
+        {...({} as any)}
       >
         <div style={styles.container}>
           <h1
@@ -299,58 +300,72 @@ function CourseCatalog() {
             </div>
 
             {filteredCourses.length > 0 ? (
-              filteredCourses.map((course) => (
-                <div
-                  key={course.id_course}
-                  className="grid grid-cols-4 gap-4 items-center px-4 py-3 bg-white/40 rounded-lg text-blue-gray-800 backdrop-blur-lg hover:bg-white/60 transition-all"
-                >
-                  <span>{course.title}</span>
-                  <span>{course.description}</span>
-                  <span>{course.tutor}</span>
-                  <div className="flex justify-center gap-2">
+              <>
+                {filteredCourses.slice(0, visibleCourses).map((course) => (
+                  <div
+                    key={course.id_course}
+                    className="grid grid-cols-4 gap-4 items-center px-4 py-3 bg-white/40 rounded-lg text-blue-gray-800 backdrop-blur-lg hover:bg-white/60 transition-all"
+                  >
+                    <span>{course.title}</span>
+                    <span>{course.description}</span>
+                    <span>{course.tutor}</span>
+                    <div className="flex justify-center gap-2">
+                      <button
+                        onClick={() => handleOpenDialog(course)}
+                        className="p-2 rounded-full bg-white/30 hover:bg-white/70 transition border border-black/10"
+                        title="Ver curso"
+                      >
+                        <FaEye size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleOpenEditDialog(course)}
+                        className="p-2 rounded-full bg-white/30 hover:bg-white/70 transition border border-black/10"
+                        title="Editar curso"
+                      >
+                        <FaEdit size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCourse(course)}
+                        className="p-2 rounded-full bg-white/30 hover:bg-white/70 transition border border-black/10"
+                        title="Eliminar curso"
+                      >
+                        <FaTrash size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleOpenAssignModal(course)}
+                        className="p-2 rounded-full bg-green-500/80 hover:bg-green-600 text-white transition"
+                        title="Asignar Departamento"
+                      >
+                        <FaPlus size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {visibleCourses < filteredCourses.length && (
+                  <div className="flex justify-center mt-4">
                     <button
-                      onClick={() => handleOpenDialog(course)}
-                      className="p-2 rounded-full bg-white/30 hover:bg-white/70 transition border border-black/10"
-                      title="Ver curso"
+                      onClick={handleShowMore}
+                      className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow transition"
                     >
-                      <FaEye size={16} />
-                    </button>
-                    <button
-                      onClick={() => handleOpenEditDialog(course)}
-                      className="p-2 rounded-full bg-white/30 hover:bg-white/70 transition border border-black/10"
-                      title="Editar curso"
-                    >
-                      <FaEdit size={16} />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteCourse(course)}
-                      className="p-2 rounded-full bg-white/30 hover:bg-white/70 transition border border-black/10"
-                      title="Eliminar curso"
-                    >
-                      <FaTrash size={16} />
-                    </button>
-                    <button
-                      onClick={() => handleOpenAssignModal(course)}
-                      className="p-2 rounded-full bg-green-500/80 hover:bg-green-600 text-white transition"
-                      title="Asignar Departamento"
-                    >
-                      <FaPlus size={16} />
+                      Ver más
                     </button>
                   </div>
-                </div>
-              ))
+                )}
+              </>
             ) : (
-              <div className="text-center text-gray-600 mt-4">No se encontraron cursos.</div>
+              <div className="text-center text-gray-600 mt-4">
+                No se encontraron cursos.
+              </div>
             )}
           </div>
-
 
           {/* Fondo borroso y diálogo para ver la información del curso */}
           <Dialog
             open={isDialogOpen}
             handler={handleCloseDialog}
             size="md"
-{...({} as any)}
+            {...({} as any)}
           >
             <div className="p-6 bg-white rounded-xl  w-full ">
               <h2 className="text-xl font-bold text-gray-800">
@@ -382,7 +397,7 @@ function CourseCatalog() {
             open={isEditDialogOpen}
             handler={handleCloseEditDialog}
             size="md"
-{...({} as any)}
+            {...({} as any)}
           >
             <div className="p-6 bg-white rounded-xl shadow-lg w-full ">
               <h2 className="text-xl font-bold text-gray-800">Editar Curso</h2>
@@ -458,7 +473,10 @@ function CourseCatalog() {
         >
           <div style={styles.modalContainer}>
             <div style={styles.modal}>
-              <CourseCatalog2 onAddCourse={handleNewCourse} onClose={handleCloseModal}/>
+              <CourseCatalog2
+                onAddCourse={handleNewCourse}
+                onClose={handleCloseModal}
+              />
               <button onClick={handleCloseModal} style={styles.closeButton}>
                 Cerrar
               </button>
@@ -471,7 +489,7 @@ function CourseCatalog() {
           open={isAssignModalOpen}
           handler={handleCloseAssignModal}
           size="lg"
-{...({} as any)}
+          {...({} as any)}
         >
           <AssignDepartmentModal
             course={{
@@ -581,7 +599,7 @@ const styles: { [key: string]: CSSProperties } = {
     backgroundColor: "rgba(255, 255, 255, 0.6)",
     transform: "scale(1.1)",
   },
-  
+
   modal: {
     backgroundColor: "#fff",
     padding: "20px",

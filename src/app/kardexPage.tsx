@@ -51,7 +51,8 @@ const Kardex = () => {
   });
   const [selectedUserId, setSelectedUserId] = useState<number | "">("");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [selectedCourse, setSelectedCourse] = useState<CursosPresencialesJson | null>(null);
+  const [selectedCourse, setSelectedCourse] =
+    useState<CursosPresencialesJson | null>(null);
   const [cursosTomados, setCursosTomados] = useState<CursoTomado[]>([]);
   const [selectedCourses, setSelectedCourses] = useState<CursoTomado[]>([]);
   const [query, setQuery] = useState("");
@@ -104,8 +105,8 @@ const Kardex = () => {
     try {
       const selectedCourse = cursosPresenciales.find(
         (course) => course.id_course === newCourseId
-      );      
-      if ( startDate === ""){
+      );
+      if (startDate === "") {
         Swal.fire({
           icon: "error",
           title: "Error",
@@ -140,7 +141,7 @@ const Kardex = () => {
         }
 
         const result = await response.json();
-        
+
         Swal.fire({
           icon: "success",
           title: "Curso agregado con éxito",
@@ -233,12 +234,24 @@ const Kardex = () => {
         });
 
         if (res.status === 200) {
-          Swal.fire({ icon: "success", title: "Imagen actualizada", text: "La imagen se ha subido correctamente." });
+          Swal.fire({
+            icon: "success",
+            title: "Imagen actualizada",
+            text: "La imagen se ha subido correctamente.",
+          });
         } else {
-          Swal.fire({ icon: "error", title: "Error", text: "No se pudo actualizar la imagen." });
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "No se pudo actualizar la imagen.",
+          });
         }
       } catch (error) {
-        Swal.fire({ icon: "error", title: "Error", text: "Error en la solicitud de imagen." });
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Error en la solicitud de imagen.",
+        });
       }
     }
   };
@@ -296,7 +309,11 @@ const Kardex = () => {
     }
   };
 
-  const handleDeleteCourse = async (id_course: number, id_usuario: number, start_date: string) => {
+  const handleDeleteCourse = async (
+    id_course: number,
+    id_usuario: number,
+    start_date: string
+  ) => {
     try {
       const response = await fetch(
         "http://api-cursos.192.168.29.40.sslip.io/eliminarCursoTomado",
@@ -313,7 +330,6 @@ const Kardex = () => {
         throw new Error("Error en la solicitud");
       }
 
-
       Swal.fire({
         icon: "success",
         title: "Curso eliminado",
@@ -321,14 +337,18 @@ const Kardex = () => {
       });
 
       setSelectedCourses(
-        selectedCourses.filter((course) => !(course.id_course === id_course && course.start_date === start_date))
+        selectedCourses.filter(
+          (course) =>
+            !(
+              course.id_course === id_course && course.start_date === start_date
+            )
+        )
       );
       const updatedCourses = await fetch(
         "http://api-cursos.192.168.29.40.sslip.io/cursostomados"
       );
       const coursesData = await updatedCourses.json();
       setCursosTomados(coursesData);
-
     } catch (error) {
       console.error("Error al eliminar el curso:", error);
       alert("Hubo un problema al eliminar el curso.");
@@ -339,30 +359,29 @@ const Kardex = () => {
 
   return (
     <div style={{ marginTop: "150px" }}>
-      <motion.video 
-      autoPlay 
-      loop 
-      muted 
-      className="fixed top-0 left-0 w-full h-full object-cover -z-20"
-      style={{ opacity: videoOpacity }}
-    >
-      <source src="/image/background.mp4" type="video/mp4" />
-      Tu navegador no soporta videos.
-    </motion.video>
+      <motion.video
+        autoPlay
+        loop
+        muted
+        className="fixed top-0 left-0 w-full h-full object-cover -z-20"
+        style={{ opacity: videoOpacity }}
+      >
+        <source src="/image/background.mp4" type="video/mp4" />
+        Tu navegador no soporta videos.
+      </motion.video>
 
-        <div
-          style={{
-            fontFamily: "Arial, sans-serif",
-            maxWidth: "1000px",
-            margin: "0 auto",
-            border: "1px solid black",
-            padding: "20px",
-            borderRadius: "10px",
-            backgroundColor: "rgba(249, 249, 249, 0.7)", // Cambia el fondo con transparencia
-            backdropFilter: "blur(0px)", // Agrega un efecto de desenfoque opcional
-          }}
-        >
-
+      <div
+        style={{
+          fontFamily: "Arial, sans-serif",
+          maxWidth: "1000px",
+          margin: "0 auto",
+          border: "1px solid black",
+          padding: "20px",
+          borderRadius: "10px",
+          backgroundColor: "rgba(249, 249, 249, 0.7)", // Cambia el fondo con transparencia
+          backdropFilter: "blur(0px)", // Agrega un efecto de desenfoque opcional
+        }}
+      >
         {/* Header Section */}
         <div
           style={{
@@ -385,7 +404,6 @@ const Kardex = () => {
             alt="Grupo Tarahumara"
           />
         </div>
-
 
         {/* i want an input that you put the Numero/user.id and after that put the infomration of the personal in the labels*/}
         <h2
@@ -459,14 +477,13 @@ const Kardex = () => {
               />
               {isAuthenticated && (
                 <div style={{ marginTop: "10px" }}>
-                  <Input 
-                    type="file" 
-                    accept="image/*" 
-                    multiple 
-                    onChange={handleChangeImage} 
-{...({} as any)}
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleChangeImage}
+                    {...({} as any)}
                   />
-
                 </div>
               )}
             </div>
@@ -505,7 +522,9 @@ const Kardex = () => {
                       >
                         {label}:
                       </td>
-                      <td style={{ padding: "8px", textAlign: "left" }}>{value}</td>
+                      <td style={{ padding: "8px", textAlign: "left" }}>
+                        {value}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -513,7 +532,6 @@ const Kardex = () => {
             </div>
           </div>
         )}
-
 
         {/* Courses Section */}
 
@@ -583,7 +601,7 @@ const Kardex = () => {
             {selectedCourses
               .filter((course) => course.status === "true")
               .map((course) => (
-                <tr key={course.id_course}>
+                <tr key={`${course.id_course}-${course.start_date}`}>
                   <td
                     style={{
                       border: "1px solid #ccc",
@@ -635,7 +653,7 @@ const Kardex = () => {
                     </div>
                   </td>
                   <td style={{ border: "1px solid #ccc", padding: "10px" }}>
-                  <span
+                    <span
                       style={{
                         width: "100%",
                         borderRadius: "4px",
@@ -694,57 +712,57 @@ const Kardex = () => {
         </table>
         {/* Add New Course Section */}
         {isAuthenticated ? (
-        <div
-          style={{
-            marginTop: "20px",
-            display: "flex",
-            alignItems: "center",
-            gap: "10px", // Espacio entre los elementos principales
-            flexWrap: "wrap", // Permite que los elementos pasen a la siguiente línea si es necesario
-          }}
-        >
-          <div className="relative w-full max-w-md">
-            <Combobox
-              value={selectedCourse}
-              onChange={(course: CursosPresencialesJson) => {
-                setSelectedCourse(course);
-                setNewCourseId(course?.id_course ?? "");
-              }}
-            >
-              <Combobox.Input
-                className="w-full border-2 border-[#9A3324] rounded-lg p-3 text-[16px] text-[#333] shadow-md focus:outline-none focus:bg-[#fdf2f2] transition-all"
-                onChange={(event) => setQuery(event.target.value)}
-                displayValue={(course: CursosPresencialesJson | null) =>
-                  course?.title || ""
-                }
-                placeholder="Seleccionar Curso"
-              />
-
-              <Combobox.Options
-                className="absolute bottom-full mb-2 z-50 max-h-60 w-full overflow-auto rounded-md border border-gray-200 bg-white py-1 shadow-xl"
+          <div
+            style={{
+              marginTop: "20px",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px", // Espacio entre los elementos principales
+              flexWrap: "wrap", // Permite que los elementos pasen a la siguiente línea si es necesario
+            }}
+          >
+            <div className="relative w-full max-w-md">
+              <Combobox
+                value={selectedCourse}
+                onChange={(course: CursosPresencialesJson) => {
+                  setSelectedCourse(course);
+                  setNewCourseId(course?.id_course ?? "");
+                }}
               >
-                {filteredCourses.length === 0 ? (
-                  <div className="cursor-default select-none py-2 px-4 text-gray-500">
-                    No se encontró ningún curso.
-                  </div>
-                ) : (
-                  filteredCourses.map((course) => (
-                    <Combobox.Option
-                      key={course.id_course}
-                      value={course}
-                      className={({ active }) =>
-                        `cursor-pointer select-none px-4 py-2 text-sm ${
-                          active ? "bg-[#f8e1e1] text-[#9A3324]" : "text-gray-900"
-                        }`
-                      }
-                    >
-                      {course.title}
-                    </Combobox.Option>
-                  ))
-                )}
-              </Combobox.Options>
-            </Combobox>
-          </div>
+                <Combobox.Input
+                  className="w-full border-2 border-[#9A3324] rounded-lg p-3 text-[16px] text-[#333] shadow-md focus:outline-none focus:bg-[#fdf2f2] transition-all"
+                  onChange={(event) => setQuery(event.target.value)}
+                  displayValue={(course: CursosPresencialesJson | null) =>
+                    course?.title || ""
+                  }
+                  placeholder="Seleccionar Curso"
+                />
+
+                <Combobox.Options className="absolute bottom-full mb-2 z-50 max-h-60 w-full overflow-auto rounded-md border border-gray-200 bg-white py-1 shadow-xl">
+                  {filteredCourses.length === 0 ? (
+                    <div className="cursor-default select-none py-2 px-4 text-gray-500">
+                      No se encontró ningún curso.
+                    </div>
+                  ) : (
+                    filteredCourses.map((course) => (
+                      <Combobox.Option
+                        key={course.id_course}
+                        value={course}
+                        className={({ active }) =>
+                          `cursor-pointer select-none px-4 py-2 text-sm ${
+                            active
+                              ? "bg-[#f8e1e1] text-[#9A3324]"
+                              : "text-gray-900"
+                          }`
+                        }
+                      >
+                        {course.title}
+                      </Combobox.Option>
+                    ))
+                  )}
+                </Combobox.Options>
+              </Combobox>
+            </div>
 
             {newCourseId && (
               <div
@@ -764,8 +782,7 @@ const Kardex = () => {
                     if (value > 100) value = 100;
                     setNewProgress(value);
                   }}
-                  
-{...({} as any)}
+                  {...({} as any)}
                 />
 
                 <Input
@@ -774,8 +791,7 @@ const Kardex = () => {
                   required
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  
-{...({} as any)}
+                  {...({} as any)}
                 />
 
                 <Input
@@ -783,8 +799,7 @@ const Kardex = () => {
                   label="Fecha de finalización"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  
-{...({} as any)}
+                  {...({} as any)}
                 />
               </div>
             )}
@@ -813,18 +828,10 @@ const Kardex = () => {
           <Dialog
             open={dialogInfo.isOpen}
             handler={() => toggleDialog(null)}
-{...({} as any)}
-            
+            {...({} as any)}
           >
-            <DialogHeader
-{...({} as any)}
-            >
-              Detalles del Curso
-            </DialogHeader>
-            <DialogBody
-              {...({} as any)}
-              
-            >
+            <DialogHeader {...({} as any)}>Detalles del Curso</DialogHeader>
+            <DialogBody {...({} as any)}>
               <p>
                 <strong>Curso:</strong> {dialogInfo.course.title}
               </p>
@@ -835,22 +842,12 @@ const Kardex = () => {
                 <strong>Tutor:</strong> {dialogInfo.course.tutor}
               </p>
               {dialogInfo.course.start_date && (
-                <Typography
-                  color="blue-gray"
-                  variant="h6"
-                  
-{...({} as any)}
-                >
+                <Typography color="blue-gray" variant="h6" {...({} as any)}>
                   Fecha de Impartición: {dialogInfo.course.start_date}
                 </Typography>
               )}
               {dialogInfo.course.end_date && (
-                <Typography
-                  color="blue-gray"
-                  variant="h6"
-                  
-{...({} as any)}
-                >
+                <Typography color="blue-gray" variant="h6" {...({} as any)}>
                   Fecha de Vencimiento {dialogInfo.course.end_date}
                 </Typography>
               )}
@@ -876,7 +873,7 @@ const Kardex = () => {
                     type="number"
                     min="0"
                     max="100"
-{...({} as any)}
+                    {...({} as any)}
                   />
                 </div>
               ) : null}
@@ -885,23 +882,16 @@ const Kardex = () => {
               )}
             </DialogBody>
 
-            <DialogFooter
-{...({} as any)}
-            >
+            <DialogFooter {...({} as any)}>
               <Button
                 color="red"
                 onClick={() => toggleDialog(null)}
-                
-{...({} as any)}
+                {...({} as any)}
               >
                 Cerrar
               </Button>
               {isAuthenticated ? (
-                <Button
-                  color="blue"
-                  onClick={updateProgress}
-                  {...({} as any)}
-                >
+                <Button color="blue" onClick={updateProgress} {...({} as any)}>
                   Actualizar
                 </Button>
               ) : null}

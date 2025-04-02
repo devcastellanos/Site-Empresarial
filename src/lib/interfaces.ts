@@ -1,3 +1,4 @@
+
 export interface User {
   Personal: number;
   ApellidoPaterno: string;
@@ -7,6 +8,9 @@ export interface User {
   Puesto: string;
   Departamento: string;
   PeriodoTipo: string;
+  RFC: string;
+  NSS: string;
+  FechaAntiguedad: string;
 }
 
 export interface CursoTomado {
