@@ -61,31 +61,6 @@ function Vacations() {
     nextVacationIncrement: new Date(2026, 1, 1),
   });
 
-  // Tipos de movimiento
-  const movements = [
-    "Cambio de descanso",
-    "Cambio de horario",
-    "Comisión fuera de Oficina",
-    "Comisión Prolongada fuera de Oficina",
-    "Curso/Capacitación",
-    "Descanso laborado",
-    "Descanso por comisión laboral",
-    "Falta justificada IMSS",
-    "Horario de Lactancia",
-    "Junta de trabajo",
-    "Permisos Especiales",
-    "Permiso con goce de sueldo",
-    "Permiso para llegar tarde",
-    "Permiso sin goce de sueldo",
-    "Retardo justificado",
-    "Salida anticipada",
-    "Sin registro entrada",
-    "Sin registro salida",
-    "Tiempo extra",
-    "Vacaciones",
-    "Viaje de Trabajo",
-  ];
-
   // Clausulas legales
   const legalClauses = [
     "Derecho a 6 días de vacaciones después del primer año de servicio.",
@@ -248,7 +223,10 @@ function Vacations() {
               locale={es}
               disabled={(date) =>
                 isBefore(date, today) ||
-                selectedDates.length >= employeeData.remainingDays
+                (
+                  !selectedDates.some((d) => d.getTime() === date.getTime()) && 
+                  selectedDates.length >= employeeData.remainingDays
+                )
               }
             />
             </div>
