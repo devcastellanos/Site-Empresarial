@@ -1,5 +1,5 @@
 // components
-import { Navbar, Footer, BlogPostCard } from "@/components";
+import { NavbarRH, FooterRH, BlogPostCard } from "@/components";
 
 // sections
 import Kardex from "../kardexPage";
@@ -8,7 +8,7 @@ import Kardex from "../kardexPage";
 export default function Campaign() {
   return (
     <>
-      <Navbar />
+      <NavbarRH />
         <Kardex />
     </>
 

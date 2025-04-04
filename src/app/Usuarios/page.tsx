@@ -1,5 +1,5 @@
 // components
-import { Navbar} from "@/components";
+import { NavbarRH} from "@/components";
 
 
 import UsuariosPage from "../../components/usersComponents/usersPage";
@@ -8,7 +8,7 @@ import UsuariosPage from "../../components/usersComponents/usersPage";
 export default function Campaign() {
   return (
     <>
-      <Navbar />
+      <NavbarRH />
 
       <UsuariosPage />
     </>
