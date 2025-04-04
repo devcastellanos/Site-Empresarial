@@ -1,58 +1,103 @@
-import { Mail, User } from "lucide-react";
+"use client";
 
-const CURRENT_YEAR = new Date().getFullYear();
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import Link from "next/link";
+import { FaFacebookF, FaInstagram, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
+import { MailIcon } from "lucide-react";
+
+const currentYear = new Date().getFullYear();
 
 export function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="flex justify-center p-10 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-gray-300">
-      {/* Tarjeta extendida con Glassmorphism */}
-      <div className="w-full max-w-none bg-gray-800/60 backdrop-blur-lg rounded-2xl p-8 md:p-10 px-6 md:px-12 text-center shadow-2xl border border-gray-700">
-        <h3 className="text-2xl font-bold tracking-wide text-white">
-          Contacto - Área de Capacitación
-        </h3>
-        <p className="text-sm mt-3 text-gray-400">
-          Para consultas sobre capacitaciones, puedes contactar a:
-        </p>
+    <>
+      {/* WhatsApp Float Button */}
+      <a
+        href="https://wa.me/3324598019"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 bg-green-500 text-white rounded-full p-4 shadow-lg hover:bg-green-600 transition-all"
+      >
+        <FaWhatsapp size={28} />
+      </a>
 
-        {/* Contactos en fila para pantallas grandes */}
-        <div className="mt-6 flex flex-col md:flex-row items-center justify-center gap-6">
-          <ContactCard name="Mariana Pérez" email="mariana.perez@grupotarahumara.com.mx" />
-          <ContactCard name="Néstor Bañuelos" email="nestor.banuelos@grupotarahumara.com.mx" />
+      {/* Footer Content */}
+      <footer className="bg-gray-900 text-white py-12 mt-20">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
+
+          {/* Logo & QR */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold">Grupo Tarahumara</h3>
+            <Image src="/image/qr.png" alt="QR Code" width={200} height={200} />
+          </div>
+
+          {/* Contactos */}
+          <div className="space-y-2 w-80">
+            <h4 className="text-md font-semibold mb-2">Contacto</h4>
+            <p className="flex items-center gap-2 text-sm text-gray-300">
+              <MailIcon className="w-4 h-4" /> <a href="mailto:contacto@grupotarahumara.com.mx">contacto@grupotarahumara.com.mx</a>
+            </p>
+            <p className="flex items-center gap-2 text-sm text-gray-300">
+              <MailIcon className="w-4 h-4" /> <a href="mailto:reclutamiento@grupotarahumara.com.mx">reclutamiento@grupotarahumara.com.mx</a>
+            </p>
+            <p className="flex items-center gap-2 text-sm text-gray-300">
+              <MailIcon className="w-4 h-4" /> <a href="mailto:etica@tarahumaralinealide.com">etica@tarahumaralinealide.com</a>
+            </p>
+          </div>
+
+          {/* Redes Sociales */}
+          <div className="space-y-2">
+            <h4 className="text-md font-semibold mb-2">Síguenos</h4>
+            <div className="flex gap-4 text-white">
+              <Link href="https://www.facebook.com/Grupo.Tarahumara/" target="_blank"><FaFacebookF size={20} /></Link>
+              <Link href="https://www.instagram.com/grupo_tarahumara/" target="_blank"><FaInstagram size={20} /></Link>
+              <Link href="https://www.linkedin.com/company/grupo-tarahumara/" target="_blank"><FaLinkedinIn size={20} /></Link>
+            </div>
+          </div>
+
+          {/* Legal / Modals */}
+          <div className="space-y-4">
+            <h4 className="text-md font-semibold mb-2">Legal</h4>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="link" className="p-0 h-auto text-sm text-gray-300 underline hover:text-white">
+                  Términos y condiciones
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Términos y Condiciones</DialogTitle>
+                </DialogHeader>
+                <div className="text-sm text-gray-700 space-y-2">
+                  <p>Aquí irían los términos y condiciones detallados...</p>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="link" className="p-0 h-auto text-sm text-gray-300 underline hover:text-white">
+                  Políticas de privacidad
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Políticas de Privacidad</DialogTitle>
+                </DialogHeader>
+                <div className="text-sm text-gray-700 space-y-2">
+                  <p>Aquí irían las políticas de privacidad de datos, cookies, etc.</p>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
-        {/* Línea divisoria */}
-        <div className="border-t border-gray-600 mt-6 pt-4">
-          <p className="text-xs text-gray-500">
-            &copy; {currentYear} Grupo Tarahumara - Todos los derechos reservados.
-          </p>
+        <div className="text-center text-gray-500 text-sm mt-10">
+          Grupo Tarahumara ©{currentYear}. Todos los derechos reservados.
         </div>
-      </div>
-    </footer>
-  );
-}
-
-// Componente reutilizable para contactos
-interface ContactCardProps {
-  name: string;
-  email: string;
-}
-
-function ContactCard({ name, email }: ContactCardProps) {
-  return (
-    <div className="flex items-center gap-4 bg-gray-700/50 p-4 rounded-lg shadow-lg hover:bg-gray-600/50 transition-all duration-300 w-full max-w-sm md:max-w-none">
-      <User className="w-8 h-8 text-gray-300" />
-      <div className="text-left">
-        <p className="text-lg font-medium text-white">{name}</p>
-        <p className="text-sm text-gray-400 flex items-center gap-1">
-          <Mail className="w-4 h-4 text-gray-400" />
-          <a href={`mailto:${email}`} className="hover:text-white transition-colors">
-            {email}
-          </a>
-        </p>
-      </div>
-    </div>
+      </footer>
+    </>
   );
 }
 

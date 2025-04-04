@@ -43,7 +43,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             await axios.post('/api/auth/logout', {});
           
             setIsAuthenticated(false); // Marcar como no autenticado
-            // Recargar la página para limpiar la sesión
            
 
         } catch (error) {

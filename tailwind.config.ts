@@ -54,7 +54,20 @@ const config: Config = withMT({
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
+  			},
+			  tinto: {
+				50:  "#fdf5f5",
+				100: "#f9e0e0",
+				200: "#f3bcbc",
+				300: "#ea8c8c",
+				400: "#db5a5a",
+				500: "#c73737",
+				600: "#a52828",
+				700: "#861e1e",
+				800: "#6c1919",
+				900: "#541313",
+			  },
+
   		},
   		keyframes: {
   			'accordion-down': {

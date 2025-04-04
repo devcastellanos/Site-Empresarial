@@ -9,24 +9,76 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Calendar as CalendarIcon, Info } from "lucide-react";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { CalendarIcon, Info } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useState } from "react";
 
+// Importar componente dinámico
+import { RestChangeFields } from "@/components/profileComponents/movementsComponents/restChangeFields";
+import { ScheduleChangeFields } from "@/components/profileComponents/movementsComponents/scheduleChangeFields";
+import { CommissionRestDayFields } from "@/components/profileComponents/movementsComponents/commissionRestDayFields";
+import { EarlyLeaveFields } from "@/components/profileComponents/movementsComponents/earlyLeaveFields";
+import { ExtendedAssignmentFields } from "@/components/profileComponents/movementsComponents/extendedAssignmentFields";
+import { ExternalAssignmentFields } from "@/components/profileComponents/movementsComponents/externalAssignmentFields";
+import { LactationScheduleFields } from "@/components/profileComponents/movementsComponents/lactationScheduleFields";
+import { IMSSAbsenceFields } from "@/components/profileComponents/movementsComponents/IMSSAbsenceFields";
+import { JustifiedDelayFields } from "@/components/profileComponents/movementsComponents/justifiedDelayFields";
+import { LateArrivePermissionFields } from "@/components/profileComponents/movementsComponents/lateArrivalPermissionFields";
+import { SpecialPermissionFields } from "@/components/profileComponents/movementsComponents/specialPermissionFields";
+import { MissingEntryFields } from "@/components/profileComponents/movementsComponents/missingEntryFields";
+import { MissingExitFields } from "@/components/profileComponents/movementsComponents/missingExitFields";
+import { OvertimeFields } from "@/components/profileComponents/movementsComponents/overtimeFields";
+import { PaidLeaveFields } from "@/components/profileComponents/movementsComponents/paidLeaveFields";
+import { TrainingFields } from "@/components/profileComponents/movementsComponents/trainingFields";
+import { UnpaidLeaveFields } from "@/components/profileComponents/movementsComponents/unpaidLeaveFields";
+import { WorkedRestDayFields } from "@/components/profileComponents/movementsComponents/workedRestDayFields";
+import { WorkMeetingFields } from "@/components/profileComponents/movementsComponents/workMeetingFields";
+import { WorkTripFields } from "@/components/profileComponents/movementsComponents/workTripFields";
+import { delay } from "framer-motion";
+
 function Movements() {
   const [employeeNumber, setEmployeeNumber] = useState("");
-  const [incidentDate, setIncidentDate] = useState<Date | undefined>();
+  const [incidentDate, setIncidentDate] = useState<Date>();
   const [movementType, setMovementType] = useState("");
-  const [authorizer, setAuthorizer] = useState("");
   const [comments, setComments] = useState("");
-  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
-  const [requestStatus, setRequestStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+
+  // Campos comunes
+  const [assignedRestDay, setAssignedRestDay] = useState("");
+  const [requestedRestDay, setRequestedRestDay] = useState("");
+  const [newSchedule, setNewSchedule] = useState("");
+  const [homeOfficeDays, setHomeOfficeDays] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [resumeDate, setResumeDate] = useState("");
+  const [tripLocation, setTripLocation] = useState("");
+
+  const [specialType, setSpecialType] = useState(""); // Define specialType state
+  const [entryTime, setEntryTime] = useState(""); // Define entryTime state
+  const [delayTime, setDelayTime] = useState(""); // Define delayTime state
+  const [earlyTime, setEarlyTime] = useState(""); // Define earlyTime state
+  const [hours, setHours] = useState(""); // Define hours state
+  const [exitTime, setExitTime] = useState(""); // Define exitTime state
+  const [approvalNotes, setApprovalNotes] = useState("");
+  const supervisorId = 2294; 
+
+  const [requestStatus, setRequestStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
 
   const movements = [
     "Cambio de descanso",
@@ -48,27 +100,50 @@ function Movements() {
     "Sin registro entrada",
     "Sin registro salida",
     "Tiempo extra",
-    "Vacaciones",
     "Viaje de Trabajo",
   ];
 
   const canSubmit =
-    employeeNumber.trim() !== "" &&
-    incidentDate &&
-    movementType !== "" &&
-    (movementType !== "Vacaciones" || (selectedDates.length > 0 && authorizer.trim() !== ""));
+    employeeNumber.trim() !== "" && incidentDate && movementType !== "";
 
   const handleSubmit = () => {
     if (!canSubmit) return;
     setRequestStatus("submitting");
-    setTimeout(() => {
-      setRequestStatus("success");
-    }, 1500);
+    setTimeout(() => setRequestStatus("success"), 1500);
   };
+  const [movementsData, setMovementsData] = useState([
+    {
+      id: 1,
+      tipo: "Cambio de horario",
+      fecha: "2024-04-01",
+      estatus: "pendiente",
+      supervisorId: 2294,
+    },
+    {
+      id: 2,
+      tipo: "Permiso sin goce de sueldo",
+      fecha: "2024-03-15",
+      estatus: "aprobado",
+      supervisorId: 2294,
+    },
+    {
+      id: 3,
+      tipo: "Curso/Capacitación",
+      fecha: "2024-02-20",
+      estatus: "rechazado",
+      supervisorId: 3514,
+    },
+    {
+      id: 4,
+      tipo: "Vacaciones",
+      fecha: "2024-04-07",
+      estatus: "pendiente",
+      supervisorId: 2294,
+    },
+  ]);
 
-  const handleMultipleDateSelect = (dates: Date[] | undefined) => {
-    setSelectedDates(dates ?? []);
-  };
+  const movimientosFiltrados = (estado: string) =>
+    movementsData.filter((m) => m.estatus === estado);
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
@@ -81,16 +156,109 @@ function Movements() {
         </div>
       </Card>
 
+      <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-6">
+  <CardHeader>
+    <CardTitle className="text-xl">Movimientos que debes aprobar</CardTitle>
+  </CardHeader>
+  <CardContent className="space-y-4">
+    {movementsData
+      .filter((mov) => mov.estatus === "pendiente" && mov.supervisorId === supervisorId)
+      .map((mov) => (
+        <Card key={mov.id} className="bg-white/95 border rounded-xl shadow-sm p-4 space-y-2">
+          <div className="flex justify-between items-center">
+            <p className="font-medium text-gray-800">📄 {mov.tipo}</p>
+            <p className="text-sm text-gray-600">
+              {format(new Date(mov.fecha), "PPP", { locale: es })}
+            </p>
+          </div>
+
+          <textarea
+            placeholder="Observaciones del supervisor"
+            className="w-full mt-2 p-2 border rounded-md"
+            value={approvalNotes}
+            onChange={(e) => setApprovalNotes(e.target.value)}
+          />
+
+          <div className="flex gap-2 justify-end mt-2">
+            <Button
+              variant="outline"
+              className="border-green-500 text-green-700"
+              onClick={() => {
+                alert(`Aprobado el movimiento #${mov.id} con nota: ${approvalNotes}`);
+              }}
+            >
+              Aprobar
+            </Button>
+            <Button
+              variant="outline"
+              className="border-red-500 text-red-700"
+              onClick={() => {
+                alert(`Rechazado el movimiento #${mov.id} con nota: ${approvalNotes}`);
+              }}
+            >
+              Rechazar
+            </Button>
+          </div>
+        </Card>
+      ))}
+  </CardContent>
+</Card>
+
+      <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-6">
+        <CardHeader>
+          <CardTitle className="text-xl">Mis movimientos recientes</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {["pendiente", "aprobado", "rechazado"].map((status) => (
+            <div key={status}>
+              <h2 className="text-lg font-semibold capitalize mb-2 text-gray-700">
+                {status === "pendiente" && "📥 Pendientes"}
+                {status === "aprobado" && "✅ Aprobados"}
+                {status === "rechazado" && "❌ Rechazados"}
+              </h2>
+
+              <div className="grid gap-4">
+                {movementsData
+                  .filter((mov) => mov.estatus === status)
+                  .map((mov) => (
+                    <Card
+                      key={mov.id}
+                      className="bg-white/90 border rounded-xl shadow-sm p-4 space-y-1"
+                    >
+                      <div className="flex justify-between items-center">
+                      <p className="font-medium text-gray-800">📄 {mov.tipo}</p>
+                      <p className="text-sm text-gray-600">
+                        {format(new Date(mov.fecha), "PPP", { locale: es })}
+                      </p>
+                    </div>
+
+                      {/* 👇 Aprobación dinámica */}
+                      <p className="text-sm text-tinto-500 italic">
+                        {mov.estatus === "pendiente" &&
+                          `En espera de aprobación de: ${mov.supervisorId}`}
+                        {mov.estatus === "aprobado" &&
+                          `Aprobado por: ${mov.supervisorId}`}
+                        {mov.estatus === "rechazado" &&
+                          `Rechazado por: ${mov.supervisorId}`}
+                      </p>
+                    </Card>
+                  ))}
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
       <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
         <CardHeader>
           <CardTitle>Solicitud de Autorización</CardTitle>
         </CardHeader>
+
         <CardContent className="space-y-4">
           <div className="grid sm:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="employee">Número de empleado *</Label>
+              <Label>Número de empleado *</Label>
               <Input
-                id="employee"
                 value={employeeNumber}
                 onChange={(e) => setEmployeeNumber(e.target.value)}
                 required
@@ -107,7 +275,9 @@ function Movements() {
                     className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {incidentDate ? format(incidentDate, "PPP", { locale: es }) : "Selecciona una fecha"}
+                    {incidentDate
+                      ? format(incidentDate, "PPP", { locale: es })
+                      : "Selecciona una fecha"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
@@ -139,55 +309,201 @@ function Movements() {
             </div>
           </div>
 
-          {/* Campos adicionales si es Vacaciones */}
-          {movementType === "Vacaciones" && (
-            <div className="space-y-4">
-              <div>
-                <Label>Días a solicitar</Label>
-                <Calendar
-                  mode="multiple"
-                  selected={selectedDates}
-                  onSelect={handleMultipleDateSelect}
-                  className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
-                  locale={es}
-                />
-              </div>
-
-              <div>
-                <Label>Persona que autoriza *</Label>
-                <Input
-                  value={authorizer}
-                  onChange={(e) => setAuthorizer(e.target.value)}
-                  placeholder="Nombre del supervisor/autorizador"
-                  required
-                  className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
-                />
-              </div>
-
-              <div>
-                <Label>Comentarios adicionales</Label>
-                <Textarea
-                  rows={3}
-                  placeholder="Motivo o detalles adicionales..."
-                  value={comments}
-                  onChange={(e) => setComments(e.target.value)}
-                  className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
-                />
-              </div>
-
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Info className="w-4 h-4" />
-                <span>Estás solicitando {selectedDates.length} días de vacaciones</span>
-              </div>
-            </div>
+          {/* Campos Condicionales */}
+          {movementType === "Cambio de descanso" && (
+            <RestChangeFields
+              assignedDay={assignedRestDay}
+              onAssignedDayChange={setAssignedRestDay}
+              requestedDay={requestedRestDay}
+              onRequestedDayChange={setRequestedRestDay}
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Cambio de horario" && (
+            <ScheduleChangeFields
+              newSchedule={newSchedule}
+              onNewScheduleChange={setNewSchedule}
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Comisión fuera de Oficina" && (
+            <ExternalAssignmentFields
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Comisión Prolongada fuera de Oficina" && (
+            <ExtendedAssignmentFields
+              homeOfficeDays={homeOfficeDays}
+              onHomeOfficeDaysChange={setHomeOfficeDays}
+              startDate={startDate}
+              onStartDateChange={setStartDate}
+              endDate={endDate}
+              onEndDateChange={setEndDate}
+              resumeDate={resumeDate}
+              onResumeDateChange={setResumeDate}
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Curso/Capacitación" && (
+            <TrainingFields
+              startDate={startDate}
+              onStartDateChange={setStartDate}
+              endDate={endDate}
+              onEndDateChange={setEndDate}
+              resumeDate={resumeDate}
+              onResumeDateChange={setResumeDate}
+              trainingDays={homeOfficeDays}
+              onTrainingDaysChange={setHomeOfficeDays}
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Descanso laborado" && (
+            <WorkedRestDayFields
+              assignedDay={assignedRestDay}
+              onAssignedDayChange={setAssignedRestDay}
+              requestedDay={requestedRestDay}
+              onRequestedDayChange={setRequestedRestDay}
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Descanso por comisión laboral" && (
+            <CommissionRestDayFields
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Falta justificada IMSS" && (
+            <IMSSAbsenceFields
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Horario de Lactancia" && (
+            <LactationScheduleFields
+              newSchedule={newSchedule}
+              onNewScheduleChange={setNewSchedule}
+              startDate={startDate}
+              onStartDateChange={setStartDate}
+              endDate={endDate}
+              onEndDateChange={setEndDate}
+              resumeDate={resumeDate}
+              onResumeDateChange={setResumeDate}
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Junta de trabajo" && (
+            <WorkMeetingFields
+              assignedDay={assignedRestDay}
+              onAssignedDayChange={setAssignedRestDay}
+              requestedDay={requestedRestDay}
+              onRequestedDayChange={setRequestedRestDay}
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Permisos Especiales" && (
+            <SpecialPermissionFields
+              specialType={specialType}
+              onSpecialTypeChange={setSpecialType}
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Permiso con goce de sueldo" && (
+            <PaidLeaveFields
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Permiso para llegar tarde" && (
+            <LateArrivePermissionFields
+              entryTime={entryTime}
+              onEntryTimeChange={setEntryTime}
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Permiso sin goce de sueldo" && (
+            <UnpaidLeaveFields
+              assignedDay={assignedRestDay}
+              onAssignedDayChange={setAssignedRestDay}
+              requestedDay={requestedRestDay}
+              onRequestedDayChange={setRequestedRestDay}
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Retardo justificado" && (
+            <JustifiedDelayFields
+              delayTime={delayTime}
+              onDelayTimeChange={setDelayTime}
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Salida anticipada" && (
+            <EarlyLeaveFields
+              earlyTime={earlyTime}
+              onEarlyTimeChange={setEarlyTime}
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Sin registro entrada" && (
+            <MissingEntryFields
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Sin registro salida" && (
+            <MissingExitFields
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Tiempo extra" && (
+            <OvertimeFields
+              hours={hours}
+              onHoursChange={setHours}
+              entryTime={entryTime}
+              onEntryTimeChange={setEntryTime}
+              exitTime={exitTime}
+              onExitTimeChange={setExitTime}
+              comments={comments}
+              onCommentsChange={setComments}
+            />
+          )}
+          {movementType === "Viaje de Trabajo" && (
+            <WorkTripFields
+              tripLocation={tripLocation}
+              onTripLocationChange={setTripLocation}
+              startDate={startDate}
+              onStartDateChange={setStartDate}
+              endDate={endDate}
+              onEndDateChange={setEndDate}
+              resumeDate={resumeDate}
+              onResumeDateChange={setResumeDate}
+              comments={comments}
+              onCommentsChange={setComments}
+            />
           )}
         </CardContent>
+
         <CardFooter className="flex justify-end">
           <Button
             onClick={handleSubmit}
             disabled={!canSubmit || requestStatus === "submitting"}
           >
-            {requestStatus === "submitting" ? "Enviando..." : "Enviar solicitud"}
+            {requestStatus === "submitting"
+              ? "Enviando..."
+              : "Enviar solicitud"}
           </Button>
         </CardFooter>
       </Card>
