@@ -3,6 +3,7 @@ import { NavbarRH, FooterRH } from "@/components";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, createElement } from "react";
 import Image from "next/image";
+import OrgChart from "@/components/OrgChart"
 
 
 const ARTICLES = [
@@ -64,7 +65,7 @@ export default function CapacitacionPage() {
               Descubre herramientas, presentaciones, guías y contenido multimedia diseñados para potenciar tu desarrollo profesional.
             </p>
             <div className="mt-6 flex justify-center">
-              <Image src="/image/logo.png" alt="Logo" width={256} height={256} className="w-64 h-auto" />
+              <Image src="/image/Logo-Outline.png" alt="Logo" width={256} height={256} className="w-64 h-auto" />
             </div>
           </div>
         </motion.header>
@@ -131,8 +132,8 @@ export default function CapacitacionPage() {
             ))}
           </motion.div>
   
-          <div className="mt-16">
-            <FooterRH />
+          <div>
+            <OrgChart />
           </div>
         </motion.section>
       </>

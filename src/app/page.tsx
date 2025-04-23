@@ -20,29 +20,41 @@ export default function HomePage() {
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        <div className="z-10 max-w-5xl mx-auto py-24">
-          <motion.h1
-              className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight text-tinto-700 mb-6"
-            initial={{ y: -30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-          >
-            Grupo Tarahumara
-          </motion.h1>
-          <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 mb-8">
-            Impulsando el crecimiento, la innovación y el desarrollo humano en el corazón de México.
-          </p>
+        <motion.header
+          className="relative w-full h-screen flex flex-col items-center justify-start text-center overflow-hidden"
+          initial={{ opacity: 0, y: -50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 1 }}
+        >
+          <div className="absolute top-0 left-0 w-full h-full bg-opacity-50"></div>
+          <div className="relative z-10 w-full max-w-4xl px-8 text-white">
+            <h1 className="text-[64px] lg:text-[80px] font-extrabold leading-tight mt-60">
+              Grupo Tarahumara
+            </h1>
+            <p className="mt-2 text-xl lg:text-2xl text-gray-200">
+            Por más de 70 años y 3 generaciones Grupo Tarahumara se ha especializado en la
+            comercialización de frutas finas y vegetales.
+            Siendo la empresa líder a nivel nacional y con más experiencia en la industria.
+            ¡Orgullosos de ser una compañía mexicana!
+            </p>
+            <div className="mt-6 flex justify-center">
+              <Image src="/image/Logo-Outline.png" alt="Logo" width={256} height={256} className="w-64 h-auto" />
+            </div>
+          </div>
+        </motion.header>
+        {/* <div className="z-10 max-w-5xl mx-auto py-24">
 
           <div className="mt-12">
             <Image
-              src="/image/logo.png"
+              src="/image/Logo-Outline.png"
               width={300}
               height={300}
               alt="Logo"
               className="mx-auto shadow-md"
             />
           </div>
-        </div>
+        </div> */}
       </motion.section>
 
       {/* NUESTRA ESENCIA */}

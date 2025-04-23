@@ -23,11 +23,11 @@ export function Navbar() {
   ];
 
   return (
-    <header className="bg-white/80 backdrop-blur-sm fixed w-full z-50 shadow-sm">
+    <header className="bg-[#818181] bg-opacity-30 backdrop-blur-md border-0 fixed top-0 left-0 right-0 z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
-          <Image src="/image/logo.png" alt="Logo" width={180} height={60} />
+          <Image src="/image/Logo-Outline.png" alt="Logo" width={180} height={60} />
         </Link>
 
         {/* Desktop Navigation */}
@@ -37,7 +37,7 @@ export function Navbar() {
               key={label}
               href={href}
               target={external ? "_blank" : "_self"}
-              className="text-gray-700 hover:text-lime-600 transition font-medium"
+              className="text-white hover:text-[#9A3324] transition font-medium"
             >
               {label}
             </Link>
@@ -94,9 +94,15 @@ export function Navbar() {
                 </Link>
               ))}
 
-              <Button variant="outline" onClick={() => setMenuOpen(false)}>
-                <Link href="/login">Iniciar sesión</Link>
-              </Button>
+              {isAuthenticated ? (
+                <Button variant="outline" onClick={() => { logout(); setMenuOpen(false); }}>
+                  Cerrar sesión
+                </Button>
+              ) : (
+                <Button variant="outline" onClick={() => setMenuOpen(false)}>
+                  <Link href="/login">Iniciar sesión</Link>
+                </Button>
+              )}
             </div>
           </motion.div>
         )}
