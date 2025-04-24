@@ -24,7 +24,7 @@ export function Navbar() {
 
   return (
     <header className="bg-[#818181] bg-opacity-30 backdrop-blur-md border-0 fixed top-0 left-0 right-0 z-50 transition-all duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-28">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
           <Image src="/image/Logo-Outline.png" alt="Logo" width={180} height={60} />

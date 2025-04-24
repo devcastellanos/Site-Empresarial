@@ -7,6 +7,7 @@ import Vacations from "./vacations";
 import Courses from "./courses";
 import Movements from "./movements";
 import PatronCard from "./patronCard";
+import AprovementsPage from "./AprovementsPage";
 
 function ProfilePage() {
   const [view, setView] = useState("info");
@@ -27,6 +28,7 @@ function ProfilePage() {
             <SidebarItem label="Mis Cursos" icon="📘" active={view === "courses"} onClick={() => setView("courses")} />
             <SidebarItem label="Movimientos" icon="🔁" active={view === "movements"} onClick={() => setView("movements")} />
             <SidebarItem label="Carta Patronal" icon="📝" active={view === "patronales"} onClick={() => setView("patronales")} />
+            <SidebarItem label="Aprobaciones" icon="✅" active={view === "aprobaciones"} onClick={() => setView("aprobaciones")} />
           </ul>
         </div>
       </aside>
@@ -40,6 +42,7 @@ function ProfilePage() {
           {view === "courses" && <Courses />}
           {view === "movements" && <Movements />}
           {view === "patronales" && <PatronCard />}
+          {view === "aprobaciones" && <AprovementsPage />}
         </div>
       </main>
     </div>

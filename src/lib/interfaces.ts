@@ -11,6 +11,7 @@ export interface User {
   RFC: string;
   NSS: string;
   FechaAntiguedad: string;
+  FechaAlta: string;
 }
 
 export interface CursoTomado {

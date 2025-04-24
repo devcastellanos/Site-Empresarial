@@ -15,41 +15,25 @@ import { Calendar } from "@/components/ui/calendar";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
 import { Calendar as CalendarIcon, Info } from "lucide-react";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import { useState, useEffect } from "react";
-import {
-  format,
-  addDays,
-  differenceInDays,
-  isBefore,
-  isAfter,
-  parseISO,
-} from "date-fns";
+import { format, differenceInDays, isBefore } from "date-fns";
 import { es } from "date-fns/locale";
+import { useAuth } from "../../app/context/AuthContext";
+import axios from "axios";
 
 function Vacations() {
   // Estados principales
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
-  const [employeeNumber, setEmployeeNumber] = useState("");
   const [incidentDate, setIncidentDate] = useState<Date | undefined>();
   const [movementType, setMovementType] = useState("");
-  const [authorizer, setAuthorizer] = useState("");
-  const [comments, setComments] = useState("");
+  const [employeeNumber, setEmployeeNumber] = useState<number | undefined>(); // sigue igual
   const [requestStatus, setRequestStatus] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
+  const tipoMovimiento = 3; // define cuántos aprobadores requiere este tipo
+  const [comments, setComments] = useState<string>("");
+  const { user } = useAuth();
 
   // Datos simulados del empleado
   const [employeeData, setEmployeeData] = useState({
@@ -84,26 +68,65 @@ function Vacations() {
     }
   };
 
-  // Validar si se puede enviar la solicitud
-  const canSubmit =
-    employeeNumber.trim() !== "" &&
-    incidentDate &&
-    movementType === "Vacaciones" &&
-    selectedDates.length > 0 &&
-    selectedDates.length <= employeeData.remainingDays &&
-    authorizer.trim() !== "";
+  useEffect(() => {
+    console.log("User:", user);
+    if (user) {
+      setEmployeeNumber(user.num_empleado);
+    }
+  }, [user]);
+
 
   // Manejar envío de solicitud
-  const handleSubmit = () => {
-    if (!canSubmit) return;
+  const handleSubmit = async () => {
+    console.log("Enviando solicitud...");
 
     setRequestStatus("submitting");
+    if (!user) {
+      console.warn("No hay perfil del usuario");
+      return;
+    }
+    const numEmpleado = user.num_empleado;
+    console.log("Perfil del empleado:", user);
 
-    // Simular envío a API
-    setTimeout(() => {
-      setRequestStatus("success");
-      // Aquí iría la lógica para actualizar los días tomados, etc.
-    }, 1500);
+    try {
+      const response = await fetch("http://api-cursos.192.168.29.40.sslip.io/vacaciones", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          num_empleado: numEmpleado,
+          fechas: selectedDates.map((d) => d.toISOString().split("T")[0]),
+          comentarios: comments,
+          tipo_movimiento: tipoMovimiento,
+          datos_json: {
+            fechas: selectedDates.map((d) => d.toISOString().split("T")[0]),
+            fecha_inicio: selectedDates[0].toISOString().split("T")[0],
+            fecha_fin: selectedDates[selectedDates.length - 1]
+              .toISOString()
+              .split("T")[0],
+            total_dias: selectedDates.length,
+            dias_restantes_post_solicitud:
+              employeeData.remainingDays - selectedDates.length,
+            fecha_ingreso: employeeData.hireDate.toISOString().split("T")[0],
+            proximo_incremento: employeeData.nextVacationIncrement
+              .toISOString()
+              .split("T")[0],
+            empleado_apto: employeeData.eligible,
+            comentarios: comments,
+          },
+        }),
+      });
+
+      if (response.ok) {
+        setRequestStatus("success");
+        setSelectedDates([]);
+        setComments("");
+      } else {
+        setRequestStatus("error");
+      }
+    } catch (error) {
+      console.error("Error enviando solicitud:", error);
+      setRequestStatus("error");
+    }
   };
 
   // Componente InfoBox mejorado
@@ -135,7 +158,6 @@ function Vacations() {
           </h1>
         </div>
       </Card>
-
 
       {/* Información del empleado y cláusulas legales */}
       <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
@@ -215,20 +237,18 @@ function Vacations() {
         <CardContent className="space-y-4">
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1">
-            <Calendar
-              mode="multiple"
-              selected={selectedDates}
-              onSelect={handleDateSelect}
-              className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
-              locale={es}
-              disabled={(date) =>
-                isBefore(date, today) ||
-                (
-                  !selectedDates.some((d) => d.getTime() === date.getTime()) && 
-                  selectedDates.length >= employeeData.remainingDays
-                )
-              }
-            />
+              <Calendar
+                mode="multiple"
+                selected={selectedDates}
+                onSelect={handleDateSelect}
+                className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
+                locale={es}
+                disabled={(date) =>
+                  isBefore(date, today) ||
+                  (!selectedDates.some((d) => d.getTime() === date.getTime()) &&
+                    selectedDates.length >= employeeData.remainingDays)
+                }
+              />
             </div>
 
             <div className="flex-1 space-y-4">
@@ -237,7 +257,11 @@ function Vacations() {
                 {selectedDates.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1">
                     {selectedDates.map((date, index) => (
-                      <Badge key={index} variant="outline" className="text-xs bg-white/95 shadow-md backdrop-blur-sm">
+                      <Badge
+                        key={index}
+                        variant="outline"
+                        className="text-xs bg-white/95 shadow-md backdrop-blur-sm"
+                      >
                         {format(date, "dd MMM", { locale: es })}
                       </Badge>
                     ))}
@@ -262,7 +286,9 @@ function Vacations() {
               </div>
 
               <div className="pt-2 border-t">
-                <Label className="text-center">Días restantes después de esta solicitud:</Label>
+                <Label className="text-center">
+                  Días restantes después de esta solicitud:
+                </Label>
                 <p className="text-lg font-semibold text-center">
                   {employeeData.remainingDays - selectedDates.length} días
                 </p>

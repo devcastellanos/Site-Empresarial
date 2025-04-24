@@ -3,26 +3,37 @@
 import axios from 'axios';
 import { createContext, useContext, useState, useEffect } from 'react';
 
+interface UserProfile {
+  email: string;
+  user: string;
+  num_empleado: number;
+  rol: string;
+}
+
 interface AuthContextType {
-    isAuthenticated: boolean;
-    login: () => void;
-    logout: () => void;
-    }
+  isAuthenticated: boolean;
+  user: UserProfile | null;
+  login: () => void;
+  logout: () => void;
+}
+
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [user, setUser] = useState<UserProfile | null>(null);
     
     const getProfile = async () => {
-        try {
-            const response = await axios.get('/api/auth/profile', { withCredentials: true });
-            console.log('Perfil del usuario:', response.data.user);
-            setIsAuthenticated(true); // Marcar como autenticado
-        } catch {
-         
-            setIsAuthenticated(false); // Marcar como no autenticado
-        }
+      try {
+        const response = await axios.get('/api/auth/profile', { withCredentials: true });
+        console.log('Perfil del usuario:', response.data.user); // Verifica la respuesta del perfil
+        setUser(response.data.user); // guarda todo el objeto
+        setIsAuthenticated(true);
+      } catch {
+        setIsAuthenticated(false);
+        setUser(null);
+      }
     };
     useEffect(() => {
         console.log('Verificando autenticación...');
@@ -52,9 +63,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
     
       return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-          {children}
-        </AuthContext.Provider>
+      <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+        {children}
+      </AuthContext.Provider>
       );
     };
     

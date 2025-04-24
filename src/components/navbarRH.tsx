@@ -58,6 +58,7 @@ export function NavbarRH() {
           { name: "Cursos", icon: BookOpenIcon, href: "/Cursos" },
           { name: "Cargar Archivos Excel", icon: DocumentIcon, href: "/cargaMasiva" },
           { name: "Usuarios", icon: UserCircleIcon, href: "/Usuarios" },
+          { name: "Perfil", icon: UserCircleIcon, href: "/Perfil" },
         ]
       : []),
   ];

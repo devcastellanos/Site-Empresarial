@@ -44,7 +44,9 @@ function PatronCard() {
       const response = await axios.get("/api/auth/profile", {
         withCredentials: true,
       });
+      const userData = response.data.user;
       return response.data.user;
+
     } catch (error) {
       console.error("Error al obtener perfil:", error);
       return null;
@@ -127,7 +129,7 @@ function PatronCard() {
             IZTAPALAPA, CDMX, C.P. 09040
           </span>, se desempeña en el puesto de{" "}
           <span className="font-semibold">{user?.Puesto}</span> desde el{" "}
-          <span className="font-semibold">{user?.FechaAntiguedad}</span>.
+          <span className="font-semibold">{user?.FechaAlta || user?.FechaAntiguedad}</span>.
         </p>
 
         <p>
