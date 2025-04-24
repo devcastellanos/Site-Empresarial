@@ -10,7 +10,7 @@ import PatronCard from "./patronCard";
 import AprovementsPage from "./AprovementsPage";
 
 function ProfilePage() {
-  const [view, setView] = useState("info");
+  const [view, setView] = useState("checkin");
 
   return (
     <div className="flex min-h-screen bg-transparent">
@@ -22,8 +22,7 @@ function ProfilePage() {
       >
         <div className="h-full px-4 py-6 space-y-6">
           <ul className="space-y-2 text-sm font-medium">
-            <SidebarItem label="Información" icon="ℹ️" active={view === "info"} onClick={() => setView("info")} />
-            <SidebarItem label="Registro Entrada/Salida" icon="📅" active={view === "checkin"} onClick={() => setView("checkin")} />
+            <SidebarItem label="Incidencias" icon="📅" active={view === "checkin"} onClick={() => setView("checkin")} />
             <SidebarItem label="Vacaciones" icon="🌴" active={view === "vacations"} onClick={() => setView("vacations")} />
             <SidebarItem label="Mis Cursos" icon="📘" active={view === "courses"} onClick={() => setView("courses")} />
             <SidebarItem label="Movimientos" icon="🔁" active={view === "movements"} onClick={() => setView("movements")} />
@@ -36,7 +35,6 @@ function ProfilePage() {
       {/* Contenido principal sin fondo */}
       <main className="sm:ml-64 w-full p-6">
         <div className="backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-6 transition-all">
-          {view === "info" && <InfoProfile />}
           {view === "checkin" && <RegisterCheckInCheckOut />}
           {view === "vacations" && <Vacations />}
           {view === "courses" && <Courses />}
