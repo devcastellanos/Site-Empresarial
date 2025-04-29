@@ -130,7 +130,7 @@ export function BlogPostCard({
 
     try {
       const response = await fetch(
-        "http://api-cursos.192.168.29.40.sslip.io/ActualizarPost",
+        "https://apicursos.in.grupotarahumara.com.mx/ActualizarPost",
         {
           method: "PUT",
           headers: {
@@ -275,7 +275,7 @@ export function BlogPostCard({
 {...({} as any)}
                 onClick={() => {
                   fetch(
-                    `http://api-cursos.192.168.29.40.sslip.io/dislike/${idBlog}`,
+                    `https://apicursos.in.grupotarahumara.com.mx/dislike/${idBlog}`,
                     {
                       method: "PUT",
                     }
@@ -312,7 +312,7 @@ export function BlogPostCard({
 {...({} as any)}
                 onClick={() => {
                   fetch(
-                    `http://api-cursos.192.168.29.40.sslip.io/like/${idBlog}`,
+                    `https://apicursos.in.grupotarahumara.com.mx/like/${idBlog}`,
                     {
                       method: "PUT",
                     }
