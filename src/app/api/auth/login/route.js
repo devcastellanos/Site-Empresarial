@@ -16,7 +16,7 @@ export async function POST(req) {
       );
     }
 
-    const response = await fetch('https://apicursos.in.grupotarahumara.com.mx/login', {
+    const response = await fetch('http://api-site-cursos.172.16.15.30.sslip.io/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, num_empleado, password }),
