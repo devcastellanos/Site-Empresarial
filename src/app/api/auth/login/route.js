@@ -20,6 +20,7 @@ export async function POST(req) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, num_empleado, password }),
+      credentials: 'include'
     });
 
     if (!response.ok) {
@@ -42,7 +43,7 @@ export async function POST(req) {
 
     const serialized = serialize('myToken', token, {
       httpOnly: true,
-      secure: false,
+      secure: true,
       sameSite: 'Lax',
       maxAge: 60 * 60 * 24 * 30,
       path: '/',
