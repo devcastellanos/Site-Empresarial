@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { NextResponse } from 'next/server';
 import { serialize } from 'cookie';
 
-export async function POST(req: Request) {
+export async function POST(req) {
   try {
     const { email, num_empleado, password } = await req.json();
     const userIdentifier = email || num_empleado;
