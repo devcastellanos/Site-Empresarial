@@ -1,12 +1,12 @@
-//api/auth/login/route.js
 import jwt from 'jsonwebtoken';
 import { NextResponse } from 'next/server';
-import {serialize} from 'cookie';
+import { serialize } from 'cookie';
 
 export async function POST(req) {
   try {
     const { email, num_empleado, password } = await req.json();
     const userIdentifier = email || num_empleado;
+
     console.log(`[LOG] Intento de inicio de sesión: ${userIdentifier}`);
 
     if (!userIdentifier || !password) {
@@ -23,37 +23,38 @@ export async function POST(req) {
       credentials: 'include'
     });
 
-    if (!response.ok) {
-      const { message } = await response.json().catch(() => ({ message: 'Error inesperado' }));
-      console.error(`[LOG] Error en la autenticación: ${message}`);
-      return NextResponse.json(
-        { success: false, message: message || 'Credenciales incorrectas.' },
-        { status: response.status }
-      );
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok || !result || !result.success) {
+      const message = result?.message || 'Credenciales incorrectas';
+      console.error(`[LOG] Fallo en autenticación: ${message}`);
+      return NextResponse.json({ success: false, message }, { status: 401 });
     }
 
-    const user = await response.json();
+    const user = result.data;
+
     const token = jwt.sign({
-      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
-      email: user.data.email,
-      user: user.data.name,
-      num_empleado: user.data.num_empleado,
-      rol: user.data.rol,
-    }, 'secret');
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30, // 30 días
+      email: user.email,
+      user: user.name || user.nombre,
+      num_empleado: user.num_empleado,
+      rol: user.rol,
+    }, process.env.JWT_SECRET);
 
     const serialized = serialize('myToken', token, {
       httpOnly: true,
       secure: true,
-      sameSite: 'Lax',
+      sameSite: 'None', // necesario para cross-origin en HTTPS
       maxAge: 60 * 60 * 24 * 30,
       path: '/',
-      sameSite: 'None', 
-      secure: true
     });
 
-    const res = NextResponse.json({ success: true, message: 'Inicio de sesión exitoso.' }, { status: 200 });
-    res.headers.set('Set-Cookie', serialized);
+    const res = NextResponse.json(
+      { success: true, message: 'Inicio de sesión exitoso.' },
+      { status: 200 }
+    );
 
+    res.headers.set('Set-Cookie', serialized);
     return res;
 
   } catch (error) {
