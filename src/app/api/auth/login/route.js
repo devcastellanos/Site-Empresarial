@@ -15,7 +15,7 @@ export async function POST(req) {
       );
     }
 
-    const response = await fetch('http://api-site-cursos.172.16.15.30.sslip.io/login', {
+    const response = await fetch('https://api-site-cursos.in.grupotarahumara.com.mx/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, num_empleado, password }),
@@ -43,10 +43,11 @@ export async function POST(req) {
     const serialized = serialize('myToken', token, {
       httpOnly: true,
       secure: true,
-      sameSite: 'Lax',
+      sameSite: 'None', // 👈 Para cross-site cookies
+      domain: '.grupotarahumara.com.mx', // 👈 Disponible en todos los subdominios
       maxAge: 60 * 60 * 24 * 30,
       path: '/',
-    });
+    });    
 
     const res = NextResponse.json({ success: true, message: 'Inicio de sesión exitoso.' }, { status: 200 });
     res.headers.set('Set-Cookie', serialized);

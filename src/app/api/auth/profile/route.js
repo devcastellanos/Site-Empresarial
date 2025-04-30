@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
     try {
         // Obtener las cookies de forma asíncrona
-        const cookieStore = await cookies(); // 👈 Agrega `await`
+        const cookieStore = cookies(); // 👈 Agrega `await`
         const myTokenCookie = cookieStore.get('myToken');
 
         // console.log('[LOG] Token recibido:', myTokenCookie);

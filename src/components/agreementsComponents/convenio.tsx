@@ -37,7 +37,7 @@ export function Convenio() {
   useEffect(() => {
     const fetchConvenios = async () => {
       try {
-        const response = await fetch("http://api-site-cursos.172.16.15.30.sslip.io/Convenios");
+        const response = await fetch("https://api-site-cursos.in.grupotarahumara.com.mx/Convenios");
         console.log(response);
         if (!response.ok) throw new Error(`Error: ${response.status}`);
         const data: Convenio[] = await response.json();
@@ -53,7 +53,7 @@ export function Convenio() {
 
   const handleDeleteConvenio = async (idConvenio: number) => {
     try {
-      const response = await fetch("http://api-site-cursos.172.16.15.30.sslip.io/eliminarConvenio", {
+      const response = await fetch("https://api-site-cursos.in.grupotarahumara.com.mx/eliminarConvenio", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idConvenio }),
@@ -83,7 +83,7 @@ export function Convenio() {
       });
       
       const newConvenio = { ...convenio, img: res.data.imageUrls };
-      const response = await fetch("http://api-site-cursos.172.16.15.30.sslip.io/agregarConvenio", {
+      const response = await fetch("https://api-site-cursos.in.grupotarahumara.com.mx/agregarConvenio", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newConvenio),

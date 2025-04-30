@@ -61,7 +61,7 @@ export function ConvenioCard({
   };
 
   const handleEdit = () => {
-    fetch(`http://api-site-cursos.172.16.15.30.sslip.io/actualizarConvenio`, {
+    fetch(`https://api-site-cursos.in.grupotarahumara.com.mx/actualizarConvenio`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

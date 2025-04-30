@@ -35,7 +35,7 @@ const UsuariosPage = () => {
 
   const fetchUsuarios = async () => {
     try {
-      const response = await fetch("http://api-site-cursos.172.16.15.30.sslip.io/usuarios");
+      const response = await fetch("https://api-site-cursos.in.grupotarahumara.com.mx/usuarios");
       if (!response.ok) throw new Error(`Error: ${response.status}`);
       const data: Usuario[] = await response.json();
       setUsuarios(data);
@@ -58,8 +58,8 @@ const UsuariosPage = () => {
     try {
       const method = usuario.id ? "PUT" : "POST";
       const url = usuario.id
-        ? "http://api-site-cursos.172.16.15.30.sslip.io/actualizarUsuario"
-        : "http://api-site-cursos.172.16.15.30.sslip.io/agregarUsuario";
+        ? "https://api-site-cursos.in.grupotarahumara.com.mx/actualizarUsuario"
+        : "https://api-site-cursos.in.grupotarahumara.com.mx/agregarUsuario";
 
       const response = await fetch(url, {
         method,
@@ -80,7 +80,7 @@ const UsuariosPage = () => {
 
   const handleDeleteUsuario = async (id: number) => {
     try {
-      const response = await fetch("http://api-site-cursos.172.16.15.30.sslip.io/eliminarUsuario", {
+      const response = await fetch("https://api-site-cursos.in.grupotarahumara.com.mx/eliminarUsuario", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),

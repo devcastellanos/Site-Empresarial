@@ -80,12 +80,12 @@ const Kardex = () => {
       );
 
       const datacourse = await fetch(
-        "http://api-site-cursos.172.16.15.30.sslip.io/cursostomados"
+        "https://api-site-cursos.in.grupotarahumara.com.mx/cursostomados"
       );
       setCursosTomados(await datacourse.json());
 
       const fetchCursosPresenciales = await fetch(
-        "http://api-site-cursos.172.16.15.30.sslip.io/cursosPresenciales"
+        "https://api-site-cursos.in.grupotarahumara.com.mx/cursosPresenciales"
       );
       if (!fetchCursosPresenciales.ok) {
         throw new Error("Network response was not ok");
@@ -125,7 +125,7 @@ const Kardex = () => {
         console.log("Nuevo curso:", newCourse);
 
         const response = await fetch(
-          "http://api-site-cursos.172.16.15.30.sslip.io/agregarCursoTomado",
+          "https://api-site-cursos.in.grupotarahumara.com.mx/agregarCursoTomado",
           {
             method: "POST",
             headers: {
@@ -161,7 +161,7 @@ const Kardex = () => {
         ]);
 
         const updatedCourses = await fetch(
-          "http://api-site-cursos.172.16.15.30.sslip.io/cursostomados"
+          "https://api-site-cursos.in.grupotarahumara.com.mx/cursostomados"
         );
         const coursesData = await updatedCourses.json();
         setCursosTomados(coursesData);
@@ -258,7 +258,7 @@ const Kardex = () => {
   const updateProgress = async () => {
     try {
       const response = await fetch(
-        "http://api-site-cursos.172.16.15.30.sslip.io/updateProgress",
+        "https://api-site-cursos.in.grupotarahumara.com.mx/updateProgress",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -299,7 +299,7 @@ const Kardex = () => {
   const handleDeleteCourse = async (id_course: number, id_usuario: number, start_date: string) => {
     try {
       const response = await fetch(
-        "http://api-site-cursos.172.16.15.30.sslip.io/eliminarCursoTomado",
+        "https://api-site-cursos.in.grupotarahumara.com.mx/eliminarCursoTomado",
         {
           method: "DELETE",
           headers: {
@@ -324,7 +324,7 @@ const Kardex = () => {
         selectedCourses.filter((course) => !(course.id_course === id_course && course.start_date === start_date))
       );
       const updatedCourses = await fetch(
-        "http://api-site-cursos.172.16.15.30.sslip.io/cursostomados"
+        "https://api-site-cursos.in.grupotarahumara.com.mx/cursostomados"
       );
       const coursesData = await updatedCourses.json();
       setCursosTomados(coursesData);

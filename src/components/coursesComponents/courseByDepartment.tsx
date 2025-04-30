@@ -53,7 +53,7 @@ const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, o
     console.log(requestBody);
 
     try {
-      const response = await fetch("http://api-site-cursos.172.16.15.30.sslip.io/api/cursoDepartamento", {
+      const response = await fetch("https://api-site-cursos.in.grupotarahumara.com.mx/api/cursoDepartamento", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
