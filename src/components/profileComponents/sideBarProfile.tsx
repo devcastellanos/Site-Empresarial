@@ -11,29 +11,43 @@ import AprovementsPage from "./AprovementsPage";
 
 function ProfilePage() {
   const [view, setView] = useState("info");
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  const handleItemClick = (selectedView: string) => {
+    setView(selectedView);
+    setSidebarOpen(false); // Cerrar el sidebar en móvil al seleccionar
+  };
 
   return (
-    <div className="flex min-h-screen bg-transparent">
+    <div className="flex min-h-screen bg-transparent relative">
+      {/* Botón de menú móvil */}
+      <button
+        className="sm:hidden fixed top-4 left-4 z-50 p-2 bg-white/20 text-white backdrop-blur-lg rounded-xl shadow-lg"
+        onClick={() => setSidebarOpen(!isSidebarOpen)}
+      >
+        ☰
+      </button>
+
       {/* Sidebar */}
       <aside
-        className="fixed left-0 z-40 w-64 h-full transition-transform -translate-x-full sm:translate-x-0 
-        bg-white/10 backdrop-blur-xl shadow-lg border-r border-white/10 rounded-r-3xl"
+        className={`fixed z-40 top-0 left-0 h-full w-64 transition-transform bg-white/10 backdrop-blur-xl shadow-lg border-r border-white/10 rounded-r-3xl
+          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} sm:translate-x-0`}
         aria-label="Sidebar"
       >
-        <div className="h-full px-4 py-6 space-y-6">
+        <div className="h-full px-4 py-6 space-y-6 p-6">
           <ul className="space-y-2 text-sm font-medium">
-            <SidebarItem label="Información" icon="ℹ️" active={view === "info"} onClick={() => setView("info")} />
-            <SidebarItem label="Registro Entrada/Salida" icon="📅" active={view === "checkin"} onClick={() => setView("checkin")} />
-            <SidebarItem label="Vacaciones" icon="🌴" active={view === "vacations"} onClick={() => setView("vacations")} />
-            <SidebarItem label="Mis Cursos" icon="📘" active={view === "courses"} onClick={() => setView("courses")} />
-            <SidebarItem label="Movimientos" icon="🔁" active={view === "movements"} onClick={() => setView("movements")} />
-            <SidebarItem label="Carta Patronal" icon="📝" active={view === "patronales"} onClick={() => setView("patronales")} />
-            <SidebarItem label="Aprobaciones" icon="✅" active={view === "aprobaciones"} onClick={() => setView("aprobaciones")} />
+            <SidebarItem label="Información" icon="ℹ️" active={view === "info"} onClick={() => handleItemClick("info")} />
+            <SidebarItem label="Registro Entrada/Salida" icon="📅" active={view === "checkin"} onClick={() => handleItemClick("checkin")} />
+            <SidebarItem label="Vacaciones" icon="🌴" active={view === "vacations"} onClick={() => handleItemClick("vacations")} />
+            <SidebarItem label="Mis Cursos" icon="📘" active={view === "courses"} onClick={() => handleItemClick("courses")} />
+            <SidebarItem label="Movimientos" icon="🔁" active={view === "movements"} onClick={() => handleItemClick("movements")} />
+            <SidebarItem label="Carta Patronal" icon="📝" active={view === "patronales"} onClick={() => handleItemClick("patronales")} />
+            <SidebarItem label="Aprobaciones" icon="✅" active={view === "aprobaciones"} onClick={() => handleItemClick("aprobaciones")} />
           </ul>
         </div>
       </aside>
 
-      {/* Contenido principal sin fondo */}
+      {/* Contenido principal */}
       <main className="sm:ml-64 w-full p-6">
         <div className="backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-6 transition-all">
           {view === "info" && <InfoProfile />}
@@ -51,7 +65,6 @@ function ProfilePage() {
 
 export default ProfilePage;
 
-// Sidebar item mejorado
 const SidebarItem = ({
   label,
   icon,
@@ -65,10 +78,9 @@ const SidebarItem = ({
 }) => {
   return (
     <li>
-      <a
-        href="#"
+      <button
         onClick={onClick}
-        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200
+        className={`flex w-full items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200
           ${
             active
               ? "bg-white/30 text-white font-semibold shadow-lg ring-1 ring-white/40"
@@ -77,7 +89,7 @@ const SidebarItem = ({
       >
         <span className="text-xl">{icon}</span>
         <span className="text-base">{label}</span>
-      </a>
+      </button>
     </li>
   );
 };

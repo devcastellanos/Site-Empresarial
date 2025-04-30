@@ -31,7 +31,8 @@ function Vacations() {
   const [requestStatus, setRequestStatus] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
-  const tipoMovimiento = 3; // define cuántos aprobadores requiere este tipo
+  const tipoMovimiento = "vacaciones"; // define el tipo de movimiento
+  const nivel_aprobacion = 1; // define cuántos aprobadores requiere este tipo
   const [comments, setComments] = useState<string>("");
   const { user } = useAuth();
 
@@ -97,6 +98,7 @@ function Vacations() {
           fechas: selectedDates.map((d) => d.toISOString().split("T")[0]),
           comentarios: comments,
           tipo_movimiento: tipoMovimiento,
+          nivel_aprobacion: nivel_aprobacion,
           datos_json: {
             fechas: selectedDates.map((d) => d.toISOString().split("T")[0]),
             fecha_inicio: selectedDates[0].toISOString().split("T")[0],
