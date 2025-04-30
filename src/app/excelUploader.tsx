@@ -94,7 +94,7 @@
 
       try {
         const res = await fetch(
-          "https://apicursos.in.grupotarahumara.com.mx/updateCargaMasiva",
+          "http://api-site-cursos.172.16.15.30.sslip.io/updateCargaMasiva",
           {
             method: "POST",
             headers: {

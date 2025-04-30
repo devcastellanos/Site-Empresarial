@@ -53,7 +53,7 @@ function CourseCatalog() {
     const fetchData = async () => {
       try {
         const fetchCursosPresenciales = await fetch(
-          "https://apicursos.in.grupotarahumara.com.mx/cursosPresenciales"
+          "http://api-site-cursos.172.16.15.30.sslip.io/cursosPresenciales"
         );
 
         if (!fetchCursosPresenciales.ok) {
@@ -78,7 +78,7 @@ function CourseCatalog() {
   const fetchDepartments = async () => {
     try {
       const response = await fetch(
-        "https://apisiteintelisis.in.grupotarahumara.com.mx/api/departments"
+        "http://api-site-intelisis.172.16.15.30.sslip.io/api/departments"
       );
       const data = await response.json();
 
@@ -153,7 +153,7 @@ function CourseCatalog() {
 
     try {
       const response = await fetch(
-        "https://apicursos.in.grupotarahumara.com.mx/actualizarCurso",
+        "http://api-site-cursos.172.16.15.30.sslip.io/actualizarCurso",
         {
           method: "POST", // Método HTTP
           headers: {
@@ -197,7 +197,7 @@ function CourseCatalog() {
   const handleDeleteDatabase = async (delet: CourseJson) => {
     try {
       const response = await fetch(
-        "https://apicursos.in.grupotarahumara.com.mx/eliminarCurso",
+        "http://api-site-cursos.172.16.15.30.sslip.io/eliminarCurso",
         {
           method: "POST",
           headers: {

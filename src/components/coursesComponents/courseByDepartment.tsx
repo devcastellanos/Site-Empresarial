@@ -19,7 +19,7 @@ const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, o
 
   const fetchUsers = async (department: string) => {
     try {
-      const response = await fetch(`https://apisiteintelisis.in.grupotarahumara.com.mx/api/users/by-department?department=${department}`);
+      const response = await fetch(`http://api-site-intelisis.172.16.15.30.sslip.io/api/users/by-department?department=${department}`);
       const data = await response.json();
       setUsers(data);
       setSelectedUsers(new Set(data.map((user: { Personal: string }) => user.Personal)));
@@ -53,7 +53,7 @@ const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, o
     console.log(requestBody);
 
     try {
-      const response = await fetch("https://apicursos.in.grupotarahumara.com.mx/api/cursoDepartamento", {
+      const response = await fetch("http://api-site-cursos.172.16.15.30.sslip.io/api/cursoDepartamento", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
