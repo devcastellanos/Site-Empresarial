@@ -34,5 +34,5 @@ export async function middleware(request: NextRequest) {
 // };
 
 export const config = {
-  matcher: [], // Aplica el middleware solo a estas rutas
+  matcher: ['/Cursos', '/cargaMasiva', '/Usuarios', '/Perfil'], // Aplica el middleware solo a estas rutas
 };
