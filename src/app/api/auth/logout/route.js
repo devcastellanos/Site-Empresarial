@@ -4,8 +4,8 @@ import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
 
 export async function POST() {
-  const cookieStore = cookies();
-  const myTokenCookie = cookieStore.get("myToken");
+    const cookieStore = await cookies();
+    const myTokenCookie = cookieStore.get('myToken');
 
   if (!myTokenCookie) {
     return NextResponse.json({ success: false, message: "Token no encontrado" }, { status: 401 });

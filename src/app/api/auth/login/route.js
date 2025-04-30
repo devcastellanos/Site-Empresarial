@@ -2,20 +2,21 @@ import jwt from 'jsonwebtoken';
 import { NextResponse } from 'next/server';
 import { serialize } from 'cookie';
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    console.log('[LOGIN] Body recibido:', body);
-
-    const { email, num_empleado, password } = body;
+    const { email, num_empleado, password } = await req.json();
     const userIdentifier = email || num_empleado;
 
     if (!userIdentifier || !password) {
       return NextResponse.json({ success: false, message: 'Campos faltantes' }, { status: 400 });
     }
 
-    console.log('[LOGIN] Autenticando contra backend....');
-    const response = await fetch('https://api-site-cursos.in.grupotarahumara.com.mx/login', {
+    const isProd = process.env.NODE_ENV === 'production';
+    const BACKEND_URL = isProd
+      ? 'https://api-site-cursos.in.grupotarahumara.com.mx'
+      : 'http://localhost:3011'; // cambia esto si usas otro puerto en local
+
+    const response = await fetch(`${BACKEND_URL}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, num_empleado, password }),
@@ -29,9 +30,7 @@ export async function POST(req) {
     }
 
     const user = await response.json();
-    console.log('[LOGIN] Usuario autenticado:', user);
 
-    // ✅ Asegúrate de que `user.data` exista
     if (!user.data?.email || !user.data?.name || !user.data?.num_empleado) {
       console.error('[LOGIN] Respuesta malformada del backend:', user);
       return NextResponse.json({ success: false, message: 'Respuesta del backend inválida' }, { status: 500 });
@@ -44,9 +43,6 @@ export async function POST(req) {
       rol: user.data.rol,
     }, process.env.JWT_SECRET || 'secret', { expiresIn: '30d' });
 
-    console.log('[LOGIN] Token generado:', token);
-
-    const isProd = process.env.NODE_ENV === 'production';
     const serialized = serialize('myToken', token, {
       httpOnly: true,
       secure: isProd,
@@ -62,6 +58,6 @@ export async function POST(req) {
 
   } catch (err) {
     console.error('[LOGIN] Error interno:', err);
-    return NextResponse.json({ success: false, message: 'Error en el servidor' }, { status: 500 });
+    return NextResponse.json({ success: false, message: 'Error interno del servidor o conexión al backend' }, { status: 500 });
   }
 }
