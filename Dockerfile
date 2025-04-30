@@ -22,4 +22,4 @@ ENV PORT=3043
 EXPOSE 3043
 
 # Start the application in production mode
-CMD ["npm", "run","start"]
+CMD ["npm", "run","dev"]
