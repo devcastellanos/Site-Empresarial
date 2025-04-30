@@ -3,32 +3,32 @@ import { serialize } from "cookie";
 import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
 
-export async function POST(req) {
+export async function POST() {
   const cookieStore = cookies();
-  const myTokenCookie = cookieStore.get('myToken');
+  const myTokenCookie = cookieStore.get("myToken");
 
   if (!myTokenCookie) {
-    return NextResponse.json({ success: false, message: 'Token no encontrado' }, { status: 401 });
+    return NextResponse.json({ success: false, message: "Token no encontrado" }, { status: 401 });
   }
 
   try {
-    verify(myTokenCookie.value, process.env.JWT_SECRET || 'secret');
+    verify(myTokenCookie.value, process.env.JWT_SECRET || "secret");
 
-    const serialized = serialize('myToken', '', {
+    const isProd = process.env.NODE_ENV === "production";
+    const serialized = serialize("myToken", "", {
       httpOnly: true,
-      secure: true, // 👈 obligatorio para SameSite=None
-      sameSite: 'None', // 👈 si usaste esto al crearla
-      domain: '.grupotarahumara.com.mx', // 👈 igual al dominio de creación
-      path: '/',
-      maxAge: 0
+      secure: isProd,
+      sameSite: isProd ? "None" : "Lax",
+      domain: isProd ? ".grupotarahumara.com.mx" : undefined,
+      path: "/",
+      maxAge: 0,
     });
 
-    const res = NextResponse.json({ success: true, message: 'Logout successfully' }, { status: 200 });
-    res.headers.set('Set-Cookie', serialized);
+    const res = NextResponse.json({ success: true, message: "Logout exitoso" }, { status: 200 });
+    res.headers.set("Set-Cookie", serialized);
     return res;
-
   } catch (error) {
-    console.error('[LOG] Error al verificar token:', error);
-    return NextResponse.json({ success: false, message: 'Token inválido' }, { status: 401 });
+    console.error("[LOGOUT] Error al verificar token:", error);
+    return NextResponse.json({ success: false, message: "Token inválido" }, { status: 401 });
   }
 }

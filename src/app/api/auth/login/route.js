@@ -1,12 +1,11 @@
 import jwt from 'jsonwebtoken';
 import { NextResponse } from 'next/server';
-import {serialize} from 'cookie';
+import { serialize } from 'cookie';
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     const { email, num_empleado, password } = await req.json();
     const userIdentifier = email || num_empleado;
-    console.log(`[LOG] Intento de inicio de sesión: ${userIdentifier}`);
 
     if (!userIdentifier || !password) {
       return NextResponse.json(
@@ -15,6 +14,7 @@ export async function POST(req) {
       );
     }
 
+    // Llamada al backend real
     const response = await fetch('https://api-site-cursos.in.grupotarahumara.com.mx/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -24,7 +24,6 @@ export async function POST(req) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[LOG] Error en la autenticación: ${errorText}`);
       return NextResponse.json(
         { success: false, message: errorText || 'Credenciales incorrectas.' },
         { status: 401 }
@@ -32,32 +31,38 @@ export async function POST(req) {
     }
 
     const user = await response.json();
-    const token = jwt.sign({
-      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
-      email: user.data.email,
-      user: user.data.name,
-      num_empleado: user.data.num_empleado,
-      rol: user.data.rol,
-    }, 'secret');
 
+    // Firmar JWT
+    const token = jwt.sign(
+      {
+        email: user.data.email,
+        user: user.data.name,
+        num_empleado: user.data.num_empleado,
+        rol: user.data.rol,
+      },
+      process.env.JWT_SECRET || 'secret',
+      { expiresIn: '30d' }
+    );
+
+    // Configurar cookie
+    const isProd = process.env.NODE_ENV === 'production';
     const serialized = serialize('myToken', token, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'None', // 👈 Para cross-site cookies
-      domain: '.grupotarahumara.com.mx', // 👈 Disponible en todos los subdominios
-      maxAge: 60 * 60 * 24 * 30,
+      secure: isProd,
+      sameSite: isProd ? 'None' : 'Lax',
+      domain: isProd ? '.grupotarahumara.com.mx' : undefined,
       path: '/',
-    });    
+      maxAge: 60 * 60 * 24 * 30,
+    });
 
-    const res = NextResponse.json({ success: true, message: 'Inicio de sesión exitoso.' }, { status: 200 });
+    const res = NextResponse.json({ success: true, message: 'Inicio de sesión exitoso' }, { status: 200 });
     res.headers.set('Set-Cookie', serialized);
-
     return res;
 
-  } catch (error) {
-    console.error('[LOG] Error en el servidor:', error);
+  } catch (err) {
+    console.error('[LOGIN] Error inesperado:', err);
     return NextResponse.json(
-      { success: false, message: 'Hubo un error al procesar tu solicitud.' },
+      { success: false, message: 'Error en el servidor' },
       { status: 500 }
     );
   }
