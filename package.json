@@ -4,12 +4,12 @@
   "private": true,
   "license": "See license in https://www.creative-tim.com/license",
   "homepage": "https://demos.creative-tim.com/nextjs-tailwind-blog-posts-page",
-  "scripts": {
-    "dev": " next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
+"scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start -p 3043",
+  "lint": "next lint"
+},
   "dependencies": {
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "2.0.18",

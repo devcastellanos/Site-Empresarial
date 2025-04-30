@@ -38,7 +38,7 @@ function CourseCatalog({ onAddCourse, onClose }: Props) {
       return;
     }
     try {
-      const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/agregarCurso', {
+      const response = await fetch('https://apicursos.in.grupotarahumara.com.mx/agregarCurso', {
         method: 'POST', 
         headers: {
           'Content-Type': 'application/json', 
