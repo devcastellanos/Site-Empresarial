@@ -60,7 +60,7 @@ export function Posts() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch('https://apicursos.in.grupotarahumara.com.mx/posts');
+        const response = await fetch('http://api-site-cursos.172.16.15.30.sslip.io/posts');
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }
@@ -84,7 +84,7 @@ export function Posts() {
     console.log('Post a eliminar:', idBlog);
     try {
       // Eliminar el post de la base de datos
-      const response = await fetch("https://apicursos.in.grupotarahumara.com.mx/EliminarPost", {
+      const response = await fetch("http://api-site-cursos.172.16.15.30.sslip.io/EliminarPost", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -165,7 +165,7 @@ export function Posts() {
   
 
     try {
-      const response = await fetch("https://apicursos.in.grupotarahumara.com.mx/Agregarpost", {
+      const response = await fetch("http://api-site-cursos.172.16.15.30.sslip.io/Agregarpost", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
