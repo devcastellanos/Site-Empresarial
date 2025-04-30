@@ -14,7 +14,7 @@ export async function POST(req) {
       return NextResponse.json({ success: false, message: 'Campos faltantes' }, { status: 400 });
     }
 
-    console.log('[LOGIN] Autenticando contra backend...');
+    console.log('[LOGIN] Autenticando contra backend....');
     const response = await fetch('https://api-site-cursos.in.grupotarahumara.com.mx/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
