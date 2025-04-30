@@ -1,3 +1,4 @@
+// app/api/auth/profile/route.js
 import { cookies } from 'next/headers';
 import { verify } from 'jsonwebtoken';
 import { NextResponse } from 'next/server';

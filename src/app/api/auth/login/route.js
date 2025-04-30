@@ -1,4 +1,4 @@
-
+//api/auth/login/route.js
 import jwt from 'jsonwebtoken';
 import { NextResponse } from 'next/server';
 import {serialize} from 'cookie';
@@ -24,11 +24,11 @@ export async function POST(req) {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`[LOG] Error en la autenticación: ${errorText}`);
+      const { message } = await response.json().catch(() => ({ message: 'Error inesperado' }));
+      console.error(`[LOG] Error en la autenticación: ${message}`);
       return NextResponse.json(
-        { success: false, message: errorText || 'Credenciales incorrectas.' },
-        { status: 401 }
+        { success: false, message: message || 'Credenciales incorrectas.' },
+        { status: response.status }
       );
     }
 
@@ -47,6 +47,8 @@ export async function POST(req) {
       sameSite: 'Lax',
       maxAge: 60 * 60 * 24 * 30,
       path: '/',
+      sameSite: 'None', 
+      secure: true
     });
 
     const res = NextResponse.json({ success: true, message: 'Inicio de sesión exitoso.' }, { status: 200 });
