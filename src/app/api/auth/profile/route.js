@@ -17,7 +17,7 @@ export async function GET() {
         const myToken = myTokenCookie.value;
 
         const user = verify(myToken, 'secret');
-        // console.log('[LOG] Usuario verificado:', user);
+        console.log('[LOG] Usuario verificado:', user);
 
         return NextResponse.json({ success: true, user });
     } catch (error) {
