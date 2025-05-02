@@ -1,7 +1,7 @@
 // src/services/movementsService.ts
 
 export async function crearMovimiento(movimiento: any) {
-    const res = await fetch('http://localhost:3001/api/movimientos', {
+    const res = await fetch('http://localhost:3041/api/movimientos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(movimiento),
@@ -10,7 +10,7 @@ export async function crearMovimiento(movimiento: any) {
   }
   
   export async function responderAprobacion(idAprobacion: number, estatus: string, nota: string) {
-    const res = await fetch(`http://localhost:3001/api/aprobaciones/${idAprobacion}/responder`, {
+    const res = await fetch(`http://localhost:3041/api/aprobaciones/${idAprobacion}/responder`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ estatus, nota }),
@@ -20,7 +20,7 @@ export async function crearMovimiento(movimiento: any) {
   
   export async function obtenerMovimientosPendientes(idAprobador: number) {
     try {
-      const response = await fetch(`http://localhost:3001/api/aprobaciones/pendientes/${idAprobador}`, {
+      const response = await fetch(`http://localhost:3041/api/aprobaciones/pendientes/${idAprobador}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -41,7 +41,7 @@ return data.movimientos ?? [];
   
   export async function obtenerAprobaciones(aprobador: number | string) {
     try {
-      const response = await fetch(`http://localhost:3001/api/aprobaciones?aprobador=${aprobador}`, {
+      const response = await fetch(`http://localhost:3041/api/aprobaciones?aprobador=${aprobador}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +63,7 @@ return data.data ?? [];
   // 🔥 NUEVA FUNCIÓN para obtener movimientos SOLICITADOS por un empleado
   export async function obtenerMisMovimientos(numEmpleado: number) {
     try {
-      const response = await fetch(`http://localhost:3001/api/movimientos/mios/${numEmpleado}`, {
+      const response = await fetch(`http://localhost:3041/api/movimientos/mios/${numEmpleado}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

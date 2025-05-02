@@ -16,7 +16,7 @@ COPY . .
 
 RUN npm run build
 
-# Set the port to 3001 (or whatever port you prefer)
+# Set the port to 3041 (or whatever port you prefer)
 ENV PORT=3020
 
 # Expose the custom port

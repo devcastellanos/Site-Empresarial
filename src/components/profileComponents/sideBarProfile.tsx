@@ -22,7 +22,7 @@ function ProfilePage() {
     <div className="flex min-h-screen bg-transparent relative">
       {/* Botón de menú móvil */}
       <button
-        className="sm:hidden fixed top-4 left-4 z-50 p-2 bg-white/20 text-white backdrop-blur-lg rounded-xl shadow-lg"
+        className="sm:hidden fixed top-4 left-4 z-50 p-2 bg-white/20 text-white backdrop-blur-lg rounded-xl shadow-lg "
         onClick={() => setSidebarOpen(!isSidebarOpen)}
       >
         ☰
@@ -30,7 +30,7 @@ function ProfilePage() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed z-40 top-0 left-0 h-full w-64 transition-transform bg-white/10 backdrop-blur-xl shadow-lg border-r border-white/10 rounded-r-3xl
+        className={`fixed z-40 top-28 left-0 h-full w-64 transition-transform bg-white/10 backdrop-blur-xl shadow-lg border-r border-white/10 rounded-r-3xl 
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} sm:translate-x-0`}
         aria-label="Sidebar"
       >
