@@ -126,33 +126,28 @@ function Movements() {
   const canSubmit =
     employeeNumber.trim() !== "" && incidentDate && movementType !== "";
 
-  useEffect(() => {
-    async function cargarMovimientos() {
-      try {
-        if (user?.num_empleado !== undefined) {
-          const pendientes = await obtenerMovimientosPendientes(
-            user.num_empleado
-          );
-          const aprobaciones = await obtenerAprobaciones(user.num_empleado);
-          const movimientosPropios = await obtenerMisMovimientos(
-            user.num_empleado
-          );
-
+    useEffect(() => {
+      if (!user || user.num_empleado === undefined) return;
+    
+      async function cargarMovimientos() {
+        try {
+          const pendientes = user ? await obtenerMovimientosPendientes(user.num_empleado) : [];
+          const aprobaciones = user ? await obtenerAprobaciones(user.num_empleado) : [];
+          const movimientosPropios = user ? await obtenerMisMovimientos(user.num_empleado) : [];
+          console.log("Movimientos pendientes:", movimientosPropios);
           setMovementsData({
-            pendientes: pendientes,
-            aprobaciones: aprobaciones,
+            pendientes,
+            aprobaciones,
             propios: movimientosPropios,
           });
-        } else {
-          console.error("User number is undefined");
+        } catch (error) {
+          console.error("Error al cargar movimientos:", error);
         }
-      } catch (error) {
-        console.error("Error al cargar movimientos:", error);
       }
-    }
-
-    cargarMovimientos();
-  }, [user]);
+    
+      cargarMovimientos();
+    }, [user]);
+    
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -223,7 +218,151 @@ function Movements() {
       alert("Error enviando la solicitud");
     }
   };
+  function renderDatosJsonPorTipo(tipo: string, datos: any) {
+    switch (tipo) {
+      case "Cambio de descanso":
+        return (
+          <>
+            <p><strong>Día asignado:</strong> {datos.assignedRestDay}</p>
+            <p><strong>Día solicitado:</strong> {datos.requestedRestDay}</p>
+          </>
+        );
+  
+      case "Cambio de horario":
+        return (
+          <>
+            <p><strong>Nuevo horario solicitado:</strong> {datos.newSchedule}</p>
 
+          </>
+        );
+  
+      case "Comisión fuera de Oficina":
+        return (
+          <>
+
+            
+          </>
+        );
+      case "Comisión Prolongada fuera de Oficina":
+        return (
+          <>
+            <p><strong>Dias de home office:</strong> {datos.homeOfficeDays}</p>
+            <p><strong>Fecha de inicio:</strong> {datos.startDate}</p>
+            <p><strong>Fecha de fin:</strong> {datos.endDate}</p>
+            <p><strong>Fecha de reincorporación:</strong> {datos.resumeDate}</p>
+          </>
+        );
+      case "Descanso laborado":
+        return (
+          <>
+            <p><strong>Día asignado como descanso:</strong> {datos.assignedRestDay}</p>
+            <p><strong>Día laborado como descanso:</strong> {datos.requestedRestDay}</p>
+          </>
+        );
+      case "Viaje de Trabajo":
+        return (
+          <>
+            <p><strong>Ubicación del viaje:</strong> {datos.tripLocation}</p>
+            <p><strong>Inicio:</strong> {datos.startDate}</p>
+            <p><strong>Fin:</strong> {datos.endDate}</p>
+            <p><strong>Reincorporación:</strong> {datos.resumeDate}</p>
+          </>
+        );
+  
+        case "Permisos Especiales":
+          let diasDescanso = 0;
+        
+          switch (datos.specialType?.toLowerCase()) {
+            case "matrimonio":
+              diasDescanso = 5;
+              break;
+            case "muerte":
+              diasDescanso = 2;
+              break;
+            case "paternidad":
+              diasDescanso = 5;
+              break;
+            default:
+              diasDescanso = 0;
+          }
+        
+          return (
+            <>
+              <p><strong>Tipo de permiso especial:</strong> {datos.specialType}</p>
+              <p><strong>Días de descanso asignados:</strong> {diasDescanso}</p>
+            </>
+          );
+      case "Permiso con goce de sueldo":
+        return (
+          <>
+          </>
+        );
+      case "Permiso sin goce de sueldo":
+        return (
+          <>
+            <p><strong>Día solicitado sin goce de sueldo:</strong> {datos.requestedRestDay}</p>
+            <p><strong>Día con goce de sueldo asignado:</strong> {datos.assignedRestDay}</p>
+          </>
+        );
+  
+      case "Permiso para llegar tarde":
+        return (
+          <>
+            <p><strong>Hora de entrada:</strong> {datos.entryTime}</p>
+          </>
+        );
+      case "Retardo justificado":
+        return <p><strong>Hora de llegada:</strong> {datos.delayTime}</p>;
+  
+      case "Salida anticipada":
+        return <p><strong>Hora de salida anticipada:</strong> {datos.earlyTime}</p>;
+  
+      case "Sin registro entrada":
+        return
+      case "Sin registro salida":
+        return
+      case "Horario de Lactancia":
+        return (
+          <>
+            <p><strong>Nuevo horario solicitado:</strong> {datos.newSchedule}</p>
+            <p><strong>Inicio:</strong> {datos.startDate}</p>
+            <p><strong>Fin:</strong> {datos.endDate}</p>
+            <p><strong>Reincorporación:</strong> {datos.resumeDate}</p>
+          </>
+        );
+  
+      case "Curso/Capacitación":
+        return (
+          <>
+            <p><strong>Dias de curso:</strong> {datos.trainingDays}</p>
+            <p><strong>Inicio:</strong> {datos.startDate}</p>
+            <p><strong>Fin:</strong> {datos.endDate}</p>
+            <p><strong>Reincorporación:</strong> {datos.resumeDate}</p>
+          </>
+        )
+      case "Junta de trabajo":
+        return (
+          <>
+            <p><strong>Dia de reunión asignado:</strong> {datos.assignedRestDay}</p>
+            <p><strong>Dia de reunión solicitado:</strong> {datos.requestedRestDay}</p>
+          </>
+        );
+  
+      case "Falta justificada IMSS":
+      case "Tiempo extra":
+        return (
+          <>
+            <p><strong>Horas extra:</strong> {datos.hours}</p>
+            <p><strong>Hora de entrada:</strong> {datos.entryTime}</p>
+            <p><strong>Hora de salida:</strong> {datos.exitTime}</p>
+          </>
+        );
+  
+      default:
+        return <p className="text-gray-400 italic">Sin datos específicos</p>;
+    }
+  }
+  
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
       <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
@@ -245,9 +384,9 @@ function Movements() {
           {movementsData.pendientes.length === 0 ? (
             <p className="text-gray-500">No tienes movimientos por aprobar</p>
           ) : (
-            movementsData.pendientes.map((mov) => (
+            movementsData.pendientes.map((mov, index) => (
               <Card
-                key={mov.id}
+              key={`${mov.id}-${index}`}
                 className="bg-white/95 border rounded-xl shadow-sm p-4 space-y-2"
               >
                 <div className="flex justify-between items-center">
@@ -345,31 +484,30 @@ function Movements() {
                   movementsData.propios
                     .filter((mov) => mov.estatus_movimiento === status)
                     .map((mov) => (
-                      <Card
-                        key={mov.idMovimiento}
-                        className="bg-white/90 border rounded-xl shadow-sm p-4 space-y-1"
-                      >
-                        <div className="flex justify-between items-center">
-                          <p className="font-medium text-gray-800">
-                            📄 {mov.tipo_movimiento}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {format(new Date(mov.fecha_solicitud), "PPP", {
-                              locale: es,
-                            })}
-                          </p>
-                        </div>
+<Card key={mov.idMovimiento} className="bg-white/90 border rounded-xl shadow-sm p-4 space-y-1">
+  <div className="flex justify-between items-center">
+    <p className="font-medium text-gray-800">📄 {mov.tipo_movimiento}</p>
+    <p className="text-sm text-gray-600">
+      {format(new Date(mov.fecha_solicitud), "PPP", { locale: es })}
+    </p>
+  </div>
 
-                        {/* 👇 Aprobación dinámica */}
-                        <p className="text-sm text-tinto-500 italic">
-                          {mov.estatus === "pendiente" &&
-                            `En espera de aprobación de: ${mov.supervisorId}`}
-                          {mov.estatus === "aprobado" &&
-                            `Aprobado por: ${mov.supervisorId}`}
-                          {mov.estatus === "rechazado" &&
-                            `Rechazado por: ${mov.supervisorId}`}
-                        </p>
-                      </Card>
+  <p className="text-sm text-tinto-500 italic">
+    {mov.estatus === "pendiente" &&
+      `En espera de aprobación de: ${mov.supervisorId}`}
+    {mov.estatus === "aprobado" &&
+      `Aprobado por: ${mov.supervisorId}`}
+    {mov.estatus === "rechazado" &&
+      `Rechazado por: ${mov.supervisorId}`}
+  </p>
+
+  <div className="mt-2 space-y-1 text-sm text-gray-700">
+    {renderDatosJsonPorTipo(mov.tipo_movimiento, mov.datos_json)}
+  </div>
+  <div>
+    <p className="text-sm"> Comentarios: {mov.comentarios}</p>
+  </div>
+</Card>
                     ))
                 )}
               </div>

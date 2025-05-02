@@ -27,6 +27,7 @@ export function WorkMeetingFields({
         <Label>Fecha de reunión asignada *</Label>
         <Input
           value={assignedDay}
+          type="date"
           onChange={(e) => onAssignedDayChange(e.target.value)}
           placeholder="Ej. 12 de Abril"
           required
@@ -38,6 +39,7 @@ export function WorkMeetingFields({
         <Label>Fecha de reunión solicitada *</Label>
         <Input
           value={requestedDay}
+          type="date"
           onChange={(e) => onRequestedDayChange(e.target.value)}
           placeholder="Ej. 13 de Abril"
           required

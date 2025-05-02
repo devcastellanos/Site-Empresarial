@@ -27,8 +27,8 @@ export function WorkedRestDayFields({
         <Label>Día originalmente asignado como descanso *</Label>
         <Input
           value={assignedDay}
+          type="date"
           onChange={(e) => onAssignedDayChange(e.target.value)}
-          placeholder="Ej. Domingo"
           required
           className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
         />
@@ -38,6 +38,7 @@ export function WorkedRestDayFields({
         <Label>Día en que se laboró el descanso *</Label>
         <Input
           value={requestedDay}
+          type="date"
           onChange={(e) => onRequestedDayChange(e.target.value)}
           placeholder="Ej. Lunes"
           required

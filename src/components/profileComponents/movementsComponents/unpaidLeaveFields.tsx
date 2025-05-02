@@ -27,6 +27,7 @@ export function UnpaidLeaveFields({
         <Label>Día con goce de sueldo asignado *</Label>
         <Input
           value={assignedDay}
+          type="date"
           onChange={(e) => onAssignedDayChange(e.target.value)}
           placeholder="Ej. Lunes"
           required
@@ -38,6 +39,7 @@ export function UnpaidLeaveFields({
         <Label>Día solicitado sin goce de sueldo *</Label>
         <Input
           value={requestedDay}
+          type="date"
           onChange={(e) => onRequestedDayChange(e.target.value)}
           placeholder="Ej. Miércoles"
           required

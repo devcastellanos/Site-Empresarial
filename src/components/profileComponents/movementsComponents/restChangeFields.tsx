@@ -27,9 +27,9 @@ export function RestChangeFields({
         <Label htmlFor="assigned-rest-day">Día de Descanso Asignado *</Label>
         <Input
           id="assigned-rest-day"
+          type="date"
           value={assignedDay}
           onChange={(e) => onAssignedDayChange(e.target.value)}
-          placeholder="Ej. Domingo"
           required
           className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
         />
@@ -39,9 +39,9 @@ export function RestChangeFields({
         <Label htmlFor="requested-rest-day">Día de Descanso Solicitado *</Label>
         <Input
           id="requested-rest-day"
+          type="date"
           value={requestedDay}
           onChange={(e) => onRequestedDayChange(e.target.value)}
-          placeholder="Ej. Lunes"
           required
           className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
         />
