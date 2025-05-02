@@ -66,9 +66,11 @@ export function Login() {
         <div className="flex justify-center mb-2">
           <div className="bg-white/70 rounded-xl px-6 py-1 shadow-md">
             <Image
-              src="/image/logo.png"
+              src="/image/Universidad.png"
               alt="Logo"
               className="h-auto w-auto"
+              width={100}
+              height={100}
             />
           </div>
         </div>
