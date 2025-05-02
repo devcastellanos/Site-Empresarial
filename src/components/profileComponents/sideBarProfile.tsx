@@ -10,7 +10,7 @@ import PatronCard from "./patronCard";
 import AprovementsPage from "./AprovementsPage";
 
 function ProfilePage() {
-  const [view, setView] = useState("info");
+  const [view, setView] = useState("checkin");
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const handleItemClick = (selectedView: string) => {
@@ -36,13 +36,12 @@ function ProfilePage() {
       >
         <div className="h-full px-4 py-6 space-y-6 p-6">
           <ul className="space-y-2 text-sm font-medium">
-            <SidebarItem label="Información" icon="ℹ️" active={view === "info"} onClick={() => handleItemClick("info")} />
-            <SidebarItem label="Registro Entrada/Salida" icon="📅" active={view === "checkin"} onClick={() => handleItemClick("checkin")} />
-            <SidebarItem label="Vacaciones" icon="🌴" active={view === "vacations"} onClick={() => handleItemClick("vacations")} />
-            <SidebarItem label="Mis Cursos" icon="📘" active={view === "courses"} onClick={() => handleItemClick("courses")} />
-            <SidebarItem label="Movimientos" icon="🔁" active={view === "movements"} onClick={() => handleItemClick("movements")} />
-            <SidebarItem label="Carta Patronal" icon="📝" active={view === "patronales"} onClick={() => handleItemClick("patronales")} />
-            <SidebarItem label="Aprobaciones" icon="✅" active={view === "aprobaciones"} onClick={() => handleItemClick("aprobaciones")} />
+            <SidebarItem label="Incidencias" icon="📅" active={view === "checkin"} onClick={() => setView("checkin")} />
+            <SidebarItem label="Vacaciones" icon="🌴" active={view === "vacations"} onClick={() => setView("vacations")} />
+            <SidebarItem label="Mis Cursos" icon="📘" active={view === "courses"} onClick={() => setView("courses")} />
+            <SidebarItem label="Movimientos" icon="🔁" active={view === "movements"} onClick={() => setView("movements")} />
+            <SidebarItem label="Carta Patronal" icon="📝" active={view === "patronales"} onClick={() => setView("patronales")} />
+            <SidebarItem label="Aprobaciones" icon="✅" active={view === "aprobaciones"} onClick={() => setView("aprobaciones")} />
           </ul>
         </div>
       </aside>
@@ -50,7 +49,6 @@ function ProfilePage() {
       {/* Contenido principal */}
       <main className="sm:ml-64 w-full p-6">
         <div className="backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-6 transition-all">
-          {view === "info" && <InfoProfile />}
           {view === "checkin" && <RegisterCheckInCheckOut />}
           {view === "vacations" && <Vacations />}
           {view === "courses" && <Courses />}

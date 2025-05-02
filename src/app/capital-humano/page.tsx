@@ -58,11 +58,11 @@ export default function CapacitacionPage() {
         >
           <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50"></div>
           <div className="relative z-10 w-full max-w-4xl px-8 text-white">
-            <h1 className="text-[64px] lg:text-[80px] font-extrabold leading-tight mt-40">
-              Capacitación Tarahumara
+            <h1 className="text-[64px] lg:text-[80px] font-extrabold leading-tight mt-60">
+              Capital Humano
             </h1>
             <p className="mt-2 text-xl lg:text-2xl text-gray-200">
-              Descubre herramientas, presentaciones, guías y contenido multimedia diseñados para potenciar tu desarrollo profesional.
+            El área de Capital Humano gestiona el talento de la organización, promoviendo el desarrollo profesional, el bienestar laboral y la alineación estratégica entre colaboradores y empresa.
             </p>
             <div className="mt-6 flex justify-center">
               <Image src="/image/Logo-Outline.png" alt="Logo" width={256} height={256} className="w-64 h-auto" />
@@ -83,9 +83,7 @@ export default function CapacitacionPage() {
             viewport={{ once: false }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="text-[40px] lg:text-[56px] font-bold leading-tight text-white">
-              Herramientas y Plataformas
-            </h2>
+            <OrgChart />
           </motion.div>
   
           <motion.div
@@ -131,10 +129,6 @@ export default function CapacitacionPage() {
               </motion.div>
             ))}
           </motion.div>
-  
-          <div>
-            <OrgChart />
-          </div>
         </motion.section>
       </>
     );
