@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy the rest of the source code
 COPY . .
@@ -16,10 +16,10 @@ COPY . .
 RUN npm run build
 
 # Set the port to 3001 (or whatever port you prefer)
-ENV PORT=3000
+ENV PORT=3043
 
 # Expose the custom port
-EXPOSE 3000
+EXPOSE 3043
 
 # Start the application in production mode
 CMD ["npm", "run","start"]
