@@ -253,7 +253,7 @@ function CourseCatalog() {
         loop
         muted
         className="fixed top-0 left-0 w-full h-full object-cover -z-20"
-        style={{ opacity: 0.5 }} // Ajusta el valor según sea necesario
+        style={{ opacity: 1.5 }} // Ajusta el valor según sea necesario
       >
         <source src="/image/background.mp4" type="video/mp4" />
       </motion.video>

@@ -72,7 +72,7 @@ export function Navbar() {
     >
       <div className="container mx-auto flex items-center justify-between px-4 py-2">
         {/* Logo */}
-        <Image width={150} height={100} src={"/image/Universidad.png"} alt={"Grupo Tarahumara"} />
+        <Image width={50} height={25} src={"/image/Universidad.png"} alt={"Grupo Tarahumara"} />
 
         {/* Menú de navegación */}
         <ul className="ml-5 hidden items-center gap-8 lg:flex">

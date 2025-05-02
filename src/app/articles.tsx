@@ -18,7 +18,7 @@ const ARTICLES = [
     img: "/image/Plan.webp",
     title: "Plan de Capacitación",
     desc: "Da clic para conocer el Plan anual de capacitación actualizada.",
-    link: "",
+    link: "https://gpotarahumara-my.sharepoint.com/:x:/g/personal/mariana_perez_grupotarahumara_com_mx/EQ3-FxxGPsVNh60Zw3dmeZ8Bi2HSd6ymFhP-aqy1ogQRIA?e=0EDtU2",
   },
   {
     img: "/image/asistencia.png",
