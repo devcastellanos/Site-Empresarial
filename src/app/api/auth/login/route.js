@@ -16,7 +16,7 @@ export async function POST(req) {
       );
     }
 
-    const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/login', {
+    const response = await fetch('http://localhost:3041/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, num_empleado, password }),

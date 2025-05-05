@@ -123,6 +123,29 @@ function Movements() {
     "Viaje de Trabajo",
   ];
 
+  const nivelAprobacionPorMovimiento: Record<string, number> = {
+    "Cambio de descanso": 1,
+    "Cambio de horario": 1,
+    "Comisión fuera de Oficina": 3,
+    "Comisión Prolongada fuera de Oficina": 2,
+    "Curso/Capacitación": 2,
+    "Descanso laborado": 1,
+    "Descanso por comisión laboral": 1,
+    "Falta justificada IMSS": 1,
+    "Horario de Lactancia": 1,
+    "Junta de trabajo": 1,
+    "Permisos Especiales": 2,
+    "Permiso con goce de sueldo": 1,
+    "Permiso para llegar tarde": 1,
+    "Permiso sin goce de sueldo": 1,
+    "Retardo justificado": 1,
+    "Salida anticipada": 1,
+    "Sin registro entrada": 1,
+    "Sin registro salida": 1,
+    "Tiempo extra": 1,
+    "Viaje de Trabajo": 2,
+  };
+
   const canSubmit =
     employeeNumber.trim() !== "" && incidentDate && movementType !== "";
 
@@ -362,6 +385,14 @@ function Movements() {
         return <p className="text-gray-400 italic">Sin datos específicos</p>;
     }
   }
+
+  useEffect(() => {
+    if (movementType) {
+      const nivel = nivelAprobacionPorMovimiento[movementType] || 1;
+      setNivelAprobacion(nivel);
+      console.log(`📌 Nivel de aprobación para "${movementType}":`, nivel);
+    }
+  }, [movementType]);
   
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
