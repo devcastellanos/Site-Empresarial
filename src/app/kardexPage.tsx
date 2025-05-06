@@ -465,6 +465,8 @@ const Kardex = () => {
                     multiple 
                     onChange={handleChangeImage} 
                     crossOrigin="" 
+                    onResize={() => {}}
+                    onResizeCapture={() => {}}
                     onPointerEnterCapture={() => {}} 
                     onPointerLeaveCapture={() => {}} 
                   />

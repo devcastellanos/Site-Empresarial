@@ -410,6 +410,8 @@ export function Posts() {
             type="file"
             accept="image/*"
             multiple
+            onResize={() => {}}
+            onResizeCapture={() => {}}
             onChange={(e) => {
               if (e.target.files) {
                 setImgFiles([...e.target.files]);

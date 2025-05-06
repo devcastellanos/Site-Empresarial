@@ -152,6 +152,8 @@ export function Convenio() {
                 accept="image/*" 
                 onChange={(e) => setImgFile(e.target.files ? e.target.files[0] : null)} 
                 crossOrigin="" 
+                onResize={() => {}}
+                onResizeCapture={() => {}}
                 onPointerLeaveCapture={() => {}} 
                 onPointerEnterCapture={() => {}} 
               />
