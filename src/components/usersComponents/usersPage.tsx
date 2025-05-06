@@ -35,7 +35,7 @@ const UsuariosPage = () => {
 
   const fetchUsuarios = async () => {
     try {
-      const response = await fetch("http://api-cursos.192.168.29.40.sslip.io/usuarios");
+      const response = await fetch("https://apicursos.in.grupotarahumara.com.mx/usuarios");
       if (!response.ok) throw new Error(`Error: ${response.status}`);
       const data: Usuario[] = await response.json();
       setUsuarios(data);
@@ -58,8 +58,8 @@ const UsuariosPage = () => {
     try {
       const method = usuario.id ? "PUT" : "POST";
       const url = usuario.id
-        ? "http://api-cursos.192.168.29.40.sslip.io/actualizarUsuario"
-        : "http://api-cursos.192.168.29.40.sslip.io/agregarUsuario";
+        ? "https://apicursos.in.grupotarahumara.com.mx/actualizarUsuario"
+        : "https://apicursos.in.grupotarahumara.com.mx/agregarUsuario";
 
       const response = await fetch(url, {
         method,
@@ -80,7 +80,7 @@ const UsuariosPage = () => {
 
   const handleDeleteUsuario = async (id: number) => {
     try {
-      const response = await fetch("http://api-cursos.192.168.29.40.sslip.io/eliminarUsuario", {
+      const response = await fetch("https://apicursos.in.grupotarahumara.com.mx/eliminarUsuario", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
