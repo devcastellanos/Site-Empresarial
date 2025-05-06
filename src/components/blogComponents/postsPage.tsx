@@ -404,14 +404,11 @@ export function Posts() {
           </div>
                 
           <div>
-          <Input
-          crossOrigin="" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}
+          <input
             placeholder="Imagen"
             type="file"
             accept="image/*"
             multiple
-            onResize={() => {}}
-            onResizeCapture={() => {}}
             onChange={(e) => {
               if (e.target.files) {
                 setImgFiles([...e.target.files]);

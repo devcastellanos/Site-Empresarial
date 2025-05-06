@@ -147,15 +147,10 @@ export function Convenio() {
               />
             </div>
             <div className="mb-6">
-              <Input 
+              <input 
                 type="file" 
                 accept="image/*" 
                 onChange={(e) => setImgFile(e.target.files ? e.target.files[0] : null)} 
-                crossOrigin="" 
-                onResize={() => {}}
-                onResizeCapture={() => {}}
-                onPointerLeaveCapture={() => {}} 
-                onPointerEnterCapture={() => {}} 
               />
               {imgFile && <Image src={URL.createObjectURL(imgFile)} alt="Imagen de Convenio" width={200} height={200} className="object-cover self-center" />}
             </div>
