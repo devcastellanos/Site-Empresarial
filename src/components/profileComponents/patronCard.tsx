@@ -6,12 +6,14 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { User } from "@/lib/interfaces";
 import axios from "axios";
+import { useAuth } from "@/app/context/AuthContext";
 
 
 function PatronCard() {
   const cartaRef = useRef<HTMLDivElement>(null);
   const [users, setUsers] = useState<User[]>([]);
-  const [user, setUser] = useState<User | null>(null);
+  const [empleado, setEmpleado] = useState<User | null>(null);
+  const { user } = useAuth();
 
   const fetchUsers = async () => {
     try {
@@ -26,8 +28,8 @@ function PatronCard() {
       setUsers(mappedUsers);
 
       // Buscar usuario directamente después de obtener los datos
-      const dataUser = mappedUsers.find((u: User) => u.Personal === 2294);
-      setUser(dataUser || null);
+      const dataUser = mappedUsers.find((u: User) => u.Personal === user?.num_empleado);
+      setEmpleado(dataUser || null);
 
       if (dataUser) {
         console.log("Usuario encontrado:", dataUser);
@@ -39,28 +41,10 @@ function PatronCard() {
     }
   };
 
-  const getProfile = async () => {
-    try {
-      const response = await axios.get("/api/auth/profile", {
-        withCredentials: true,
-      });
-      const userData = response.data.user;
-      return response.data.user;
-
-    } catch (error) {
-      console.error("Error al obtener perfil:", error);
-      return null;
-    }
-  };
-
   useEffect(() => {
     const fetchData = async () => {
-      const profile = await getProfile();
-
-      if (profile?.rol === "admin") {
+      if (user?.rol === "admin") {
         await fetchUsers(); // Solo admin puede ver otras personas
-      } else {
-        setUser(profile); // Si no es admin, usa su propio perfil
       }
     };
 
@@ -114,12 +98,12 @@ function PatronCard() {
         <p>
           Por medio del presente hago constar que la C.{" "}
           <span className="font-semibold">
-            {user?.Nombre} {user?.ApellidoPaterno} {user?.ApellidoMaterno}
+            {empleado?.Nombre} {empleado?.ApellidoPaterno} {empleado?.ApellidoMaterno}
           </span>
           , con número de colaborador{" "}
-          <span className="font-semibold">{user?.Personal }</span>, contando con NSS{" "}
-          <span className="font-semibold">{user?.NSS}</span>, RFC{" "}
-          <span className="font-semibold">{user?.RFC}</span>, quien labora en la empresa denominada{" "}
+          <span className="font-semibold">{empleado?.Personal }</span>, contando con NSS{" "}
+          <span className="font-semibold">{empleado?.NSS}</span>, RFC{" "}
+          <span className="font-semibold">{empleado?.RFC}</span>, quien labora en la empresa denominada{" "}
           <span className="font-semibold">
             COMERCIALIZADORA DE FRUTAS FINAS TARAHUMARA
           </span>, con RPU{" "}
@@ -128,8 +112,8 @@ function PatronCard() {
             AVENIDA RÍO CHURUBUSCO, NÚMERO 1015-Q A Y B 164, CENTRAL DE ABASTOS,
             IZTAPALAPA, CDMX, C.P. 09040
           </span>, se desempeña en el puesto de{" "}
-          <span className="font-semibold">{user?.Puesto}</span> desde el{" "}
-          <span className="font-semibold">{user?.FechaAlta || user?.FechaAntiguedad}</span>.
+          <span className="font-semibold">{empleado?.Puesto}</span> desde el{" "}
+          <span className="font-semibold">{empleado?.FechaAlta || empleado?.FechaAntiguedad}</span>.
         </p>
 
         <p>

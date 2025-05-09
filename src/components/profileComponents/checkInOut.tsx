@@ -4,35 +4,20 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/app/context/AuthContext";
+import { User } from "@/lib/interfaces";
 
 function RegisterCheckInCheckOut() {
+  const { user } = useAuth();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [filtrarPorFecha, setFiltrarPorFecha] = useState(false);
-  const [registros, setRegistros] = useState<
-    { date: string; type: "Entrada" | "Salida"; time: string }[]
-  >([]);
+  const [registros, setRegistros] = useState<{ date: string; type: "Entrada" | "Salida"; time: string }[]>([]);
   const [asistencias, setAsistencias] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  const user = {
-    personal: 2294,
-    apellidoPaterno: "CASTELLANOS",
-    apellidoMaterno: "CABANILLAS",
-    nombre: "JUAN FRANCISCO",
-    Estatus: "ALTA",
-    puesto: "Ing Desarrollo Jr",
-    departamento: "Sistemas",
-    ingreso: "15/01/2021",
-    periodoTipo: "Quincenal",
-  };
-  
+  const [empleado, setEmpleado] = useState<User | null>(null);
 
   const diasMap: Record<string, string> = {
     "Dom": "Domingo",
@@ -45,19 +30,11 @@ function RegisterCheckInCheckOut() {
     "Sab": "Sábado",
   };
 
-  const formatHora = (hora: string) => {
-    const [h, m] = hora.split(":");
-    const hour = parseInt(h, 10);
-    const minute = parseInt(m, 10);
-    const meridian = hour >= 12 ? "PM" : "AM";
-    const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
-    return `${formattedHour}:${minute.toString().padStart(2, "0")} ${meridian}`;
-  };
-
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAsistencias = async () => {
+      if (!user || !user.num_empleado) return;
       try {
-        const res = await fetch("http://api-checadas.192.168.29.40.sslip.io/asistencia?codigo=2294");
+        const res = await fetch(`http://api-checadas.192.168.29.40.sslip.io/asistencia?codigo=${user.num_empleado}`);
         const data = await res.json();
         setAsistencias(data);
       } catch (error) {
@@ -66,27 +43,36 @@ function RegisterCheckInCheckOut() {
         setLoading(false);
       }
     };
-
-    fetchData();
+  
+    fetchAsistencias();
+  
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [user]);
+
+  useEffect(() => {
+    const fetchEmpleado = async () => {
+      if (!user) return;
+      try {
+        const response = await fetch("http://api-site-intelisis.192.168.29.40.sslip.io/api/users/all");
+        const data = await response.json();
+        const employeeData = data.find((u: any) => Number(u.Personal) === Number(user.num_empleado));
+        setEmpleado(employeeData);
+      } catch (err) {
+        console.error("Error al cargar datos del empleado:", err);
+      }
+    };
+
+    fetchEmpleado();
+  }, [user]);
 
   const esRetardo = (time: string) => {
-    const [hora, minuto, meridiano] =
-      time.match(/(\d+):(\d+)\s(AM|PM)/i)?.slice(1) || [];
+    const [hora, minuto, meridiano] = time.match(/(\d+):(\d+)\s(AM|PM)/i)?.slice(1) || [];
     let horas = parseInt(hora);
     const minutos = parseInt(minuto);
     if (meridiano === "PM" && horas < 12) horas += 12;
     return horas > 7 || (horas === 7 && minutos > 40);
   };
-
-  const registrosFiltrados = registros.filter((r) => {
-    if (filtrarPorFecha && startDate && endDate) {
-      return r.date >= startDate && r.date <= endDate;
-    }
-    return true;
-  });
 
   const getRangoDeFechas = (start: string, end: string) => {
     const fechas = [];
@@ -98,6 +84,13 @@ function RegisterCheckInCheckOut() {
     }
     return fechas;
   };
+
+  const registrosFiltrados = registros.filter((r) => {
+    if (filtrarPorFecha && startDate && endDate) {
+      return r.date >= startDate && r.date <= endDate;
+    }
+    return true;
+  });
 
   const fechasConChecadasIncompletas = new Set<string>();
   const fechasAgrupadas = registrosFiltrados.reduce((acc, reg) => {
@@ -120,25 +113,12 @@ function RegisterCheckInCheckOut() {
           .reverse();
 
   const registrosPorFecha = fechasParaMostrar.map((fecha) => {
-    const entrada = registrosFiltrados.find(
-      (r) => r.date === fecha && r.type === "Entrada"
-    );
-    const salida = registrosFiltrados.find(
-      (r) => r.date === fecha && r.type === "Salida"
-    );
+    const entrada = registrosFiltrados.find((r) => r.date === fecha && r.type === "Entrada");
+    const salida = registrosFiltrados.find((r) => r.date === fecha && r.type === "Salida");
     const retardo = entrada?.time ? esRetardo(entrada.time) : false;
     const incompleta = !entrada || !salida;
     return { fecha, entrada, salida, retardo, incompleta };
   });
-
-  if (loading) {
-    return (
-      <div className="p-6 text-center text-gray-600">
-        Cargando registros de asistencia...
-      </div>
-    );
-  }
-
 
   const asistenciasTotales = asistencias.filter((a) => a.NOMBRE_INCIDENCIA === null && a.CVEINC !== "SD").length;
   const retardosTotales = asistencias.filter((a) => a.NOMBRE_INCIDENCIA === "Retardo E1" && a.CVEINC !== "SD").length;
@@ -152,15 +132,6 @@ function RegisterCheckInCheckOut() {
   if (loading) {
     return <div className="p-6 text-center text-gray-600">Cargando registros de asistencia...</div>;
   }
-
-  const InfoItem = ({ label, value }: { label: string; value: string }) => (
-    <div className="flex flex-col">
-      <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="text-base font-medium">{value}</span>
-    </div>
-  );
-  
-
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
       <Card className="relative rounded-3xl shadow-lg border border-muted bg-white/80 backdrop-blur-md mb-6">
@@ -169,36 +140,36 @@ function RegisterCheckInCheckOut() {
     <Badge
       variant="outline"
       className={`px-3 py-1 text-sm font-medium rounded-full shadow-sm ${
-        user.Estatus === "ALTA"
+        empleado?.Estatus === "ALTA"
           ? "text-green-600 border-green-600"
           : "text-red-600 border-red-600"
       }`}
     >
-      {user.Estatus}
+      {empleado?.Estatus}
     </Badge>
   </div>
 
   <CardHeader className="text-center space-y-3">
     <Avatar className="w-32 h-36 mx-auto shadow-md border">
-      <AvatarImage src={`/api/employees/${user.personal}`} alt="Avatar" />
+      <AvatarImage src={`/api/employees/${empleado?.Personal}`} alt="Avatar" />
       <AvatarFallback>
-        {user.nombre[0]}
-        {user.apellidoPaterno[0]}
+        {empleado?.Nombre}
+        {empleado?.ApellidoPaterno[0]}
       </AvatarFallback>
     </Avatar>
 
     <div>
       <CardTitle className="text-2xl font-semibold tracking-tight">
-        {user.nombre} {user.apellidoPaterno} {user.apellidoMaterno}
+        {empleado?.Nombre} {empleado?.ApellidoPaterno} {empleado?.ApellidoMaterno}
       </CardTitle>
-      <p className="text-muted-foreground text-sm">#{user.personal}</p>
+      <p className="text-muted-foreground text-sm">#{empleado?.Personal}</p>
     </div>
   </CardHeader>
 
   <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 px-6 py-4">
-    <InfoItem label="Puesto" value={user.puesto} />
-    <InfoItem label="Departamento" value={user.departamento} />
-    <InfoItem label="Tipo de Pago" value={user.periodoTipo || "No especificado"} />
+    <InfoItem label="Puesto" value={empleado?.Puesto || ""} />
+    <InfoItem label="Departamento" value={empleado?.Departamento || ""} />
+    <InfoItem label="Tipo de Pago" value={empleado?.PeriodoTipo || "No especificado"} />
   </CardContent>
 </Card>
 
@@ -211,9 +182,9 @@ function RegisterCheckInCheckOut() {
         <CardContent className="space-y-3 text-sm">
           <div>
             <p className="font-semibold text-black">
-              {user.nombre} {user.apellidoPaterno}
+              {empleado?.Nombre} {empleado?.ApellidoPaterno}
             </p>
-            <p className="text-black">{user.puesto}</p>
+            <p className="text-black">{empleado?.Puesto}</p>
           </div>
 
           <Separator className="my-4 h-1 bg-gray-200 rounded-full" />
@@ -236,111 +207,6 @@ function RegisterCheckInCheckOut() {
           </div>
         </CardContent>
       </Card>
-
-      {/* Tabla de registros básicos */}
-      {/* <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
-        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
-          <CardTitle className="text-lg text-center sm:text-left w-full sm:w-auto">
-            Registros de Asistencia
-          </CardTitle>
-          <span className="text-xl font-mono text-gray-600">
-            {currentTime.toLocaleTimeString()}
-          </span>
-        </CardHeader>
-
-        <CardContent className="space-y-6">
-          <div className="space-y-3">
-            <label className="flex items-center gap-2 text-sm font-medium text-black">
-              <input
-                type="checkbox"
-                className="accent-blue-600"
-                checked={filtrarPorFecha}
-                onChange={(e) => setFiltrarPorFecha(e.target.checked)}
-              />
-              Auditar por rango de fechas
-            </label>
-
-            {filtrarPorFecha && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label
-                    htmlFor="startDate"
-                    className="block text-sm text-black mb-1"
-                  >
-                    Fecha inicial
-                  </label>
-                  <input
-                    type="date"
-                    id="startDate"
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm text-black shadow-sm"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="endDate"
-                    className="block text-sm text-black mb-1"
-                  >
-                    Fecha final
-                  </label>
-                  <input
-                    type="date"
-                    id="endDate"
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm text-black shadow-sm"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-          <Separator />
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead>
-                <tr className="bg-gray-100 text-black">
-                  <th className="py-2 px-4">Fecha</th>
-                  <th className="py-2 px-4">Entrada</th>
-                  <th className="py-2 px-4">Salida</th>
-                </tr>
-              </thead>
-              <tbody>
-                {registrosPorFecha.map((r, index) => (
-                  <tr
-                    key={index}
-                    className={`${
-                      r.retardo
-                        ? "bg-red-100"
-                        : r.incompleta
-                        ? "bg-yellow-100"
-                        : "bg-white"
-                    } border-b border-gray-200 text-black`}
-                  >
-                    <td className="py-2 px-4 font-medium">{r.fecha}</td>
-                    <td className="py-2 px-4">
-                      {r.entrada?.time || (
-                        <span className="italic text-red-500">
-                          No registrado
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-2 px-4">
-                      {r.salida?.time || (
-                        <span className="italic text-red-500">
-                          No registrado
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card> */}
 
       {/* Tabla completa de asistencias */}
       <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
@@ -414,7 +280,12 @@ function RegisterCheckInCheckOut() {
     </div>
   );
 }
-
+const InfoItem = ({ label, value }: { label: string; value: string }) => (
+  <div className="flex flex-col">
+    <span className="text-xs text-muted-foreground">{label}</span>
+    <span className="text-base font-medium">{value}</span>
+  </div>
+);
 const InfoBox = ({
   label,
   value,

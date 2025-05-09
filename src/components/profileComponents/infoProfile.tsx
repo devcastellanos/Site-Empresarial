@@ -12,6 +12,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/app/context/AuthContext";
+import React from "react";
+
 
 export interface User {
   Personal: number;
@@ -22,20 +25,34 @@ export interface User {
   Puesto: string;
   Departamento: string;
   PeriodoTipo: string;
+  RFC: string;
+  NSS: string;
+  FechaAntiguedad: string;
+  FechaAlta: string;
 }
-
-const user: User = {
-  Personal: 2294,
-  ApellidoPaterno: "CASTELLANOS",
-  ApellidoMaterno: "CABANILLAS",
-  Nombre: "JUAN FRANCISCO",
-  Estatus: "ALTA",
-  Puesto: "Ing Desarrollo Jr",
-  Departamento: "Sistemas",
-  PeriodoTipo: "Quincenal",
-};
-
 function InfoProfile() {
+  const { user } = useAuth();
+
+const [empleado, setEmpleado] = React.useState<User | null>(null);
+
+
+React.useEffect(() => {
+  const fetchData = async () => {
+      if (!user) return;
+      const response = await fetch(
+        "http://api-site-intelisis.192.168.29.40.sslip.io/api/users/all"
+      );
+      const data = await response.json();
+      const employeeData = data.find((u: any) => Number(u.Personal) === Number(user.num_empleado));
+      setEmpleado(employeeData);
+    };
+  
+    if (user) {
+      fetchData();
+  };
+}, [user]);
+
+
   return (
     <div className="max-w-4xl mx-auto p-6 relative">
       <Card className="relative rounded-3xl shadow-lg border border-muted bg-white/80 backdrop-blur-md">
@@ -44,36 +61,36 @@ function InfoProfile() {
           <Badge
             variant="outline"
             className={`px-3 py-1 text-sm font-medium rounded-full shadow-sm ${
-              user.Estatus === "ALTA"
+              empleado?.Estatus === "ALTA"
                 ? "text-green-600 border-green-600"
                 : "text-red-600 border-red-600"
             }`}
           >
-            {user.Estatus}
+            {empleado?.Estatus || "Desconocido"}
           </Badge>
         </div>
 
         <CardHeader className="text-center space-y-3">
           <Avatar className="w-32 h-36 mx-auto shadow-md border">
-            <AvatarImage src={`/api/employees/${user.Personal}`} alt="Avatar" />
+            <AvatarImage src={`/api/employees/${empleado?.Personal || "default"}`} alt="Avatar" />
             <AvatarFallback>
-              {user.Nombre[0]}
-              {user.ApellidoPaterno[0]}
+              {empleado?.Nombre?.[0] || ""}
+              {empleado?.ApellidoPaterno?.[0] || ""}
             </AvatarFallback>
           </Avatar>
 
           <div>
             <CardTitle className="text-2xl font-semibold tracking-tight">
-              {user.Nombre} {user.ApellidoPaterno} {user.ApellidoMaterno}
+              {empleado?.Nombre || "N/A"} {empleado?.ApellidoPaterno || "N/A"} {empleado?.ApellidoMaterno || "N/A"}
             </CardTitle>
-            <p className="text-muted-foreground text-sm">#{user.Personal}</p>
+            <p className="text-muted-foreground text-sm">#{empleado?.Personal}</p>
           </div>
         </CardHeader>
 
         <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 px-6 py-4">
-          <InfoItem label="Puesto" value={user.Puesto} />
-          <InfoItem label="Departamento" value={user.Departamento} />
-          <InfoItem label="Tipo de Pago" value={user.PeriodoTipo || "No especificado"} />
+          <InfoItem label="Puesto" value={empleado?.Puesto || "N/A"} />
+          <InfoItem label="Departamento" value={empleado?.Departamento || "N/A"} />
+          <InfoItem label="Tipo de Pago" value={empleado?.PeriodoTipo || "No especificado"} />
         </CardContent>
       </Card>
     </div>

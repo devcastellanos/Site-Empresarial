@@ -83,6 +83,7 @@ function Movements() {
   const [hours, setHours] = useState(""); // Define hours state
   const [exitTime, setExitTime] = useState(""); // Define exitTime state
   const [approvalNotes, setApprovalNotes] = useState("");
+  const { user } = useAuth();
 
   const [movementsData, setMovementsData] = useState<{
     pendientes: any[];
@@ -94,7 +95,7 @@ function Movements() {
     propios: [],
   });
 
-  const { user } = useAuth();
+
 
   const [requestStatus, setRequestStatus] = useState<
     "idle" | "submitting" | "success" | "error"

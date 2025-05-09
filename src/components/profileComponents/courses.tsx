@@ -6,10 +6,12 @@ import { Badge } from "@/components/ui/badge";
 
 import { CursoTomado } from "@/lib/interfaces";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/app/context/AuthContext";
 
 function Courses() {
   const [cursosTomados, setCursosTomados] = useState<CursoTomado[]>([]);
   const [filtroStatus, setFiltroStatus] = useState("todos");
+  const { user } = useAuth();
 
   const fetchCourses = async () => {
     try {
@@ -18,7 +20,7 @@ function Courses() {
       );
       const data = await datacourse.json();
       const dataUser = data
-        .filter((course: CursoTomado) => course.id_usuario === 2294)
+        .filter((course: CursoTomado) => course.id_usuario === user?.num_empleado)
         .filter((course: CursoTomado) => course.status === "true");
       setCursosTomados(dataUser);
     } catch (error) {
