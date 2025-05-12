@@ -26,12 +26,14 @@ export async function crearMovimiento(movimiento: any) {
           "Content-Type": "application/json",
         },
       });
+
   
       if (!response.ok) {
         throw new Error("Error obteniendo movimientos pendientes");
       }
   
       const data = await response.json();
+      console.log("Movimientos pendientes:", data);
 return data.movimientos ?? [];
     } catch (error) {
       console.error("❌ Error al obtener movimientos pendientes:", error);
