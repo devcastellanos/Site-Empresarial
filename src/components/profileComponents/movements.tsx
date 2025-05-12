@@ -58,6 +58,8 @@ import {
   obtenerMisMovimientos,
 } from "@/services/movementsService";
 import { useAuth } from "@/app/context/AuthContext";
+import { nivelAprobacionPorMovimiento, movements } from "@/lib/movimientos";
+import { renderDatosJsonPorTipo } from "@/utils/renderDatosJsonPorTipo";
 
 function Movements() {
   const [employeeNumber, setEmployeeNumber] = useState("");
@@ -95,64 +97,17 @@ function Movements() {
     propios: [],
   });
 
-
-
   const [requestStatus, setRequestStatus] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
 
-  const movements = [
-    "Cambio de descanso",
-    "Cambio de horario",
-    "Comisión fuera de Oficina",
-    "Comisión Prolongada fuera de Oficina",
-    "Curso/Capacitación",
-    "Descanso laborado",
-    "Descanso por comisión laboral",
-    "Falta justificada IMSS",
-    "Horario de Lactancia",
-    "Junta de trabajo",
-    "Permisos Especiales",
-    "Permiso con goce de sueldo",
-    "Permiso para llegar tarde",
-    "Permiso sin goce de sueldo",
-    "Retardo justificado",
-    "Salida anticipada",
-    "Sin registro entrada",
-    "Sin registro salida",
-    "Tiempo extra",
-    "Viaje de Trabajo",
-  ];
-
-  const nivelAprobacionPorMovimiento: Record<string, number> = {
-    "Cambio de descanso": 1,
-    "Cambio de horario": 1,
-    "Comisión fuera de Oficina": 3,
-    "Comisión Prolongada fuera de Oficina": 2,
-    "Curso/Capacitación": 2,
-    "Descanso laborado": 1,
-    "Descanso por comisión laboral": 1,
-    "Falta justificada IMSS": 1,
-    "Horario de Lactancia": 1,
-    "Junta de trabajo": 1,
-    "Permisos Especiales": 2,
-    "Permiso con goce de sueldo": 1,
-    "Permiso para llegar tarde": 1,
-    "Permiso sin goce de sueldo": 1,
-    "Retardo justificado": 1,
-    "Salida anticipada": 1,
-    "Sin registro entrada": 1,
-    "Sin registro salida": 1,
-    "Tiempo extra": 1,
-    "Viaje de Trabajo": 2,
-  };
 
   const canSubmit =
     employeeNumber.trim() !== "" && incidentDate && movementType !== "";
 
   useEffect(() => {
     if (!user || user.num_empleado === undefined) return;
-    user.num_empleado = 1847;
+    user.num_empleado = 2294;
 
     async function cargarMovimientos() {
       try {
@@ -243,156 +198,7 @@ function Movements() {
       alert("Error enviando la solicitud");
     }
   };
-  function renderDatosJsonPorTipo(tipo: string, datos: any) {
-    switch (tipo) {
-      case "Cambio de descanso":
-        return (
-          <>
-            <p><strong>Día asignado:</strong> {datos.assignedRestDay}</p>
-            <p><strong>Día solicitado:</strong> {datos.requestedRestDay}</p>
-          </>
-        );
-
-      case "Cambio de horario":
-        return (
-          <>
-            <p><strong>Nuevo horario solicitado:</strong> {datos.newSchedule}</p>
-          </>
-        );
-
-      case "Comisión fuera de Oficina":
-        return (
-          <>
-          </>
-        );
-      case "Comisión Prolongada fuera de Oficina":
-        return (
-          <>
-            <p><strong>Dias de home office:</strong> {datos.homeOfficeDays}</p>
-            <p><strong>Fecha de inicio:</strong> {datos.startDate}</p>
-            <p><strong>Fecha de fin:</strong> {datos.endDate}</p>
-            <p><strong>Fecha de reincorporación:</strong> {datos.resumeDate}</p>
-          </>
-        );
-      case "Descanso laborado":
-        return (
-          <>
-            <p><strong>Día asignado como descanso:</strong> {datos.assignedRestDay}</p>
-            <p><strong>Día laborado como descanso:</strong> {datos.requestedRestDay}</p>
-          </>
-        );
-      case "Viaje de Trabajo":
-        return (
-          <>
-            <p><strong>Ubicación del viaje:</strong> {datos.tripLocation}</p>
-            <p><strong>Inicio:</strong> {datos.startDate}</p>
-            <p><strong>Fin:</strong> {datos.endDate}</p>
-            <p><strong>Reincorporación:</strong> {datos.resumeDate}</p>
-          </>
-        );
-
-      case "Permisos Especiales":
-        let diasDescanso = 0;
-
-        switch (datos.specialType?.toLowerCase()) {
-          case "matrimonio":
-            diasDescanso = 5;
-            break;
-          case "muerte":
-            diasDescanso = 2;
-            break;
-          case "paternidad":
-            diasDescanso = 5;
-            break;
-          default:
-            diasDescanso = 0;
-        }
-
-        return (
-          <>
-            <p><strong>Tipo de permiso especial:</strong> {datos.specialType}</p>
-            <p><strong>Días de descanso asignados:</strong> {diasDescanso}</p>
-          </>
-        );
-      case "Permiso con goce de sueldo":
-        return (
-          <>
-          </>
-        );
-      case "Permiso sin goce de sueldo":
-        return (
-          <>
-            <p><strong>Día solicitado sin goce de sueldo:</strong> {datos.requestedRestDay}</p>
-            <p><strong>Día con goce de sueldo asignado:</strong> {datos.assignedRestDay}</p>
-          </>
-        );
-
-      case "Permiso para llegar tarde":
-        return (
-          <>
-            <p><strong>Hora de entrada:</strong> {datos.entryTime}</p>
-          </>
-        );
-      case "Retardo justificado":
-        return <p><strong>Hora de llegada:</strong> {datos.delayTime}</p>;
-
-      case "Salida anticipada":
-        return <p><strong>Hora de salida anticipada:</strong> {datos.earlyTime}</p>;
-
-      case "Sin registro entrada":
-        return
-      case "Sin registro salida":
-        return
-      case "Horario de Lactancia":
-        return (
-          <>
-            <p><strong>Nuevo horario solicitado:</strong> {datos.newSchedule}</p>
-            <p><strong>Inicio:</strong> {datos.startDate}</p>
-            <p><strong>Fin:</strong> {datos.endDate}</p>
-            <p><strong>Reincorporación:</strong> {datos.resumeDate}</p>
-          </>
-        );
-
-      case "Curso/Capacitación":
-        return (
-          <>
-            <p><strong>Dias de curso:</strong> {datos.trainingDays}</p>
-            <p><strong>Inicio:</strong> {datos.startDate}</p>
-            <p><strong>Fin:</strong> {datos.endDate}</p>
-            <p><strong>Reincorporación:</strong> {datos.resumeDate}</p>
-          </>
-        )
-      case "Junta de trabajo":
-        return (
-          <>
-            <p><strong>Dia de reunión asignado:</strong> {datos.assignedRestDay}</p>
-            <p><strong>Dia de reunión solicitado:</strong> {datos.requestedRestDay}</p>
-          </>
-        );
-
-      case "Falta justificada IMSS":
-      case "Tiempo extra":
-        return (
-          <>
-            <p><strong>Horas extra:</strong> {datos.hours}</p>
-            <p><strong>Hora de entrada:</strong> {datos.entryTime}</p>
-            <p><strong>Hora de salida:</strong> {datos.exitTime}</p>
-          </>
-        );
-
-      default:
-        return <p className="text-gray-400 italic">Sin datos específicos</p>;
-    }
-  }
-
-  useEffect(() => {
-    if (movementType) {
-      const nivel = nivelAprobacionPorMovimiento[movementType] || 1;
-      setNivelAprobacion(nivel);
-      console.log(`📌 Nivel de aprobación para "${movementType}":`, nivel);
-    }
-  }, [movementType]);
-
+ 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
       <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
@@ -501,7 +307,7 @@ function Movements() {
               onClick={async () => {
                 try {
                   await responderAprobacion(
-                    mov.idMovimiento,
+                    mov.idAprobacion,
                     "aprobado",
                     approvalNotes
                   );
