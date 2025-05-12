@@ -150,28 +150,29 @@ function Movements() {
   const canSubmit =
     employeeNumber.trim() !== "" && incidentDate && movementType !== "";
 
-    useEffect(() => {
-      if (!user || user.num_empleado === undefined) return;
-    
-      async function cargarMovimientos() {
-        try {
-          const pendientes = user ? await obtenerMovimientosPendientes(user.num_empleado) : [];
-          const aprobaciones = user ? await obtenerAprobaciones(user.num_empleado) : [];
-          const movimientosPropios = user ? await obtenerMisMovimientos(user.num_empleado) : [];
-          console.log("Movimientos pendientes:", movimientosPropios);
-          setMovementsData({
-            pendientes,
-            aprobaciones,
-            propios: movimientosPropios,
-          });
-        } catch (error) {
-          console.error("Error al cargar movimientos:", error);
-        }
+  useEffect(() => {
+    if (!user || user.num_empleado === undefined) return;
+    user.num_empleado = 1847;
+
+    async function cargarMovimientos() {
+      try {
+        const pendientes = user ? await obtenerMovimientosPendientes(user.num_empleado) : [];
+        const aprobaciones = user ? await obtenerAprobaciones(user.num_empleado) : [];
+        const movimientosPropios = user ? await obtenerMisMovimientos(user.num_empleado) : [];
+        console.log("Movimientos aprobaciones:", pendientes);
+        setMovementsData({
+          pendientes,
+          aprobaciones,
+          propios: movimientosPropios,
+        });
+      } catch (error) {
+        console.error("Error al cargar movimientos:", error);
       }
-    
-      cargarMovimientos();
-    }, [user]);
-    
+    }
+
+    cargarMovimientos();
+  }, [user]);
+
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -251,20 +252,17 @@ function Movements() {
             <p><strong>Día solicitado:</strong> {datos.requestedRestDay}</p>
           </>
         );
-  
+
       case "Cambio de horario":
         return (
           <>
             <p><strong>Nuevo horario solicitado:</strong> {datos.newSchedule}</p>
-
           </>
         );
-  
+
       case "Comisión fuera de Oficina":
         return (
           <>
-
-            
           </>
         );
       case "Comisión Prolongada fuera de Oficina":
@@ -292,30 +290,30 @@ function Movements() {
             <p><strong>Reincorporación:</strong> {datos.resumeDate}</p>
           </>
         );
-  
-        case "Permisos Especiales":
-          let diasDescanso = 0;
-        
-          switch (datos.specialType?.toLowerCase()) {
-            case "matrimonio":
-              diasDescanso = 5;
-              break;
-            case "muerte":
-              diasDescanso = 2;
-              break;
-            case "paternidad":
-              diasDescanso = 5;
-              break;
-            default:
-              diasDescanso = 0;
-          }
-        
-          return (
-            <>
-              <p><strong>Tipo de permiso especial:</strong> {datos.specialType}</p>
-              <p><strong>Días de descanso asignados:</strong> {diasDescanso}</p>
-            </>
-          );
+
+      case "Permisos Especiales":
+        let diasDescanso = 0;
+
+        switch (datos.specialType?.toLowerCase()) {
+          case "matrimonio":
+            diasDescanso = 5;
+            break;
+          case "muerte":
+            diasDescanso = 2;
+            break;
+          case "paternidad":
+            diasDescanso = 5;
+            break;
+          default:
+            diasDescanso = 0;
+        }
+
+        return (
+          <>
+            <p><strong>Tipo de permiso especial:</strong> {datos.specialType}</p>
+            <p><strong>Días de descanso asignados:</strong> {diasDescanso}</p>
+          </>
+        );
       case "Permiso con goce de sueldo":
         return (
           <>
@@ -328,7 +326,7 @@ function Movements() {
             <p><strong>Día con goce de sueldo asignado:</strong> {datos.assignedRestDay}</p>
           </>
         );
-  
+
       case "Permiso para llegar tarde":
         return (
           <>
@@ -337,10 +335,10 @@ function Movements() {
         );
       case "Retardo justificado":
         return <p><strong>Hora de llegada:</strong> {datos.delayTime}</p>;
-  
+
       case "Salida anticipada":
         return <p><strong>Hora de salida anticipada:</strong> {datos.earlyTime}</p>;
-  
+
       case "Sin registro entrada":
         return
       case "Sin registro salida":
@@ -354,7 +352,7 @@ function Movements() {
             <p><strong>Reincorporación:</strong> {datos.resumeDate}</p>
           </>
         );
-  
+
       case "Curso/Capacitación":
         return (
           <>
@@ -371,7 +369,7 @@ function Movements() {
             <p><strong>Dia de reunión solicitado:</strong> {datos.requestedRestDay}</p>
           </>
         );
-  
+
       case "Falta justificada IMSS":
       case "Tiempo extra":
         return (
@@ -381,7 +379,7 @@ function Movements() {
             <p><strong>Hora de salida:</strong> {datos.exitTime}</p>
           </>
         );
-  
+
       default:
         return <p className="text-gray-400 italic">Sin datos específicos</p>;
     }
@@ -394,7 +392,7 @@ function Movements() {
       console.log(`📌 Nivel de aprobación para "${movementType}":`, nivel);
     }
   }, [movementType]);
-  
+
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
       <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
@@ -413,87 +411,149 @@ function Movements() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {movementsData.pendientes.length === 0 ? (
-            <p className="text-gray-500">No tienes movimientos por aprobar</p>
-          ) : (
-            movementsData.pendientes.map((mov, index) => (
-              <Card
-              key={`${mov.id}-${index}`}
-                className="bg-white/95 border rounded-xl shadow-sm p-4 space-y-2"
-              >
-                <div className="flex justify-between items-center">
-                  <p className="font-medium text-gray-800">📄 {mov.tipo}</p>
-                  <p className="text-sm text-gray-600">
-                    {mov.fecha
-                      ? format(new Date(mov.fecha), "PPP", { locale: es })
-                      : "Fecha no disponible"}
-                  </p>
-                </div>
+  {movementsData.pendientes.length === 0 ? (
+    <p className="text-gray-500">No tienes movimientos por aprobar</p>
+  ) : (
+    movementsData.pendientes.map((mov, index) => {
+      const tipo = mov.tipo_movimiento;
+      const resaltado =
+        tipo === "Nueva Posición"
+          ? "border-red-600 bg-red-50 shadow-md"
+          : "border-gray-200";
 
-                <textarea
-                  placeholder="Observaciones del supervisor"
-                  className="w-full mt-2 p-2 border rounded-md"
-                  value={approvalNotes}
-                  onChange={(e) => setApprovalNotes(e.target.value)}
-                />
+      // Historial formateado
+      const aprobadoresPrevios =
+        mov.historial_aprobaciones?.split(",").map((a: string) => {
+          const [orden, estatus, aprobador] = a.trim().split(" ");
+          return `👤 Aprobador #${aprobador} (orden ${orden})`;
+        }) || [];
 
-                <div className="flex gap-2 justify-end mt-2">
-                  <Button
-                    variant="outline"
-                    className="border-green-500 text-green-700"
-                    onClick={async () => {
-                      try {
-                        await responderAprobacion(
-                          mov.id,
-                          "aprobado",
-                          approvalNotes
-                        );
-                        if (user) {
-                          await obtenerMovimientosPendientes(user.num_empleado);
-                        } else {
-                          console.error("User is null");
-                        }
-                        alert(`✅ Aprobado correctamente`);
-                        // Aquí podrías recargar los movimientos
-                      } catch (error) {
-                        console.error(error);
-                        alert("❌ Error al aprobar");
-                      }
-                    }}
-                  >
-                    Aprobar
-                  </Button>
+      const pendientesPrevios =
+        mov.pendientes_previos?.split(",").map((a: string) => {
+          const [orden, estatus, aprobador] = a.trim().split(" ");
+          return `👤 Aprobador pendiente #${aprobador} (orden ${orden})`;
+        }) || [];
 
-                  <Button
-                    variant="outline"
-                    className="border-red-500 text-red-700"
-                    onClick={async () => {
-                      try {
-                        await responderAprobacion(
-                          mov.id,
-                          "rechazado",
-                          approvalNotes
-                        );
-                        if (user) {
-                          await obtenerMovimientosPendientes(user.num_empleado);
-                        } else {
-                          console.error("User is null");
-                        }
-                        alert(`❌ Rechazado correctamente`);
-                        // Aquí podrías recargar los movimientos
-                      } catch (error) {
-                        console.error(error);
-                        alert("❌ Error al rechazar");
-                      }
-                    }}
-                  >
-                    Rechazar
-                  </Button>
-                </div>
-              </Card>
-            ))
+      return (
+        <Card
+          key={`${mov.idMovimiento}-${index}`}
+          className={`rounded-xl border-2 ${resaltado} p-4 space-y-3`}
+        >
+          <div className="flex justify-between items-center">
+            <p className={`text-md font-semibold text-gray-800`}>
+              {tipo === "Nueva Posición" ? "🚨 " : "📄 "}
+              {tipo}
+            </p>
+            <p className="text-sm text-gray-500">
+              {mov.fecha_incidencia
+                ? format(new Date(mov.fecha_incidencia), "PPP", { locale: es })
+                : "Fecha no disponible"}
+            </p>
+          </div>
+
+          <p className="text-sm text-gray-700">
+            <strong>Solicitado por:</strong> 👤 Empleado #{mov.num_empleado}
+          </p>
+
+          {mov.comentarios && (
+            <p className="text-sm text-muted-foreground italic">
+              “{mov.comentarios}”
+            </p>
           )}
-        </CardContent>
+
+          {aprobadoresPrevios.length > 0 && (
+            <div className="text-sm text-green-600">
+              <p className="font-medium">✅ Ya aprobado por:</p>
+              <ul className="list-disc list-inside ml-4">
+                {aprobadoresPrevios.map((ap: string, i: number) => (
+                  <li key={i}>{ap}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {aprobadoresPrevios.length === 0 && (
+            <p className="text-sm text-red-600">
+              ❌ No ha sido aprobado por nadie
+            </p>
+          )}
+          {pendientesPrevios.length > 0 && (
+            <div className="text-sm text-red-600">
+              <p className="font-medium">⏳ Pendiente de:</p>
+              <ul className="list-disc list-inside ml-4">
+                {pendientesPrevios.map((ap: string, i: number) => (
+                  <li key={i}>{ap}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <textarea
+            placeholder="Observaciones del supervisor"
+            className="w-full mt-2 p-2 border rounded-md text-sm"
+            value={approvalNotes}
+            onChange={(e) => setApprovalNotes(e.target.value)}
+          />
+
+          <div className="flex gap-2 justify-end mt-2">
+            <Button
+              variant="outline"
+              className="border-green-500 text-green-700"
+              onClick={async () => {
+                try {
+                  await responderAprobacion(
+                    mov.idMovimiento,
+                    "aprobado",
+                    approvalNotes
+                  );
+                  if (user) {
+                    const pendientesActualizados = await obtenerMovimientosPendientes(user.num_empleado);
+                    setMovementsData((prev) => ({
+                      ...prev,
+                      pendientes: pendientesActualizados,
+                    }));
+                  }
+                  alert(`✅ Aprobado correctamente`);
+                } catch (error) {
+                  console.error(error);
+                  alert("❌ Error al aprobar");
+                }
+              }}
+            >
+              Aprobar
+            </Button>
+
+            <Button
+              variant="outline"
+              className="border-red-500 text-red-700"
+              onClick={async () => {
+                try {
+                  await responderAprobacion(
+                    mov.idMovimiento,
+                    "rechazado",
+                    approvalNotes
+                  );
+                  if (user) {
+                    const pendientesActualizados = await obtenerMovimientosPendientes(user.num_empleado);
+                    setMovementsData((prev) => ({
+                      ...prev,
+                      pendientes: pendientesActualizados,
+                    }));
+                  }
+                  alert(`❌ Rechazado correctamente`);
+                } catch (error) {
+                  console.error(error);
+                  alert("❌ Error al rechazar");
+                }
+              }}
+            >
+              Rechazar
+            </Button>
+          </div>
+        </Card>
+      );
+    })
+  )}
+</CardContent>
       </Card>
 
       <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-6">
@@ -516,30 +576,30 @@ function Movements() {
                   movementsData.propios
                     .filter((mov) => mov.estatus_movimiento === status)
                     .map((mov) => (
-<Card key={mov.idMovimiento} className="bg-white/90 border rounded-xl shadow-sm p-4 space-y-1">
-  <div className="flex justify-between items-center">
-    <p className="font-medium text-gray-800">📄 {mov.tipo_movimiento}</p>
-    <p className="text-sm text-gray-600">
-      {format(new Date(mov.fecha_solicitud), "PPP", { locale: es })}
-    </p>
-  </div>
+                      <Card key={mov.idMovimiento} className="bg-white/90 border rounded-xl shadow-sm p-4 space-y-1">
+                        <div className="flex justify-between items-center">
+                          <p className="font-medium text-gray-800">📄 {mov.tipo_movimiento}</p>
+                          <p className="text-sm text-gray-600">
+                            {format(new Date(mov.fecha_solicitud), "PPP", { locale: es })}
+                          </p>
+                        </div>
 
-  <p className="text-sm text-tinto-500 italic">
-    {mov.estatus === "pendiente" &&
-      `En espera de aprobación de: ${mov.supervisorId}`}
-    {mov.estatus === "aprobado" &&
-      `Aprobado por: ${mov.supervisorId}`}
-    {mov.estatus === "rechazado" &&
-      `Rechazado por: ${mov.supervisorId}`}
-  </p>
+                        <p className="text-sm text-tinto-500 italic">
+                          {mov.estatus === "pendiente" &&
+                            `En espera de aprobación de: ${mov.supervisorId}`}
+                          {mov.estatus === "aprobado" &&
+                            `Aprobado por: ${mov.supervisorId}`}
+                          {mov.estatus === "rechazado" &&
+                            `Rechazado por: ${mov.supervisorId}`}
+                        </p>
 
-  <div className="mt-2 space-y-1 text-sm text-gray-700">
-    {renderDatosJsonPorTipo(mov.tipo_movimiento, mov.datos_json)}
-  </div>
-  <div>
-    <p className="text-sm"> Comentarios: {mov.comentarios}</p>
-  </div>
-</Card>
+                        <div className="mt-2 space-y-1 text-sm text-gray-700">
+                          {renderDatosJsonPorTipo(mov.tipo_movimiento, mov.datos_json)}
+                        </div>
+                        <div>
+                          <p className="text-sm"> Comentarios: {mov.comentarios}</p>
+                        </div>
+                      </Card>
                     ))
                 )}
               </div>

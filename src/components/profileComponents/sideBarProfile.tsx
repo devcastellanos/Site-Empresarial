@@ -7,7 +7,7 @@ import Vacations from "./vacations";
 import Courses from "./courses";
 import Movements from "./movements";
 import PatronCard from "./patronCard";
-import AprovementsPage from "./AprovementsPage";
+import RequisitonsPage from "./requisitionsPage";
 
 function ProfilePage() {
   const [view, setView] = useState("checkin");
@@ -41,20 +41,20 @@ function ProfilePage() {
             <SidebarItem label="Mis Cursos" icon="📘" active={view === "courses"} onClick={() => setView("courses")} />
             <SidebarItem label="Movimientos" icon="🔁" active={view === "movements"} onClick={() => setView("movements")} />
             <SidebarItem label="Carta Patronal" icon="📝" active={view === "patronales"} onClick={() => setView("patronales")} />
-            <SidebarItem label="Aprobaciones" icon="✅" active={view === "aprobaciones"} onClick={() => setView("aprobaciones")} />
+            <SidebarItem label="Requisiciones" icon="📝" active={view === "requisiciones"} onClick={() => setView("requisiciones")} />
           </ul>
         </div>
       </aside>
 
       {/* Contenido principal */}
-      <main className="sm:ml-64 w-full p-6">
-        <div className="backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-6 transition-all">
+      <main className="sm:ml-64 w-full ">
+        <div className="  transition-all">
           {view === "checkin" && <RegisterCheckInCheckOut />}
           {view === "vacations" && <Vacations />}
           {view === "courses" && <Courses />}
           {view === "movements" && <Movements />}
           {view === "patronales" && <PatronCard />}
-          {view === "aprobaciones" && <AprovementsPage />}
+          {view === "requisiciones" && <RequisitonsPage />}
         </div>
       </main>
     </div>
