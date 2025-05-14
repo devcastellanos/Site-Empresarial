@@ -55,19 +55,28 @@ const config: Config = withMT({
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			},
-			  tinto: {
-				50:  "#fdf5f5",
-				100: "#f9e0e0",
-				200: "#f3bcbc",
-				300: "#ea8c8c",
-				400: "#db5a5a",
-				500: "#c73737",
-				600: "#a52828",
-				700: "#861e1e",
-				800: "#6c1919",
-				900: "#541313",
-			  },
-
+  			tinto: {
+  				'50': '#fdf5f5',
+  				'100': '#f9e0e0',
+  				'200': '#f3bcbc',
+  				'300': '#ea8c8c',
+  				'400': '#db5a5a',
+  				'500': '#c73737',
+  				'600': '#a52828',
+  				'700': '#861e1e',
+  				'800': '#6c1919',
+  				'900': '#541313'
+  			},
+  			sidebar: {
+  				DEFAULT: 'hsl(var(--sidebar-background))',
+  				foreground: 'hsl(var(--sidebar-foreground))',
+  				primary: 'hsl(var(--sidebar-primary))',
+  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+  				accent: 'hsl(var(--sidebar-accent))',
+  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+  				border: 'hsl(var(--sidebar-border))',
+  				ring: 'hsl(var(--sidebar-ring))'
+  			}
   		},
   		keyframes: {
   			'accordion-down': {

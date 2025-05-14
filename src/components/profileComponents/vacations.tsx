@@ -151,164 +151,153 @@ function Vacations() {
   );
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6">
-      <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
-        <div className="flex items-center gap-4">
-          <Info className="w-8 h-8 text-blue-600" />
-          <h1 className="text-4xl font-bold tracking-tight text-gray-800 drop-shadow-sm">
-            Vacaciones
-          </h1>
-        </div>
-      </Card>
-
-      {/* Información del empleado y cláusulas legales */}
-      <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
-        <CardHeader>
-          <CardTitle>Información de Vacaciones</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <strong>Fecha de ingreso:</strong>{" "}
-              {format(employeeData.hireDate, "PPP", { locale: es })}
-              <div>
-                <strong>Estado:</strong>{" "}
-                {employeeData.eligible ? (
-                  <Badge variant="default">Apto para vacaciones</Badge>
-                ) : (
-                  <Badge variant="destructive">No apto para vacaciones</Badge>
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <p>
-                <strong>Días disponibles:</strong> {employeeData.remainingDays}{" "}
-                de {employeeData.totalDays}
-              </p>
-              <p>
-                <strong>Próximo incremento:</strong>{" "}
-                {format(employeeData.nextVacationIncrement, "PPP", {
-                  locale: es,
-                })}
-              </p>
-            </div>
-          </div>
-
-          <Separator className="my-2" />
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <InfoBox
-              label="Apto para vacaciones"
-              value={employeeData.eligible ? "Sí" : "No"}
-              icon={employeeData.eligible ? "✅" : "❌"}
-            />
-            <InfoBox
-              label="Días disponibles"
-              value={`${employeeData.remainingDays} días`}
-            />
-            <InfoBox
-              label="Faltan para incremento"
-              value={`${daysUntilNextIncrement} días`}
-            />
-          </div>
-
-          <div className="mt-4">
-            <Label>Progreso anual:</Label>
-            <Progress value={progressValue} className="h-2 mt-2" />
-          </div>
-
-          <Separator className="my-4" />
-
-          <div>
-            <Label className="font-semibold">Cláusulas legales:</Label>
-            <ul className="mt-2 space-y-1 text-sm list-disc pl-5">
-              {legalClauses.map((clause, index) => (
-                <li key={index}>{clause}</li>
-              ))}
-            </ul>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Selección de fechas de vacaciones */}
-      <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
-        <CardHeader>
-          <CardTitle>Selección de días de vacaciones</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex-1">
-              <Calendar
-                mode="multiple"
-                selected={selectedDates}
-                onSelect={handleDateSelect}
-                className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
-                locale={es}
-                disabled={(date) =>
-                  isBefore(date, today) ||
-                  (!selectedDates.some((d) => d.getTime() === date.getTime()) &&
-                    selectedDates.length >= employeeData.remainingDays)
-                }
-              />
-            </div>
-
-            <div className="flex-1 space-y-4">
-              <div>
-                <Label>Días seleccionados: {selectedDates.length}</Label>
-                {selectedDates.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {selectedDates.map((date, index) => (
-                      <Badge
-                        key={index}
-                        variant="outline"
-                        className="text-xs bg-white/95 shadow-md backdrop-blur-sm"
-                      >
-                        {format(date, "dd MMM", { locale: es })}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label>Rango seleccionado:</Label>
-                {selectedDates.length > 0 ? (
-                  <p className="text-center w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm">
-                    {format(selectedDates[0], "PPP", { locale: es })} -{" "}
-                    {format(selectedDates[selectedDates.length - 1], "PPP", {
-                      locale: es,
-                    })}
-                  </p>
-                ) : (
-                  <p className="text-muted-foreground text-sm">
-                    No hay días seleccionados
-                  </p>
-                )}
-              </div>
-
-              <div className="pt-2 border-t">
-                <Label className="text-center">
-                  Días restantes después de esta solicitud:
-                </Label>
-                <p className="text-lg font-semibold text-center">
-                  {employeeData.remainingDays - selectedDates.length} días
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-end mt-4">
-          <Button
-            onClick={handleSubmit}
-            disabled={selectedDates.length === 0}
-            className="px-6 py-2 rounded-xl text-white font-semibold bg-blue-600 hover:bg-blue-700 transition-all shadow-md backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            🚀 Enviar solicitud
-          </Button>
-        </CardFooter>
-      </Card>
+    <div className="max-w-6xl mx-auto p-6 space-y-6">
+  <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
+    <div className="flex items-center gap-4">
+      <Info className="w-8 h-8 text-blue-600" />
+      <h1 className="text-4xl font-bold tracking-tight text-gray-800 drop-shadow-sm">
+        Vacaciones
+      </h1>
     </div>
+  </Card>
+
+  {/* Grid principal con dos columnas */}
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    {/* Columna izquierda - Información de vacaciones */}
+    <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
+      <CardHeader>
+        <CardTitle>Información de Vacaciones</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <strong>Fecha de ingreso:</strong>{" "}
+            {format(employeeData.hireDate, "PPP", { locale: es })}
+            <div>
+              <strong>Estado:</strong>{" "}
+              {employeeData.eligible ? (
+                <Badge variant="default">Apto para vacaciones</Badge>
+              ) : (
+                <Badge variant="destructive">No apto para vacaciones</Badge>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <p>
+              <strong>Días disponibles:</strong> {employeeData.remainingDays} de {employeeData.totalDays}
+            </p>
+            <p>
+              <strong>Próximo incremento:</strong>{" "}
+              {format(employeeData.nextVacationIncrement, "PPP", { locale: es })}
+            </p>
+          </div>
+        </div>
+
+        <Separator className="my-2" />
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <InfoBox label="Apto para vacaciones" value={employeeData.eligible ? "Sí" : "No"} icon={employeeData.eligible ? "✅" : "❌"} />
+          <InfoBox label="Días disponibles" value={`${employeeData.remainingDays} días`} />
+          <InfoBox label="Faltan para incremento" value={`${daysUntilNextIncrement} días`} />
+        </div>
+
+        <div className="mt-4">
+          <Label>Progreso anual:</Label>
+          <Progress value={progressValue} className="h-2 mt-2" />
+        </div>
+
+        <Separator className="my-4" />
+
+        <div>
+          <Label className="font-semibold">Cláusulas legales:</Label>
+          <ul className="mt-2 space-y-1 text-sm list-disc pl-5">
+            {legalClauses.map((clause, index) => (
+              <li key={index}>{clause}</li>
+            ))}
+          </ul>
+        </div>
+      </CardContent>
+    </Card>
+
+    {/* Columna derecha - Selección de fechas */}
+    <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
+      <CardHeader>
+        <CardTitle>Selección de días de vacaciones</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex-1">
+            <Calendar
+              mode="multiple"
+              selected={selectedDates}
+              onSelect={handleDateSelect}
+              className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
+              locale={es}
+              disabled={(date) =>
+                isBefore(date, today) ||
+                (!selectedDates.some((d) => d.getTime() === date.getTime()) &&
+                  selectedDates.length >= employeeData.remainingDays)
+              }
+            />
+          </div>
+
+          <div className="flex-1 space-y-4">
+            <div>
+              <Label>Días seleccionados: {selectedDates.length}</Label>
+              {selectedDates.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {selectedDates.map((date, index) => (
+                    <Badge
+                      key={index}
+                      variant="outline"
+                      className="text-xs bg-white/95 shadow-md backdrop-blur-sm"
+                    >
+                      {format(date, "dd MMM", { locale: es })}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label>Rango seleccionado:</Label>
+              {selectedDates.length > 0 ? (
+                <p className="text-center w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm">
+                  {format(selectedDates[0], "PPP", { locale: es })} -{" "}
+                  {format(selectedDates[selectedDates.length - 1], "PPP", { locale: es })}
+                </p>
+              ) : (
+                <p className="text-muted-foreground text-sm">
+                  No hay días seleccionados
+                </p>
+              )}
+            </div>
+
+            <div className="pt-2 border-t">
+              <Label className="text-center">
+                Días restantes después de esta solicitud:
+              </Label>
+              <p className="text-lg font-semibold text-center">
+                {employeeData.remainingDays - selectedDates.length} días
+              </p>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter className="flex justify-end mt-4">
+        <Button
+          onClick={handleSubmit}
+          disabled={selectedDates.length === 0}
+          className="px-6 py-2 rounded-xl text-white font-semibold bg-blue-600 hover:bg-blue-700 transition-all shadow-md backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          🚀 Enviar solicitud
+        </Button>
+      </CardFooter>
+    </Card>
+  </div>
+</div>
+
   );
 }
 

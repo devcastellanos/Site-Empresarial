@@ -105,28 +105,30 @@ function Movements() {
   const canSubmit =
     employeeNumber.trim() !== "" && incidentDate && movementType !== "";
 
-  useEffect(() => {
-    if (!user || user.num_empleado === undefined) return;
-    
-
-    async function cargarMovimientos() {
-      try {
-        const pendientes = user ? await obtenerMovimientosPendientes(user.num_empleado) : [];
-        const aprobaciones = user ? await obtenerAprobaciones(user.num_empleado) : [];
-        const movimientosPropios = user ? await obtenerMisMovimientos(user.num_empleado) : [];
-        console.log("Movimientos aprobaciones:", pendientes);
-        setMovementsData({
-          pendientes,
-          aprobaciones,
-          propios: movimientosPropios,
-        });
-      } catch (error) {
-        console.error("Error al cargar movimientos:", error);
+    useEffect(() => {
+      if (user?.num_empleado) {
+        setEmployeeNumber(user.num_empleado.toString());
       }
-    }
-
-    cargarMovimientos();
-  }, [user]);
+    
+      async function cargarMovimientos() {
+        try {
+          const pendientes = await obtenerMovimientosPendientes(user.num_empleado);
+          const aprobaciones = await obtenerAprobaciones(user.num_empleado);
+          const movimientosPropios = await obtenerMisMovimientos(user.num_empleado);
+    
+          setMovementsData({
+            pendientes,
+            aprobaciones,
+            propios: movimientosPropios,
+          });
+        } catch (error) {
+          console.error("Error al cargar movimientos:", error);
+        }
+      }
+    
+      if (user?.num_empleado) cargarMovimientos();
+    }, [user]);
+    
 
 function obtenerEstadoAprobaciones(historialDetallado: any[]) {
   if (!Array.isArray(historialDetallado)) return [];
@@ -205,7 +207,7 @@ function obtenerEstadoAprobaciones(historialDetallado: any[]) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6">
+    <div className="max-w-7xl mx-auto p-6">
       <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
         <div className="flex items-center gap-4">
           <Info className="w-8 h-8 text-blue-600" />

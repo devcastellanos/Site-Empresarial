@@ -133,152 +133,142 @@ function RegisterCheckInCheckOut() {
     return <div className="p-6 text-center text-gray-600">Cargando registros de asistencia...</div>;
   }
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
-      <Card className="relative rounded-3xl shadow-lg border border-muted bg-white/80 backdrop-blur-md mb-6">
-  {/* Badge de estatus */}
-  <div className="absolute top-4 right-4">
-    <Badge
-      variant="outline"
-      className={`px-3 py-1 text-sm font-medium rounded-full shadow-sm ${
-        empleado?.Estatus === "ALTA"
-          ? "text-green-600 border-green-600"
-          : "text-red-600 border-red-600"
-      }`}
-    >
-      {empleado?.Estatus}
-    </Badge>
-  </div>
-
-  <CardHeader className="text-center space-y-3">
-    <Avatar className="w-32 h-36 mx-auto shadow-md border">
-      <AvatarImage src={`/api/employees/${empleado?.Personal}`} alt="Avatar" />
-      <AvatarFallback>
-        {empleado?.Nombre}
-        {empleado?.ApellidoPaterno[0]}
-      </AvatarFallback>
-    </Avatar>
-
-    <div>
-      <CardTitle className="text-2xl font-semibold tracking-tight">
-        {empleado?.Nombre} {empleado?.ApellidoPaterno} {empleado?.ApellidoMaterno}
-      </CardTitle>
-      <p className="text-muted-foreground text-sm">#{empleado?.Personal}</p>
-    </div>
-  </CardHeader>
-
-  <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 px-6 py-4">
-    <InfoItem label="Puesto" value={empleado?.Puesto || ""} />
-    <InfoItem label="Departamento" value={empleado?.Departamento || ""} />
-    <InfoItem label="Tipo de Pago" value={empleado?.PeriodoTipo || "No especificado"} />
-  </CardContent>
-</Card>
-
-
-      {/* Info empleado */}
-      <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
-        <CardHeader>
-          <CardTitle>Información del Empleado</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm">
-          <div>
-            <p className="font-semibold text-black">
-              {empleado?.Nombre} {empleado?.ApellidoPaterno}
-            </p>
-            <p className="text-black">{empleado?.Puesto}</p>
-          </div>
-
-          <Separator className="my-4 h-1 bg-gray-200 rounded-full" />
-
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <p className=" font-semibold text-xs text-black">Turno</p>
-              <p className=" text-black">7:30 am - 4:30 pm</p>
+    <div className="max-w-7xl mx-auto p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Columna izquierda - Foto y Resumen */}
+        <div className="space-y-6">
+          {/* Card de Foto y datos principales */}
+          <Card className="relative rounded-3xl shadow-lg border border-muted bg-white/80 backdrop-blur-md">
+            <div className="absolute top-4 right-4">
+              <Badge
+                variant="outline"
+                className={`px-3 py-1 text-sm font-medium rounded-full shadow-sm ${
+                  empleado?.Estatus === "ALTA"
+                    ? "text-green-600 border-green-600"
+                    : "text-red-600 border-red-600"
+                }`}
+              >
+                {empleado?.Estatus}
+              </Badge>
             </div>
-          </div>
+  
+            <CardHeader className="text-center space-y-3">
+              <Avatar className="w-32 h-36 mx-auto shadow-md border">
+                <AvatarImage src={`/api/employees/${empleado?.Personal}`} alt="Avatar" />
+                <AvatarFallback>
+                  {empleado?.Nombre}
+                  {empleado?.ApellidoPaterno[0]}
+                </AvatarFallback>
+              </Avatar>
+  
+              <div>
+                <CardTitle className="text-2xl font-semibold tracking-tight">
+                  {empleado?.Nombre} {empleado?.ApellidoPaterno} {empleado?.ApellidoMaterno}
+                </CardTitle>
+                <p className="text-muted-foreground text-sm">#{empleado?.Personal}</p>
+              </div>
+            </CardHeader>
+  
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 px-6 py-4">
+              <InfoItem label="Puesto" value={empleado?.Puesto || ""} />
+              <InfoItem label="Departamento" value={empleado?.Departamento || ""} />
+              <InfoItem label="Tipo de Pago" value={empleado?.PeriodoTipo || "No especificado"} />
+              <InfoItem label="Turno" value="7:30 am - 4:30 pm" />
+            </CardContent>
+          </Card>
+  
+          {/* Card de Resumen de asistencia */}
+          <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
+            <CardHeader>
+              <CardTitle>Resumen de asistencia</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+  
+              <Separator className="my-4 h-1 bg-gray-200 rounded-full" />
 
-          <Separator className="my-4 h-1 bg-gray-200 rounded-full" />
-
-          <p className="text-sm text-black">Resumen de asistencia</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
-            <InfoBox color="green" label="Asistencias" value={asistenciasTotales.toString()} />
-            <InfoBox color="red" label="Inasistencias" value={inasistenciasTotales.toString()} />
-            <InfoBox color="yellow" label="Retardos" value={retardosTotales.toString()} />
-            <InfoBox color="blue" label="Puntualidad" value={`${puntualidadPorcentaje}%`} />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Tabla completa de asistencias */}
-      <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
-        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
-          <CardTitle className="text-lg text-center sm:text-left w-full sm:w-auto">
-            Registros de Asistencia
-          </CardTitle>
-          <span className="text-xl font-mono text-gray-600">
-            {currentTime.toLocaleTimeString()}
-          </span>
-        </CardHeader>
-
-        <CardContent className="overflow-x-auto">
-          <table className="w-full text-sm text-left border">
-            <thead className="bg-gray-100 text-black">
-              <tr>
-                <th className="py-2 px-4">Fecha</th>
-                <th className="py-2 px-4">Día</th>
-                <th className="py-2 px-4">Entrada Prog.</th>
-                <th className="py-2 px-4">Salida Prog.</th>
-                <th className="py-2 px-4">Tipo Asistencia</th>
-                <th className="py-2 px-4">Incidencia</th>
-              </tr>
-            </thead>
-            <tbody>
-              {asistencias
-                .filter((item) => item.CVEINC !== "SD")
-                .map((item, i) => {
-                  let bgColor = "bg-green-50"; // asistencia normal
-
-                  if (item.NOMBRE_INCIDENCIA === "Retardo E1") {
-                    bgColor = "bg-yellow-50";
-                  } else if (item.NOMBRE_INCIDENCIA && item.NOMBRE_INCIDENCIA !== "Retardo E1") {
-                    bgColor = "bg-red-50";
-                  }
-
-                  if (item.INC === "FINJ") {
-                    bgColor = "bg-purple-50"; // home office sábado
-                  }
-
-                  if (item.CVEINC === "DF") {
-                    bgColor = "bg-blue-50"; // día festivo
-                  }
-
-                  const fechaStr = item.FECHA.split("T")[0];
-                  const diaSemana = diasMap[item.DIA_SEM] || item.DIA_SEM;
-                  
-                  return (
-                    <tr key={i} className={`${bgColor} border-b text-black`}>
-                      <td className="py-2 px-4">{fechaStr}</td>
-                      <td className="py-2 px-4">{diaSemana}</td>
-                      <td className="py-2 px-4">
-                        {item.ENTRADA_PROGRAMADA && item.ENTRADA_PROGRAMADA !== "00:00"
-                          ? item.ENTRADA_PROGRAMADA
-                          : "—"}
-                      </td>
-                      <td className="py-2 px-4">
-                        {item.SALIDA_PROGRAMADA && item.SALIDA_PROGRAMADA !== "00:00"
-                          ? item.SALIDA_PROGRAMADA
-                          : "—"}
-                      </td>
-                      <td className="py-2 px-4">{item.TIPO_ASISTENCIA || "—"}</td>
-                      <td className="py-2 px-4">{item.NOMBRE_INCIDENCIA || "—"}</td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
-        </CardContent>
-      </Card>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+                <InfoBox color="green" label="Asistencias" value={asistenciasTotales.toString()} />
+                <InfoBox color="red" label="Inasistencias" value={inasistenciasTotales.toString()} />
+                <InfoBox color="yellow" label="Retardos" value={retardosTotales.toString()} />
+                <InfoBox color="blue" label="Puntualidad" value={`${puntualidadPorcentaje}%`} />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+  
+        {/* Columna derecha - Tabla de Asistencia */}
+        <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4 h-fit">
+          <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+            <CardTitle className="text-lg text-center sm:text-left w-full sm:w-auto">
+              Registros de Asistencia
+            </CardTitle>
+            <span className="text-xl font-mono text-gray-600">
+              {currentTime.toLocaleTimeString()}
+            </span>
+          </CardHeader>
+  
+          <CardContent className="overflow-x-auto">
+            <table className="w-full text-sm text-left border">
+              <thead className="bg-gray-100 text-black">
+                <tr>
+                  <th className="py-2 px-4">Fecha</th>
+                  <th className="py-2 px-4">Día</th>
+                  <th className="py-2 px-4">Entrada Prog.</th>
+                  <th className="py-2 px-4">Salida Prog.</th>
+                  <th className="py-2 px-4">Tipo Asistencia</th>
+                  <th className="py-2 px-4">Incidencia</th>
+                </tr>
+              </thead>
+              <tbody>
+                {asistencias
+                  .filter((item) => item.CVEINC !== "SD")
+                  .map((item, i) => {
+                    let bgColor = "bg-green-50";
+  
+                    if (item.NOMBRE_INCIDENCIA === "Retardo E1") {
+                      bgColor = "bg-yellow-50";
+                    } else if (item.NOMBRE_INCIDENCIA && item.NOMBRE_INCIDENCIA !== "Retardo E1") {
+                      bgColor = "bg-red-50";
+                    }
+  
+                    if (item.INC === "FINJ") {
+                      bgColor = "bg-purple-50";
+                    }
+  
+                    if (item.CVEINC === "DF") {
+                      bgColor = "bg-blue-50";
+                    }
+  
+                    const fechaStr = item.FECHA.split("T")[0];
+                    const diaSemana = diasMap[item.DIA_SEM] || item.DIA_SEM;
+  
+                    return (
+                      <tr key={i} className={`${bgColor} border-b text-black`}>
+                        <td className="py-2 px-4">{fechaStr}</td>
+                        <td className="py-2 px-4">{diaSemana}</td>
+                        <td className="py-2 px-4">
+                          {item.ENTRADA_PROGRAMADA && item.ENTRADA_PROGRAMADA !== "00:00"
+                            ? item.ENTRADA_PROGRAMADA
+                            : "—"}
+                        </td>
+                        <td className="py-2 px-4">
+                          {item.SALIDA_PROGRAMADA && item.SALIDA_PROGRAMADA !== "00:00"
+                            ? item.SALIDA_PROGRAMADA
+                            : "—"}
+                        </td>
+                        <td className="py-2 px-4">{item.TIPO_ASISTENCIA || "—"}</td>
+                        <td className="py-2 px-4">{item.NOMBRE_INCIDENCIA || "—"}</td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
+  
 }
 const InfoItem = ({ label, value }: { label: string; value: string }) => (
   <div className="flex flex-col">
