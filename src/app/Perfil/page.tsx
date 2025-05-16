@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Page from "@/components/profileComponents/ProfileBar"
 import RegisterCheckInCheckOut from "@/components/profileComponents/checkInOut"
 import Vacations from "@/components/profileComponents/vacations"
 import Courses from "@/components/profileComponents/courses"
@@ -78,7 +77,7 @@ export default function Campaign() {
 
   return (
     <SidebarProvider>
-      <AppSidebar setVista={setVista} vistaActual={vista} />
+      <AppSidebar setVista={(vista: string) => setVista(vista as PerfilVista)} vistaActual={vista} collapsed={false} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 px-4">
           <Breadcrumb>

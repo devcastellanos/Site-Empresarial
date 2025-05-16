@@ -9,7 +9,7 @@ interface AssignDepartmentModalProps {
   departments: string[];
 }
 
-const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, onClose, onAssign, departments }) => {
+export const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, onClose, onAssign, departments }) => {
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [users, setUsers] = useState<{ Personal: string; Nombre: string; ApellidoPaterno: string; ApellidoMaterno: string; Puesto: string }[]>([]);
   const [selectedUsers, setSelectedUsers] = useState(new Set<string>());
@@ -53,7 +53,7 @@ const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, o
     console.log(requestBody);
 
     try {
-      const response = await fetch("http://api-cursos.192.168.29.40.sslip.io/api/cursoDepartamento", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cursoDepartamento`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),

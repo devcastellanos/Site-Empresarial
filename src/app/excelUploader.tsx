@@ -94,7 +94,7 @@
 
       try {
         const res = await fetch(
-          "http://api-cursos.192.168.29.40.sslip.io/updateCargaMasiva",
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/updateCargaMasiva`,
           {
             method: "POST",
             headers: {
@@ -139,7 +139,7 @@
           <source src="/image/background.mp4" type="video/mp4" />
           Tu navegador no soporta videos.
         </motion.video>
-      <Card className="p-8 shadow-2xl bg-white/80 backdrop-blur-lg rounded-2xl w-3/4"
+      <Card className="p-8 shadow-2xl bg-white/80 backdrop-blur-lg rounded-2xl w-[95%]"
         {...({} as any)}
       >
         <Typography

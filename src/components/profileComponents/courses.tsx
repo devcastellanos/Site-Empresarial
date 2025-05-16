@@ -16,7 +16,7 @@ function Courses() {
   const fetchCourses = async () => {
     try {
       const datacourse = await fetch(
-        "http://api-cursos.192.168.29.40.sslip.io/cursostomados"
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/cursostomados`
       );
       const data = await datacourse.json();
       const dataUser = data

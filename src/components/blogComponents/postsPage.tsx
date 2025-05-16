@@ -114,7 +114,7 @@ export function Posts() {
   };
 
   return (
-    <section className="grid min-h-screen place-items-center mt-20 p-10">
+    <section className="min-h-screen flex items-start justify-center px-4 pt-24 pb-12">
       <motion.video
         autoPlay
         loop
@@ -126,7 +126,7 @@ export function Posts() {
       </motion.video>
 
       <Card
-        className="p-10 shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl w-[90%] max-w-full"
+        className="shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl  max-w-full"
         {...({} as any)}
       >
         <CardHeader

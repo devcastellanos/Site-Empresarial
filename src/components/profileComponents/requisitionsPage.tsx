@@ -50,7 +50,7 @@ useEffect(() => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`http://localhost:3041/api/movimientos/requisiciones/${user.num_empleado}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movimientos/requisiciones/${user.num_empleado}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

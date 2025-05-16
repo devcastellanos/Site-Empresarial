@@ -5,7 +5,7 @@ import { da } from "date-fns/locale";
     export const fetchPosts = async (): Promise<Post[]>  => {
       try {
         const response = await fetch(
-          "http://api-cursos.192.168.29.40.sslip.io/posts"
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts`
         );
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
@@ -22,7 +22,7 @@ import { da } from "date-fns/locale";
     export const deletePost = async (idBlog: number, postDeleted: Post | undefined): Promise<boolean> => {
 
         try{
-            const response = await fetch("http://api-cursos.192.168.29.40.sslip.io/EliminarPost",
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/EliminarPost`,
                 {
                     method: "DELETE",
                     headers: {
@@ -71,7 +71,7 @@ export const uploadImages = async (imgFiles: File[], num_empleado: number): Prom
 export const addPost = async (newPost: Post): Promise<Post | null> => {
     try{
         const response = await fetch(
-            "http://api-cursos.192.168.29.40.sslip.io/Agregarpost",
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/Agregarpost`,
             {
               method: "POST",
               headers: {

@@ -70,7 +70,7 @@ const Kardex = () => {
   const fetchUsers = async () => {
     try {
       const response = await fetch(
-        "http://api-site-intelisis.192.168.29.40.sslip.io/api/users/all"
+        `${process.env.NEXT_PUBLIC_API_INTELISIS}/api/users/all`
       );
       const data = await response.json();
       setUsers(
@@ -81,12 +81,12 @@ const Kardex = () => {
       );
 
       const datacourse = await fetch(
-        "http://api-cursos.192.168.29.40.sslip.io/cursostomados"
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/cursostomados`
       );
       setCursosTomados(await datacourse.json());
 
       const fetchCursosPresenciales = await fetch(
-        "http://api-cursos.192.168.29.40.sslip.io/cursosPresenciales"
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/cursosPresenciales`
       );
       if (!fetchCursosPresenciales.ok) {
         throw new Error("Network response was not ok");
@@ -126,7 +126,7 @@ const Kardex = () => {
         console.log("Nuevo curso:", newCourse);
 
         const response = await fetch(
-          "http://api-cursos.192.168.29.40.sslip.io/agregarCursoTomado",
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/agregarCursoTomado`,
           {
             method: "POST",
             headers: {
@@ -162,7 +162,7 @@ const Kardex = () => {
         ]);
 
         const updatedCourses = await fetch(
-          "http://api-cursos.192.168.29.40.sslip.io/cursostomados"
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/cursostomados`
         );
         const coursesData = await updatedCourses.json();
         setCursosTomados(coursesData);
@@ -271,7 +271,7 @@ const Kardex = () => {
   const updateProgress = async () => {
     try {
       const response = await fetch(
-        "http://api-cursos.192.168.29.40.sslip.io/updateProgress",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/updateProgress`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -316,7 +316,7 @@ const Kardex = () => {
   ) => {
     try {
       const response = await fetch(
-        "http://api-cursos.192.168.29.40.sslip.io/eliminarCursoTomado",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/eliminarCursoTomado`,
         {
           method: "DELETE",
           headers: {
@@ -345,7 +345,7 @@ const Kardex = () => {
         )
       );
       const updatedCourses = await fetch(
-        "http://api-cursos.192.168.29.40.sslip.io/cursostomados"
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/cursostomados`
       );
       const coursesData = await updatedCourses.json();
       setCursosTomados(coursesData);

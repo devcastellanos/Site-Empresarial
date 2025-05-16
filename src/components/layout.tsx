@@ -23,7 +23,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </motion.video>
 
         {/* Contenido de la página con un fondo semitransparente para mejorar legibilidad */}
-        <div className="relative z-10 min-h-screen bg-black bg-opacity-50">
+        <div className="relative z-10 min-h-screen ">
           {children}
         </div>
       </div>

@@ -18,7 +18,7 @@ function PatronCard() {
   const fetchUsers = async () => {
     try {
       const response = await fetch(
-        "http://api-site-intelisis.192.168.29.40.sslip.io/api/users/all"
+        `${process.env.NEXT_PUBLIC_API_INTELISIS}/api/users/all`
       );
       const data = await response.json();
       const mappedUsers = data.map((user: any) => ({

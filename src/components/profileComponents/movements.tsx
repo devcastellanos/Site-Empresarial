@@ -111,6 +111,7 @@ function Movements() {
       }
     
       async function cargarMovimientos() {
+        if (!user || !user.num_empleado) return;
         try {
           const pendientes = await obtenerMovimientosPendientes(user.num_empleado);
           const aprobaciones = await obtenerAprobaciones(user.num_empleado);

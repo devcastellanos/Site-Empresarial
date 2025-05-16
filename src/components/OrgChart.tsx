@@ -25,11 +25,6 @@ const people: Person[] = [
         image: "/fotos/yara.jpg",
       },
       {
-        name: "Víctor Monroy",
-        role: "Coord. Relaciones Laborales",
-        image: "/fotos/2100.jpg",
-      },
-      {
         name: "Jesús Yánez",
         role: "Coord. Nóminas",
         image: "/fotos/1444.jpg",
@@ -111,7 +106,7 @@ const PersonCard = ({ person }: { person: Person }) => (
         transition={{ type: "spring", stiffness: 260 }}
         className="cursor-pointer"
       >
-        <Card className="w-48 bg-gray-200/40 dark:bg-gray-800/40 border border-gray-300 dark:border-zinc-700 backdrop-blur-md shadow-md hover:shadow-xl transition-all">
+        <Card className="w-40 bg-gray-200/40 dark:bg-gray-800/40 border border-gray-300 dark:border-zinc-700 backdrop-blur-md shadow-md hover:shadow-xl transition-all">
           <CardContent className="flex flex-col items-center justify-center p-4 space-y-3">
             <img
               src={person.image}
@@ -172,8 +167,8 @@ const OrgChart = () => {
   const especiales = jesus.team?.filter(p => ["Yara Martínez", "Helio García"].includes(p.name)) || []
 
   return (
-    <div className="p-6 max-w-screen-2xl mx-auto bg-white dark:bg-zinc-800 rounded-lg shadow-lg border">
-      <h2 className="text-center text-4xl font-bold mb-10 tracking-tight text-primary">
+    <div className="p-6 max-w-screen-2xl mx-auto dark:bg-zinc-800 rounded-lg shadow-lg ">
+      <h2 className="text-center text-4xl font-bold mb-10 tracking-tight text-primary text-white">
         Capital Humano Tarahumara
       </h2>
 

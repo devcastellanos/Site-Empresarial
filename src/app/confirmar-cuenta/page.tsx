@@ -12,7 +12,7 @@ export default function ConfirmarCuentaPage() {
     const verificarYConfirmar = async () => {
       try {
         // Paso 1: Verificar token sin consumirlo
-        const verif = await axios.get(`http://localhost:3041/api/verificar-token?token=${token}`);
+        const verif = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/verificar-token?token=${token}`);
         if (!verif.data.success) return setEstado("error");
 
         // Mostrar delay visual
@@ -20,7 +20,7 @@ export default function ConfirmarCuentaPage() {
         await new Promise((res) => setTimeout(res, 1500));
 
         // Paso 2: Confirmar y activar la cuenta
-        const confirm = await axios.post(`http://localhost:3041/api/confirmar-cuenta`, { token });
+        const confirm = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/confirmar-cuenta`, { token });
         if (confirm.data.success) {
           setEstado("exito");
         } else {

@@ -145,7 +145,14 @@ export function Login() {
           />
         </div>
 
-        <Card className="rounded-3xl bg-white/5 backdrop-blur-lg border border-white/10 p-10 shadow-2xl text-white">
+        <Card
+          className="rounded-3xl bg-white/5 backdrop-blur-lg border border-white/10 p-10 shadow-2xl text-white"
+          placeholder=""
+          onResize={() => {}}
+          onResizeCapture={() => {}}
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
+        >
           <h3 className="text-center font-bold text-2xl mb-4">Bienvenido</h3>
           <p className="text-center text-gray-300 text-sm mb-6">
             Inicia sesión con tu correo o número de empleado
@@ -162,6 +169,8 @@ export function Login() {
               containerProps={{ className: "min-w-full" }}
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             />
 
             {empleadoValido !== null && (
@@ -183,6 +192,9 @@ export function Login() {
               containerProps={{ className: "min-w-full" }}
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             />
 
             <Button
@@ -194,6 +206,9 @@ export function Login() {
               ripple={false}
               onPointerEnterCapture={() => {}}
               onPointerLeaveCapture={() => {}}
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               {isLoading ? "Cargando..." : "INICIAR SESIÓN"}
             </Button>
@@ -204,7 +219,11 @@ export function Login() {
               onClick={openRegistroModal}
               className="border-white text-white hover:bg-white/10 transition duration-300 rounded-lg"
               ripple={false}
-              crossOrigin=""
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               CREAR CUENTA NUEVA
             </Button>
@@ -217,7 +236,12 @@ export function Login() {
       </motion.div>
 
       {/* DIALOG DE REGISTRO */}
-      <Dialog open={openModal} handler={setOpenModal} size="xs" className="bg-transparent shadow-none" dismiss={{ enabled: true }}>
+      <Dialog open={openModal} handler={setOpenModal} size="xs" className="bg-transparent shadow-none" dismiss={{ enabled: true }}
+      onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}>
         <div className="w-screen max-w-sm mx-auto rounded-2xl bg-black/60 backdrop-blur-xl border border-white/10 p-6 shadow-2xl text-white">
           <div className="flex justify-center mb-8">
             <Image
@@ -236,6 +260,11 @@ export function Login() {
             <div className="flex flex-col space-y-1">
               <label className="text-white text-sm font-medium">Número de empleado</label>
               <Input
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
                 value={registroEmpleado}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -260,6 +289,11 @@ export function Login() {
                 onChange={(e) => setRegistroPassword(e.target.value)}
                 crossOrigin=""
                 className="bg-white/10 text-white placeholder:text-gray-300 border border-white/20 rounded-md"
+                onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
               />
             </div>
 
@@ -273,6 +307,11 @@ export function Login() {
                 success={registroConfirmar !== "" && registroPassword === registroConfirmar}
                 crossOrigin=""
                 className="bg-white/10 text-white placeholder:text-gray-300 border border-white/20 rounded-md"
+                onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
               />
               {registroConfirmar && registroPassword !== registroConfirmar && (
                 <p className="text-sm text-red-400">Las contraseñas no coinciden</p>
@@ -286,7 +325,11 @@ export function Login() {
               onClick={() => setOpenModal(false)}
               className="text-gray-300 hover:text-white"
               ripple={false}
-              crossOrigin=""
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               Cancelar
             </Button>
@@ -300,7 +343,11 @@ export function Login() {
               className="text-white px-4 py-2 font-semibold rounded-md hover:opacity-90"
               style={{ backgroundColor: "#9A3324" }}
               ripple={false}
-              crossOrigin=""
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
+              placeholder=""
+              onResize={() => {}}
+              onResizeCapture={() => {}}
             >
               Registrar
             </Button>

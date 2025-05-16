@@ -90,7 +90,7 @@ function Vacations() {
     console.log("Perfil del empleado:", user);
 
     try {
-      const response = await fetch("http://api-cursos.192.168.29.40.sslip.io/vacaciones", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/vacaciones`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

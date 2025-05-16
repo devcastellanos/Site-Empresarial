@@ -67,7 +67,7 @@ export function AppSidebar({
     const fetchEmpleado = async () => {
       if (!user?.num_empleado) return
       try {
-        const res = await fetch("http://api-site-intelisis.192.168.29.40.sslip.io/api/users/all")
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_INTELISIS}/api/users/all`)
         const data = await res.json()
         const empleadoMatch = data.find(
           (e: any) => Number(e.Personal) === Number(user.num_empleado)
@@ -94,7 +94,7 @@ export function AppSidebar({
       }
 
   return (
-    <Sidebar collapsible="icon" collapsed={collapsed} {...props}>
+    <Sidebar collapsible="icon" {...props} className={collapsed ? "collapsed-class" : ""}>
       <SidebarHeader>
         <TeamSwitcher teams={teams} />
       </SidebarHeader>

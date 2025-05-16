@@ -122,7 +122,7 @@ export function BlogPostCard({
 
     try {
       const response = await fetch(
-        "http://api-cursos.192.168.29.40.sslip.io/ActualizarPost",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/ActualizarPost`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

@@ -51,7 +51,7 @@ function CourseCatalog() {
     const fetchData = async () => {
       try {
         const fetchCursosPresenciales = await fetch(
-          "http://api-cursos.192.168.29.40.sslip.io/cursosPresenciales"
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/cursosPresenciales`
         );
 
         if (!fetchCursosPresenciales.ok) {
@@ -76,7 +76,7 @@ function CourseCatalog() {
   const fetchDepartments = async () => {
     try {
       const response = await fetch(
-        "http://api-site-intelisis.192.168.29.40.sslip.io/api/departments"
+        `${process.env.NEXT_PUBLIC_API_INTELISIS}/api/departments`
       );
       const data = await response.json();
 
@@ -151,7 +151,7 @@ function CourseCatalog() {
 
     try {
       const response = await fetch(
-        "http://api-cursos.192.168.29.40.sslip.io/actualizarCurso",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/actualizarCurso`,
         {
           method: "POST", // Método HTTP
           headers: {
@@ -195,7 +195,7 @@ function CourseCatalog() {
   const handleDeleteDatabase = async (delet: CourseJson) => {
     try {
       const response = await fetch(
-        "http://api-cursos.192.168.29.40.sslip.io/eliminarCurso",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/eliminarCurso`,
         {
           method: "POST",
           headers: {
@@ -261,7 +261,7 @@ function CourseCatalog() {
       </motion.video>
 
       <Card
-        className="p-8 shadow-2xl bg-white/80 backdrop-blur-lg rounded-2xl w-3/4"
+        className=" bg-white/80 backdrop-blur-lg rounded-2xl w-[95%]"
         {...({} as any)}
       >
         <div style={styles.container}>
