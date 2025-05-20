@@ -31,7 +31,8 @@ export function ExtendedAssignmentFields({
 }: ExtendedAssignmentFieldsProps) {
   return (
     <div className="space-y-4">
-      <div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="col-span-1">
         <Label>Días de home office *</Label>
         <Input
           type="number"
@@ -42,9 +43,10 @@ export function ExtendedAssignmentFields({
           required
           className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
         />
-      </div>
+        </div>
+        
 
-      <div>
+        <div className="col-span-1">
         <Label>Fecha de inicio *</Label>
         <Input
           type="date"
@@ -53,6 +55,9 @@ export function ExtendedAssignmentFields({
           required
           className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
         />
+        </div>
+
+        
       </div>
 
       <div>

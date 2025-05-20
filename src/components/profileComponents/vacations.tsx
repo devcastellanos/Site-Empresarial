@@ -17,10 +17,12 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Calendar as CalendarIcon, Info } from "lucide-react";
 import { useState, useEffect } from "react";
-import { format, differenceInDays, isBefore } from "date-fns";
-import { es } from "date-fns/locale";
+import { differenceInDays, isBefore } from "date-fns";
+import { es, fr } from "date-fns/locale";
 import { useAuth } from "../../app/context/AuthContext";
 import axios from "axios";
+import { User } from "@/lib/interfaces";
+import { parse, format } from "date-fns";
 
 function Vacations() {
   // Estados principales
@@ -35,16 +37,64 @@ function Vacations() {
   const nivel_aprobacion = 1; // define cuántos aprobadores requiere este tipo
   const [comments, setComments] = useState<string>("");
   const { user } = useAuth();
+  const [empleado, setEmpleado] = useState<User | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
 
-  // Datos simulados del empleado
-  const [employeeData, setEmployeeData] = useState({
-    hireDate: new Date(2024, 1, 1),
-    eligible: true,
+
+     const fetchUsers = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_INTELISIS}/api/users/all`
+        );
+        const data = await response.json();
+        const mappedUsers = data.map((user: any) => ({
+          ...user,
+          Personal: Number(user.Personal),
+        }));
+        setUsers(mappedUsers);
+        // Buscar usuario directamente después de obtener los datos
+        if(user){
+          user.num_empleado = 2294;
+        }
+        const dataUser = mappedUsers.find((u: User) => u.Personal === user?.num_empleado);
+        setEmpleado(dataUser || null);
+  
+        if (dataUser) {
+          console.log("Usuario encontrado:", dataUser);
+        } else {
+          console.log("Usuario no encontrado");
+        }
+      } catch (error) {
+        console.error("Error al obtener usuarios:", error);
+      }
+    };
+
+  useEffect(() => {
+    console.log("User:", user);
+    if (user) {
+      setEmployeeNumber(user.num_empleado);
+    }
+    fetchUsers();
+
+  }, [user]);
+  // Datos del empleado
+  const rawHireDate = empleado?.FechaAlta;
+  const parsedHireDate = rawHireDate
+    ? parse(rawHireDate, "dd/MM/yyyy", new Date())
+    : new Date();
+  
+  const employeeData = {
     totalDays: 12,
-    takenDays: 5,
+    hireDate: parsedHireDate,
+    eligible: true,
     remainingDays: 7,
-    nextVacationIncrement: new Date(2026, 1, 1),
-  });
+    nextVacationIncrement: new Date(
+      new Date().getFullYear() + 1,
+      0,
+      1
+    ),
+  };
+
 
   // Clausulas legales
   const legalClauses = [
@@ -55,12 +105,20 @@ function Vacations() {
     "El patrón podrá dividir el periodo vacacional a petición del trabajador.",
   ];
 
-  // Calcular días hasta próximo incremento
+  // Calcular días hasta próximo incremento desde hoy hasta el primer dia del proximo año
+  const nextVacationIncrement = new Date(
+    new Date().getFullYear() + 1,
+    0,
+    1
+  );
   const today = new Date();
-  const rawDays = differenceInDays(employeeData.nextVacationIncrement, today);
-  const daysUntilNextIncrement = rawDays > 0 ? rawDays : 0;
 
-  const progressValue = ((365 - daysUntilNextIncrement) / 365) * 100;
+  const daysUntilNextIncrement = differenceInDays(
+    nextVacationIncrement,
+    today
+  );
+
+ 
 
   // Manejar selección de fechas
   const handleDateSelect = (dates: Date[] | undefined) => {
@@ -68,13 +126,6 @@ function Vacations() {
       setSelectedDates(dates);
     }
   };
-
-  useEffect(() => {
-    console.log("User:", user);
-    if (user) {
-      setEmployeeNumber(user.num_empleado);
-    }
-  }, [user]);
 
 
   // Manejar envío de solicitud
@@ -131,6 +182,12 @@ function Vacations() {
     }
   };
 
+  // Calcular el progreso de días usados respecto al total de días disponibles
+  const progressValue =
+    employeeData.totalDays > 0
+      ? ((employeeData.totalDays - employeeData.remainingDays) / employeeData.totalDays) * 100
+      : 0;
+
   // Componente InfoBox mejorado
   const InfoBox = ({
     label,
@@ -172,14 +229,21 @@ function Vacations() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <strong>Fecha de ingreso:</strong>{" "}
-            {format(employeeData.hireDate, "PPP", { locale: es })}
+            {employeeData.hireDate && !isNaN(new Date(employeeData.hireDate).getTime()) ?
+            format(employeeData.hireDate, "PPP", { locale: es })
+            : "Fecha no válida" 
+            }
+
             <div>
-              <strong>Estado:</strong>{" "}
-              {employeeData.eligible ? (
-                <Badge variant="default">Apto para vacaciones</Badge>
-              ) : (
-                <Badge variant="destructive">No apto para vacaciones</Badge>
-              )}
+              <strong>Tipo de movimiento:</strong> {tipoMovimiento}
+              <div>
+                <strong>Estado:</strong>{" "}
+                {employeeData.eligible ? (
+                  <Badge variant="default">Apto para vacaciones</Badge>
+                ) : (
+                  <Badge variant="destructive">No apto para vacaciones</Badge>
+                )}
+              </div>
             </div>
           </div>
 

@@ -61,7 +61,6 @@ function RegisterCheckInCheckOut() {
     };
     const fetchAsistencias = async () => {
       if (!user || !user.num_empleado) return;
-      user.num_empleado = 2294;
       try {
         const res = await fetch(`http://api-checadas.192.168.29.40.sslip.io/asistencia?codigo=${user.num_empleado}`);
         const data = await res.json();
@@ -281,11 +280,13 @@ function RegisterCheckInCheckOut() {
             </div>
 
             <CardHeader className="text-center space-y-3">
-              <Avatar className="w-32 h-36 mx-auto shadow-md border">
-                <AvatarImage src={`/api/employees/${empleado?.Personal}`} alt="Avatar" />
+              <Avatar>
+                {empleado?.Personal ? (
+                  <AvatarImage src={`/api/employees/${empleado.Personal}`} alt="Avatar" />
+                ) : null}
                 <AvatarFallback>
                   {empleado?.Nombre}
-                  {empleado?.ApellidoPaterno[0]}
+                  {empleado?.ApellidoPaterno?.[0]}
                 </AvatarFallback>
               </Avatar>
 
@@ -386,14 +387,14 @@ function RegisterCheckInCheckOut() {
                           {item.SALIDA_PROGRAMADA && item.SALIDA_PROGRAMADA !== "00:00" ? item.SALIDA_PROGRAMADA : "—"}
                         </td>
                         <td className="py-2 px-4">{item.TIPO_ASISTENCIA || "—"}</td>
+
                         <td className="py-2 px-4 italic text-sm">
-                          <td className="py-2 px-4 italic text-sm">
                           {estatus === "📤 Solicitado"
                             ? `Movimiento "${tipoMovimiento}" en proceso`
                             : estatus === "✅ Aprobado"
                             ? `Movimiento "${tipoMovimiento}" aprobado`
                             : item.NOMBRE_INCIDENCIA || "—"}
-                        </td>
+
                         </td>
                         <td className="py-2 px-4">{estatus || "—"}</td>
                         <td className="py-2 px-4">

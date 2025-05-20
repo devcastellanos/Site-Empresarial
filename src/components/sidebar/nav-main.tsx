@@ -20,6 +20,7 @@ import {
 
 export function NavMain({
   items,
+  setVista,
 }: {
   items: {
     title: string
@@ -31,6 +32,7 @@ export function NavMain({
       url: string
     }[]
   }[]
+  setVista: (vista: string) => void
 }) {
   return (
     <SidebarGroup>
@@ -53,15 +55,25 @@ export function NavMain({
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <SidebarMenuSub>
-                  {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </a>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
+                  {item.items?.map((subItem) => {
+                    const anchor = subItem.url.split("#")[1] // obtenemos solo 'perfil', 'vacaciones', etc.
+
+                    return (
+                      <SidebarMenuSubItem key={subItem.title}>
+                        <SidebarMenuSubButton
+                          asChild
+                          onClick={(e) => {
+                            e.preventDefault()
+                            if (anchor) setVista(anchor)
+                          }}
+                        >
+                          <a href={subItem.url}>
+                            <span>{subItem.title}</span>
+                          </a>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    )
+                  })}
                 </SidebarMenuSub>
               </CollapsibleContent>
             </SidebarMenuItem>

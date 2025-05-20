@@ -29,6 +29,7 @@ export function Login() {
   const [registroConfirmar, setRegistroConfirmar] = useState("");
   const [registroInfo, setRegistroInfo] = useState<any>(null);
   const [registroValido, setRegistroValido] = useState<boolean | null>(null);
+  const [esNumeroEmpleado, setEsNumeroEmpleado] = useState(false);
 
   const validarEmpleado = async (numEmpleado: string) => {
     try {
@@ -46,38 +47,52 @@ export function Login() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setEmail(value);
-    if (!isNaN(Number(value)) && value.trim() !== "") {
-      validarEmpleado(value);
-    } else {
-      setEmpleadoValido(null);
-      setInfoEmpleado(null);
-    }
-  };
+const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const value = e.target.value;
+  setEmail(value);
+  const esNumero = !isNaN(Number(value)) && value.trim() !== "";
+  if (esNumero) {
+    setEmpleadoValido(null); // Limpia estado mientras valida
+    validarEmpleado(value);
+  } else {
+    setEmpleadoValido(true); // Habilita login por correo
+  }
+};
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Swal.fire("Campos requeridos", "Completa todos los campos", "warning");
-      return;
-    }
+const handleLogin = async () => {
+  if (!email || !password) {
+    Swal.fire("Campos requeridos", "Completa todos los campos", "warning");
+    return;
+  }
 
-    setIsLoading(true);
-    const payload = isNaN(Number(email)) ? { email, password } : { num_empleado: email, password };
+  const esNumero = !isNaN(Number(email));
+  if (esNumero && !empleadoValido) {
+    Swal.fire("Empleado inválido", "El número de empleado no es válido", "error");
+    return;
+  }
 
-    try {
-      const response = await axios.post("/api/auth/login", payload, { withCredentials: true });
-      if (response.status === 200) {
-        login();
-        Swal.fire("Bienvenido", "Inicio de sesión exitoso", "success").then(() => router.push("/"));
-      } else throw new Error();
-    } catch {
-      Swal.fire("Error", "Credenciales incorrectas o fallo del servidor", "error");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  setIsLoading(true);
+  const payload = esNumero
+    ? { num_empleado: email, password }
+    : { email, password };
+
+  try {
+    const response = await axios.post("/api/auth/login", payload, {
+      withCredentials: true,
+    });
+    if (response.status === 200) {
+      login();
+      Swal.fire("Bienvenido", "Inicio de sesión exitoso", "success").then(() =>
+        router.push("/")
+      );
+    } else throw new Error();
+  } catch {
+    Swal.fire("Error", "Credenciales incorrectas o fallo del servidor", "error");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const openRegistroModal = () => {
     setRegistroEmpleado("");
@@ -172,14 +187,14 @@ export function Login() {
               onResize={() => {}}
               onResizeCapture={() => {}}
             />
-
-            {empleadoValido !== null && (
+            {esNumeroEmpleado && empleadoValido !== null && (
               <p className={`text-sm ${empleadoValido ? "text-green-400" : "text-red-400"}`}>
                 {empleadoValido
                   ? `Empleado válido: ${infoEmpleado?.NombreCompleto ?? ""}`
                   : "Número de empleado no válido"}
               </p>
             )}
+
 
             <Input
               label="Contraseña"
@@ -196,11 +211,11 @@ export function Login() {
               onResize={() => {}}
               onResizeCapture={() => {}}
             />
-
+            
             <Button
               fullWidth
               onClick={handleLogin}
-              disabled={isLoading}
+              disabled={isLoading || email.trim() === "" || password.trim() === ""}
               className="text-white font-bold py-2 transition duration-300 rounded-lg"
               style={{ backgroundColor: "#9A3324" }}
               ripple={false}
@@ -209,6 +224,7 @@ export function Login() {
               placeholder=""
               onResize={() => {}}
               onResizeCapture={() => {}}
+              
             >
               {isLoading ? "Cargando..." : "INICIAR SESIÓN"}
             </Button>

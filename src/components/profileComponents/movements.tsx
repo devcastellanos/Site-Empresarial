@@ -105,37 +105,37 @@ function Movements() {
   const canSubmit =
     employeeNumber.trim() !== "" && incidentDate && movementType !== "";
 
-    useEffect(() => {
-      if (user?.num_empleado) {
-        setEmployeeNumber(user.num_empleado.toString());
-      }
-    
-      async function cargarMovimientos() {
-        if (!user || !user.num_empleado) return;
-        try {
-          const pendientes = await obtenerMovimientosPendientes(user.num_empleado);
-          const aprobaciones = await obtenerAprobaciones(user.num_empleado);
-          const movimientosPropios = await obtenerMisMovimientos(user.num_empleado);
-    
-          setMovementsData({
-            pendientes,
-            aprobaciones,
-            propios: movimientosPropios,
-          });
-        } catch (error) {
-          console.error("Error al cargar movimientos:", error);
-        }
-      }
-    
-      if (user?.num_empleado) cargarMovimientos();
-    }, [user]);
-    
+  useEffect(() => {
+    if (user?.num_empleado) {
+      setEmployeeNumber(user.num_empleado.toString());
+    }
 
-function obtenerEstadoAprobaciones(historialDetallado: any[]) {
-  if (!Array.isArray(historialDetallado)) return [];
+    async function cargarMovimientos() {
+      if (!user || !user.num_empleado) return;
+      try {
+        const pendientes = await obtenerMovimientosPendientes(user.num_empleado);
+        const aprobaciones = await obtenerAprobaciones(user.num_empleado);
+        const movimientosPropios = await obtenerMisMovimientos(user.num_empleado);
 
-  return historialDetallado.sort((a, b) => Number(a.orden) - Number(b.orden));
-}
+        setMovementsData({
+          pendientes,
+          aprobaciones,
+          propios: movimientosPropios,
+        });
+      } catch (error) {
+        console.error("Error al cargar movimientos:", error);
+      }
+    }
+
+    if (user?.num_empleado) cargarMovimientos();
+  }, [user]);
+
+
+  function obtenerEstadoAprobaciones(historialDetallado: any[]) {
+    if (!Array.isArray(historialDetallado)) return [];
+
+    return historialDetallado.sort((a, b) => Number(a.orden) - Number(b.orden));
+  }
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -147,7 +147,7 @@ function obtenerEstadoAprobaciones(historialDetallado: any[]) {
       const movimientoPayload = {
         num_empleado: employeeNumber,
         tipo_movimiento: movementType,
-        nivel_aprobacion: nivel_aprobacion,
+        nivel_aprobacion: nivelAprobacionPorMovimiento[movementType] || 1,
         fecha_incidencia: incidentDate
           ? incidentDate.toISOString().slice(0, 10)
           : "",
@@ -208,8 +208,8 @@ function obtenerEstadoAprobaciones(historialDetallado: any[]) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
+    <div className="max-w-7xl mx-auto p-6   lg:grid grid-cols-4 gap-6">
+      <Card className="col-span-4 mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
         <div className="flex items-center gap-4">
           <Info className="w-8 h-8 text-blue-600" />
           <h1 className="text-4xl font-bold tracking-tight text-gray-800 drop-shadow-sm">
@@ -218,224 +218,15 @@ function obtenerEstadoAprobaciones(historialDetallado: any[]) {
         </div>
       </Card>
 
-      <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-6">
-        <CardHeader>
-          <CardTitle className="text-xl">
-            Movimientos que debes aprobar
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {movementsData.pendientes.length === 0 ? (
-            <p className="text-gray-500">No tienes movimientos por aprobar</p>
-          ) : (
-            movementsData.pendientes.map((mov, index) => {
-              const tipo = mov.tipo_movimiento;
-              const resaltado =
-                tipo === "Nueva Posición"
-                  ? "border-red-600 bg-red-50 shadow-md"
-                  : "border-gray-200";
-
-              // Historial formateado
-              const aprobadoresPrevios = mov.historial_aprobaciones_detallado?.map((a: any) => {
-                return `✅ ${a.nombre} (Nivel ${a.orden})`;
-              }) || [];
-
-              const pendientesPrevios = mov.pendientes_previos_detallado?.map((a: any) => {
-                return `⏳ Pendiente: ${a.nombre} (Nivel ${a.orden})`;
-              }) || [];
-
-              return (
-                <Card
-                  key={`${mov.idMovimiento}-${index}`}
-                  className={`rounded-xl border-2 ${resaltado} p-4 space-y-3`}
-                >
-                  <div className="flex justify-between items-center">
-                    <p className={`text-md font-semibold text-gray-800`}>
-                      {tipo === "Nueva Posición" ? "🚨 " : "📄 "}
-                      {tipo}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {mov.fecha_incidencia
-                        ? format(new Date(mov.fecha_incidencia), "PPP", { locale: es })
-                        : "Fecha no disponible"}
-                    </p>
-                  </div>
-
-                  <p className="text-sm text-gray-700">
-                    <strong>Solicitado por:</strong> 👤 Empleado #{mov.num_empleado} {mov.nombre_solicitante}
-                  </p>
-
-                  {mov.comentarios && (
-                    <p className="text-sm text-muted-foreground italic">
-                      “{mov.comentarios}”
-                    </p>
-                  )}
-
-                  {aprobadoresPrevios.length > 0 && (
-                    <div className="text-sm text-green-600">
-                      <p className="font-medium">✅ Ya aprobado por:</p>
-                      <ul className="list-disc list-inside ml-4">
-                        {aprobadoresPrevios.map((ap: string, i: number) => (
-                          <li key={i}>{ap}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  {aprobadoresPrevios.length === 0 && (
-                    <p className="text-sm text-red-600">
-                      ❌ No ha sido aprobado por nadie
-                    </p>
-                  )}
-                  {pendientesPrevios.length > 0 && (
-                    <div className="text-sm text-red-600">
-                      <p className="font-medium">⏳ Pendiente de:</p>
-                      <ul className="list-disc list-inside ml-4">
-                        {pendientesPrevios.map((ap: string, i: number) => (
-                          <li key={i}>{ap}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  <textarea
-                    placeholder="Observaciones del supervisor"
-                    className="w-full mt-2 p-2 border rounded-md text-sm"
-                    value={approvalNotes}
-                    onChange={(e) => setApprovalNotes(e.target.value)}
-                  />
-
-                  <div className="flex gap-2 justify-end mt-2">
-                    <Button
-                      variant="outline"
-                      className="border-green-500 text-green-700"
-                      onClick={async () => {
-                        try {
-                          await responderAprobacion(
-                            mov.idAprobacion,
-                            "aprobado",
-                            approvalNotes
-                          );
-                          if (user) {
-                            const pendientesActualizados = await obtenerMovimientosPendientes(user.num_empleado);
-                            setMovementsData((prev) => ({
-                              ...prev,
-                              pendientes: pendientesActualizados,
-                            }));
-                          }
-                          alert(`✅ Aprobado correctamente`);
-                        } catch (error) {
-                          console.error(error);
-                          alert("❌ Error al aprobar");
-                        }
-                      }}
-                    >
-                      Aprobar
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      className="border-red-500 text-red-700"
-                      onClick={async () => {
-                        try {
-                          await responderAprobacion(
-                            mov.idMovimiento,
-                            "rechazado",
-                            approvalNotes
-                          );
-                          if (user) {
-                            const pendientesActualizados = await obtenerMovimientosPendientes(user.num_empleado);
-                            setMovementsData((prev) => ({
-                              ...prev,
-                              pendientes: pendientesActualizados,
-                            }));
-                          }
-                          alert(`❌ Rechazado correctamente`);
-                        } catch (error) {
-                          console.error(error);
-                          alert("❌ Error al rechazar");
-                        }
-                      }}
-                    >
-                      Rechazar
-                    </Button>
-                  </div>
-                </Card>
-              );
-            })
-          )}
-        </CardContent>
-      </Card>
-
-      <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-6">
-        <CardHeader>
-          <CardTitle className="text-xl">Mis movimientos recientes</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {["pendiente", "aprobado", "rechazado"].map((status) => (
-            <div key={status}>
-              <h2 className="text-lg font-semibold capitalize mb-2 text-gray-700">
-                {status === "pendiente" && "📥 Pendientes"}
-                {status === "aprobado" && "✅ Aprobados"}
-                {status === "rechazado" && "❌ Rechazados"}
-              </h2>
-
-              <div className="grid gap-4">
-                {movementsData.propios.length === 0 ? (
-                  <p className="text-gray-500">No has solicitado movimientos</p>
-                ) : (
-                  movementsData.propios
-                    .filter((mov) => mov.estatus_movimiento === status)
-                    .map((mov) => (
-                      <Card key={mov.idMovimiento} className="bg-white/90 border rounded-xl shadow-sm p-4 space-y-1">
-                        <div className="flex justify-between items-center">
-                          <p className="font-medium text-gray-800">📄 {mov.tipo_movimiento}</p>
-                          <p className="text-sm text-gray-600">
-                            {format(new Date(mov.fecha_solicitud), "PPP", { locale: es })}
-                          </p>
-                        </div>
-
-                        <p className="text-sm text-tinto-500 italic">
-                          {mov.estatus === "pendiente" &&
-                            `En espera de aprobación de: ${mov.supervisorId}`}
-                          {mov.estatus === "aprobado" &&
-                            `Aprobado por: ${mov.supervisorId}`}
-                          {mov.estatus === "rechazado" &&
-                            `Rechazado por: ${mov.supervisorId}`}
-                        </p>
-
-                        <div className="mt-2 space-y-1 text-sm text-gray-700">
-                          {renderDatosJsonPorTipo(mov.tipo_movimiento, mov.datos_json)}
-
-                          <div className="mt-2">
-                            <p className="font-medium text-gray-800">Ruta de aprobación:</p>
-                            <ul className="list-disc list-inside text-sm ml-2">
-                              {obtenerEstadoAprobaciones(mov.historial_aprobaciones_detallado).map((ap, i) => (
-                                <p key={i}>
-                                  Nivel {ap.orden}: {ap.nombre} - {ap.estatus}
-                                </p>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                        <div>
-                          <p className="text-sm"> Comentarios: {mov.comentarios}</p>
-                        </div>
-                      </Card>
-                    ))
-                )}
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
+      <Card className={`${
+    user?.rol !== "admin" ? "col-span-4" : "col-span-2"
+  } space-y-4 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4 max-h-[650px]`}>
         <CardHeader>
           <CardTitle>Solicitud de Autorización</CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <div className="grid sm:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <Label>Número de empleado *</Label>
               <Input
@@ -687,6 +478,221 @@ function obtenerEstadoAprobaciones(historialDetallado: any[]) {
           </Button>
         </CardFooter>
       </Card>
+      {
+        user?.rol === "admin" && (
+          <Card className="col-span-2 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-3 max-h-[650px]">
+            <CardHeader>
+              <CardTitle className="text-xl">
+                Movimientos que debes aprobar
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 overflow-y-auto pr-2 max-h-[520px]">
+              {movementsData.pendientes.length === 0 ? (
+                <p className="text-gray-500">No tienes movimientos por aprobar</p>
+              ) : (
+                movementsData.pendientes.map((mov, index) => {
+                  const tipo = mov.tipo_movimiento;
+                  const resaltado =
+                    tipo === "Nueva Posición"
+                      ? "border-red-600 bg-red-50 shadow-md"
+                      : "border-gray-200";
+
+                  // Historial formateado
+                  const aprobadoresPrevios = mov.historial_aprobaciones_detallado?.map((a: any) => {
+                    return `✅ ${a.nombre} (Nivel ${a.orden})`;
+                  }) || [];
+
+                  const pendientesPrevios = mov.pendientes_previos_detallado?.map((a: any) => {
+                    return `⏳ Pendiente: ${a.nombre} (Nivel ${a.orden})`;
+                  }) || [];
+
+                  return (
+                    <Card
+                      key={`${mov.idMovimiento}-${index}`}
+                      className={`rounded-xl border-2 ${resaltado} p-4 space-y-3`}
+                    >
+                      <div className="flex justify-between items-center">
+                        <p className={`text-md font-semibold text-gray-800`}>
+                          {tipo === "Nueva Posición" ? "🚨 " : "📄 "}
+                          {tipo}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {mov.fecha_incidencia
+                            ? format(new Date(mov.fecha_incidencia), "PPP", { locale: es })
+                            : "Fecha no disponible"}
+                        </p>
+                      </div>
+
+                      <p className="text-sm text-gray-700">
+                        <strong>Solicitado por:</strong> 👤 Empleado #{mov.num_empleado} {mov.nombre_solicitante}
+                      </p>
+
+                      {mov.comentarios && (
+                        <p className="text-sm text-muted-foreground italic">
+                          “{mov.comentarios}”
+                        </p>
+                      )}
+
+                      {aprobadoresPrevios.length > 0 && (
+                        <div className="text-sm text-green-600">
+                          <p className="font-medium">✅ Ya aprobado por:</p>
+                          <ul className="list-disc list-inside ml-4">
+                            {aprobadoresPrevios.map((ap: string, i: number) => (
+                              <li key={i}>{ap}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {aprobadoresPrevios.length === 0 && (
+                        <p className="text-sm text-red-600">
+                          ❌ No ha sido aprobado por nadie
+                        </p>
+                      )}
+                      {pendientesPrevios.length > 0 && (
+                        <div className="text-sm text-red-600">
+                          <p className="font-medium">⏳ Pendiente de:</p>
+                          <ul className="list-disc list-inside ml-4">
+                            {pendientesPrevios.map((ap: string, i: number) => (
+                              <li key={i}>{ap}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      <textarea
+                        placeholder="Observaciones del supervisor"
+                        className="w-full mt-2 p-2 border rounded-md text-sm"
+                        value={approvalNotes}
+                        onChange={(e) => setApprovalNotes(e.target.value)}
+                      />
+
+                      <div className="flex gap-2 justify-end mt-2">
+                        <Button
+                          variant="outline"
+                          className="border-green-500 text-green-700"
+                          onClick={async () => {
+                            try {
+                              await responderAprobacion(
+                                mov.idAprobacion,
+                                "aprobado",
+                                approvalNotes
+                              );
+                              if (user) {
+                                const pendientesActualizados = await obtenerMovimientosPendientes(user.num_empleado);
+                                setMovementsData((prev) => ({
+                                  ...prev,
+                                  pendientes: pendientesActualizados,
+                                }));
+                              }
+                              alert(`✅ Aprobado correctamente`);
+                            } catch (error) {
+                              console.error(error);
+                              alert("❌ Error al aprobar");
+                            }
+                          }}
+                        >
+                          Aprobar
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          className="border-red-500 text-red-700"
+                          onClick={async () => {
+                            try {
+                              await responderAprobacion(
+                                mov.idMovimiento,
+                                "rechazado",
+                                approvalNotes
+                              );
+                              if (user) {
+                                const pendientesActualizados = await obtenerMovimientosPendientes(user.num_empleado);
+                                setMovementsData((prev) => ({
+                                  ...prev,
+                                  pendientes: pendientesActualizados,
+                                }));
+                              }
+                              alert(`❌ Rechazado correctamente`);
+                            } catch (error) {
+                              console.error(error);
+                              alert("❌ Error al rechazar");
+                            }
+                          }}
+                        >
+                          Rechazar
+                        </Button>
+                      </div>
+                    </Card>
+                  );
+                })
+              )}
+            </CardContent>
+          </Card>
+        )
+      }
+
+      <Card className="col-span-4 space-y-4 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-6">
+        <CardHeader>
+          <CardTitle className="text-xl">Mis movimientos recientes</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {["pendiente", "aprobado", "rechazado"].map((status) => (
+            <div key={status}>
+              <h2 className="text-lg font-semibold capitalize mb-2 text-gray-700">
+                {status === "pendiente" && "📥 Pendientes"}
+                {status === "aprobado" && "✅ Aprobados"}
+                {status === "rechazado" && "❌ Rechazados"}
+              </h2>
+
+              <div className="grid gap-4">
+                {movementsData.propios.length === 0 ? (
+                  <p className="text-gray-500">No has solicitado movimientos</p>
+                ) : (
+                  movementsData.propios
+                    .filter((mov) => mov.estatus_movimiento === status)
+                    .map((mov) => (
+                      <Card key={mov.idMovimiento} className="bg-white/90 border rounded-xl shadow-sm p-4 space-y-1">
+                        <div className="flex justify-between items-center">
+                          <p className="font-medium text-gray-800">📄 {mov.tipo_movimiento}</p>
+                          <p className="text-sm text-gray-600">
+                            {format(new Date(mov.fecha_solicitud), "PPP", { locale: es })}
+                          </p>
+                        </div>
+
+                        <p className="text-sm text-tinto-500 italic">
+                          {mov.estatus === "pendiente" &&
+                            `En espera de aprobación de: ${mov.supervisorId}`}
+                          {mov.estatus === "aprobado" &&
+                            `Aprobado por: ${mov.supervisorId}`}
+                          {mov.estatus === "rechazado" &&
+                            `Rechazado por: ${mov.supervisorId}`}
+                        </p>
+
+                        <div className="mt-2 space-y-1 text-sm text-gray-700">
+                          {renderDatosJsonPorTipo(mov.tipo_movimiento, mov.datos_json)}
+
+                          <div className="mt-2">
+                            <p className="font-medium text-gray-800">Ruta de aprobación:</p>
+                            <ul className="list-disc list-inside text-sm ml-2">
+                              {obtenerEstadoAprobaciones(mov.historial_aprobaciones_detallado).map((ap, i) => (
+                                <p key={i}>
+                                  Nivel {ap.orden}: {ap.nombre} - {ap.estatus}
+                                </p>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-sm"> Comentarios: {mov.comentarios}</p>
+                        </div>
+                      </Card>
+                    ))
+                )}
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
     </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { AppSidebar } from "@/components/app-sidebar"
+import { use, useState } from "react"
+import { AppSidebar } from "@/components/sidebar/app-sidebar"
 import {
   SidebarProvider,
   SidebarInset,
@@ -15,13 +15,17 @@ import Courses from "./courses"
 import Movements from "./movements"
 import PatronCard from "./patronCard"
 import RequisitonsPage from "./requisitionsPage"
+import { useAuth } from "@/app/context/AuthContext"
+import { collapse } from "@material-tailwind/react"
 
 export default function ProfilePage() {
   const [view, setView] = useState("checkin")
+  // TODO: Replace this mock user with actual user data from context, props, or API
+  const { user } = useAuth()
 
   return (
     <SidebarProvider>
-      <AppSidebar onSelectView={setView} activeView={view} />
+      <AppSidebar setVista={setView} collapsed={false} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
@@ -36,7 +40,15 @@ export default function ProfilePage() {
           {view === "courses" && <Courses />}
           {view === "movements" && <Movements />}
           {view === "patronales" && <PatronCard />}
-          {view === "requisiciones" && <RequisitonsPage />}
+          {view === "requisiciones" ? (
+            user?.rol === "admin" ? (
+              <div className="text-red-500 font-semibold">
+                Acceso denegado: necesitas permisos de administrador.
+              </div>
+            ) : (
+              <RequisitonsPage />
+            )
+          ) : null}
         </div>
       </SidebarInset>
     </SidebarProvider>

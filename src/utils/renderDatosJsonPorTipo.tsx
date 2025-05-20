@@ -98,6 +98,19 @@ export function renderDatosJsonPorTipo(tipo: string, datos: any) {
           <p><strong>Hora de salida:</strong> {datos.exitTime}</p>
         </>
       );
+    case "Vacaciones":
+  return (
+    <>
+      <p><strong>Fecha de inicio:</strong> {datos.fecha_inicio}</p>
+      <p><strong>Fecha de fin:</strong> {datos.fecha_fin}</p>
+      <p><strong>Días solicitados:</strong> {datos.total_dias}</p>
+      <p><strong>Días restantes después de la solicitud:</strong> {datos.dias_restantes_post_solicitud}</p>
+      <p><strong>Fecha de ingreso:</strong> {datos.fecha_ingreso}</p>
+      <p><strong>Próximo incremento de días:</strong> {datos.proximo_incremento}</p>
+      <p><strong>Empleado apto:</strong> {datos.empleado_apto ? "Sí" : "No"}</p>
+    </>
+  );
+
     default:
       return <p className="text-gray-400 italic">Sin datos específicos</p>;
   }

@@ -99,7 +99,7 @@ useEffect(() => {
     <div className="container mx-auto px-6 py-10">
   <div className="flex justify-between items-center mb-6">
     <div>
-      <h1 className="text-3xl font-bold text-gray-800">📋 Movimientos de Personal</h1>
+      <h1 className="text-3xl font-bold text-gray-800">📋 Requisiciones de Personal</h1>
       <p className="text-sm text-muted-foreground">Gestiona y visualiza solicitudes de cambio o sustitución</p>
     </div>
     <div className="flex gap-3">
