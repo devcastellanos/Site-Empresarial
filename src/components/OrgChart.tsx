@@ -1,16 +1,20 @@
+"use client"
 import React from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
-import { motion } from "framer-motion"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
+import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
+import { Mail, Phone } from "lucide-react"
 
 type Person = {
   name: string
   role: string
   image: string
-  team?: Person[]
+  email?: string
+  phone?: string
   extraInfo?: string
+  team?: Person[]
 }
 
 const people: Person[] = [
@@ -18,21 +22,19 @@ const people: Person[] = [
     name: "Jesús Rodríguez",
     role: "Gerente de CH",
     image: "/fotos/1848.jpg",
+    email: "jesus.rodriguez@tarahumara.com",
     team: [
-      {
-        name: "Yara Martínez",
-        role: "Auxiliar CH CD México",
-        image: "/fotos/yara.jpg",
-      },
       {
         name: "Jesús Yánez",
         role: "Coord. Nóminas",
         image: "/fotos/1444.jpg",
+        email: "jesus.yanez@tarahumara.com",
         team: [
           {
             name: "Mauricio Monterde",
             role: "Auxiliar de Nóminas",
-            image: "/fotos/mauricio.jpg",
+            image: "/fotos/2525.jpg",
+            email: "mauricio.monterde@tarahumara.com",
           }
         ]
       },
@@ -40,45 +42,53 @@ const people: Person[] = [
         name: "Marcela Rosas",
         role: "Coord. DO",
         image: "/fotos/1190.jpg",
+        email: "marcela.rosas@tarahumara.com",
         team: [
           {
             name: "Julio Rodríguez",
             role: "Auxiliar de DO",
             image: "/fotos/1985.jpg",
+            email: "julio.rodriguez@tarahumara.com",
           }
         ]
       },
       {
         name: "Mariana Pérez",
         role: "Coord. de Capacitación",
-        image: "/fotos/mariana.jpg",
+        image: "/fotos/2323.jpg",
+        email: "mariana.perez@tarahumara.com",
         team: [
           {
             name: "Lezly Rodríguez",
             role: "Auxiliar de DO",
-            image: "/fotos/lezly.jpg",
+            image: "/fotos/2557.jpg",
+            email: "lezly.rodriguez@tarahumara.com",
           }
         ]
       },
       {
         name: "Néstor Bañuelos",
         role: "Coord. Entrenamiento Operativo",
-        image: "/fotos/nestor.jpg",
+        image: "/fotos/2324.jpg",
+        email: "nestor.banuelos@tarahumara.com",
       },
       {
         name: "Edith Correa",
         role: "Coord. Atracción de Talento",
         image: "/fotos/2164.png",
+        email: "edith.correa@tarahumara.com",
         team: [
           {
             name: "Karen Arriaga",
             role: "Aux. Atracción de Talento",
             image: "/fotos/2188.jpg",
+            email: "karen.arriaga@tarahumara.com",
             team: [
               {
                 name: "Fernanda Glez",
                 role: "Aux. Atracción de Talento",
                 image: "/fotos/2522.jpg",
+                email: "fernanda.glez@tarahumara.com",
               }
             ]
           }
@@ -88,25 +98,23 @@ const people: Person[] = [
         name: "Helio García",
         role: "Paramédico",
         image: "/fotos/helio.jpg",
-      },
-      {
-        name: "Alberto Cardona",
-        role: "CH Selectara",
-        image: "/fotos/alberto.jpg",
+        phone: "523311234567",
+        email: "helio.garcia@tarahumara.com",
+        extraInfo: "Responsable de primeros auxilios y emergencias médicas",
       }
     ]
   }
 ]
 
 const PersonCard = ({ person }: { person: Person }) => (
-  <Popover>
-    <PopoverTrigger asChild>
+  <Dialog>
+    <DialogTrigger asChild>
       <motion.div
-        whileHover={{ scale: 1.03 }}
-        transition={{ type: "spring", stiffness: 260 }}
+        whileHover={{ scale: 1.05 }}
+        transition={{ type: "spring", stiffness: 200 }}
         className="cursor-pointer"
       >
-        <Card className="w-40 bg-gray-200/40 dark:bg-gray-800/40 border border-gray-300 dark:border-zinc-700 backdrop-blur-md shadow-md hover:shadow-xl transition-all">
+        <Card className="w-44 bg-white/60 dark:bg-zinc-900/30 backdrop-blur border border-gray-300 dark:border-zinc-700 shadow-md hover:shadow-lg transition-all rounded-xl">
           <CardContent className="flex flex-col items-center justify-center p-4 space-y-3">
             <img
               src={person.image}
@@ -122,17 +130,31 @@ const PersonCard = ({ person }: { person: Person }) => (
           </CardContent>
         </Card>
       </motion.div>
-    </PopoverTrigger>
-    <PopoverContent className="w-64" side="top" align="center">
-      <Card>
-        <CardContent className="p-4 space-y-2 text-sm">
-          <h4 className="text-lg font-bold">{person.name}</h4>
-          <p className="text-muted-foreground">{person.role}</p>
-          {person.extraInfo && <p>{person.extraInfo}</p>}
-        </CardContent>
-      </Card>
-    </PopoverContent>
-  </Popover>
+    </DialogTrigger>
+
+    <DialogContent className="max-w-md text-center">
+      <img src={person.image} alt={person.name} className="w-32 h-32 mx-auto rounded-full object-cover mb-4 border-2 border-primary" />
+      <h2 className="text-lg font-bold">{person.name}</h2>
+      <p className="text-muted-foreground text-sm mb-2">{person.role}</p>
+      {person.extraInfo && <p className="mb-4 text-sm text-zinc-700">{person.extraInfo}</p>}
+      <div className="flex justify-center gap-4">
+        {person.phone && (
+          <a href={`https://wa.me/${person.phone}`} target="_blank" rel="noopener noreferrer">
+            <Button variant="ghost" size="sm" className="border border-primary text-primary hover:bg-primary/10">
+              <Phone className="w-4 h-4 mr-1" /> WhatsApp
+            </Button>
+          </a>
+        )}
+        {person.email && (
+          <a href={`mailto:${person.email}`}>
+            <Button variant="ghost" size="sm" className="border border-primary text-primary hover:bg-primary/10">
+              <Mail className="w-4 h-4 mr-1" /> Correo
+            </Button>
+          </a>
+        )}
+      </div>
+    </DialogContent>
+  </Dialog>
 )
 
 const renderTree = (team: Person[], level = 0) => (
@@ -163,25 +185,38 @@ const renderTree = (team: Person[], level = 0) => (
 
 const OrgChart = () => {
   const jesus = people[0]
-  const coordinadores = jesus.team?.filter(p => !["Yara Martínez", "Helio García"].includes(p.name)) || []
-  const especiales = jesus.team?.filter(p => ["Yara Martínez", "Helio García"].includes(p.name)) || []
+  const helio = jesus.team?.find(p => p.name === "Helio García")
+  const coordinadores = jesus.team?.filter(p =>
+    !["Alberto Cardona", "Helio García"].includes(p.name)
+  ) || []
 
   return (
-    <div className="p-6 max-w-screen-2xl mx-auto dark:bg-zinc-800 rounded-lg shadow-lg ">
-      <h2 className="text-center text-4xl font-bold mb-10 tracking-tight text-primary text-white">
+    <div className="p-8 max-w-screen-2xl mx-auto rounded-lg">
+      <h2 className="text-center text-4xl font-extrabold mb-10 tracking-tight text-white">
         Capital Humano Tarahumara
       </h2>
 
       <div className="mb-6 text-center">
-        <span className="text-sm bg-primary text-white px-3 py-1 rounded-full shadow">Gerencia</span>
+        <span className="text-sm bg-primary text-white px-4 py-1 rounded-full shadow">Gerencia</span>
       </div>
 
-      <div className="flex justify-center mb-12">
-        <PersonCard person={jesus} />
+      <div className="flex justify-center mb-12 relative">
+        <div className="flex flex-col items-center">
+          <PersonCard person={jesus} />
+          <div className="w-0.5 h-6 bg-gray-400 my-1" />
+          <div className="w-32 h-0.5 bg-gray-400" />
+        </div>
+        {helio && (
+          <div className="absolute left-[70%] top-12 flex flex-col items-center">
+            <div className="h-0.5 w-4 bg-gray-400" />
+            <PersonCard person={helio} />
+          </div>
+        )}
+
       </div>
 
       <div className="mb-6 text-center">
-        <span className="text-sm bg-green-600 text-white px-3 py-1 rounded-full shadow">Coordinaciones</span>
+        <span className="text-sm bg-green-600 text-white px-4 py-1 rounded-full shadow">Coordinaciones</span>
       </div>
 
       <div className="flex justify-center gap-12 flex-wrap">
@@ -205,24 +240,6 @@ const OrgChart = () => {
           </motion.div>
         ))}
       </div>
-
-      {especiales.length > 0 && (
-        <div className="mt-16 text-center">
-          <h3 className="text-lg font-semibold text-muted-foreground mb-4">Equipo Especial</h3>
-          <div className="flex justify-center gap-10 flex-wrap">
-            {especiales.map((person, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.05 }}
-              >
-                <PersonCard person={person} />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   )
 }

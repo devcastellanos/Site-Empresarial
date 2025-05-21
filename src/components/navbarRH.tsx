@@ -52,12 +52,13 @@ export function NavbarRH() {
   const NAV_MENU = [
     { name: "Home", icon: RectangleStackIcon, href: "/" },
     { name: "Noti-Tarahumara", icon: NewspaperIcon, href: "/Blog" },
-    { name: "Kardex", icon: ClipboardDocumentIcon, href: "/kardex" },
+    // { name: "Kardex", icon: ClipboardDocumentIcon, href: "/kardex" },
     ...(isAuthenticated
       ? [
-          { name: "Cursos", icon: BookOpenIcon, href: "/Cursos" },
-          { name: "Cargar Archivos Excel", icon: DocumentIcon, href: "/cargaMasiva" },
-          { name: "Usuarios", icon: UserCircleIcon, href: "/Usuarios" },
+          // { name: "Cursos", icon: BookOpenIcon, href: "/Cursos" },
+          // { name: "Cargar Archivos Excel", icon: DocumentIcon, href: "/cargaMasiva" },
+          { name: "Universidad Tarahumara", icon: UserCircleIcon, href: "/HomeUT" },
+          { name: "Capital Humano", icon: UserCircleIcon, href: "/HomeCH" },
           { name: "Perfil", icon: UserCircleIcon, href: "/Perfil" },
         ]
       : []),

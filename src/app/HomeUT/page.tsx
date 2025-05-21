@@ -1,46 +1,47 @@
 "use client";
 import { NavbarRH, FooterRH } from "@/components";
-import { motion, useScroll } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
-import OrgChart from "@/components/OrgChart";
 
 const ARTICLES = [
   {
-    img: "/image/osticket.png",
-    title: "Osticket",
-    desc: "Plataforma para generar y dar seguimiento a tickets de soporte técnico y otros servicios.",
-    link: "https://soporte.grupotarahumara.com.mx/",
+    img: "/image/crehana.png",
+    title: "Crehana",
+    desc: "Crehana es una plataforma de educación online que ofrece cursos de diseño, marketing, fotografía, programación y más.",
+    link: "https://www.crehana.com/entrar/",
   },
   {
-    img: "/image/convenio.jpg",
-    title: "Convenios",
-    desc: "Explora los convenios con instituciones educativas, descuentos y beneficios para colaboradores.",
+    img: "/image/cap.png",
+    title: "Plan de Capacitación",
+    desc: "Da clic para conocer el Plan anual de capacitación actualizada.",
+    link: "https://gpotarahumara-my.sharepoint.com/:x:/g/personal/mariana_perez_grupotarahumara_com_mx/EQ3-FxxGPsVNh60Zw3dmeZ8Bi2HSd6ymFhP-aqy1ogQRIA?e=0EDtU2",
+  },
+  {
+    img: "/image/Asistencia.png",
+    title: "Asistencia",
+    desc: "Da clic aquí para descargar la lista de asistencia de la capacitación de Tarahumara.",
+    link: "https://gpotarahumara-my.sharepoint.com/...",
+  },
+  {
+    img: "/image/convenio.png",
+    title: "Convenios Educativos",
+    desc: "Da clic aquí para conocer los convenios educativos que tenemos.",
     link: "/Convenios",
   },
   {
-    img: "/image/UT.png",
-    title: "Universidad Tarahumara",
-    desc: "Accede a los programas de formación y desarrollo profesional internos de la organización.",
-    link: "/HomeUT",
-  },
-  {
-    img: "/image/fotos.jpg",
-    title: "Fotos",
-    desc: "Mira las galerías de eventos, actividades y momentos importantes de Grupo Tarahumara.",
-    link: "https://gpotarahumara.sharepoint.com/:u:/r/sites/Intranet_Tarahumara_/SitePages/GALERIA-DE-FOTOS-EVENTOS-TARAHUMARA.aspx?csf=1&web=1&share=EZL7_tW-NehCkexJiK2j-jIBDJ8VuW--BSErAK8hGhefUA&e=tchd4L",
-  },
-  {
-    img: "/image/sharepoint.jpg",
-    title: "Sitios de SharePoint",
-    desc: "Accede a los sitios SharePoint de cada área, organizados por departamento o función.",
-    link: "https://gpotarahumara.sharepoint.com/:u:/s/Intranet_Tarahumara_/EXG3EdX-9JFDhPff0nhO_h0BcKbAE_zZ1B372dPJYPScXQ?e=f9YAZR",
+    img: "/image/solicitud.png",
+    title: "Formato de solicitud",
+    desc: "Da clic aquí para descargar el formato de solicitud de cursos.",
+    link: "https://gpotarahumara-my.sharepoint.com/...",
   },
 ];
 
-export default function IntranetHomePage() {
+export default function Campaign() {
   const ref = useRef(null);
+  const footerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
+  const videoOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.3]);
 
   return (
     <>
@@ -49,9 +50,8 @@ export default function IntranetHomePage() {
         autoPlay
         loop
         muted
-        playsInline
         className="fixed top-0 left-0 w-full h-full object-cover -z-20"
-        style={{ opacity: 1 }}
+        style={{ opacity: videoOpacity }}
       >
         <source src="/image/background.mp4" type="video/mp4" />
         Tu navegador no soporta videos.
@@ -59,35 +59,33 @@ export default function IntranetHomePage() {
 
       <motion.header
         ref={ref}
-        className="relative w-full h-screen flex flex-col items-center justify-start text-center pt-32 overflow-hidden"
+        className="relative w-full min-h-screen flex flex-col items-center justify-start text-center pt-32 overflow-hidden"
         initial={{ opacity: 0, y: -50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false }}
         transition={{ duration: 1 }}
       >
-        <div className="absolute top-0 left-0 w-full h-full md:px-16" />
+        <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50"></div>
         <div className="relative z-10 w-full max-w-6xl px-6 text-white mt-24">
           <h1 className="text-[48px] lg:text-[64px] font-extrabold leading-tight">
-            Grupo Tarahumara
+            Capacitación Tarahumara
           </h1>
           <p className="mt-2 text-lg lg:text-2xl text-gray-200">
-            En Grupo Tarahumara valoramos el esfuerzo colectivo y la dedicación
-            diaria que construye nuestro éxito. Esta intranet es tu espacio para
-            conectar, colaborar y crecer juntos.
+            Descubre herramientas, presentaciones, guías y contenido multimedia diseñados para potenciar tu desarrollo profesional.
           </p>
 
           <div className="mt-12 flex justify-center">
             <Image
-              src="/image/Logo-Outline.png"
+              src="/image/utara.png"
               alt="Logo"
               width={256}
               height={256}
-              className="w-64 h-auto"
+              className="w-48 h-auto"
             />
           </div>
 
-          {/* TARJETAS / ARTICLES */}
-          <div className="mt-28 max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 px-2">
+          {/* ARTICLES DENTRO DEL HEADER */}
+          <div className="mt-20 max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 px-2">
             {ARTICLES.map((article, idx) => (
               <div key={idx} className="group perspective">
                 <motion.div
@@ -141,7 +139,20 @@ export default function IntranetHomePage() {
           </div>
         </div>
       </motion.header>
-      
+
+      {/* BOTÓN FLOTANTE HACIA FOOTER */}
+      <button
+        onClick={() => footerRef.current?.scrollIntoView({ behavior: "smooth" })}
+        className="fixed bottom-6 right-6 z-50 bg-[#9A3324] hover:bg-[#7c291d] text-white rounded-full px-5 py-3 text-sm shadow-xl animate-bounce transition-all"
+        aria-label="Ir al pie de página"
+      >
+        Contacta al equipo de Capacitación
+      </button>
+
+      {/* FOOTER CON REF */}
+      <div ref={footerRef}>
+        <FooterRH />
+      </div>
     </>
   );
 }

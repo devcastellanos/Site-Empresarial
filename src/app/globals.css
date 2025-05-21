@@ -74,6 +74,21 @@
     --sidebar-ring: 217.2 91.2% 59.8%}
 }
 
+/* styles/globals.css o equivalente */
+.perspective {
+  perspective: 1000px;
+}
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+
 @layer base {
   * {
     @apply border-border;
