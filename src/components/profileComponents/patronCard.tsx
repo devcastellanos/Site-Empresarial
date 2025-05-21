@@ -40,15 +40,11 @@ function PatronCard() {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (user?.rol === "admin") {
-        await fetchUsers(); // Solo admin puede ver otras personas
-      }
-    };
-
-    fetchData();
-  }, []);
+useEffect(() => {
+  if (user) {
+    fetchUsers();
+  }
+}, [user]);
 
   const generarPDF = () => {
     if (cartaRef.current) {

@@ -28,9 +28,11 @@ function Courses() {
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
+  if (user) {
     fetchCourses();
-  }, []);
+  }
+}, [user]);
 
   const getBadge = (progress: number) => {
     if (progress === 100) {
