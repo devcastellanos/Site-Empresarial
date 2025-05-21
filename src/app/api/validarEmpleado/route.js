@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function POST(req) {
   try {
     const { num_empleado } = await req.json();
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:3041';
+    const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     const res = await fetch(`${backendUrl}/api/validarEmpleado`, {
       method: 'POST',
