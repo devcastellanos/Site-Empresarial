@@ -12,6 +12,8 @@ export interface User {
   NSS: string;
   FechaAntiguedad: string;
   FechaAlta: string;
+  vacaciones_acumuladas: number;
+  vacaciones_ley: number;
 }
 
 export interface CursoTomado {

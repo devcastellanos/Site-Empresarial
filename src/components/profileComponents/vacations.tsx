@@ -35,7 +35,7 @@ function Vacations() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_INTELISIS}/api/users/all`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_INTELISIS}/api/users`);
         const data = await res.json();
         const usuarios = data.map((u: any) => ({ ...u, Personal: Number(u.Personal) }));
         const emp = usuarios.find((u: User) => u.Personal === user?.num_empleado);
@@ -76,7 +76,7 @@ function Vacations() {
     return next;
   };
 
-  const totalDays = parsedHireDate ? calculateTotalVacationDays(parsedHireDate) : 0;
+  const totalDays = (empleado?.vacaciones_acumuladas ?? 0) + (empleado?.vacaciones_ley ?? 0);
   const remainingDays = parsedHireDate ? Math.max(totalDays - selectedDates.length, 0) : 0;
   const nextIncrement = parsedHireDate ? getNextVacationIncrementDate(parsedHireDate) : null;
   const daysUntilNextIncrement = nextIncrement ? differenceInDays(nextIncrement, new Date()) : 0;
