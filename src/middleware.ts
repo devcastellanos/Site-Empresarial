@@ -30,5 +30,5 @@ export async function middleware(request: NextRequest) {
 
 // Esto aplica el middleware solo a las rutas que necesitas
 export const config = {
-  matcher: ['/Cursos', '/cargaMasiva', '/Usuarios'], // Aplica el middleware solo a estas rutas
+  matcher: ['/Cursos', '/cargaMasiva', '/Usuarios', '/Perfil'], // Aplica el middleware solo a estas rutas
 };

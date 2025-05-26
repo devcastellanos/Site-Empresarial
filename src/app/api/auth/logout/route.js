@@ -26,6 +26,7 @@ export async function POST(req) {
             { success: true, message: 'logout succesfully' },
             { status: 200 }
         );
+        
         res.headers.set('Set-Cookie', serialized);
         return res;
     }   

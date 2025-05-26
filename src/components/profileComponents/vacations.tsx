@@ -61,14 +61,6 @@ function Vacations() {
     return years;
   };
 
-  const calculateTotalVacationDays = (hireDate: Date) => {
-    const years = calculateYearsOfService(hireDate);
-    if (years < 1) return 0;
-    if (years === 1) return 12;
-    if (years <= 5) return 12 + (years - 1) * 2;
-    return 20 + Math.floor((years - 5) / 5) * 2;
-  };
-
   const getNextVacationIncrementDate = (hireDate: Date) => {
     const years = calculateYearsOfService(hireDate) + 1;
     const next = new Date(hireDate);
@@ -81,6 +73,25 @@ function Vacations() {
   const nextIncrement = parsedHireDate ? getNextVacationIncrementDate(parsedHireDate) : null;
   const daysUntilNextIncrement = nextIncrement ? differenceInDays(nextIncrement, new Date()) : 0;
   const progressValue = totalDays > 0 ? (selectedDates.length / totalDays) * 100 : 0;
+  const totalSolicitados = selectedDates.length;
+  let usadasAcumuladas = 0;
+  let usadasLey = 0;
+
+  if (empleado) {
+    const acumuladas = empleado.vacaciones_acumuladas ?? 0;
+    const ley = empleado.vacaciones_ley ?? 0;
+
+    if (totalSolicitados <= acumuladas) {
+      usadasAcumuladas = totalSolicitados;
+      usadasLey = 0;
+    } else {
+      usadasAcumuladas = acumuladas;
+      usadasLey = totalSolicitados - acumuladas;
+    }
+  }
+
+  const vacacionesAcumuladasRestantes = Math.max((empleado?.vacaciones_acumuladas ?? 0) - usadasAcumuladas, 0);
+  const vacacionesLeyRestantes = Math.max((empleado?.vacaciones_ley ?? 0) - usadasLey, 0);
 
   const handleDateSelect = (dates: Date[] | undefined) => {
     if (dates) setSelectedDates(dates);
@@ -103,8 +114,9 @@ function Vacations() {
             fechas: selectedDates.map(d => d.toISOString().split("T")[0]),
             fecha_inicio: selectedDates[0].toISOString().split("T")[0],
             fecha_fin: selectedDates[selectedDates.length - 1].toISOString().split("T")[0],
-            total_dias: selectedDates.length,
-            dias_restantes_post_solicitud: remainingDays - selectedDates.length,
+            total_dias: totalSolicitados,
+            vacaciones_acumuladas_restantes: vacacionesAcumuladasRestantes,
+            vacaciones_ley_restantes: vacacionesLeyRestantes,
             fecha_ingreso: parsedHireDate.toISOString().split("T")[0],
             proximo_incremento: nextIncrement.toISOString().split("T")[0],
             empleado_apto: totalDays > 0,
@@ -148,6 +160,7 @@ function Vacations() {
     "A partir del 5º año, el periodo de vacaciones aumentará en 2 días por cada 5 años de servicio.",
     "Las vacaciones deberán disfrutarse dentro de los 6 meses siguientes al cumplimiento del año de servicio.",
     "El patrón podrá dividir el periodo vacacional a petición del trabajador.",
+    "Las vacaciones deberán ser solicitadas con al menos 15 días de anticipación.",
   ];
 
   return (
@@ -198,6 +211,12 @@ function Vacations() {
                 <p>
                   <strong>Próximo incremento:</strong>{" "}
                   {nextIncrement ? format(nextIncrement, "PPP", { locale: es }) : "N/A"}
+                </p>
+              </div>
+              <div>
+                <p>
+                  <strong>Dias acumulados</strong> {" "} {empleado?.vacaciones_acumuladas} <br />
+                  <strong>Dias de ley</strong> {" "} {empleado?.vacaciones_ley} <br />
                 </p>
               </div>
             </div>

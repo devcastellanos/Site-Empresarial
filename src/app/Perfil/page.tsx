@@ -34,7 +34,7 @@ const LOCAL_STORAGE_KEY = "vista_perfil_activa"
 
 export default function Campaign() {
   const [vista, setVista] = useState<PerfilVista>("perfil")
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+
   const { user } = useAuth(); 
   // Leer vista desde localStorage al cargar
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function Campaign() {
   }
 
 const renderVista = () => {
-  if (vista === "requisiciones" && user?.rol !== "admin") {
+  if (vista === "requisiciones" && (user?.rol !== "admin" && user?.rol !== "reclutamiento")) {
     return <div className="text-red-500 font-semibold">Acceso denegado: necesitas permisos de administrador.</div>
   }
 
@@ -85,13 +85,6 @@ const renderVista = () => {
       <AppSidebar setVista={(vista: string) => setVista(vista as PerfilVista)} vistaActual={vista} collapsed={false} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 px-4 justify-between">
-          <button
-            className="lg:hidden text-xl"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label="Abrir menú"
-          >
-            ☰
-          </button>
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>

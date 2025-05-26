@@ -83,4 +83,17 @@ return data.data ?? [];
       return [];
     }
   }
+
+  export async function cargarMovimientos() {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movimientos`);
+    const data = await response.json();
+    if (!data || !data.data) throw new Error("Datos vacíos");
+    
+    return data.data ?? [];	
+  } catch (error) {
+    console.error("Error al cargar movimientos:", error);
+    return [];
+  }
+}
   

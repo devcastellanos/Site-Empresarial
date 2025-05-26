@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import Swal from "sweetalert2";
-import {
-  Card,
-  Input,
-  Button,
-  Dialog,
-} from "@material-tailwind/react";
+
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../hooks/useAuth";
@@ -47,51 +47,52 @@ export function Login() {
     }
   };
 
-const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const value = e.target.value;
-  setEmail(value);
-  const esNumero = !isNaN(Number(value)) && value.trim() !== "";
-  if (esNumero) {
-    setEmpleadoValido(null); // Limpia estado mientras valida
-    validarEmpleado(value);
-  } else {
-    setEmpleadoValido(true); // Habilita login por correo
-  }
-};
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    const esNumero = !isNaN(Number(value)) && value.trim() !== "";
+    setEsNumeroEmpleado(esNumero);
+    if (esNumero) {
+      setEmpleadoValido(null); // Limpia estado mientras valida
+      validarEmpleado(value);
+    } else {
+      setEmpleadoValido(true); // Habilita login por correo
+    }
+  };
 
-const handleLogin = async () => {
-  if (!email || !password) {
-    Swal.fire("Campos requeridos", "Completa todos los campos", "warning");
-    return;
-  }
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Swal.fire("Campos requeridos", "Completa todos los campos", "warning");
+      return;
+    }
 
-  const esNumero = !isNaN(Number(email));
-  if (esNumero && !empleadoValido) {
-    Swal.fire("Empleado inválido", "El número de empleado no es válido", "error");
-    return;
-  }
+    const esNumero = !isNaN(Number(email));
+    if (esNumero && !empleadoValido) {
+      Swal.fire("Empleado inválido", "El número de empleado no es válido", "error");
+      return;
+    }
 
-  setIsLoading(true);
-  const payload = esNumero
-    ? { num_empleado: email, password }
-    : { email, password };
+    setIsLoading(true);
+    const payload = esNumero
+      ? { num_empleado: email, password }
+      : { email, password };
 
-  try {
-    const response = await axios.post("/api/auth/login", payload, {
-      withCredentials: true,
-    });
-    if (response.status === 200) {
-      login();
-      Swal.fire("Bienvenido", "Inicio de sesión exitoso", "success").then(() =>
-        router.push("/")
-      );
-    } else throw new Error();
-  } catch {
-    Swal.fire("Error", "Credenciales incorrectas o fallo del servidor", "error");
-  } finally {
-    setIsLoading(false);
-  }
-};
+    try {
+      const response = await axios.post("/api/auth/login", payload, {
+        withCredentials: true,
+      });
+      if (response.status === 200) {
+        login();
+        Swal.fire("Bienvenido", "Inicio de sesión exitoso", "success").then(() =>
+          router.push("/")
+        );
+      } else throw new Error();
+    } catch {
+      Swal.fire("Error", "Credenciales incorrectas o fallo del servidor", "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
 
   const openRegistroModal = () => {
@@ -162,11 +163,6 @@ const handleLogin = async () => {
 
         <Card
           className="rounded-3xl bg-white/5 backdrop-blur-lg border border-white/10 p-10 shadow-2xl text-white"
-          placeholder=""
-          onResize={() => {}}
-          onResizeCapture={() => {}}
-          onPointerEnterCapture={() => {}}
-          onPointerLeaveCapture={() => {}}
         >
           <h3 className="text-center font-bold text-2xl mb-4">Bienvenido</h3>
           <p className="text-center text-gray-300 text-sm mb-6">
@@ -174,18 +170,14 @@ const handleLogin = async () => {
           </p>
 
           <div className="space-y-4">
+            <label className="text-white text-sm font-medium" htmlFor="login-email">
+              Correo o número de empleado
+            </label>
             <Input
-              label="Correo o número de empleado"
+              id="login-email"
               value={email}
               onChange={handleInputChange}
-              crossOrigin=""
-              className="text-white"
-              labelProps={{ className: "text-white" }}
-              containerProps={{ className: "min-w-full" }}
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-              onResize={() => {}}
-              onResizeCapture={() => {}}
+              className="text-white min-w-full"
             />
             {esNumeroEmpleado && empleadoValido !== null && (
               <p className={`text-sm ${empleadoValido ? "text-green-400" : "text-red-400"}`}>
@@ -196,69 +188,49 @@ const handleLogin = async () => {
             )}
 
 
+            <label className="text-white text-sm font-medium" htmlFor="login-password">
+              Contraseña
+            </label>
             <Input
-              label="Contraseña"
+              id="login-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              crossOrigin=""
-              className="text-white"
-              labelProps={{ className: "text-white" }}
-              containerProps={{ className: "min-w-full" }}
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-              placeholder=""
-              onResize={() => {}}
-              onResizeCapture={() => {}}
+
+              className="text-white min-w-full"
+
             />
-            
+
             <Button
-              fullWidth
               onClick={handleLogin}
               disabled={isLoading || email.trim() === "" || password.trim() === ""}
-              className="text-white font-bold py-2 transition duration-300 rounded-lg"
+              className="text-white font-bold w-full transition duration-300 rounded-lg"
               style={{ backgroundColor: "#9A3324" }}
-              ripple={false}
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-              placeholder=""
-              onResize={() => {}}
-              onResizeCapture={() => {}}
-              
             >
               {isLoading ? "Cargando..." : "INICIAR SESIÓN"}
             </Button>
 
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={openRegistroModal}
-              className="border-white text-white hover:bg-white/10 transition duration-300 rounded-lg"
-              ripple={false}
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-              placeholder=""
-              onResize={() => {}}
-              onResizeCapture={() => {}}
-            >
-              CREAR CUENTA NUEVA
-            </Button>
-
-            <p className="text-center text-sm text-gray-400 mt-4">
-              ¿No tienes cuenta? Valida tu número de empleado y regístrate.
+            <p className="text-center text-sm text-gray-300 mt-4">
+              ¿No tienes cuenta?{" "}
+              <button
+                onClick={openRegistroModal}
+                className="text-white underline hover:text-red-400 transition"
+              >
+                Regístrate aquí
+              </button>
+            </p>
+            <p className="text-center text-sm text-black mt-4">
+              Valida tu número de empleado y regístrate.
             </p>
           </div>
         </Card>
       </motion.div>
 
       {/* DIALOG DE REGISTRO */}
-      <Dialog open={openModal} handler={setOpenModal} size="xs" className="bg-transparent shadow-none" dismiss={{ enabled: true }}
-      onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-              placeholder=""
-              onResize={() => {}}
-              onResizeCapture={() => {}}>
-        <div className="w-screen max-w-sm mx-auto rounded-2xl bg-black/60 backdrop-blur-xl border border-white/10 p-6 shadow-2xl text-white">
+      <Dialog open={openModal} onOpenChange={setOpenModal}>
+        <DialogContent className="bg-black/60 backdrop-blur-xl border border-white/10 text-white">
+
+
           <div className="flex justify-center mb-8">
             <Image
               src="/image/logowhite.png"
@@ -269,25 +241,19 @@ const handleLogin = async () => {
               priority
             />
           </div>
-
-          <h3 className="text-xl font-bold mb-6 text-center">Crear cuenta nueva</h3>
-
+          <DialogTitle className="text-xl font-bold text-center mb-4">
+            Crear cuenta nueva
+          </DialogTitle>
           <div className="space-y-4">
             <div className="flex flex-col space-y-1">
               <label className="text-white text-sm font-medium">Número de empleado</label>
               <Input
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-              placeholder=""
-              onResize={() => {}}
-              onResizeCapture={() => {}}
                 value={registroEmpleado}
                 onChange={(e) => {
                   const val = e.target.value;
                   setRegistroEmpleado(val);
                   if (val) validarRegistroEmpleado(val);
                 }}
-                crossOrigin=""
                 className="bg-white/10 text-white placeholder:text-gray-300 border border-white/20 rounded-md"
               />
               {registroValido !== null && (
@@ -303,13 +269,8 @@ const handleLogin = async () => {
                 type="password"
                 value={registroPassword}
                 onChange={(e) => setRegistroPassword(e.target.value)}
-                crossOrigin=""
+
                 className="bg-white/10 text-white placeholder:text-gray-300 border border-white/20 rounded-md"
-                onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-              placeholder=""
-              onResize={() => {}}
-              onResizeCapture={() => {}}
               />
             </div>
 
@@ -319,15 +280,7 @@ const handleLogin = async () => {
                 type="password"
                 value={registroConfirmar}
                 onChange={(e) => setRegistroConfirmar(e.target.value)}
-                error={registroConfirmar !== "" && registroPassword !== registroConfirmar}
-                success={registroConfirmar !== "" && registroPassword === registroConfirmar}
-                crossOrigin=""
                 className="bg-white/10 text-white placeholder:text-gray-300 border border-white/20 rounded-md"
-                onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-              placeholder=""
-              onResize={() => {}}
-              onResizeCapture={() => {}}
               />
               {registroConfirmar && registroPassword !== registroConfirmar && (
                 <p className="text-sm text-red-400">Las contraseñas no coinciden</p>
@@ -337,15 +290,9 @@ const handleLogin = async () => {
 
           <div className="mt-6 flex justify-end gap-3">
             <Button
-              variant="text"
+              variant="ghost"
               onClick={() => setOpenModal(false)}
               className="text-gray-300 hover:text-white"
-              ripple={false}
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-              placeholder=""
-              onResize={() => {}}
-              onResizeCapture={() => {}}
             >
               Cancelar
             </Button>
@@ -358,17 +305,11 @@ const handleLogin = async () => {
               }
               className="text-white px-4 py-2 font-semibold rounded-md hover:opacity-90"
               style={{ backgroundColor: "#9A3324" }}
-              ripple={false}
-              onPointerEnterCapture={() => {}}
-              onPointerLeaveCapture={() => {}}
-              placeholder=""
-              onResize={() => {}}
-              onResizeCapture={() => {}}
             >
               Registrar
             </Button>
           </div>
-        </div>
+        </DialogContent>
       </Dialog>
     </div>
   );

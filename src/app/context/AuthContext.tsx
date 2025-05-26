@@ -54,7 +54,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             await axios.post('/api/auth/logout', {});
           
             setIsAuthenticated(false); // Marcar como no autenticado
-           
+            setUser(null); // Limpiar el perfil del usuario
+            window.location.href = '/Login'; // Redirigir al usuario a la página de inicio de sesión
 
         } catch (error) {
             console.error('Error al cerrar sesión:', error);
