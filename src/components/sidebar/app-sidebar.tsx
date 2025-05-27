@@ -2,9 +2,12 @@
 
 import * as React from "react"
 import {
+  AudioWaveform,
   BookOpen,
   Bot,
+  Command,
   Frame,
+  GalleryVerticalEnd,
   Map,
   PieChart,
   Settings2,
@@ -13,6 +16,7 @@ import {
   Briefcase,
   GraduationCap,
 } from "lucide-react"
+
 import { NavMain } from "@/components/sidebar/nav-main"
 import { NavProjects } from "@/components/sidebar/nav-projects"
 import { NavUser } from "@/components/sidebar/nav-user"
@@ -24,18 +28,17 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+
 import { useAuth } from "@/app/context/AuthContext"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   setVista: (vista: string) => void
   vistaActual?: string
-  collapsed: boolean
 }
 
 export function AppSidebar({
   setVista,
   vistaActual,
-  collapsed,
   ...props
 }: AppSidebarProps) {
   const { user } = useAuth()
@@ -63,42 +66,41 @@ export function AppSidebar({
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
-    )
-  }
+  )
+}
 
-  // Sidebar completo cuando hay usuario
-  const sidebarData = {
-    teams: [
+const sidebarData = {
+  teams: [
       { name: "Grupo Tarahumara", logo: Users, plan: "Home" },
       { name: "Capital Humano", logo: Briefcase, plan: "CH" },
       { name: "Capacitación Tarahumara", logo: GraduationCap, plan: "Capacitación" },
-    ],
-    navMain: [
-      {
-        title: "Perfil",
-        url: "/Perfil",
-        icon: Settings2,
-        items: [
-          { title: "Mi Perfil", url: "/Perfil#perfil" },
-          { title: "Vacaciones", url: "/Perfil#vacaciones" },
-          { title: "Cursos", url: "/Perfil#cursos" },
-          { title: "Movimientos", url: "/Perfil#movimientos" },
-          ...(user.rol === "admin"
-            ? [{ title: "Requisiciones", url: "/Perfil#requisiciones" }]
-            : []),
-          { title: "Carta Patronal", url: "/Perfil#patron" },
-        ],
-      },
-    ],
-    projects: [
+  ],
+  navMain: [
+    {
+      title: "Perfil",
+      url: "/Perfil",
+      icon: Settings2,
+      items: [
+        { title: "Mi Perfil", url: "/Perfil#perfil" },
+        { title: "Vacaciones", url: "/Perfil#vacaciones" },
+        { title: "Cursos", url: "/Perfil#cursos" },
+        { title: "Movimientos", url: "/Perfil#movimientos" },
+        ...(user.rol === "admin"
+          ? [{ title: "Requisiciones", url: "/Perfil#requisiciones" }]
+          : []),
+        { title: "Carta Patronal", url: "/Perfil#patron" },
+      ],
+    },
+  ],
+  projects: [
       { name: "Home", url: "/", icon: SquareTerminal },
       { name: "Kardex", url: "/kardex", icon: BookOpen },
       { name: "Cargar Archivos Excel", url: "/cargaMasiva", icon: Frame },
       { name: "Usuarios", url: "/Usuarios", icon: Map },
       { name: "Cursos", url: "/Cursos", icon: PieChart },
       { name: "Noti-Tarahumara", url: "/Blog", icon: Bot },
-    ],
-  }
+  ],
+}
 
   return (
     <Sidebar collapsible="icon" {...props}>

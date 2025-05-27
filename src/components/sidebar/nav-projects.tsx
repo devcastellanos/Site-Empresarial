@@ -34,9 +34,10 @@ export function NavProjects({
     icon: LucideIcon
   }[]
 }) {
+  const { isMobile } = useSidebar()
 
   return (
-    <SidebarGroup className="">
+    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
@@ -56,8 +57,8 @@ export function NavProjects({
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="w-48 rounded-lg"
-                side={ "right"}
-                align={"start"}
+                side={isMobile ? "bottom" : "right"}
+                align={isMobile ? "end" : "start"}
               >
                 <DropdownMenuItem>
                   <Folder className="text-muted-foreground" />
@@ -76,6 +77,7 @@ export function NavProjects({
             </DropdownMenu>
           </SidebarMenuItem>
         ))}
+
       </SidebarMenu>
     </SidebarGroup>
   )

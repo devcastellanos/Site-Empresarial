@@ -12,6 +12,7 @@ import { useAuth } from "@/app/context/AuthContext"
 import {
   SidebarInset,
   SidebarProvider,
+  SidebarTrigger,
 } from "@/components/ui/sidebar"
 import {
   Breadcrumb,
@@ -21,6 +22,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { Separator } from "@/components/ui/separator"
 
 export type PerfilVista =
   | "perfil"
@@ -35,7 +37,7 @@ const LOCAL_STORAGE_KEY = "vista_perfil_activa"
 export default function Campaign() {
   const [vista, setVista] = useState<PerfilVista>("perfil")
 
-  const { user } = useAuth(); 
+  const { user } = useAuth();
   // Leer vista desde localStorage al cargar
   useEffect(() => {
     const storedVista = localStorage.getItem(LOCAL_STORAGE_KEY) as PerfilVista | null
@@ -58,44 +60,50 @@ export default function Campaign() {
     patron: "Modo Patrón",
   }
 
-const renderVista = () => {
-  if (vista === "requisiciones" && (user?.rol !== "admin" && user?.rol !== "reclutamiento")) {
-    return <div className="text-red-500 font-semibold">Acceso denegado: necesitas permisos de administrador.</div>
-  }
+  const renderVista = () => {
+    if (vista === "requisiciones" && (user?.rol !== "admin" && user?.rol !== "reclutamiento")) {
+      return <div className="text-red-500 font-semibold">Acceso denegado: necesitas permisos de administrador.</div>
+    }
 
-  switch (vista) {
-    case "vacaciones":
-      return <Vacations />
-    case "cursos":
-      return <Courses />
-    case "movimientos":
-      return <Movements />
-    case "requisiciones":
-      return <RequisitonsPage />
-    case "patron":
-      return <PatronCard />
-    case "perfil":
-    default:
-      return <RegisterCheckInCheckOut />
+    switch (vista) {
+      case "vacaciones":
+        return <Vacations />
+      case "cursos":
+        return <Courses />
+      case "movimientos":
+        return <Movements />
+      case "requisiciones":
+        return <RequisitonsPage />
+      case "patron":
+        return <PatronCard />
+      case "perfil":
+      default:
+        return <RegisterCheckInCheckOut />
+    }
   }
-}
 
   return (
     <SidebarProvider>
-      <AppSidebar setVista={(vista: string) => setVista(vista as PerfilVista)} vistaActual={vista} collapsed={false} />
+      <AppSidebar setVista={(vista: string) => setVista(vista as PerfilVista)} vistaActual={vista}/>
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 px-4 justify-between">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="#">Perfil</BreadcrumbLink>
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+           <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="#">
+                  Perfil
+                  </BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbSeparator />
+              <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
                 <BreadcrumbPage>{breadcrumbMap[vista]}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
+          </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           {renderVista()}

@@ -40,6 +40,7 @@ export function NavUser({
     avatar: string
   }
 }) {
+  const { isMobile } = useSidebar()
   const { isAuthenticated, logout } = useAuth();
 
   return (
@@ -64,7 +65,7 @@ export function NavUser({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            side={"right"}
+            side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
           >
@@ -103,7 +104,6 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-
             <DropdownMenuItem onClick={logout}>
               <LogOut  className="text-red-500" />
               Logout
