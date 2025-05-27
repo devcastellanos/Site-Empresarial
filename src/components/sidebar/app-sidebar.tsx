@@ -85,7 +85,7 @@ const sidebarData = {
         { title: "Vacaciones", url: "/Perfil#vacaciones" },
         { title: "Cursos", url: "/Perfil#cursos" },
         { title: "Movimientos", url: "/Perfil#movimientos" },
-        ...(user.rol === "admin"
+        ...(user.rol === "admin" || user.rol === "reclutamiento"
           ? [{ title: "Requisiciones", url: "/Perfil#requisiciones" }]
           : []),
         { title: "Carta Patronal", url: "/Perfil#patron" },
@@ -99,6 +99,8 @@ const sidebarData = {
       { name: "Usuarios", url: "/Usuarios", icon: Map },
       { name: "Cursos", url: "/Cursos", icon: PieChart },
       { name: "Noti-Tarahumara", url: "/Blog", icon: Bot },
+      { name: "Movimientos Nominas", url: "/Movimientos", icon: AudioWaveform },
+
   ],
 }
 
