@@ -38,7 +38,7 @@ function CourseCatalog({ onAddCourse, onClose }: Props) {
       return;
     }
     try {
-      const response = await fetch('http://api-cursos.192.168.29.40.sslip.io/agregarCurso', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/agregarCurso`, {
         method: 'POST', 
         headers: {
           'Content-Type': 'application/json', 

@@ -143,7 +143,7 @@ export function BlogPostCard({
   };
 
   const toggleLike = async (action: "like" | "dislike") => {
-    const url = `http://api-cursos.192.168.29.40.sslip.io/${action}/${idBlog}`;
+    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/${action}/${idBlog}`;
     const delta = action === "like" ? 1 : -1;
 
     try {

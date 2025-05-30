@@ -89,6 +89,7 @@ const sidebarData = {
           ? [{ title: "Requisiciones", url: "/Perfil#requisiciones" }]
           : []),
         { title: "Carta Patronal", url: "/Perfil#patron" },
+        { title: "Monitorear Equipo", url: "/Perfil#monitorearequipo" },
       ],
     },
   ],

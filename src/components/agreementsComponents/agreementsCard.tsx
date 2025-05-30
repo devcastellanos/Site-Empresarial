@@ -61,7 +61,7 @@ export function ConvenioCard({
   };
 
   const handleEdit = () => {
-    fetch(`http://api-cursos.192.168.29.40.sslip.io/actualizarConvenio`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/actualizarConvenio`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

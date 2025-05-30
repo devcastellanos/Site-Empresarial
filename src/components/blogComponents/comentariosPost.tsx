@@ -45,7 +45,7 @@ const ComentariosPost: React.FC<ComentariosPostProps> = ({ idBlog, isAdmin = fal
 
   const fetchComentarios = React.useCallback(async () => {
     try {
-      const res = await axios.get(`http://api-cursos.192.168.29.40.sslip.io/comentarios`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/comentarios`, {
         params: { post: idBlog },
       });
       setComentarios(res.data);
@@ -68,7 +68,7 @@ const ComentariosPost: React.FC<ComentariosPostProps> = ({ idBlog, isAdmin = fal
     if (!nuevoComentario.trim() || !user?.num_empleado) return;
 
     try {
-        const response = await axios.post(`http://api-cursos.192.168.29.40.sslip.io/comentarios`, {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/comentarios`, {
             idBlog,
             num_empleado: user.num_empleado,
             contenido: nuevoComentario,
@@ -83,7 +83,7 @@ const ComentariosPost: React.FC<ComentariosPostProps> = ({ idBlog, isAdmin = fal
 
   const handleEliminar = async (idComentario: number) => {
     try {
-      await axios.delete(`http://api-cursos.192.168.29.40.sslip.io/comentarios/${idComentario}`);
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/comentarios/${idComentario}`);
       fetchComentarios();
     } catch (error) {
       console.error("Error al eliminar comentario:", error);
@@ -94,7 +94,7 @@ const ComentariosPost: React.FC<ComentariosPostProps> = ({ idBlog, isAdmin = fal
     if (!editando) return;
 
     try {
-      await axios.put(`http://api-cursos.192.168.29.40.sslip.io/comentarios/${editando.idComentario}`, {
+      await axios.put(`http://${process.env.NEXT_PUBLIC_API_BASE_URL}/comentarios/${editando.idComentario}`, {
         contenido: editando.contenido,
       });
       setEditando(null);

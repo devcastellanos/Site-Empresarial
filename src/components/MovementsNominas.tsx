@@ -39,6 +39,10 @@ function Movements() {
   const [fechaInicio, setFechaInicio] = useState<Date | undefined>();
   const [fechaFin, setFechaFin] = useState<Date | undefined>();
   const { user } = useAuth();
+  const [fechasSeleccionadas, setFechasSeleccionadas] = useState<Date[]>([]);
+  const [vacacionesOriginales, setVacacionesOriginales] = useState({ acumuladas: 0, ley: 0 });
+  const [acumuladasRestantes, setAcumuladasRestantes] = useState(0);
+  const [leyRestantes, setLeyRestantes] = useState(0);
 
   useEffect(() => {
     if (!user) return;
@@ -52,9 +56,102 @@ function Movements() {
         console.error("❌ Error al cargar movimientos:", error);
       }
     };
+    if (selectedMovimiento?.tipo_movimiento === "Vacaciones") {
+      const fechas = selectedMovimiento.datos_json?.fechas || [];
+      const fechasReales = fechas.map((f: string) => {
+        const [y, m, d] = f.split("-").map(Number);
+        return new Date(y, m - 1, d);
+      });
+      const acumuladas = parseInt(selectedMovimiento.datos_json?.vacaciones_acumuladas_restantes) || 0;
+      const ley = parseInt(selectedMovimiento.datos_json?.vacaciones_ley_restantes) || 0;
+      setFechasSeleccionadas(fechasReales);
+      setVacacionesOriginales({ acumuladas, ley });
+      setAcumuladasRestantes(acumuladas);
+      setLeyRestantes(ley);
+    }
 
     fetchMovimientos();
-  }, [user]);
+  }, [user, selectedMovimiento]);
+
+  const guardarCambios = async () => {
+    if (!selectedMovimiento) return;
+
+    const datos = selectedMovimiento.datos_json || {};
+    const totalSolicitado = parseInt(datos.total_dias);
+    const fechas = Array.isArray(datos.fechas) ? datos.fechas : [];
+    const ley = parseInt(datos.vacaciones_ley_restantes) || 0;
+    const acumuladas = parseInt(datos.vacaciones_acumuladas_restantes) || 0;
+    const disponibles = ley + acumuladas;
+
+    // Validaciones
+    if (isNaN(totalSolicitado) || totalSolicitado <= 0) {
+      alert("❌ Debes indicar un número válido de días");
+      return;
+    }
+
+    if (totalSolicitado > disponibles) {
+      alert("❌ No puedes tomar más días de los que tienes disponibles");
+      return;
+    }
+
+    if (fechas.length < totalSolicitado) {
+      alert("❌ Debes seleccionar al menos tantas fechas como días solicitados");
+      return;
+    }
+
+    // Validar fechas dentro de rango
+    const fechaInicio = new Date(datos.fecha_inicio);
+    const fechaFin = new Date(datos.fecha_fin);
+    if (fechaInicio > fechaFin) {
+      alert("❌ La fecha de inicio no puede ser mayor que la fecha de fin");
+      return;
+    }
+
+    const fechasFueraDeRango = fechas.filter((f: string) => {
+      const fecha = new Date(f);
+      return fecha < fechaInicio || fecha > fechaFin;
+    });
+
+    if (fechasFueraDeRango.length > 0) {
+      alert("❌ Hay fechas fuera del rango entre inicio y fin");
+      return;
+    }
+
+    // Validar fechas duplicadas
+    const fechasSet = new Set(fechas);
+    if (fechasSet.size !== fechas.length) {
+      alert("⚠️ Hay fechas repetidas en el listado");
+      return;
+    }
+
+    // Enviar al backend
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movimientos/${selectedMovimiento.idMovimiento}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          datos_json: selectedMovimiento.datos_json,
+          comentarios: selectedMovimiento.comentarios || "",
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        alert(`❌ Error: ${data.message}`);
+        return;
+      }
+
+      alert("✅ Movimiento actualizado correctamente");
+      setSelectedMovimiento(null);
+    } catch (error) {
+      console.error("❌ Error al guardar cambios:", error);
+      alert("Ocurrió un error al guardar");
+    }
+  };
+
+
 
   const movimientosFiltrados = movementsData.todos.filter((mov) => {
     const fechaIncidencia = new Date(mov.fecha_incidencia);
@@ -160,8 +257,8 @@ function Movements() {
                       mov.estatus_movimiento === "aprobado"
                         ? "default"
                         : mov.estatus_movimiento === "pendiente"
-                        ? "secondary"
-                        : "destructive"
+                          ? "secondary"
+                          : "destructive"
                     }
                   >
                     {mov.estatus_movimiento}
@@ -189,15 +286,135 @@ function Movements() {
               <p><strong>Historial:</strong> {selectedMovimiento.historial_aprobaciones}</p>
 
               <p className="pt-2 font-bold">Datos Específicos:</p>
-              {Object.entries(selectedMovimiento.datos_json || {}).map(([key, value]) => {
-                if (value === "") return null;
-                return (
-                  <p key={key}>
-                    <strong>{key}:</strong>{" "}
-                    {Array.isArray(value) ? value.join(", ") : String(value)}
-                  </p>
-                );
-              })}
+              {selectedMovimiento?.tipo_movimiento === "Vacaciones" ? (
+                Object.entries(selectedMovimiento.datos_json || {}).map(([key, value]) => {
+                  const isEditable = [
+                    "total_dias",
+                    "fecha_inicio",
+                    "fecha_fin",
+                    "fechas",
+                    "comentarios"
+                  ].includes(key);
+
+                  return (
+                    <div key={key} className="space-y-1">
+                      <label className="block font-medium capitalize">{key}:</label>
+                      {key === "fechas" ? (
+                        <>
+                          <Calendar
+                            mode="multiple"
+                            selected={fechasSeleccionadas}
+                            onSelect={(dates: Date[] | undefined) => {
+                              const nuevasFechas = dates || [];
+                              const ordenadas = [...nuevasFechas].sort((a, b) => a.getTime() - b.getTime());
+                              const fechaFormateada = (d: Date) => format(d, "yyyy-MM-dd");
+
+                              const anteriores = new Set(fechasSeleccionadas.map(fechaFormateada));
+                              const nuevas = new Set(ordenadas.map(fechaFormateada));
+
+                              const agregadas = [...nuevas].filter((f) => !anteriores.has(f));
+                              const eliminadas = [...anteriores].filter((f) => !nuevas.has(f));
+
+                              console.log("➡️ Fechas seleccionadas antes:", [...anteriores]);
+                              console.log("➡️ Fechas seleccionadas ahora :", [...nuevas]);
+                              console.log("🟢 Agregadas:", agregadas);
+                              console.log("🔴 Eliminadas:", eliminadas);
+
+                              let nuevasAcumuladas = acumuladasRestantes;
+                              let nuevasLey = leyRestantes;
+
+                              if (agregadas.length > 0) {
+                                for (let i = 0; i < agregadas.length; i++) {
+                                  if (nuevasAcumuladas > 0) nuevasAcumuladas--;
+                                  else if (nuevasLey > 0) nuevasLey--;
+                                  else {
+                                    alert("❌ No tienes días suficientes para agregar más fechas.");
+                                    return;
+                                  }
+                                }
+                              }
+
+                              if (eliminadas.length > 0) {
+                                for (let i = 0; i < eliminadas.length; i++) {
+                                  const totalSeleccionadas = nuevasFechas.length;
+
+                                  // Asume que ley se usa al final, así que devolvemos a ley primero si fue usada
+                                  if (totalSeleccionadas < vacacionesOriginales.acumuladas) {
+                                    nuevasAcumuladas++;
+                                  } else {
+                                    nuevasLey++;
+                                  }
+                                }
+                              }
+
+                              const usadas = ordenadas.length;
+                              const usadasAcumuladas = vacacionesOriginales.acumuladas - nuevasAcumuladas;
+                              const usadasLey = vacacionesOriginales.ley - nuevasLey;
+
+                              console.log("📊 Total días usados:", usadas);
+                              console.log("💼 Usadas acumuladas:", usadasAcumuladas);
+                              console.log("📘 Usadas ley:", usadasLey);
+                              console.log("🧮 Nuevas acumuladas restantes:", nuevasAcumuladas);
+                              console.log("📗 Nuevas ley restantes:", nuevasLey);
+
+                              setAcumuladasRestantes(nuevasAcumuladas);
+                              setLeyRestantes(nuevasLey);
+                              setFechasSeleccionadas(ordenadas);
+                              setSelectedMovimiento((prev: any) => ({
+                                ...prev,
+                                datos_json: {
+                                  ...prev.datos_json,
+                                  fechas: ordenadas.map(fechaFormateada),
+                                  total_dias: usadas,
+                                  fecha_inicio: ordenadas[0] ? fechaFormateada(ordenadas[0]) : "",
+                                  fecha_fin: ordenadas[usadas - 1] ? fechaFormateada(ordenadas[usadas - 1]) : "",
+                                  vacaciones_acumuladas_restantes: nuevasAcumuladas,
+                                  vacaciones_ley_restantes: nuevasLey,
+                                },
+                              }));
+                            }}
+
+
+                            className="border rounded-md"
+                            initialFocus
+                          />
+                          {Array.isArray(value) && value.length > 0 && (
+                            <div className="text-xs text-gray-600 mt-2">
+                              Fechas seleccionadas: {value.join(", ")}
+                            </div>
+                          )}
+                        </>
+                      ) : isEditable ? (
+                        <input
+                          type="text"
+                          className="w-full px-2 py-1 border rounded-md"
+                          value={String(value || "")}
+                          onChange={(e) =>
+                            setSelectedMovimiento((prev: any) => ({
+                              ...prev,
+                              datos_json: {
+                                ...prev.datos_json,
+                                [key]: e.target.value,
+                              },
+                            }))
+                          }
+                        />
+                      ) : (
+                        <p>{String(value)}</p>
+                      )}
+                    </div>
+                  );
+                })
+              ) : (
+                <p>No hay datos específicos para este tipo de movimiento.</p>
+              )}
+
+            </div>
+          )}
+
+          {selectedMovimiento?.tipo_movimiento === "Vacaciones" && (
+            <div className="pt-4 flex justify-end">
+              <Button onClick={guardarCambios}>Guardar cambios</Button>
             </div>
           )}
         </DialogContent>

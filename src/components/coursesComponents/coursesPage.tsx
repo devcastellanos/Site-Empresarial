@@ -76,7 +76,7 @@ function CourseCatalog() {
   const fetchDepartments = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_INTELISIS}/api/departments`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/departments`
       );
       const data = await response.json();
 

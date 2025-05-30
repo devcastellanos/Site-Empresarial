@@ -7,6 +7,7 @@ import Courses from "@/components/profileComponents/courses"
 import Movements from "@/components/profileComponents/movements"
 import PatronCard from "@/components/profileComponents/patronCard"
 import RequisitonsPage from "@/components/profileComponents/requisitionsPage"
+import MonitorSubordinates from "@/components/profileComponents/monitorSubordinates"
 import { AppSidebar } from "@/components/sidebar/app-sidebar"
 import { useAuth } from "@/app/context/AuthContext"
 import {
@@ -31,6 +32,7 @@ export type PerfilVista =
   | "movimientos"
   | "requisiciones"
   | "patron"
+  | "monitorearequipo"
 
 const LOCAL_STORAGE_KEY = "vista_perfil_activa"
 
@@ -58,6 +60,7 @@ export default function Campaign() {
     movimientos: "Movimientos",
     requisiciones: "requisiciones",
     patron: "Modo Patrón",
+    monitorearequipo: "Monitorear Equipo",
   }
 
   const renderVista = () => {
@@ -76,9 +79,12 @@ export default function Campaign() {
         return <RequisitonsPage />
       case "patron":
         return <PatronCard />
+      case "monitorearequipo":
+        return <MonitorSubordinates />
       case "perfil":
       default:
         return <RegisterCheckInCheckOut />
+      
     }
   }
 

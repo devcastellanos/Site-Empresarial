@@ -59,18 +59,19 @@ function RegisterCheckInCheckOut() {
       const movimientos = await obtenerMisMovimientos(user.num_empleado);
       setMovimientosSolicitados(movimientos);
     };
-    const fetchAsistencias = async () => {
-      if (!user || !user.num_empleado) return;
-      try {
-        const res = await fetch(`http://api-checadas.192.168.29.40.sslip.io/asistencia?codigo=${user.num_empleado}`);
-        const data = await res.json();
-        setAsistencias(data);
-      } catch (error) {
-        console.error("Error al obtener datos de asistencia:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+const fetchAsistencias = async () => {
+  if (!user || !user.num_empleado) return;
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/asistencia?codigo=${user.num_empleado}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    setAsistencias(json.data); // solo si json.success === true
+  } catch (error) {
+    console.error("Error al obtener datos de asistencia:", error);
+  } finally {
+    setLoading(false);
+  }
+};
     fetchMovimientos();
     fetchAsistencias();
 
@@ -82,7 +83,7 @@ function RegisterCheckInCheckOut() {
     const fetchEmpleado = async () => {
       if (!user) return;
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_INTELISIS}/api/users/all`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/all`);
         const data = await response.json();
         const employeeData = data.find((u: any) => Number(u.Personal) === Number(user.num_empleado));
         setEmpleado(employeeData);

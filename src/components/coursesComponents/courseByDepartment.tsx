@@ -19,7 +19,7 @@ export const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ co
 
   const fetchUsers = async (department: string) => {
     try {
-      const response = await fetch(`http://api-site-intelisis.192.168.29.40.sslip.io/api/users/by-department?department=${department}`);
+      const response = await fetch(`http://${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/by-department?department=${department}`);
       const data = await response.json();
       setUsers(data);
       setSelectedUsers(new Set(data.map((user: { Personal: string }) => user.Personal)));

@@ -40,7 +40,7 @@ React.useEffect(() => {
   const fetchData = async () => {
       if (!user) return;
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_INTELISIS}/api/users/all`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/all`
       );
       const data = await response.json();
       const employeeData = data.find((u: any) => Number(u.Personal) === Number(user.num_empleado));
