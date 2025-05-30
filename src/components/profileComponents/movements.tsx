@@ -60,6 +60,7 @@ import {
 import { useAuth } from "@/app/context/AuthContext";
 import { nivelAprobacionPorMovimiento, movements } from "@/lib/movimientos";
 import { renderDatosJsonPorTipo } from "@/utils/renderDatosJsonPorTipo";
+import Swal from "sweetalert2";
 
 function Movements() {
   const [employeeNumber, setEmployeeNumber] = useState("");
@@ -173,10 +174,35 @@ function Movements() {
       const movimientoResult = await crearMovimiento(movimientoPayload);
 
       if (!movimientoResult.success) {
-        alert("Error creando movimiento");
         setRequestStatus("error");
+
+        if (movimientoResult.limite) {
+          // Mostramos SweetAlert
+         Swal.fire({
+  icon: 'warning',
+  title: 'Límite alcanzado',
+  html: `
+    <p style="font-size: 15px; line-height: 1.5; color: #333;">
+      Has alcanzado el limite de retardos justificados este mes
+    </p>
+    <p style="margin-top: 10px; font-size: 14px; color: #555;">
+      Si requieres apoyo adicional, por favor contacta a Recursos Humanos.
+    </p>
+  `,
+  confirmButtonColor: '#9A3324',
+  confirmButtonText: 'Entendido',
+  customClass: {
+    popup: 'rounded-xl shadow-lg',
+    title: 'text-lg font-semibold',
+    confirmButton: 'px-4 py-2 text-white',
+  }
+});
+        } else {
+          alert("❌ Error creando movimiento");
+        }
         return;
       }
+
 
       setRequestStatus("success");
       alert("✅ Solicitud enviada correctamente");
@@ -218,9 +244,8 @@ function Movements() {
         </div>
       </Card>
 
-      <Card className={`${
-    user?.rol !== "admin" ? "col-span-4" : "col-span-2"
-  } space-y-4 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4 max-h-[650px]`}>
+      <Card className={`${user?.rol !== "admin" ? "col-span-4" : "col-span-2"
+        } space-y-4 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4 max-h-[650px]`}>
         <CardHeader>
           <CardTitle>Solicitud de Autorización</CardTitle>
         </CardHeader>

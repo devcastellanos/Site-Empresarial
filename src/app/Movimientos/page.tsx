@@ -1,8 +1,11 @@
 import Movements from "@/components/MovementsNominas";
+import { NavbarRH } from "@/components";
 
 export default function Movimientos() {
   return (
-    <div className="w-full h-full">
+    
+    <div className="pt-24" >
+      <NavbarRH />
       <Movements />
     </div>
   );
