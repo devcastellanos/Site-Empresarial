@@ -1,6 +1,6 @@
 "use client"
 
-import { use, useState } from "react"
+import { useState } from "react"
 import { AppSidebar } from "@/components/sidebar/app-sidebar"
 import {
   SidebarProvider,

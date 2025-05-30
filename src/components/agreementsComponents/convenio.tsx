@@ -1,17 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Typography,
-  Textarea,
-  Input,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-} from "@material-tailwind/react";
-import { PlusIcon } from "@heroicons/react/24/solid";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Plus } from "lucide-react";
 import ConvenioCard from "@/components/agreementsComponents/agreementsCard";
 import Image from "next/image";
 import axios from "axios";
@@ -38,7 +32,7 @@ export function Convenio() {
   const [open, setOpen] = useState(false);
   const { isAuthenticated } = useAuth();
 
-  const handleOpen = () => setOpen((prev) => !prev);
+  const handleOpen = () => setOpen(prev => !prev);
 
   useEffect(() => {
     const fetchConvenios = async () => {
@@ -115,38 +109,35 @@ export function Convenio() {
 
       {isAuthenticated && (
         <>
-          <Button
-            onClick={handleOpen}
-            color="blue"
-            className="mb-10 flex items-center gap-2"
-          >
-            <PlusIcon className="h-5 w-5" />
-            Agregar Convenio
-          </Button>
-
-          <Dialog open={open} handler={handleOpen} size="lg">
-            <DialogHeader>Nuevo Convenio</DialogHeader>
-            <DialogBody>
-              <div className="space-y-4">
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button className="mb-10 flex items-center gap-2">
+                <Plus className="h-5 w-5" />
+                Agregar Convenio
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>Nuevo Convenio</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-2">
                 <Input
-                  label="Título"
+                  placeholder="Título"
                   value={convenio.titulo}
                   onChange={(e) => setConvenio({ ...convenio, titulo: e.target.value })}
                 />
                 <Input
-                  label="Link"
+                  placeholder="Link"
                   value={convenio.link}
                   onChange={(e) => setConvenio({ ...convenio, link: e.target.value })}
                 />
                 <Textarea
-                  label="Descripción"
+                  placeholder="Descripción"
                   value={convenio.descripcion}
                   onChange={(e) => setConvenio({ ...convenio, descripcion: e.target.value })}
                 />
                 <Input
                   type="file"
-                  label="Imagen"
-                  accept="image/*"
                   onChange={(e) => setImgFile(e.target.files ? e.target.files[0] : null)}
                 />
                 {imgFile && (
@@ -159,19 +150,19 @@ export function Convenio() {
                   />
                 )}
               </div>
-            </DialogBody>
-            <DialogFooter>
-              <Button variant="text" onClick={handleOpen} className="mr-2">Cancelar</Button>
-              <Button color="blue" onClick={handleAddConvenio}>Agregar</Button>
-            </DialogFooter>
+              <DialogFooter>
+                <Button variant="outline" onClick={handleOpen}>Cancelar</Button>
+                <Button onClick={handleAddConvenio}>Agregar</Button>
+              </DialogFooter>
+            </DialogContent>
           </Dialog>
         </>
       )}
 
-      <Typography variant="h1" className="mb-2">Convenios</Typography>
-      <Typography variant="lead" color="gray" className="max-w-3xl mb-12 text-center text-gray-500">
+      <h1 className="text-4xl font-bold mb-2">Convenios</h1>
+      <p className="text-muted-foreground max-w-3xl mb-12 text-center">
         Aquí puedes ver los convenios actuales de Grupo Tarahumara
-      </Typography>
+      </p>
 
       <div className="container grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-2">
         {convenios.length > 0 ? convenios.map(({ img, titulo, descripcion, link, idConvenio }) => (
