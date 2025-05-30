@@ -3,7 +3,6 @@ import { NavbarRH, FooterRH } from "@/components";
 import { motion, useScroll } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
-import OrgChart from "@/components/OrgChart";
 
 const ARTICLES = [
   {

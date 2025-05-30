@@ -1,8 +1,9 @@
 "use client";
 import { NavbarRH, FooterRH } from "@/components";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
+import OrgChart from "@/components/OrgChart";
 
 const ARTICLES = [
   {
@@ -37,11 +38,10 @@ const ARTICLES = [
   },
 ];
 
-export default function Campaign() {
+export default function IntranetHomePage() {
   const ref = useRef(null);
-  const footerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
-  const videoOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.3]);
+  const orgChartRef = useRef<HTMLElement | null>(null);
 
   return (
     <>
@@ -50,8 +50,9 @@ export default function Campaign() {
         autoPlay
         loop
         muted
+        playsInline
         className="fixed top-0 left-0 w-full h-full object-cover -z-20"
-        style={{ opacity: videoOpacity }}
+        style={{ opacity: 1 }}
       >
         <source src="/image/background.mp4" type="video/mp4" />
         Tu navegador no soporta videos.
@@ -59,33 +60,33 @@ export default function Campaign() {
 
       <motion.header
         ref={ref}
-        className="relative w-full min-h-screen flex flex-col items-center justify-start text-center pt-32 overflow-hidden"
+        className="relative w-full h-screen flex flex-col items-center justify-start text-center pt-32 overflow-hidden"
         initial={{ opacity: 0, y: -50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false }}
         transition={{ duration: 1 }}
       >
-        <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50"></div>
+        <div className="absolute top-0 left-0 w-full h-full md:px-16" />
         <div className="relative z-10 w-full max-w-6xl px-6 text-white mt-24">
           <h1 className="text-[48px] lg:text-[64px] font-extrabold leading-tight">
-            Capacitación Tarahumara
+            Universidad Tarahumara
           </h1>
           <p className="mt-2 text-lg lg:text-2xl text-gray-200">
             Descubre herramientas, presentaciones, guías y contenido multimedia diseñados para potenciar tu desarrollo profesional.
           </p>
 
-          <div className="mt-12 flex justify-center">
+          <div className="mt-6 flex justify-center">
             <Image
               src="/image/utara.png"
               alt="Logo"
               width={256}
               height={256}
-              className="w-48 h-auto"
+              className="w-32 h-auto"
             />
           </div>
 
-          {/* ARTICLES DENTRO DEL HEADER */}
-          <div className="mt-20 max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 px-2">
+          {/* TARJETAS / ARTICLES */}
+          <div className="mt-14 max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 px-2">
             {ARTICLES.map((article, idx) => (
               <div key={idx} className="group perspective">
                 <motion.div
@@ -139,20 +140,35 @@ export default function Campaign() {
           </div>
         </div>
       </motion.header>
-
-      {/* BOTÓN FLOTANTE HACIA FOOTER */}
-      <button
-        onClick={() => footerRef.current?.scrollIntoView({ behavior: "smooth" })}
-        className="fixed bottom-6 right-6 z-50 bg-[#9A3324] hover:bg-[#7c291d] text-white rounded-full px-5 py-3 text-sm shadow-xl animate-bounce transition-all"
-        aria-label="Ir al pie de página"
+      {/* ORG CHART SECTION */}
+      <motion.section
+        ref={orgChartRef}
+        className="w-full bg-gray-900 bg-opacity-95 text-center py-10 px-4 md:px-16"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: false }}
+        transition={{ duration: 1 }}
       >
-        Contacta al equipo de Capacitación
-      </button>
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.8 }}
+        >
+          <FooterRH />
+        </motion.div>
+      </motion.section>
 
-      {/* FOOTER CON REF */}
-      <div ref={footerRef}>
-        <FooterRH />
-      </div>
+      {/* BOTÓN FLOTANTE ANIMADO */}
+      <button
+        onClick={() =>
+          orgChartRef.current?.scrollIntoView({ behavior: "smooth" })
+        }
+        className="fixed bottom-6 right-6 z-50 bg-[#9A3324] hover:bg-[#7c291d] text-white rounded-full px-5 py-3 text-sm shadow-xl animate-bounce transition-all"
+        aria-label="Ir al organigrama"
+      >
+        Conoce el equipo de Capacitación
+      </button>
     </>
   );
 }
