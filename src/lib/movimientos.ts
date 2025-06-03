@@ -19,6 +19,7 @@ export const nivelAprobacionPorMovimiento: Record<string, number> = {
     "Sin registro salida": 1,
     "Tiempo extra": 1,
     "Viaje de Trabajo": 2,
+    "extraoridinario": 1,
   };
 
   export const movements = [
@@ -42,6 +43,7 @@ export const nivelAprobacionPorMovimiento: Record<string, number> = {
     "Sin registro salida",
     "Tiempo extra",
     "Viaje de Trabajo",
+    "extraoridinario",
   ];
 
   

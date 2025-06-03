@@ -490,6 +490,17 @@ function Movements() {
               onCommentsChange={setComments}
             />
           )}
+          {movementType === "extraoridinario" && (
+            <div className="space-y-4">
+              <Label>Comentarios</Label>
+              <Input
+                value={comments}
+                onChange={(e) => setComments(e.target.value)}
+                placeholder="Escribe tus comentarios aquí"
+                className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
+              /> 
+            </div>
+          )}
         </CardContent>
 
         <CardFooter className="flex justify-end">

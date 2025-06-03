@@ -28,7 +28,7 @@ const ARTICLES = [
     img: "/image/convenio.png",
     title: "Convenios Educativos",
     desc: "Da clic aquí para conocer los convenios educativos que tenemos.",
-    link: "/Convenios",
+    link: "/Convenios?tipo=educativo",
   },
   {
     img: "/image/solicitud.png",

@@ -1,29 +1,22 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Typography,
-  Textarea,
-  Card,
-  CardBody,
-  CardHeader,
-  CardFooter,
-} from "@material-tailwind/react";
-import { ArrowSmallDownIcon } from "@heroicons/react/24/solid";
-import BlogPostCard from "@/components/blogComponents/blog-post-card";
 import Image from "next/image";
-import { Input, Select, Option, Carousel } from "@material-tailwind/react";
+import { motion } from "framer-motion";
 import axios from "axios";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowDownIcon } from "lucide-react";
+import BlogPostCard from "@/components/blogComponents/blog-post-card";
 import { useAuth } from "@/hooks/useAuth";
-import { fetchPosts, deletePost, uploadImages, addPost } from "./postFunctions";
-import PostForm from "./postForm";
-
 import { Post } from "@/lib/interfaces";
+import PostForm from "./postForm";
+import { fetchPosts, deletePost, uploadImages, addPost } from "./postFunctions";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function Posts() {
-  const [post, setPost] = React.useState<Post>({
+  const [post, setPost] = useState<Post>({
     idBlog: 0,
     img: [],
     tag: "",
@@ -35,46 +28,34 @@ export function Posts() {
     num_empleado: 0,
     likes: 0,
     videoUrl: "",
-    impact: "bajo",
+    impact: "bajo"
   });
 
-  const [sortOrder, setSortOrder] = useState<"reciente" | "antiguo">(
-    "reciente"
-  );
-  const [tagFilter, setTagFilter] = useState<string | null>(null);
-  const [posts, setPosts] = React.useState<Post[]>([]);
+  const [sortOrder, setSortOrder] = useState<"reciente" | "antiguo">("reciente");
+  const [tagFilter, setTagFilter] = useState<string>("todos");
+  const [posts, setPosts] = useState<Post[]>([]);
   const [imgFiles, setImgFiles] = useState<File[]>([]);
-
   const [visiblePosts, setVisiblePosts] = useState(5);
-
   const { isAuthenticated } = useAuth();
 
-  const filteredAndSortedPosts = [...posts]
-    .filter((post) => {
-      if (!tagFilter) return true;
-      return post.tag === tagFilter;
-    })
-    .sort((a, b) => {
-      const dateA = new Date(a.date).getTime();
-      const dateB = new Date(b.date).getTime();
-      return sortOrder === "reciente" ? dateB - dateA : dateA - dateB;
-    });
+const filteredAndSortedPosts = [...posts]
+  .filter((post) => tagFilter === "todos" || post.tag === tagFilter)
+  .sort((a, b) => {
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+    return sortOrder === "reciente" ? dateB - dateA : dateA - dateB;
+  });
 
   useEffect(() => {
     const loadPosts = async () => {
       const data = await fetchPosts();
       setPosts(data);
     };
-
     loadPosts();
   }, []);
 
   const handleDeletePost = async (idBlog: number) => {
-    // Encontrar el post que se va a eliminar
-    const postDeleted = posts.find((post) => post.idBlog === idBlog);
-    console.log("Imágenes del post a eliminar:", postDeleted?.img);
-    console.log("Post a eliminar:", idBlog);
-
+    const postDeleted = posts.find((p) => p.idBlog === idBlog);
     const success = await deletePost(idBlog, postDeleted);
     if (success) {
       setPosts((prev) => prev.filter((p) => p.idBlog !== idBlog));
@@ -82,191 +63,123 @@ export function Posts() {
   };
 
   const handlePostEdit = (updatedPost: Post) => {
-    setPosts((prevPosts) =>
-      prevPosts.map((post) =>
-        post.idBlog === updatedPost.idBlog ? updatedPost : post
-      )
-    );
+    setPosts((prev) => prev.map((p) => (p.idBlog === updatedPost.idBlog ? updatedPost : p)));
   };
 
   const handleAddPost = async () => {
     if ((!imgFiles.length && !post.videoUrl) || !post?.num_empleado) {
-      alert(
-        "Por favor, sube una imagen o proporciona un enlace de video y proporciona el número de empleado."
-      );
+      alert("Sube imagen o video y número de empleado");
       return;
     }
 
     const imageUrls = await uploadImages(imgFiles, post.num_empleado);
-
-    const newPost = {
-      ...post,
-      img: imageUrls,
-      videoUrl: post.videoUrl || "",
-    };
+    const newPost = { ...post, img: imageUrls, videoUrl: post.videoUrl || "" };
     const addedPost = await addPost(newPost);
 
     if (addedPost) {
-      setPosts((prevPosts) => [...prevPosts, addedPost]);
-      console.log("Post agregado:", addedPost);
+      setPosts((prev) => [...prev, addedPost]);
       window.location.reload();
     }
   };
 
   return (
-    <section className="min-h-screen flex items-start justify-center px-4 pt-24 pb-12">
+    <section className="min-h-screen flex flex-col items-center justify-center px-4 pt-24 pb-12">
       <motion.video
         autoPlay
         loop
         muted
-        className="fixed top-0 left-0 w-full h-full object-cover -z-20"
-        style={{ opacity: 0.4 }}
+        className="fixed top-0 left-0 w-full h-full object-cover -z-20 opacity-40"
       >
         <source src="/image/background.mp4" type="video/mp4" />
       </motion.video>
 
-      <Card
-        className="shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl  max-w-full"
-        {...({} as any)}
-      >
-        <CardHeader
-          floated={false}
-          shadow={false}
-          className="relative h-64"
-          {...({} as any)}
-        >
+      <Card className="shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl max-w-screen-lg w-full">
+        <div className="h-64 relative">
           <Image
             width={1920}
             height={1080}
             src="/image/noti.png"
             alt="background"
-            className="h-full w-full rounded-lg object-cover"
+            className="h-full w-full rounded-t-2xl object-cover"
           />
-        </CardHeader>
-        {isAuthenticated ? (
-          <PostForm
-            post={post}
-            setPost={setPost}
-            imgFiles={imgFiles}
-            setImgFiles={setImgFiles}
-            handleAddPost={handleAddPost}
-          />
-        ) : null}
+        </div>
 
-        <div className="py-10"></div>
-        <CardBody {...({} as any)}>
-          <Typography variant="h5" color="blue-gray" {...({} as any)}>
-            Últimos posts
-          </Typography>
-          <Typography
-            variant="lead"
-            className="text-gray-600 mt-2"
-            {...({} as any)}
-          >
-            Aquí puedes ver la última información y noticias de Grupo
-            Tarahumara.
-          </Typography>
-          <div className="flex flex-col md:flex-row justify-end gap-4 mb-6">
-            <div className="w-64">
-              <Select
-                label="Ordenar por fecha"
-                value={sortOrder}
-                onChange={(val) => setSortOrder(val as "reciente" | "antiguo")}
-                {...({} as any)}
-              >
-                <Option value="reciente">Más reciente</Option>
-                <Option value="antiguo">Más antiguo</Option>
-              </Select>
-            </div>
-            <div className="w-64">
-              <Select
-                label="Filtrar por departamento"
-                value={tagFilter ?? ""}
-                onChange={(val) => setTagFilter(val || null)}
-                {...({} as any)}
-              >
-                <Option value="">Todos</Option>
-                <Option value="Sistemas">Sistemas</Option>
-                <Option value="Recursos Humanos">Recursos Humanos</Option>
-                <Option value="Contabilidad">Contabilidad</Option>
-                <Option value="Compras">Compras</Option>
-                <Option value="Ventas">Ventas</Option>
-              </Select>
-            </div>
-            <div className="w-64">
-            <Select
-            label="Impacto"
-            value={post.impact}
-            onChange={(val) => setPost({ ...post, impact: val as "bajo" | "medio" | "alto" })}
-            {...({} as any)}
-          >
-            <Option value="bajo">Bajo</Option>
-            <Option value="medio">Medio</Option>
-            <Option value="alto">Alto</Option>
-          </Select>
+        {isAuthenticated && (
+          <div className="p-6">
+            <PostForm
+              post={post}
+              setPost={setPost}
+              imgFiles={imgFiles}
+              setImgFiles={setImgFiles}
+              handleAddPost={handleAddPost}
+            />
           </div>
+        )}
+
+        <div className="px-6 py-4">
+          <div className="mb-4">
+            <h2 className="text-2xl font-semibold text-gray-800">Últimos posts</h2>
+            <p className="text-sm text-gray-600">
+              Aquí puedes ver la última información y noticias de Grupo Tarahumara.
+            </p>
           </div>
-          <div className="grid grid-cols-1 gap-6 mt-6 ">
-            {posts.length > 0 ? (
-              filteredAndSortedPosts
-                .slice(0, visiblePosts)
-                .map(
-                  ({
-                    img,
-                    tag,
-                    title,
-                    desc,
-                    date,
-                    img_author,
-                    name_author,
-                    idBlog,
-                    num_empleado,
-                    likes,
-                    videoUrl,
-                  }) => (
-                    <Card key={idBlog} className="shadow-md" {...({} as any)}>
-                      <BlogPostCard
-                        img={img}
-                        tag={tag}
-                        title={title}
-                        desc={desc}
-                        date={date}
-                        author={{ img: img_author, name: name_author }}
-                        idBlog={idBlog}
-                        num_empleado={num_empleado}
-                        likes={likes}
-                        videoUrl={videoUrl}
-                        onPostEdit={handlePostEdit}
-                        onPostDelete={() => handleDeletePost(idBlog)}
-                      />
-                    </Card>
-                  )
-                )
+
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <Select onValueChange={(val) => setSortOrder(val as any)}>
+              <SelectTrigger><SelectValue placeholder="Ordenar por" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="reciente">Más reciente</SelectItem>
+                <SelectItem value="antiguo">Más antiguo</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select onValueChange={(val) => setTagFilter(val)}>
+              <SelectTrigger><SelectValue placeholder="Departamento" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todos</SelectItem>
+                <SelectItem value="Sistemas">Sistemas</SelectItem>
+                <SelectItem value="Recursos Humanos">Recursos Humanos</SelectItem>
+                <SelectItem value="Contabilidad">Contabilidad</SelectItem>
+                <SelectItem value="Compras">Compras</SelectItem>
+                <SelectItem value="Ventas">Ventas</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select onValueChange={(val) => setPost({ ...post, impact: val as any })}>
+              <SelectTrigger><SelectValue placeholder="Impacto" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="bajo">Bajo</SelectItem>
+                <SelectItem value="medio">Medio</SelectItem>
+                <SelectItem value="alto">Alto</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-6">
+            {filteredAndSortedPosts.length > 0 ? (
+              filteredAndSortedPosts.slice(0, visiblePosts).map((p) => (
+                <Card key={p.idBlog} className="shadow-md">
+                  <BlogPostCard
+                    {...p}
+                    author={{ name: p.name_author, img: p.img_author }}
+                    onPostEdit={handlePostEdit}
+                    onPostDelete={() => handleDeletePost(p.idBlog)}
+                  />
+                </Card>
+              ))
             ) : (
-              <Typography
-                variant="small"
-                className="text-gray-500"
-                {...({} as any)}
-              >
-                No hay publicaciones disponibles.
-              </Typography>
+              <p className="text-sm text-gray-500">No hay publicaciones disponibles.</p>
             )}
           </div>
-        </CardBody>
-        <CardFooter className="flex justify-center" {...({} as any)}>
+
           {visiblePosts < filteredAndSortedPosts.length && (
-            <Button
-              variant="text"
-              size="lg"
-              color="gray"
-              className="flex items-center gap-2"
-              onClick={() => setVisiblePosts((prev) => prev + 6)}
-              {...({} as any)}
-            >
-              <ArrowSmallDownIcon className="h-5 w-5 text-gray-900" /> Ver más
-            </Button>
+            <div className="flex justify-center mt-6">
+              <Button variant="outline" onClick={() => setVisiblePosts((prev) => prev + 6)}>
+                <ArrowDownIcon className="w-4 h-4 mr-2" /> Ver más
+              </Button>
+            </div>
           )}
-        </CardFooter>
+        </div>
       </Card>
     </section>
   );

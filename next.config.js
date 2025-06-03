@@ -7,6 +7,7 @@ const nextConfig = {
         hostname: "**",
       },
     ],
+    domains: ["api-img-tara.192.168.29.40.sslip.io"],
   },
 };
 

@@ -99,7 +99,7 @@ const sidebarData = {
       { name: "Cargar Archivos Excel", url: "/cargaMasiva", icon: Frame },
       { name: "Usuarios", url: "/Usuarios", icon: Map },
       { name: "Cursos", url: "/Cursos", icon: PieChart },
-      { name: "Noti-Tarahumara", url: "/Blog", icon: Bot },
+      // { name: "Noti-Tarahumara", url: "/Blog", icon: Bot },
       { name: "Movimientos Nominas", url: "/Movimientos", icon: AudioWaveform },
 
   ],

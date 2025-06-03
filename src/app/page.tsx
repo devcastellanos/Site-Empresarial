@@ -3,6 +3,7 @@ import { NavbarRH, FooterRH } from "@/components";
 import { motion, useScroll } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
+import Posts from "@/components/blogComponents/postsPage";
 
 const ARTICLES = [
   {
@@ -58,7 +59,7 @@ export default function IntranetHomePage() {
 
       <motion.header
         ref={ref}
-        className="relative w-full h-screen flex flex-col items-center justify-start text-center pt-32 overflow-hidden"
+        className="relative w-full flex flex-col items-center justify-start text-center overflow-hidden"
         initial={{ opacity: 0, y: -50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false }}
@@ -141,6 +142,8 @@ export default function IntranetHomePage() {
         </div>
       </motion.header>
       
+      <Posts />
+
     </>
   );
 }

@@ -1,11 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-
-interface Course {
-  title: string;
-  description: string;
-  area: string;
-  tutor: string;
-}
+import { Course } from '@/lib/interfaces';
 
 // Crear un contexto para los cursos
 const CourseContext = createContext<{

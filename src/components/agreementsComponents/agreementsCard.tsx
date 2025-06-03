@@ -1,32 +1,35 @@
+"use client";
+
 import React, { useState } from "react";
 import Image from "next/image";
-import {
-  Typography,
-  Card,
-  CardHeader,
-  CardBody,
-  Avatar,
-  Button,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-  Input,
-  Carousel,
-} from "@material-tailwind/react";
-
+import { useAuth } from "@/hooks/useAuth";
 import { Convenio } from "./convenio";
 
-import { useAuth } from "@/hooks/useAuth";
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 interface ConvenioCardProps {
   idConvenio: number;
   img: string;
-
   titulo: string;
   descripcion: string;
   link: string;
-
+  tipo: string;
   onConvenioEdit: (convenio: Convenio) => void;
   onConvenioDelete: (idConvenio: number) => void;
 }
@@ -36,185 +39,121 @@ export function ConvenioCard({
   img,
   titulo,
   descripcion,
-    link,
+  link,
+  tipo,
   onConvenioEdit,
   onConvenioDelete,
 }: ConvenioCardProps) {
-  const [openModal, setOpenModal] = React.useState(false);
-  const [imageJson, setImageJson] = React.useState<string>();
-  const [convenio, setConvenio] = React.useState<Convenio>({
-    idConvenio: idConvenio,
-    img: img,
-    titulo: titulo,
-    descripcion: descripcion,
-    link: link
+  const [openModal, setOpenModal] = useState(false);
+  const [convenio, setConvenio] = useState<Convenio>({
+    idConvenio,
+    img,
+    titulo,
+    descripcion,
+    link,
+    tipo,
   });
 
   const { isAuthenticated } = useAuth();
 
-  const handleEditClick = () => {
-    setOpenModal(true); // Abre el modal cuando se hace clic en "Editar"
-  };
+  const handleCloseModal = () => setOpenModal(false);
 
-  const handleCloseModal = () => {
-    setOpenModal(false); // Cierra el modal
-  };
-
-  const handleEdit = () => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/actualizarConvenio`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(convenio),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setOpenModal(false);
-        onConvenioEdit(convenio);
+  const handleEdit = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/actualizarConvenio`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(convenio),
       });
-    window.location.reload();
+
+      if (!response.ok) throw new Error("Error al actualizar convenio");
+      const result = await response.json();
+      onConvenioEdit(convenio);
+      setOpenModal(false);
+    } catch (error) {
+      console.error("Error actualizando convenio:", error);
+    }
   };
 
   return (
     <>
-      <Card
-        shadow={true}
-        
-{...({} as any)}
-      >
-        <CardHeader
-          {...({} as any)}
-        >
-          <a href={link} target="_blank" rel="noopener noreferrer">
-                <Image
-                src={`/api/images/${img}`}
-                alt="blog"
-                width={600}
-                height={600}
-                className="h-full w-full object-cover cursor-pointer"
-                />
-            </a>
-        </CardHeader>
-        <CardBody
-          className="p-6"
-{...({} as any)}
-        >
-          <Typography
-{...({} as any)}
-            as="a"
-            href="#"
-            variant="h5"
-            color="blue-gray"
-            className="mb-2 normal-case transition-colors hover:text-gray-900"
-          >
-            {titulo}
-          </Typography>
-          <Typography
-{...({} as any)}
-            className="mb-6 font-normal !text-gray-500"
-          >
-            {descripcion}
-          </Typography>
-          <div className="flex items-center gap-4">
-            {isAuthenticated && (
-              <div>
-                <Button
-                  
-{...({} as any)}
-                  onClick={() => onConvenioDelete(idConvenio)}
-                >
-                  Eliminar
-                </Button>
-                <Button
-                  className="ml-auto"
-                  
-{...({} as any)}
-                  onClick={handleEditClick}
-                >
-                  Editar
-                </Button>
-              </div>
-            )}
-          </div>
-        </CardBody>
+      <Card className="w-full overflow-hidden rounded-xl shadow-md">
+        <a href={link} target="_blank" rel="noopener noreferrer">
+          <Image
+            src={`/api/images/${img}`}
+            alt="Imagen del convenio"
+            width={600}
+            height={300}
+            className="w-full h-60 object-cover"
+          />
+        </a>
+        <CardContent className="p-4 space-y-2">
+          <h2 className="text-xl font-semibold">{titulo}</h2>
+          <p className="text-sm text-muted-foreground">{descripcion}</p>
+          <p className="text-xs italic text-gray-500">Tipo: {tipo}</p>
+          {isAuthenticated && (
+            <div className="flex gap-2 pt-2">
+              <Button variant="destructive" onClick={() => onConvenioDelete(idConvenio)}>Eliminar</Button>
+              <Button variant="default" onClick={() => setOpenModal(true)}>Editar</Button>
+            </div>
+          )}
+        </CardContent>
       </Card>
 
-      {/* Modal para editar información */}
-      <Dialog
-        
-{...({} as any)}
-        open={openModal}
-        handler={handleCloseModal}
-      >
-        <DialogHeader
-{...({} as any)}
-        >
-          Edita la información
-        </DialogHeader>
-        <DialogBody
-{...({} as any)}
-        >
-          <div>
-            {/* Aquí puedes agregar los campos del formulario de edición */}
-            <Input
-              
-{...({} as any)}
-              type="text"
-              placeholder="Título"
-              value={convenio.titulo}
-              onChange={(e) =>
-                setConvenio({ ...convenio, titulo: e.target.value })
-              }
-              className="w-full p-2 border rounded mb-4"
-            />
-            <Input
-              
-{...({} as any)}
-              placeholder="Descripción"
-              value={convenio.descripcion}
-              onChange={(e) =>
-                setConvenio({ ...convenio, descripcion: e.target.value })
-              }
-              className="w-full p-2 border rounded mb-4"
-            />
-            <Input
-              
-{...({} as any)}
-              placeholder="Link"
-              value={convenio.link}
-              onChange={(e) =>
-                setConvenio({ ...convenio, link: e.target.value })
-              }
-              className="w-full p-2 border rounded mb-4"
-            />
+      <Dialog open={openModal} onOpenChange={setOpenModal}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Editar Convenio</DialogTitle>
+            <DialogDescription>
+              Cambia la información del convenio y guarda los cambios.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="titulo">Título</Label>
+              <Input
+                id="titulo"
+                value={convenio.titulo}
+                onChange={(e) => setConvenio({ ...convenio, titulo: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="link">Link</Label>
+              <Input
+                id="link"
+                value={convenio.link}
+                onChange={(e) => setConvenio({ ...convenio, link: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="descripcion">Descripción</Label>
+              <Input
+                id="descripcion"
+                value={convenio.descripcion}
+                onChange={(e) => setConvenio({ ...convenio, descripcion: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="tipo">Tipo</Label>
+              <Select
+                value={convenio.tipo}
+                onValueChange={(value) => setConvenio({ ...convenio, tipo: value })}
+              >
+                <SelectTrigger id="tipo">
+                  <SelectValue placeholder="Selecciona un tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="educativo">Educativo</SelectItem>
+                  <SelectItem value="no educativo">No Educativo</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </DialogBody>
-        <DialogFooter
-{...({} as any)}
-        >
-          <Button
-            variant="text"
-            color="red"
-            onClick={() => {
-              handleCloseModal();
-            }}
-{...({} as any)}
-          >
-            Cerrar
-          </Button>
-          <Button
-            variant="gradient"
-            onClick={() => {
-              handleEdit();
-              handleCloseModal();
-            }}
-{...({} as any)}
-          >
-            Guardar
-          </Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseModal}>Cancelar</Button>
+            <Button onClick={handleEdit}>Guardar</Button>
+          </DialogFooter>
+        </DialogContent>
       </Dialog>
     </>
   );

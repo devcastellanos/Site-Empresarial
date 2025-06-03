@@ -16,7 +16,7 @@ const ARTICLES = [
     img: "/image/convenio.jpg",
     title: "Convenios",
     desc: "Explora los convenios con instituciones educativas, descuentos y beneficios para colaboradores.",
-    link: "/Convenios",
+    link: "/Convenios?tipo=no educativo",
   },
   {
     img: "/image/UT.png",

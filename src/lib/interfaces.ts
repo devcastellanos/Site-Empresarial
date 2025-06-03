@@ -27,6 +27,7 @@ export interface CursoTomado {
   status: string;
   start_date: string;
   end_date?: string;
+  category?: string;
 }
 
 export interface CursosPresencialesJson {
@@ -63,4 +64,17 @@ export interface Comentarios {
   contenido: string;
   fecha: string;
   editado: boolean;
+}
+
+export interface Course {
+  id_course:number,
+  title: string;
+  description: string;
+  area: string;
+  tutor: string;
+  start_date: string; 
+  end_date: string;  
+  status: string;
+  noEndDate?: boolean;
+  category?: string;
 }

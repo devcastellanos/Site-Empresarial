@@ -1,6 +1,11 @@
 import React, { useState } from "react";
-import { Button, Card, CardBody, Typography, Input, Checkbox } from "@material-tailwind/react";
 import Swal from "sweetalert2";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface AssignDepartmentModalProps {
   course: { id_course: number; title: string };
@@ -9,7 +14,7 @@ interface AssignDepartmentModalProps {
   departments: string[];
 }
 
-export const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, onClose, onAssign, departments }) => {
+const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ course, onClose, onAssign, departments }) => {
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [users, setUsers] = useState<{ Personal: string; Nombre: string; ApellidoPaterno: string; ApellidoMaterno: string; Puesto: string }[]>([]);
   const [selectedUsers, setSelectedUsers] = useState(new Set<string>());
@@ -48,9 +53,8 @@ export const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ co
       progress,
       start_date: startDate,
       end_date: endDate,
-      employees: Array.from(selectedUsers)
+      employees: Array.from(selectedUsers),
     };
-    console.log(requestBody);
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cursoDepartamento`, {
@@ -70,15 +74,13 @@ export const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ co
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-      <Card className="w-full max-w-lg p-6 bg-white shadow-xl rounded-lg overflow-y-auto max-h-[90vh]" {...({} as any)}>
-        <CardBody
-        {...({} as any)}>
-          <Typography variant="h5" className="text-center text-blue-600 mb-4"
-          {...({} as any)}>
-            {`Asignar Curso: ${course.title}`}
-          </Typography>
-          <div className="space-y-4">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
+      <Card className="w-full max-w-lg p-6 bg-white rounded-lg shadow-xl">
+        <h2 className="text-xl font-bold text-center text-blue-600 mb-4">Asignar Curso: {course.title}</h2>
+
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="department">Departamento</Label>
             <select
               id="department"
               value={selectedDepartment}
@@ -87,58 +89,61 @@ export const AssignDepartmentModal: React.FC<AssignDepartmentModalProps> = ({ co
             >
               <option value="">Seleccione un departamento</option>
               {departments.map((dept) => (
-                <option key={dept} value={dept}>
-                  {dept}
-                </option>
+                <option key={dept} value={dept}>{dept}</option>
               ))}
             </select>
+          </div>
+
+          <div>
+            <Label>Progreso</Label>
             <Input
               type="number"
-              label="Progreso"
               value={progress}
               onChange={(e) => setProgress(Number(e.target.value))}
-              className="w-full"
-               {...({} as any)}
             />
-            <Input type="date" label="Fecha de inicio" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full"  {...({} as any)} />
-            <Input type="date" label="Fecha de finalización" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full"  {...({} as any)} />
+          </div>
+
+          <div>
+            <Label>Fecha de inicio</Label>
+            <Input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label>Fecha de finalización</Label>
+            <Input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
           </div>
 
           {selectedDepartment && users.length > 0 && (
-            <div className="mt-4 max-h-40 overflow-y-auto">
-              <Typography variant="h6" className="text-gray-700"
-              {...({} as any)}>
-                Usuarios en {selectedDepartment}:
-              </Typography>
+            <ScrollArea className="max-h-40 border p-2 rounded-md">
+              <h3 className="font-semibold text-gray-700 mb-2">Usuarios en {selectedDepartment}:</h3>
               {users.map((user) => (
-                <div key={user.Personal} className="flex items-center gap-2 mt-2">
+                <div key={user.Personal} className="flex items-center gap-2 mb-2">
                   <Checkbox
+                    id={user.Personal}
                     checked={selectedUsers.has(user.Personal)}
-                    onChange={() => handleCheckboxChange(user.Personal)}
-                    
-                    {...({} as any)}
-                    
+                    onCheckedChange={() => handleCheckboxChange(user.Personal)}
                   />
-                  <Typography
-                  {...({} as any)}>
+                  <Label htmlFor={user.Personal} className="text-sm font-normal">
                     {user.Nombre} {user.ApellidoPaterno} {user.ApellidoMaterno} - {user.Puesto}
-                  </Typography>
+                  </Label>
                 </div>
               ))}
-            </div>
+            </ScrollArea>
           )}
 
-          <div className="mt-6 flex justify-between">
-            <Button color="blue" onClick={handleAssign} className="w-full mr-2"
-            {...({} as any)}>
-              Asignar
-            </Button>
-            <Button color="red" onClick={onClose} className="w-full"
-            {...({} as any)}>
-              Cerrar
-            </Button>
+          <div className="flex justify-between gap-4 mt-6">
+            <Button className="w-full" onClick={handleAssign}>Asignar</Button>
+            <Button className="w-full" variant="destructive" onClick={onClose}>Cerrar</Button>
           </div>
-        </CardBody>
+        </div>
       </Card>
     </div>
   );

@@ -51,7 +51,7 @@ export function NavbarRH() {
 
   const NAV_MENU = [
     { name: "Home", icon: RectangleStackIcon, href: "/" },
-    { name: "Noti-Tarahumara", icon: NewspaperIcon, href: "/Blog" },
+    // { name: "Noti-Tarahumara", icon: NewspaperIcon, href: "/Blog" },
     // { name: "Kardex", icon: ClipboardDocumentIcon, href: "/kardex" },
     ...(isAuthenticated
       ? [

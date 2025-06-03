@@ -206,7 +206,7 @@ function Vacations() {
 
               <div className="space-y-2">
                 <p>
-                  <strong>Días disponibles:</strong> {remainingDays} de {totalDays}
+                  <strong>Días disponibles:</strong> {remainingDays}
                 </p>
                 <p>
                   <strong>Próximo incremento:</strong>{" "}
@@ -216,7 +216,7 @@ function Vacations() {
               <div>
                 <p>
                   <strong>Dias acumulados</strong> {" "} {empleado?.vacaciones_acumuladas} <br />
-                  <strong>Dias de ley</strong> {" "} {empleado?.vacaciones_ley} <br />
+                  <strong>Dias disponibles del año</strong> {" "} {empleado?.vacaciones_ley} <br />
                 </p>
               </div>
             </div>
