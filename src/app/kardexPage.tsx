@@ -475,17 +475,6 @@ const Kardex = () => {
                   margin: "0 auto",
                 }}
               />
-              {isAuthenticated && (
-                <div style={{ marginTop: "10px" }}>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleChangeImage}
-                    {...({} as any)}
-                  />
-                </div>
-              )}
             </div>
 
             {/* Tabla de información del empleado */}
