@@ -126,7 +126,7 @@ const UsuariosPage = () => {
         </div>
 
           {usuarios.length > 0 ? (
-            usuarios.map(({ id, name, email, status }) => (
+            usuarios.map(({ id, name, email, status, num_empleado }) => (
               <div
                 key={id}
                 className="grid grid-cols-12 items-center bg-white/40 backdrop-blur-md rounded-lg px-4 py-3 shadow-sm hover:bg-white/60 transition"
@@ -160,7 +160,7 @@ const UsuariosPage = () => {
                         <IconButton
                           variant="text"
                           className="hover:bg-white/70 p-1"
-                          onClick={() => handleOpenModal({ id, name, email, status, num_empleado: 0 })}
+                          onClick={() => handleOpenModal({ id, name, email, status, num_empleado })}
                           {...({} as any)}
                         >
                           <PencilIcon className="h-3.5 w-3.5 text-blue-gray-800" />
@@ -195,7 +195,7 @@ const UsuariosPage = () => {
             <Input label="Nombre" value={currentUsuario.name}  {...({} as any)} onChange={(e) => setCurrentUsuario({ ...currentUsuario, name: e.target.value })} />
             <Input label="Correo" value={currentUsuario.email}  {...({} as any)} onChange={(e) => setCurrentUsuario({ ...currentUsuario, email: e.target.value })} />
             <Input label="Contraseña" type="password" value={currentUsuario.password || ""}  {...({} as any)} onChange={(e) => setCurrentUsuario({ ...currentUsuario, password: e.target.value })} />
-            <Input label="Número de empleado" type="number" value={currentUsuario.num_empleado}  {...({} as any)} onChange={(e) => setCurrentUsuario({ ...currentUsuario, num_empleado: Number(e.target.value) })} />
+            <Input label="Número de empleado" type="number" value={currentUsuario.num_empleado}  {...({} as any)} onChange={(e) => setCurrentUsuario({ ...currentUsuario, num_empleado: Number(e.target.value) })} disabled />
           </DialogBody>
           <DialogFooter className="mt-4" {...({} as any)}>
             <Button variant="text" color="red" onClick={() => handleOpenModal()} {...({} as any)}>Cancelar</Button>

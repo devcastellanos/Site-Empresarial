@@ -1,7 +1,7 @@
 export const nivelAprobacionPorMovimiento: Record<string, number> = {
     "Cambio de descanso": 1,
     "Cambio de horario": 1,
-    "Comisión fuera de Oficina": 3,
+    "Comisión fuera de Oficina": 1,
     "Comisión Prolongada fuera de Oficina": 2,
     "Curso/Capacitación": 2,
     "Descanso laborado": 1,
