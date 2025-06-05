@@ -15,7 +15,7 @@ const ARTICLES = [
   {
     img: "/image/convenio.jpg",
     title: "Convenios",
-    desc: "Explora los convenios con instituciones educativas, descuentos y beneficios para colaboradores.",
+    desc: "Explora los convenios con educativos y empresariales con descuentos y beneficios para colaboradores.",
     link: "/Convenios",
   },
   {
@@ -41,6 +41,7 @@ const ARTICLES = [
 export default function IntranetHomePage() {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll();
+  const orgPostsRef = useRef<HTMLElement | null>(null);
 
   return (
     <>
@@ -59,14 +60,14 @@ export default function IntranetHomePage() {
 
       <motion.header
         ref={ref}
-        className="relative w-full flex flex-col items-center justify-start text-center overflow-hidden"
+        className="relative w-full h-screen flex flex-col items-center justify-start text-center pt-32 overflow-hidden"
         initial={{ opacity: 0, y: -50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false }}
         transition={{ duration: 1 }}
       >
 
-        <div className="relative z-10 w-full max-w-6xl px-6 text-white mt-32">
+        <div className="relative z-10 w-full max-w-6xl px-6 text-white mt-20">
           <h1 className="text-[48px] lg:text-[64px] font-extrabold leading-tight">
             Grupo Tarahumara
           </h1>
@@ -141,8 +142,35 @@ export default function IntranetHomePage() {
           </div>
         </div>
       </motion.header>
+
+      <motion.section
+        ref={orgPostsRef}
+        className="w-full bg-gray-900 bg-opacity-95 text-center py-10 px-4 md:px-16"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: false }}
+        transition={{ duration: 1 }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.8 }}
+        >
+        <Posts />
+        </motion.div>
+      </motion.section>
       
-      <Posts />
+      {/* BOTÓN FLOTANTE ANIMADO */}
+      <button
+        onClick={() =>
+          orgPostsRef.current?.scrollIntoView({ behavior: "smooth" })
+        }
+        className="fixed bottom-6 right-6 z-50 bg-[#9A3324] hover:bg-[#7c291d] text-white rounded-full px-5 py-3 text-sm shadow-xl animate-bounce transition-all"
+        aria-label="Ir al organigrama"
+      >
+        Entérate de las últimas noticias de Grupo Tarahumara
+      </button>
 
     </>
   );

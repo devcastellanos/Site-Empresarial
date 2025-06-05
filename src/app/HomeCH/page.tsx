@@ -67,7 +67,7 @@ export default function IntranetHomePage() {
         transition={{ duration: 1 }}
       >
         <div className="absolute top-0 left-0 w-full h-full md:px-16" />
-        <div className="relative z-10 w-full max-w-6xl px-6 text-white mt-24">
+        <div className="relative z-10 w-full max-w-6xl px-6 text-white mt-20">
           <h1 className="text-[48px] lg:text-[64px] font-extrabold leading-tight">
             Capital Humano
           </h1>
