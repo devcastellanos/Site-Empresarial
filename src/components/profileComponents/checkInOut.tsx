@@ -257,7 +257,7 @@ function RegisterCheckInCheckOut() {
 
   return (
     <div className="max-w-7xl mx-auto p-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Columna izquierda - Foto y Resumen */}
         <div className="space-y-6">
           {/* Card de Foto y datos principales */}
@@ -297,7 +297,6 @@ function RegisterCheckInCheckOut() {
               <InfoItem label="Puesto" value={empleado?.Puesto || ""} />
               <InfoItem label="Departamento" value={empleado?.Departamento || ""} />
               <InfoItem label="Tipo de Pago" value={empleado?.PeriodoTipo || "No especificado"} />
-              <InfoItem label="Turno" value="7:30 am - 4:30 pm" />
             </CardContent>
           </Card>
 
@@ -321,7 +320,7 @@ function RegisterCheckInCheckOut() {
         </div>
 
         {/* Columna derecha - Tabla de Asistencia */}
-        <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4 h-fit">
+        <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4 h-fit lg:col-span-2">
           <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
             <CardTitle className="text-lg text-center sm:text-left w-full sm:w-auto">
               Registros de Asistencia

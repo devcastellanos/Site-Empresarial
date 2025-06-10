@@ -34,23 +34,6 @@ export function Login() {
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmarRef = useRef<HTMLInputElement>(null);
 
-
-  // const validarEmpleado = async (numEmpleado: string) => {
-  //   try {
-  //     const res = await fetch("/api/validarEmpleado", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ num_empleado: numEmpleado }),
-  //     });
-  //     const data = await res.json();
-  //     setEmpleadoValido(data.success);
-  //     setInfoEmpleado(data.success ? data.data : null);
-  //   } catch (error) {
-  //     setEmpleadoValido(false);
-  //     setInfoEmpleado(null);
-  //   }
-  // };
-
   const handleLogin = async () => {
     if (!email || !password) {
       Swal.fire("Campos requeridos", "Completa todos los campos", "warning");
@@ -95,7 +78,7 @@ export function Login() {
         );
       } else throw new Error();
     } catch {
-      Swal.fire("Error", "Credenciales incorrectas o fallo del servidor", "error");
+      Swal.fire("Error", "Credenciales incorrectas o falta de verificación de cuenta", "error");
     } finally {
       setIsLoading(false);
     }
@@ -114,38 +97,22 @@ export function Login() {
     setOpenModal(true);
   };
 
-  const validarRegistroEmpleado = async (numEmpleado: string) => {
-    try {
-      const res = await fetch("/api/validarEmpleado", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ num_empleado: numEmpleado }),
-      });
-      const data = await res.json();
-      setRegistroValido(data.success);
-      setRegistroInfo(data.success ? data.data : null);
-    } catch {
-      setRegistroValido(false);
-      setRegistroInfo(null);
-    }
-  };
-
   const enviarRegistro = async () => {
-    if (registroLoading) return; // ✅ Protección contra doble envío
+    if (registroLoading) return;
 
     if (!registroEmpleado || !registroPassword || !registroConfirmar) {
       Swal.fire("Campos incompletos", "Completa todos los campos", "warning");
       return;
     }
+
     if (registroPassword !== registroConfirmar) {
       Swal.fire("Contraseñas no coinciden", "Verifica los campos de contraseña", "warning");
       return;
     }
 
-    setRegistroLoading(true); // ✅ Activa bloqueo inmediato
+    setRegistroLoading(true);
 
     try {
-      // Validar existencia del empleado
       const check = await fetch("/api/validarEmpleado", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -164,7 +131,7 @@ export function Login() {
         return;
       }
 
-      // Crear el usuario
+      // Intentar crear el usuario
       await axios.post("/api/agregarUsuario", {
         num_empleado: registroEmpleado,
         password: registroPassword,
@@ -172,19 +139,34 @@ export function Login() {
 
       Swal.fire("Registro exitoso", "Revisa tu correo para confirmar tu cuenta", "success");
       setOpenModal(false);
-    } catch {
-      Swal.fire("Error", "No se pudo completar el registro", "error");
+
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        const data = error.response?.data;
+        const message = data?.message || data?.error || "";
+
+        console.warn("🔍 Error de registro:", error.response); // 👈 para depuración
+
+        if (status === 409 && message.includes("cuenta")) {
+          Swal.fire("Ya registrado", "Ya existe una cuenta para este número de empleado", "info");
+        } else {
+          Swal.fire("Error", message , "error");
+        }
+      }
+
     } finally {
-      setRegistroLoading(false); // 🔓 Libera solo si todo termina
+      setRegistroLoading(false);
     }
   };
 
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-neutral-900 px-4 py-10">
-      <video 
-        autoPlay 
-        loop 
-        muted 
+      <video
+        autoPlay
+        loop
+        muted
         className="absolute top-0 left-0 w-full h-full object-cover"
       >
         <source src="/image/background.mp4" type="video/mp4" />
@@ -201,14 +183,14 @@ export function Login() {
           className="rounded-3xl bg-black/50 backdrop-blur-lg border border-white/10 p-10 shadow-2xl text-white"
         >
           <div className="flex justify-center mb-8">
-          <Image
-            src="/image/logowhite.png"
-            alt="Logo Grupo Tarahumara"
-            width={260}
-            height={80}
-            className="object-contain drop-shadow-xl"
-            priority
-          />
+            <Image
+              src="/image/logowhite.png"
+              alt="Logo Grupo Tarahumara"
+              width={260}
+              height={80}
+              className="object-contain drop-shadow-xl"
+              priority
+            />
           </div>
           <h3 className="text-center font-bold text-2xl mb-4">Bienvenido</h3>
           <p className="text-center text-gray-300 text-sm mb-6">
