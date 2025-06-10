@@ -17,6 +17,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { opcionesPorIncidencia } from "@/lib/movimientos";
 
 function RegisterCheckInCheckOut() {
   const { user } = useAuth();
@@ -30,6 +31,7 @@ function RegisterCheckInCheckOut() {
   const [empleado, setEmpleado] = useState<User | null>(null);
   const [quickModalOpen, setQuickModalOpen] = useState(false);
   const [movimientosSolicitados, setMovimientosSolicitados] = useState<any[]>([]);
+  const [opcionesMovimiento, setOpcionesMovimiento] = useState<string[]>([]);
   type Incident = {
     numeroEmpleado: number;
     fecha: Date;
@@ -59,19 +61,19 @@ function RegisterCheckInCheckOut() {
       const movimientos = await obtenerMisMovimientos(user.num_empleado);
       setMovimientosSolicitados(movimientos);
     };
-const fetchAsistencias = async () => {
-  if (!user || !user.num_empleado) return;
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/asistencia?codigo=${user.num_empleado}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
-    setAsistencias(json.data); // solo si json.success === true
-  } catch (error) {
-    console.error("Error al obtener datos de asistencia:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+    const fetchAsistencias = async () => {
+      if (!user || !user.num_empleado) return;
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/asistencia?codigo=${user.num_empleado}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        setAsistencias(json.data); // solo si json.success === true
+      } catch (error) {
+        console.error("Error al obtener datos de asistencia:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchMovimientos();
     fetchAsistencias();
 
@@ -162,21 +164,21 @@ const fetchAsistencias = async () => {
     return <div className="p-6 text-center text-gray-600">Cargando registros de asistencia...</div>;
   }
 
-  const handleQuickRequest = (item: any) => {
-    const tipoMovimiento = item.NOMBRE_INCIDENCIA?.includes("Retardo")
-      ? "Retardo justificado"
-      : "Salida anticipada";
+  const handleQuickRequestOpciones = (item: any) => {
+    const opciones = opcionesPorIncidencia[item.NOMBRE_INCIDENCIA] || [];
 
     setSelectedIncident({
       numeroEmpleado: user?.num_empleado ?? 0,
       fecha: new Date(item.FECHA),
-      tipoMovimiento,
+      tipoMovimiento: opciones[0] || "",
       horaEntradaReal: item.ENTRADA_REAL,
       horaSalidaReal: item.SALIDA_REAL,
     });
 
+    setOpcionesMovimiento(opciones);
     setQuickModalOpen(true);
   };
+
 
   const handleQuickSubmit = async () => {
     if (!selectedIncident) return;
@@ -237,27 +239,19 @@ const fetchAsistencias = async () => {
     }
   };
 
-
-  const getEstatusMovimiento = (fecha: string, tipoMovimiento: string) => {
-    const hoy = new Date();
-    const [a, m] = [hoy.getFullYear(), hoy.getMonth() + 1];
-
+  const getEstatusMovimiento = (fecha: string) => {
     const match = movimientosSolicitados.find((mov) => {
       const fechaIncidencia = new Date(mov.fecha_incidencia);
-      const fechaCoincide = fechaIncidencia.toISOString().split("T")[0] === fecha;
-      const mesCoincide = fechaIncidencia.getFullYear() === a && fechaIncidencia.getMonth() + 1 === m;
-      const tipoCoincide = mov.tipo_movimiento === tipoMovimiento;
-
-      return fechaCoincide && mesCoincide && tipoCoincide;
+      return fechaIncidencia.toISOString().split("T")[0] === fecha;
     });
 
     if (!match) return null;
 
     switch (match.estatus_movimiento) {
-      case "pendiente": return "📤 Solicitado";
-      case "aprobado": return "✅ Aprobado";
-      case "rechazado": return "❌ Rechazado";
-      default: return "⏳ En revisión";
+      case "pendiente": return { icono: "📤 Solicitado", tipo: match.tipo_movimiento };
+      case "aprobado": return { icono: "✅ Aprobado", tipo: match.tipo_movimiento };
+      case "rechazado": return { icono: "❌ Rechazado", tipo: match.tipo_movimiento };
+      default: return { icono: "⏳ En revisión", tipo: match.tipo_movimiento };
     }
   };
 
@@ -319,7 +313,7 @@ const fetchAsistencias = async () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
                 <InfoBox color="green" label="Asistencias" value={asistenciasTotales.toString()} />
                 <InfoBox color="red" label="Inasistencias" value={inasistenciasTotales.toString()} />
-                <InfoBox color="yellow" label="Retardos" value={retardosTotales.toString()} />
+                <InfoBox color="orange" label="Retardos" value={retardosTotales.toString()} />
                 <InfoBox color="blue" label="Puntualidad" value={`${puntualidadPorcentaje}%`} />
               </div>
             </CardContent>
@@ -357,10 +351,11 @@ const fetchAsistencias = async () => {
                   .map((item, i) => {
                     const fechaStr = item.FECHA.split("T")[0];
                     const diaSemana = diasMap[item.DIA_SEM] || item.DIA_SEM;
-                    const tipoMovimiento = item.NOMBRE_INCIDENCIA?.includes("Retardo") ? "Retardo justificado" : "Salida anticipada";
-                    const estatus = getEstatusMovimiento(fechaStr, tipoMovimiento);
-                    const estiloExtra = getEstiloFilaPorEstatus(estatus);
-                    
+                    const tipoMovimiento = item.NOMBRE_INCIDENCIA;
+                    const resultadoMovimiento = getEstatusMovimiento(fechaStr);
+                    const estatus = resultadoMovimiento?.icono || null;
+                    const tipoMovimientoDetectado = resultadoMovimiento?.tipo || tipoMovimiento;
+
                     let bgColor = "";
 
                     if (estatus) {
@@ -375,8 +370,8 @@ const fetchAsistencias = async () => {
                         bgColor = "bg-red-50"; // inasistencia o retardo no justificado
                       }
                     }
-                    
-                    const claseFila = `${bgColor} ${estiloExtra} border-b text-black`;
+
+                    const claseFila = `${bgColor} ${getEstiloFilaPorEstatus(estatus)} border-b text-black`;
                     return (
                       <tr key={i} className={claseFila}>
                         <td className="py-2 px-4">{fechaStr}</td>
@@ -390,22 +385,19 @@ const fetchAsistencias = async () => {
                         <td className="py-2 px-4">{item.TIPO_ASISTENCIA || "—"}</td>
 
                         <td className="py-2 px-4 italic text-sm">
-                          {estatus === "📤 Solicitado"
-                            ? `Movimiento "${tipoMovimiento}" en proceso`
-                            : estatus === "✅ Aprobado"
-                            ? `Movimiento "${tipoMovimiento}" aprobado`
+                          {estatus
+                            ? `Movimiento "${tipoMovimientoDetectado}"`
                             : item.NOMBRE_INCIDENCIA || "—"}
-
                         </td>
                         <td className="py-2 px-4">{estatus || "—"}</td>
                         <td className="py-2 px-4">
-                          {item.NOMBRE_INCIDENCIA && item.NOMBRE_INCIDENCIA !== "Retardo E1" && item.CVEINC !== "SD" ? (
+                          {item.NOMBRE_INCIDENCIA && item.CVEINC !== "SD" ? (
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handleQuickRequest(item)}
+                              onClick={() => handleQuickRequestOpciones(item)}
                               className="text-xs"
-                              disabled={!!estatus}
+                              disabled={!!getEstatusMovimiento(fechaStr)}
                             >
                               Solicitar
                             </Button>
@@ -445,7 +437,21 @@ const fetchAsistencias = async () => {
 
             <div>
               <Label>Tipo de movimiento</Label>
-              <Input value={selectedIncident?.tipoMovimiento || ""} disabled />
+              <select
+                className="w-full border rounded-md p-2"
+                value={selectedIncident?.tipoMovimiento}
+                onChange={(e) =>
+                  setSelectedIncident((prev) =>
+                    prev ? { ...prev, tipoMovimiento: e.target.value } : null
+                  )
+                }
+              >
+                {opcionesMovimiento.map((opcion, idx) => (
+                  <option key={idx} value={opcion}>
+                    {opcion}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
@@ -492,7 +498,5 @@ const InfoBox = ({
     <p className="text-sm text-gray-500 text-center">{label}</p>
   </div>
 );
-
-
 
 export default RegisterCheckInCheckOut;

@@ -46,4 +46,30 @@ export const nivelAprobacionPorMovimiento: Record<string, number> = {
     "extraoridinario",
   ];
 
+  export const opcionesPorIncidencia: Record<string, string[]> = {
+  "Falta": [
+    "Comisión fuera de Oficina",
+    "Comisión Prolongada fuera de Oficina",
+    "Falta justificada IMSS",
+    "Permisos Especiales",
+    "Permiso con goce de sueldo",
+    "Permiso sin goce de sueldo",
+    "Viaje de Trabajo",
+    "Descanso laborado",
+    "Descanso por comisión laboral",
+  ],
+  "No Chec¢ Entrada": [
+    "Retardo justificado",
+    "Permiso para llegar tarde",
+    "Sin registro entrada",
+  ],
+  "No Chec¢ Salida": [
+    "Salida anticipada",
+    "Sin registro salida",
+  ],
+  "Retardo E1": [
+    "Retardo justificado",
+    "Permiso para llegar tarde",
+  ]
+};
   

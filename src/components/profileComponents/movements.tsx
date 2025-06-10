@@ -63,7 +63,8 @@ import { renderDatosJsonPorTipo } from "@/utils/renderDatosJsonPorTipo";
 import Swal from "sweetalert2";
 
 function Movements() {
-  const [employeeNumber, setEmployeeNumber] = useState("");
+  const { user } = useAuth();
+  const [employeeNumber, setEmployeeNumber] = useState(user?.num_empleado?.toString() || "");
   const [incidentDate, setIncidentDate] = useState<Date>();
   const [movementType, setMovementType] = useState("");
   const [comments, setComments] = useState("");
@@ -86,7 +87,7 @@ function Movements() {
   const [hours, setHours] = useState(""); // Define hours state
   const [exitTime, setExitTime] = useState(""); // Define exitTime state
   const [approvalNotes, setApprovalNotes] = useState("");
-  const { user } = useAuth();
+
 
   const [movementsData, setMovementsData] = useState<{
     pendientes: any[];
@@ -208,7 +209,7 @@ function Movements() {
       alert("✅ Solicitud enviada correctamente");
 
       // Opcional: limpiar formulario
-      setEmployeeNumber("");
+      setEmployeeNumber(user?.num_empleado?.toString() || "");
       setIncidentDate(undefined);
       setMovementType("");
       setComments("");
@@ -256,8 +257,8 @@ function Movements() {
               <Label>Número de empleado *</Label>
               <Input
                 value={employeeNumber}
-                onChange={(e) => setEmployeeNumber(e.target.value)}
                 required
+                disabled
                 className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
               />
             </div>

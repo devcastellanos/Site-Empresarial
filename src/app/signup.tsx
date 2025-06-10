@@ -305,6 +305,7 @@ export function Login() {
             <div className="flex flex-col space-y-1">
               <label className="text-white text-sm font-medium">Número de empleado</label>
               <Input
+                type="number"
                 value={registroEmpleado}
                 onChange={(e) => setRegistroEmpleado(e.target.value)}
                 onKeyDown={(e) => {
