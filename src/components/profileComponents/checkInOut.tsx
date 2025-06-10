@@ -348,6 +348,7 @@ function RegisterCheckInCheckOut() {
               <tbody>
                 {asistencias
                   .filter((item) => item.CVEINC !== "SD")
+                  .sort((a, b) => new Date(b.FECHA) - new Date(a.FECHA)) // Orden descendente por fecha
                   .map((item, i) => {
                     const fechaStr = item.FECHA.split("T")[0];
                     const diaSemana = diasMap[item.DIA_SEM] || item.DIA_SEM;
@@ -359,15 +360,14 @@ function RegisterCheckInCheckOut() {
                     let bgColor = "";
 
                     if (estatus) {
-                      // Si hay un estatus especial (solicitud en proceso o aprobada)
-                      bgColor = "bg-white"; // color base, el verde se da en estiloExtra
+                      bgColor = "bg-white";
                     } else {
                       if (item.NOMBRE_INCIDENCIA === null && item.CVEINC !== "SD") {
-                        bgColor = "bg-green-50"; // asistencia sin problema
+                        bgColor = "bg-green-50";
                       } else if (item.NOMBRE_INCIDENCIA === "Retardo E1" && item.CVEINC !== "SD") {
-                        bgColor = "bg-yellow-50"; // retardo menor
+                        bgColor = "bg-yellow-50";
                       } else {
-                        bgColor = "bg-red-50"; // inasistencia o retardo no justificado
+                        bgColor = "bg-red-50";
                       }
                     }
 
@@ -383,7 +383,6 @@ function RegisterCheckInCheckOut() {
                           {item.SALIDA_PROGRAMADA && item.SALIDA_PROGRAMADA !== "00:00" ? item.SALIDA_PROGRAMADA : "—"}
                         </td>
                         <td className="py-2 px-4">{item.TIPO_ASISTENCIA || "—"}</td>
-
                         <td className="py-2 px-4 italic text-sm">
                           {estatus
                             ? `Movimiento "${tipoMovimientoDetectado}"`
@@ -406,7 +405,6 @@ function RegisterCheckInCheckOut() {
                       </tr>
                     );
                   })}
-
               </tbody>
             </table>
           </CardContent>

@@ -145,17 +145,14 @@ export default function IntranetHomePage() {
 
       <motion.section
         ref={orgPostsRef}
-        className="w-full bg-gray-900 bg-opacity-95 text-center py-10 px-4 md:px-16"
+        className="w-full bg-gray-900 bg-opacity-95 text-center py-8 px-4 md:px-16"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: false }}
-        transition={{ duration: 1 }}
       >
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
-          transition={{ duration: 0.8 }}
         >
         <Posts />
         </motion.div>

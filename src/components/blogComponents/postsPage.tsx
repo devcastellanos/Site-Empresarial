@@ -83,7 +83,7 @@ const filteredAndSortedPosts = [...posts]
   };
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center px-4 pt-24 pb-12">
+    <section className=" flex flex-col items-center justify-center px-4 pt-24 pb-12">
       <motion.video
         autoPlay
         loop
