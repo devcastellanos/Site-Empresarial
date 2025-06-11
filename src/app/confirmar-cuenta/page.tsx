@@ -14,6 +14,7 @@ function ConfirmarCuentaContent() {
     const verificarYConfirmar = async () => {
       try {
         // Paso 1: Verificar token sin consumirlo
+        console.log("Verificando token:", token)
         const verif = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/verificar-token?token=${token}`)
         if (!verif.data.success) return setEstado("error")
 
