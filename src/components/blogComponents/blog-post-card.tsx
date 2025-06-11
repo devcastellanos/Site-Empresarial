@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
 import { Post } from '@/lib/interfaces';
-import { useAuth } from '@/hooks/useAuth';
 import ComentariosPost from './comentariosPost';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +13,7 @@ import { Card } from '@/components/ui/card';
 import { HeartIcon } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
+import { useAuth } from '@/app/context/AuthContext';
 import 'swiper/css';
 
 
@@ -66,7 +66,7 @@ export function BlogPostCard({
     impact: 'bajo'
   });
   const [newImgFiles, setNewImgFiles] = useState<File[]>([]);
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuth();
 
   const extractYouTubeID = (url: string) => {
     const regExp = /(?:youtube\.com.*(?:\?|&)v=|youtu\.be\/)([^&#]*)/;
@@ -207,7 +207,7 @@ export function BlogPostCard({
             <span className="text-sm text-gray-600">{post.likes}</span>
           </div>
 
-          {isAuthenticated && (
+          {user?.rol === "admin" && (
             <div className="ml-4 flex gap-2">
               <Button variant="destructive" onClick={() => onPostDelete(idBlog)}>Eliminar</Button>
               <Button onClick={handleEditClick}>Editar</Button>
@@ -215,7 +215,7 @@ export function BlogPostCard({
           )}
         </div>
 
-        <ComentariosPost idBlog={idBlog} isAdmin={isAuthenticated} />
+        <ComentariosPost idBlog={idBlog} isAdmin={user?.rol === "admin" } />
       </Card>
 
 

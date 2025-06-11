@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import { ArrowDownIcon } from "lucide-react";
 import BlogPostCard from "@/components/blogComponents/blog-post-card";
-import { useAuth } from "@/hooks/useAuth";
 import { Post } from "@/lib/interfaces";
 import PostForm from "./postForm";
 import { fetchPosts, deletePost, uploadImages, addPost } from "./postFunctions";
@@ -14,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAuth } from "@/app/context/AuthContext";
 
 export function Posts() {
   const [post, setPost] = useState<Post>({
@@ -36,7 +36,7 @@ export function Posts() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [imgFiles, setImgFiles] = useState<File[]>([]);
   const [visiblePosts, setVisiblePosts] = useState(5);
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuth();
 
 const filteredAndSortedPosts = [...posts]
   .filter((post) => tagFilter === "todos" || post.tag === tagFilter)
@@ -73,7 +73,12 @@ const filteredAndSortedPosts = [...posts]
     }
 
     const imageUrls = await uploadImages(imgFiles, post.num_empleado);
+    console.log("Imagenes subidas:", imageUrls);
     const newPost = { ...post, img: imageUrls, videoUrl: post.videoUrl || "" };
+    if (!imageUrls || imageUrls.length === 0) {
+  alert("No se pudieron subir imágenes. Intenta de nuevo.");
+  return;
+}
     const addedPost = await addPost(newPost);
 
     if (addedPost) {
@@ -104,7 +109,7 @@ const filteredAndSortedPosts = [...posts]
           />
         </div>
 
-        {isAuthenticated && (
+        {user && user.rol == "admin" && (
           <div className="p-6">
             <PostForm
               post={post}

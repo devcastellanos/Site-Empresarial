@@ -4,10 +4,7 @@ import * as React from "react"
 import {
   AudioWaveform,
   BookOpen,
-  Bot,
-  Command,
   Frame,
-  GalleryVerticalEnd,
   Map,
   PieChart,
   Settings2,
@@ -66,44 +63,44 @@ export function AppSidebar({
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
-  )
-}
+    )
+  }
 
-const sidebarData = {
-  teams: [
+  const sidebarData = {
+    teams: [
       { name: "Grupo Tarahumara", logo: Users, plan: "Home" },
       { name: "Capital Humano", logo: Briefcase, plan: "CH" },
       { name: "Capacitación Tarahumara", logo: GraduationCap, plan: "Capacitación" },
-  ],
-  navMain: [
-    {
-      title: "Perfil",
-      url: "/Perfil",
-      icon: Settings2,
-      items: [
-        { title: "Mi Perfil", url: "/Perfil#perfil" },
-        { title: "Vacaciones", url: "/Perfil#vacaciones" },
-        { title: "Cursos", url: "/Perfil#cursos" },
-        { title: "Movimientos", url: "/Perfil#movimientos" },
-        ...(user.rol === "admin" || user.rol === "reclutamiento"
-          ? [{ title: "Requisiciones", url: "/Perfil#requisiciones" }]
-          : []),
-        { title: "Carta Patronal", url: "/Perfil#patron" },
-        { title: "Monitorear Equipo", url: "/Perfil#monitorearequipo" },
-      ],
-    },
-  ],
-  projects: [
+    ],
+    navMain: [
+      {
+        title: "Perfil",
+        url: "/Perfil",
+        icon: Settings2,
+        items: [
+          { title: "Mi Perfil", url: "/Perfil#perfil" },
+          { title: "Vacaciones", url: "/Perfil#vacaciones" },
+          { title: "Cursos", url: "/Perfil#cursos" },
+          { title: "Movimientos", url: "/Perfil#movimientos" },
+          ...(user.rol === "admin" || user.rol === "reclutamiento"
+            ? [{ title: "Requisiciones", url: "/Perfil#requisiciones" }]
+            : []),
+          { title: "Carta Patronal", url: "/Perfil#patron" },
+          { title: "Monitorear Equipo", url: "/Perfil#monitorearequipo" },
+        ],
+      },
+    ],
+    projects: [
       { name: "Home", url: "/", icon: SquareTerminal },
       { name: "Kardex", url: "/kardex", icon: BookOpen },
-      { name: "Cargar Archivos Excel", url: "/cargaMasiva", icon: Frame },
+      ...(user.rol === "admin" 
+        ? [{ name: "Cargar Archivos Excel", url: "/cargaMasiva", icon: Frame }]
+        : []),
       { name: "Usuarios", url: "/Usuarios", icon: Map },
       { name: "Cursos", url: "/Cursos", icon: PieChart },
-      // { name: "Noti-Tarahumara", url: "/Blog", icon: Bot },
       { name: "Movimientos Nominas", url: "/Movimientos", icon: AudioWaveform },
-
-  ],
-}
+    ],
+  }
 
   return (
     <Sidebar collapsible="icon" {...props}>

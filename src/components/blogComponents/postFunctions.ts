@@ -60,7 +60,7 @@ export const uploadImages = async (imgFiles: File[], num_empleado: number): Prom
             headers: { "Content-Type": "multipart/form-data" },
         });
         console.log("Imágenes subidas correctamente:", res.data);
-        return res.data.imagesUrls; 
+        return res.data.imageUrls; 
     }
     catch(error) {
         console.error("Error al subir imágenes:", error);

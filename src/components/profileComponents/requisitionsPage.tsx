@@ -31,7 +31,7 @@ type MovimientoPersonal = {
   estatus: 'pendiente' | 'aprobado' | 'rechazado'
   fecha_solicitud: string
   rechazado_por: number | null
-  nota_rechazo: string | null
+  nota: string | null
   nivel_aprobacion: number
 }
 

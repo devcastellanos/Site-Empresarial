@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,7 @@ import { Plus } from "lucide-react";
 import ConvenioCard from "@/components/agreementsComponents/agreementsCard";
 import Image from "next/image";
 import axios from "axios";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/app/context/AuthContext";
 import { useSearchParams } from "next/navigation";
 
 
@@ -34,7 +34,7 @@ export function Convenio() {
   const [convenios, setConvenios] = useState<Convenio[]>([]);
   const [imgFile, setImgFile] = useState<File | null>(null);
   const [open, setOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { user }  = useAuth();
   const [tipoSeleccionado, setTipoSeleccionado] = useState<"educativo" | "no educativo">("educativo");
   const searchParams = useSearchParams();
   const tipoQuery = searchParams.get("tipo");
@@ -133,7 +133,7 @@ export function Convenio() {
         />
       </div>
 
-      {isAuthenticated && (
+      {user?.rol === "admin" && (
         <>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>

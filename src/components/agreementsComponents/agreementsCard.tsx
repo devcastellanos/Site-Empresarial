@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/app/context/AuthContext";
 import { Convenio } from "./convenio";
 
 import {
@@ -54,7 +54,7 @@ export function ConvenioCard({
     tipo,
   });
 
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuth();
 
   const handleCloseModal = () => setOpenModal(false);
 
@@ -91,7 +91,7 @@ export function ConvenioCard({
           <h2 className="text-xl font-semibold">{titulo}</h2>
           <p className="text-sm text-muted-foreground">{descripcion}</p>
           <p className="text-xs italic text-gray-500">Tipo: {tipo}</p>
-          {isAuthenticated && (
+          {user && user.rol === "admin" && (
             <div className="flex gap-2 pt-2">
               <Button variant="destructive" onClick={() => onConvenioDelete(idConvenio)}>Eliminar</Button>
               <Button variant="default" onClick={() => setOpenModal(true)}>Editar</Button>

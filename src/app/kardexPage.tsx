@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "@/app/context/AuthContext"; 
 import {
   Button,
   Dialog,
@@ -23,7 +23,7 @@ import { User, CursoTomado, CursosPresencialesJson } from "@/lib/interfaces";
 // Ajusta la ruta según tu estructura de archivos
 
 const Kardex = () => {
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuth();
 
   const [users, setUsers] = useState<User[]>([]);
 
@@ -99,7 +99,29 @@ const Kardex = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+
+    if (!user) {
+      return;
+    }
+
+    let userId = user.num_empleado;
+    userId = Number(userId.toString().replace(/\D/g, ""));
+    userId = Number(userId.toString().slice(0, 4));
+
+    setSelectedUserId(userId);
+    const userSelected = users.find((user) => user.Personal === userId) || null;
+    setSelectedUser(userSelected);
+
+    const userCourses = cursosTomados.filter(
+      (curso) => curso.id_usuario === userId
+    );
+    setSelectedCourses(userCourses);
+
+    const cursosFaltantes = cursosPresenciales.filter(
+      (curso) => !userCourses.some((c) => c.id_course === curso.id_course)
+    );
+    console.log(formattedUserId);
+  }, [user]);
 
   const handleAddCourse = async () => {
     try {
@@ -200,61 +222,10 @@ const Kardex = () => {
     }
   };
 
-  const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let userId = Number(e.target.value);
-    userId = Number(userId.toString().replace(/\D/g, ""));
-    userId = Number(userId.toString().slice(0, 4));
+  
+   
 
-    setSelectedUserId(userId);
-    const user = users.find((user) => user.Personal === userId) || null;
-    setSelectedUser(user);
-
-    const userCourses = cursosTomados.filter(
-      (curso) => curso.id_usuario === userId
-    );
-    setSelectedCourses(userCourses);
-
-    const cursosFaltantes = cursosPresenciales.filter(
-      (curso) => !userCourses.some((c) => c.id_course === curso.id_course)
-    );
-    console.log(formattedUserId);
-  };
   const formattedUserId = selectedUserId.toString().padStart(4, "0");
-
-  const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const formData = new FormData();
-      formData.append("file", e.target.files[0]);
-      formData.append("id", selectedUserId?.toString() || "");
-
-      try {
-        console.log("Actualizando Imagen...");
-        const res = await axios.post("/api/employeesImages", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-
-        if (res.status === 200) {
-          Swal.fire({
-            icon: "success",
-            title: "Imagen actualizada",
-            text: "La imagen se ha subido correctamente.",
-          });
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "No se pudo actualizar la imagen.",
-          });
-        }
-      } catch (error) {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Error en la solicitud de imagen.",
-        });
-      }
-    }
-  };
 
   //Dialog modify progress
 
@@ -417,35 +388,6 @@ const Kardex = () => {
         >
           Información Personal
         </h2>
-
-        <div
-          style={{
-            marginBottom: "20px",
-            padding: "10px",
-            borderRadius: "8px",
-            backgroundColor: "#f9f9f9",
-            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-          }}
-        >
-          <label htmlFor="userIdInput" style={{ fontWeight: "bold" }}>
-            Número Empleado:
-          </label>
-          <input
-            type="number"
-            id="userIdInput"
-            onChange={handleUserChange}
-            style={{
-              padding: "5px",
-              borderRadius: "5px",
-              border: "1px solid #ccc",
-              width: "100px",
-              fontSize: "14px",
-            }}
-          />
-        </div>
 
         {selectedUser && (
           <div
@@ -672,7 +614,7 @@ const Kardex = () => {
                     >
                       Información
                     </button>
-                    {isAuthenticated ? (
+                    {user && user.rol === "admin" ? (
                       <button
                         style={{
                           backgroundColor: "#9A3324",
@@ -700,7 +642,7 @@ const Kardex = () => {
           </tbody>
         </table>
         {/* Add New Course Section */}
-        {isAuthenticated ? (
+        {user && user.rol === "admin" ? (
           <div
             style={{
               marginTop: "20px",
@@ -840,7 +782,7 @@ const Kardex = () => {
                   Fecha de Vencimiento {dialogInfo.course.end_date}
                 </Typography>
               )}
-              {isAuthenticated ? (
+              {user && user.rol === "admin" ? (
                 <div className="my-4">
                   <label className="block text-sm font-medium text-gray-700">
                     Progreso
@@ -879,7 +821,7 @@ const Kardex = () => {
               >
                 Cerrar
               </Button>
-              {isAuthenticated ? (
+              {user && user.rol === "admin" ? (
                 <Button color="blue" onClick={updateProgress} {...({} as any)}>
                   Actualizar
                 </Button>

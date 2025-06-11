@@ -86,7 +86,7 @@ function Movements() {
   const [earlyTime, setEarlyTime] = useState(""); // Define earlyTime state
   const [hours, setHours] = useState(""); // Define hours state
   const [exitTime, setExitTime] = useState(""); // Define exitTime state
-  const [approvalNotes, setApprovalNotes] = useState("");
+  const [approvalNotes, setApprovalNotes] = useState<{ [id: number]: string }>({});
 
 
   const [movementsData, setMovementsData] = useState<{
@@ -599,8 +599,13 @@ function Movements() {
                       <textarea
                         placeholder="Observaciones del supervisor"
                         className="w-full mt-2 p-2 border rounded-md text-sm"
-                        value={approvalNotes}
-                        onChange={(e) => setApprovalNotes(e.target.value)}
+                        value={approvalNotes[mov.idMovimiento] }
+                        onChange={(e) =>
+                          setApprovalNotes((prev) => ({
+                            ...prev,
+                            [mov.idMovimiento]: e.target.value,
+                          }))
+                        }
                       />
 
                       <div className="flex gap-2 justify-end mt-2">
@@ -612,7 +617,7 @@ function Movements() {
                               await responderAprobacion(
                                 mov.idAprobacion,
                                 "aprobado",
-                                approvalNotes
+                                approvalNotes[mov.idMovimiento]
                               );
                               if (user) {
                                 const pendientesActualizados = await obtenerMovimientosPendientes(user.num_empleado);
@@ -639,7 +644,7 @@ function Movements() {
                               await responderAprobacion(
                                 mov.idMovimiento,
                                 "rechazado",
-                                approvalNotes
+                                approvalNotes[mov.idMovimiento]
                               );
                               if (user) {
                                 const pendientesActualizados = await obtenerMovimientosPendientes(user.num_empleado);
