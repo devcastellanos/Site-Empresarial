@@ -98,30 +98,21 @@ const Kardex = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
+  if (!user) return;
+  setSelectedUserId(Number(user.num_empleado));
+}, [user]);
 
-    if (!user) {
-      return;
-    }
+useEffect(() => {
+  if (!selectedUserId) return;
 
-    let userId = user.num_empleado;
-    userId = Number(userId.toString().replace(/\D/g, ""));
-    userId = Number(userId.toString().slice(0, 4));
+  const userSelected = users.find((u) => u.Personal === selectedUserId) || null;
+  setSelectedUser(userSelected);
 
-    setSelectedUserId(userId);
-    const userSelected = users.find((user) => user.Personal === userId) || null;
-    setSelectedUser(userSelected);
-
-    const userCourses = cursosTomados.filter(
-      (curso) => curso.id_usuario === userId
-    );
-    setSelectedCourses(userCourses);
-
-    const cursosFaltantes = cursosPresenciales.filter(
-      (curso) => !userCourses.some((c) => c.id_course === curso.id_course)
-    );
-    console.log(formattedUserId);
-  }, [user]);
+  const userCourses = cursosTomados.filter(
+    (curso) => curso.id_usuario === selectedUserId
+  );
+  setSelectedCourses(userCourses);
+}, [selectedUserId, users, cursosTomados]);
 
   const handleAddCourse = async () => {
     try {
