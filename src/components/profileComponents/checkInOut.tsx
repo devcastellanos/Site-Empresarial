@@ -347,7 +347,7 @@ function RegisterCheckInCheckOut() {
               <tbody>
                 {asistencias
                   .filter((item) => item.CVEINC !== "SD")
-                  .sort((a, b) => new Date(b.FECHA) - new Date(a.FECHA)) // Orden descendente por fecha
+                 .sort((a, b) => new Date(b.FECHA).getTime() - new Date(a.FECHA).getTime())
                   .map((item, i) => {
                     const fechaStr = item.FECHA.split("T")[0];
                     const diaSemana = diasMap[item.DIA_SEM] || item.DIA_SEM;
