@@ -2,16 +2,21 @@
 
 import * as React from "react"
 import {
-  AudioWaveform,
-  BookOpen,
-  Frame,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-  Users,
-  Briefcase,
+  UserCircle,
+  CalendarCheck,
+  Palmtree,
   GraduationCap,
+  Repeat,
+  FileText,
+  Stamp,
+  Users,
+  Home,
+  NotebookText,
+  FileSpreadsheet,
+  UserCog,
+  Presentation,
+  CircleDollarSign,
+  Briefcase,
 } from "lucide-react"
 
 import { NavMain } from "@/components/sidebar/nav-main"
@@ -76,29 +81,30 @@ export function AppSidebar({
       {
         title: "Perfil",
         url: "/Perfil",
-        icon: Settings2,
+        icon: UserCircle, // 👈 CAMBIADO
+        expanded: true,
         items: [
-          { title: "Mi Perfil", url: "/Perfil#perfil" },
-          { title: "Vacaciones", url: "/Perfil#vacaciones" },
-          { title: "Cursos", url: "/Perfil#cursos" },
-          { title: "Movimientos", url: "/Perfil#movimientos" },
+          { title: "Asistencia", url: "/Perfil#perfil", icon: CalendarCheck },
+          { title: "Vacaciones", url: "/Perfil#vacaciones", icon: Palmtree },
+          { title: "Cursos", url: "/Perfil#cursos", icon: GraduationCap },
+          { title: "Movimientos", url: "/Perfil#movimientos", icon: Repeat },
           ...(user.rol === "admin" || user.rol === "reclutamiento"
-            ? [{ title: "Requisiciones", url: "/Perfil#requisiciones" }]
+            ? [{ title: "Requisiciones", url: "/Perfil#requisiciones", icon: FileText }]
             : []),
-          { title: "Carta Patronal", url: "/Perfil#patron" },
-          { title: "Monitorear Equipo", url: "/Perfil#monitorearequipo" },
+          { title: "Carta Patronal", url: "/Perfil#patron", icon: Stamp },
+          { title: "Monitorear Equipo", url: "/Perfil#monitorearequipo", icon: Users },
         ],
       },
     ],
     projects: [
-      { name: "Home", url: "/", icon: SquareTerminal },
-      { name: "Kardex", url: "/kardex", icon: BookOpen },
-      ...(user.rol === "admin" 
-        ? [{ name: "Cargar Archivos Excel", url: "/cargaMasiva", icon: Frame }]
+      { name: "Home", url: "/", icon: Home },
+      { name: "Kardex", url: "/kardex", icon: NotebookText },
+      ...(user.rol === "admin"
+        ? [{ name: "Cargar Archivos Excel", url: "/cargaMasiva", icon: FileSpreadsheet }]
         : []),
-      { name: "Usuarios", url: "/Usuarios", icon: Map },
-      { name: "Cursos", url: "/Cursos", icon: PieChart },
-      { name: "Movimientos Nominas", url: "/Movimientos", icon: AudioWaveform },
+      { name: "Usuarios", url: "/Usuarios", icon: UserCog },
+      { name: "Cursos", url: "/Cursos", icon: Presentation },
+      { name: "Movimientos Nominas", url: "/Movimientos", icon: CircleDollarSign },
     ],
   }
 

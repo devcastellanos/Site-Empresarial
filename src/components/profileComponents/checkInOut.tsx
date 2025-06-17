@@ -274,13 +274,17 @@ function RegisterCheckInCheckOut() {
               </Badge>
             </div>
 
-            <CardHeader className="text-center space-y-3">
-              <Avatar>
+            <CardHeader className="flex flex-col items-center justify-center space-y-4 text-center">
+              <Avatar className="w-32 h-32">
                 {empleado?.Personal ? (
-                  <AvatarImage src={`/api/employees/${empleado.Personal}`} alt="Avatar" />
+                  <AvatarImage
+                    src={`/api/employees/${empleado.Personal}`}
+                    alt="Avatar"
+                    className="object-cover"
+                  />
                 ) : null}
-                <AvatarFallback>
-                  {empleado?.Nombre}
+                <AvatarFallback className="text-xl">
+                  {empleado?.Nombre?.[0]}
                   {empleado?.ApellidoPaterno?.[0]}
                 </AvatarFallback>
               </Avatar>
