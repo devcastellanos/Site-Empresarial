@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useAuth } from "@/app/context/AuthContext";
 import { Convenio } from "./convenio";
+import Swal from "sweetalert2"; // ← Añadido
 
 import {
   Card,
@@ -11,7 +12,6 @@ import {
 } from "@/components/ui/card";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -75,6 +75,23 @@ export function ConvenioCard({
     }
   };
 
+  const confirmDelete = () => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción eliminará el convenio y no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        onConvenioDelete(idConvenio);
+      }
+    });
+  };
+
   return (
     <>
       <Card className="w-full overflow-hidden rounded-xl shadow-md">
@@ -93,7 +110,7 @@ export function ConvenioCard({
           <p className="text-xs italic text-gray-500">Tipo: {tipo}</p>
           {user && user.rol === "admin" && (
             <div className="flex gap-2 pt-2">
-              <Button variant="destructive" onClick={() => onConvenioDelete(idConvenio)}>Eliminar</Button>
+              <Button variant="destructive" onClick={confirmDelete}>Eliminar</Button>
               <Button variant="default" onClick={() => setOpenModal(true)}>Editar</Button>
             </div>
           )}

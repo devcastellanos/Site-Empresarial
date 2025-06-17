@@ -68,7 +68,6 @@ function Movements() {
   const [incidentDate, setIncidentDate] = useState<Date>();
   const [movementType, setMovementType] = useState("");
   const [comments, setComments] = useState("");
-  const [nivel_aprobacion, setNivelAprobacion] = useState(1); // Cambia el valor inicial a 1 o al que necesites
 
   // Campos comunes
   const [assignedRestDay, setAssignedRestDay] = useState("");
@@ -87,6 +86,7 @@ function Movements() {
   const [hours, setHours] = useState(""); // Define hours state
   const [exitTime, setExitTime] = useState(""); // Define exitTime state
   const [approvalNotes, setApprovalNotes] = useState<{ [id: number]: string }>({});
+const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>({});
 
 
   const [movementsData, setMovementsData] = useState<{
@@ -179,10 +179,10 @@ function Movements() {
 
         if (movimientoResult.limite) {
           // Mostramos SweetAlert
-         Swal.fire({
-  icon: 'warning',
-  title: 'Límite alcanzado',
-  html: `
+          Swal.fire({
+            icon: 'warning',
+            title: 'Límite alcanzado',
+            html: `
     <p style="font-size: 15px; line-height: 1.5; color: #333;">
       Has alcanzado el limite de retardos justificados este mes
     </p>
@@ -190,24 +190,45 @@ function Movements() {
       Si requieres apoyo adicional, por favor contacta a Recursos Humanos.
     </p>
   `,
-  confirmButtonColor: '#9A3324',
-  confirmButtonText: 'Entendido',
-  customClass: {
-    popup: 'rounded-xl shadow-lg',
-    title: 'text-lg font-semibold',
-    confirmButton: 'px-4 py-2 text-white',
-  }
-});
+            confirmButtonColor: '#9A3324',
+            confirmButtonText: 'Entendido',
+            customClass: {
+              popup: 'rounded-xl shadow-lg',
+              title: 'text-lg font-semibold',
+              confirmButton: 'px-4 py-2 text-white',
+            }
+          });
         } else {
-          alert("❌ Error creando movimiento");
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo crear el movimiento. Por favor, intenta de nuevo más tarde.',
+            confirmButtonColor: '#9A3324',
+            confirmButtonText: 'Entendido',
+            customClass: {
+              popup: 'rounded-xl shadow-lg',
+              title: 'text-lg font-semibold',
+              confirmButton: 'px-4 py-2 text-white',
+            }
+          });
         }
         return;
       }
 
 
       setRequestStatus("success");
-      alert("✅ Solicitud enviada correctamente");
-
+      Swal.fire({
+        icon: 'success',
+        title: 'Solicitud enviada',
+        text: 'Tu solicitud ha sido enviada correctamente.',
+        confirmButtonColor: '#9A3324',
+        confirmButtonText: 'Entendido',
+        customClass: {
+          popup: 'rounded-xl shadow-lg',
+          title: 'text-lg font-semibold',
+          confirmButton: 'px-4 py-2 text-white',
+        }
+      });
       // Opcional: limpiar formulario
       setEmployeeNumber(user?.num_empleado?.toString() || "");
       setIncidentDate(undefined);
@@ -230,7 +251,18 @@ function Movements() {
     } catch (error) {
       console.error("❌ Error en submit:", error);
       setRequestStatus("error");
-      alert("Error enviando la solicitud");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Ocurrió un error al enviar tu solicitud. Por favor, intenta de nuevo más tarde.',
+        confirmButtonColor: '#9A3324',
+        confirmButtonText: 'Entendido',
+        customClass: {
+          popup: 'rounded-xl shadow-lg',
+          title: 'text-lg font-semibold',
+          confirmButton: 'px-4 py-2 text-white',
+        }
+      });
     }
   };
 
@@ -499,7 +531,7 @@ function Movements() {
                 onChange={(e) => setComments(e.target.value)}
                 placeholder="Escribe tus comentarios aquí"
                 className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
-              /> 
+              />
             </div>
           )}
         </CardContent>
@@ -599,7 +631,7 @@ function Movements() {
                       <textarea
                         placeholder="Observaciones del supervisor"
                         className="w-full mt-2 p-2 border rounded-md text-sm"
-                        value={approvalNotes[mov.idMovimiento] }
+                        value={approvalNotes[mov.idMovimiento]}
                         onChange={(e) =>
                           setApprovalNotes((prev) => ({
                             ...prev,
@@ -612,8 +644,10 @@ function Movements() {
                         <Button
                           variant="outline"
                           className="border-green-500 text-green-700"
+                          disabled={loadingActions[mov.idMovimiento]}
                           onClick={async () => {
                             try {
+                              setLoadingActions(prev => ({ ...prev, [mov.idMovimiento]: true }));
                               await responderAprobacion(
                                 mov.idAprobacion,
                                 "aprobado",
@@ -626,23 +660,50 @@ function Movements() {
                                   pendientes: pendientesActualizados,
                                 }));
                               }
-                              alert(`✅ Aprobado correctamente`);
+                              Swal.fire({
+                                icon: 'success',
+                                title: 'Aprobación exitosa',
+                                text: 'El movimiento ha sido aprobado correctamente.',
+                                confirmButtonColor: '#9A3324',
+                                confirmButtonText: 'Entendido',
+                                customClass: {
+                                  popup: 'rounded-xl shadow-lg',
+                                  title: 'text-lg font-semibold',
+                                  confirmButton: 'px-4 py-2 text-white',
+                                }
+                              });
                             } catch (error) {
                               console.error(error);
-                              alert("❌ Error al aprobar");
+                              Swal.fire({
+                                icon: 'error',
+                                title: 'Error al aprobar',
+                                text: 'Ocurrió un error al aprobar el movimiento. Por favor, intenta de nuevo más tarde.',
+                                confirmButtonColor: '#9A3324',
+                                confirmButtonText: 'Entendido',
+                                customClass: {
+                                  popup: 'rounded-xl shadow-lg',
+                                  title: 'text-lg font-semibold',
+                                  confirmButton: 'px-4 py-2 text-white',
+                                }
+                              });
+
+                            } finally {
+                              setLoadingActions(prev => ({ ...prev, [mov.idMovimiento]: false }));
                             }
                           }}
                         >
-                          Aprobar
+                          {loadingActions[mov.idMovimiento] ? "Aprobando..." : "Aprobar"}
                         </Button>
 
                         <Button
                           variant="outline"
                           className="border-red-500 text-red-700"
+                          disabled={loadingActions[mov.idMovimiento]}
                           onClick={async () => {
                             try {
+                              setLoadingActions(prev => ({ ...prev, [mov.idMovimiento]: true }));
                               await responderAprobacion(
-                                mov.idMovimiento,
+                                mov.idAprobacion,
                                 "rechazado",
                                 approvalNotes[mov.idMovimiento]
                               );
@@ -653,14 +714,40 @@ function Movements() {
                                   pendientes: pendientesActualizados,
                                 }));
                               }
-                              alert(`❌ Rechazado correctamente`);
+                              Swal.fire({
+                                icon: 'error',
+                                title: 'Movimiento rechazado',
+                                text: 'El movimiento ha sido rechazado correctamente.',
+                                confirmButtonColor: '#9A3324',
+                                confirmButtonText: 'Entendido',
+                                customClass: {
+                                  popup: 'rounded-xl shadow-lg',
+                                  title: 'text-lg font-semibold',
+                                  confirmButton: 'px-4 py-2 text-white',
+                                }
+                              });
                             } catch (error) {
                               console.error(error);
-                              alert("❌ Error al rechazar");
+                             
+                              Swal.fire({
+                                icon: 'error',
+                                title: 'Error al rechazar',
+                                text: 'Ocurrió un error al rechazar el movimiento. Por favor, intenta de nuevo más tarde.',
+                                confirmButtonColor: '#9A3324',
+                                confirmButtonText: 'Entendido',
+                                customClass: {
+                                  popup: 'rounded-xl shadow-lg',
+                                  title: 'text-lg font-semibold',
+                                  confirmButton: 'px-4 py-2 text-white',
+                                }
+                              });
+
+                            } finally {
+                              setLoadingActions(prev => ({ ...prev, [mov.idMovimiento]: false }));
                             }
                           }}
                         >
-                          Rechazar
+                          {loadingActions[mov.idMovimiento] ? "Rechazando..." : "Rechazar"}
                         </Button>
                       </div>
                     </Card>

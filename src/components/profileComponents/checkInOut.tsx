@@ -320,94 +320,98 @@ function RegisterCheckInCheckOut() {
         </div>
 
         {/* Columna derecha - Tabla de Asistencia */}
-        <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4 h-fit lg:col-span-2">
-          <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
-            <CardTitle className="text-lg text-center sm:text-left w-full sm:w-auto">
-              Registros de Asistencia
-            </CardTitle>
-            <span className="text-xl font-mono text-gray-600">
-              {currentTime.toLocaleTimeString()}
-            </span>
-          </CardHeader>
+<Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4 h-fit lg:col-span-2">
+  <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+    <CardTitle className="text-lg text-center sm:text-left w-full sm:w-auto">
+      Registros de Asistencia
+    </CardTitle>
+    <span className="text-xl font-mono text-gray-600">
+      {currentTime.toLocaleTimeString()}
+    </span>
+  </CardHeader>
 
-          <CardContent className="overflow-x-auto">
-            <table className="w-full text-sm text-left border">
-              <thead className="bg-gray-100 text-black">
-                <tr>
-                  <th className="py-2 px-4">Fecha</th>
-                  <th className="py-2 px-4">Día</th>
-                  <th className="py-2 px-4">Entrada Prog.</th>
-                  <th className="py-2 px-4">Salida Prog.</th>
-                  <th className="py-2 px-4">Tipo Asistencia</th>
-                  <th className="py-2 px-4">Incidencia</th>
-                  <th className="py-2 px-4">Estatus</th>
-                  <th className="py-2 px-4">Acción</th>
+  <CardContent className="overflow-x-auto">
+    {/* Contenedor con altura fija y scroll vertical */}
+    <div className="max-h-[600px] overflow-y-auto">
+      <table className="w-full text-sm text-left border">
+        <thead className="bg-gray-100 text-black sticky top-0 z-10">
+          <tr>
+            <th className="py-2 px-4">Fecha</th>
+            <th className="py-2 px-4">Día</th>
+            <th className="py-2 px-4">Entrada Prog.</th>
+            <th className="py-2 px-4">Salida Prog.</th>
+            <th className="py-2 px-4">Tipo Asistencia</th>
+            <th className="py-2 px-4">Incidencia</th>
+            <th className="py-2 px-4">Estatus</th>
+            <th className="py-2 px-4">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {asistencias
+            .filter((item) => item.CVEINC !== "SD")
+            .sort((a, b) => new Date(b.FECHA).getTime() - new Date(a.FECHA).getTime())
+            .map((item, i) => {
+              const fechaStr = item.FECHA.split("T")[0];
+              const diaSemana = diasMap[item.DIA_SEM] || item.DIA_SEM;
+              const tipoMovimiento = item.NOMBRE_INCIDENCIA;
+              const resultadoMovimiento = getEstatusMovimiento(fechaStr);
+              const estatus = resultadoMovimiento?.icono || null;
+              const tipoMovimientoDetectado = resultadoMovimiento?.tipo || tipoMovimiento;
+
+              let bgColor = "";
+
+              if (estatus) {
+                bgColor = "bg-white";
+              } else {
+                if (item.NOMBRE_INCIDENCIA === null && item.CVEINC !== "SD") {
+                  bgColor = "bg-green-50";
+                } else if (item.NOMBRE_INCIDENCIA === "Retardo E1" && item.CVEINC !== "SD") {
+                  bgColor = "bg-yellow-50";
+                } else {
+                  bgColor = "bg-red-50";
+                }
+              }
+
+              const claseFila = `${bgColor} ${getEstiloFilaPorEstatus(estatus)} border-b text-black`;
+              return (
+                <tr key={i} className={claseFila}>
+                  <td className="py-2 px-4">{fechaStr}</td>
+                  <td className="py-2 px-4">{diaSemana}</td>
+                  <td className="py-2 px-4">
+                    {item.ENTRADA_PROGRAMADA && item.ENTRADA_PROGRAMADA !== "00:00" ? item.ENTRADA_PROGRAMADA : "—"}
+                  </td>
+                  <td className="py-2 px-4">
+                    {item.SALIDA_PROGRAMADA && item.SALIDA_PROGRAMADA !== "00:00" ? item.SALIDA_PROGRAMADA : "—"}
+                  </td>
+                  <td className="py-2 px-4">{item.TIPO_ASISTENCIA || "—"}</td>
+                  <td className="py-2 px-4 italic text-sm">
+                    {estatus
+                      ? `Movimiento "${tipoMovimientoDetectado}"`
+                      : item.NOMBRE_INCIDENCIA || "—"}
+                  </td>
+                  <td className="py-2 px-4">{estatus || "—"}</td>
+                  <td className="py-2 px-4">
+                    {item.NOMBRE_INCIDENCIA && item.CVEINC !== "SD" ? (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleQuickRequestOpciones(item)}
+                        className="text-xs"
+                        disabled={!!getEstatusMovimiento(fechaStr)}
+                      >
+                        Solicitar
+                      </Button>
+                    ) : null}
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {asistencias
-                  .filter((item) => item.CVEINC !== "SD")
-                 .sort((a, b) => new Date(b.FECHA).getTime() - new Date(a.FECHA).getTime())
-                  .map((item, i) => {
-                    const fechaStr = item.FECHA.split("T")[0];
-                    const diaSemana = diasMap[item.DIA_SEM] || item.DIA_SEM;
-                    const tipoMovimiento = item.NOMBRE_INCIDENCIA;
-                    const resultadoMovimiento = getEstatusMovimiento(fechaStr);
-                    const estatus = resultadoMovimiento?.icono || null;
-                    const tipoMovimientoDetectado = resultadoMovimiento?.tipo || tipoMovimiento;
+              );
+            })}
+        </tbody>
+      </table>
+    </div>
+  </CardContent>
+</Card>
 
-                    let bgColor = "";
-
-                    if (estatus) {
-                      bgColor = "bg-white";
-                    } else {
-                      if (item.NOMBRE_INCIDENCIA === null && item.CVEINC !== "SD") {
-                        bgColor = "bg-green-50";
-                      } else if (item.NOMBRE_INCIDENCIA === "Retardo E1" && item.CVEINC !== "SD") {
-                        bgColor = "bg-yellow-50";
-                      } else {
-                        bgColor = "bg-red-50";
-                      }
-                    }
-
-                    const claseFila = `${bgColor} ${getEstiloFilaPorEstatus(estatus)} border-b text-black`;
-                    return (
-                      <tr key={i} className={claseFila}>
-                        <td className="py-2 px-4">{fechaStr}</td>
-                        <td className="py-2 px-4">{diaSemana}</td>
-                        <td className="py-2 px-4">
-                          {item.ENTRADA_PROGRAMADA && item.ENTRADA_PROGRAMADA !== "00:00" ? item.ENTRADA_PROGRAMADA : "—"}
-                        </td>
-                        <td className="py-2 px-4">
-                          {item.SALIDA_PROGRAMADA && item.SALIDA_PROGRAMADA !== "00:00" ? item.SALIDA_PROGRAMADA : "—"}
-                        </td>
-                        <td className="py-2 px-4">{item.TIPO_ASISTENCIA || "—"}</td>
-                        <td className="py-2 px-4 italic text-sm">
-                          {estatus
-                            ? `Movimiento "${tipoMovimientoDetectado}"`
-                            : item.NOMBRE_INCIDENCIA || "—"}
-                        </td>
-                        <td className="py-2 px-4">{estatus || "—"}</td>
-                        <td className="py-2 px-4">
-                          {item.NOMBRE_INCIDENCIA && item.CVEINC !== "SD" ? (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleQuickRequestOpciones(item)}
-                              className="text-xs"
-                              disabled={!!getEstatusMovimiento(fechaStr)}
-                            >
-                              Solicitar
-                            </Button>
-                          ) : null}
-                        </td>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
-          </CardContent>
-        </Card>
       </div>
       <Dialog open={quickModalOpen} onOpenChange={setQuickModalOpen}>
         <DialogContent>

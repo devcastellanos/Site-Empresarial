@@ -9,7 +9,7 @@ import { CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Textarea } from "@/components/ui/textarea"
 import { puestos } from "@/lib/puestos"
-
+import { useAuth } from "@/app/context/AuthContext"
 const motivos = ["Sustitución", "Nueva Posición", "Aumento Plantilla"]
 const tiposIncapacidad = ["Enfermedad General", "Accidente de trabajo", "Accidente en trayecto"]
 
@@ -21,18 +21,25 @@ export default function Step1SeleccionRequisicion({
   updateData: (val: any) => void
 }) {
   const [fecha, setFecha] = useState<Date | undefined>(data.fecha_solicitud || new Date())
+  const { user } = useAuth()
+
 
   useEffect(() => {
     updateData({ fecha_solicitud: fecha })
   }, [fecha])
+
+  useEffect(() => {
+    updateData({ num_empleado: user?.num_empleado })
+  }, [user?.num_empleado])
+
 
   return (
     <div className="space-y-6">
       <div>
         <Label>Número de empleado</Label>
         <Input
-          value={data.num_empleado || ""}
-          onChange={(e) => updateData({ num_empleado: e.target.value })}
+          value={user?.num_empleado || ""}
+          disabled
           placeholder="Ej. 1234"
         />
       </div>

@@ -1,19 +1,29 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { User } from "@/lib/interfaces";
-import axios from "axios";
 import { useAuth } from "@/app/context/AuthContext";
-
 
 function PatronCard() {
   const cartaRef = useRef<HTMLDivElement>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [empleado, setEmpleado] = useState<User | null>(null);
   const { user } = useAuth();
+  const [ubicacion, setUbicacion] = useState("CDMX");
+
+  const direcciones: Record<string, string> = {
+    CDMX:
+      "AVENIDA RÍO CHURUBUSCO, NÚMERO 1015-Q A Y B 164, CENTRAL DE ABASTOS, IZTAPALAPA, CDMX, C.P. 09040",
+    Guadalajara:
+      "AV. LÁZARO CÁRDENAS 2345, COLONIA JARDINES DEL BOSQUE, GUADALAJARA, JALISCO, C.P. 44520",
+  };
+
+  const localidades: Record<string, string> = {
+    CDMX: "Iztapalapa",
+    Guadalajara: "Guadalajara",
+  };
 
   const fetchUsers = async () => {
     try {
@@ -26,25 +36,26 @@ function PatronCard() {
         Personal: Number(user.Personal),
       }));
       setUsers(mappedUsers);
-      // Buscar usuario directamente después de obtener los datos
-      const dataUser = mappedUsers.find((u: User) => u.Personal === user?.num_empleado);
+
+      const dataUser = mappedUsers.find(
+        (u: User) => u.Personal === user?.num_empleado
+      );
       setEmpleado(dataUser || null);
 
-      if (dataUser) {
-        console.log("Usuario encontrado:", dataUser);
-      } else {
-        console.log("Usuario no encontrado");
-      }
+      console.log(
+        dataUser ? "Usuario encontrado:" : "Usuario no encontrado",
+        dataUser
+      );
     } catch (error) {
       console.error("Error al obtener usuarios:", error);
     }
   };
 
-useEffect(() => {
-  if (user) {
-    fetchUsers();
-  }
-}, [user]);
+  useEffect(() => {
+    if (user && users.length === 0) {
+      fetchUsers();
+    }
+  }, [user]);
 
   const generarPDF = () => {
     if (cartaRef.current) {
@@ -62,17 +73,34 @@ useEffect(() => {
 
   return (
     <div className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow-md">
+      {/* Selector de ubicación */}
+      <div className="flex items-center gap-2">
+        <label htmlFor="ubicacion" className="text-sm font-medium text-gray-700">
+          Ubicación:
+        </label>
+        <select
+          id="ubicacion"
+          value={ubicacion}
+          onChange={(e) => setUbicacion(e.target.value)}
+          className="border border-gray-300 rounded px-2 py-1 text-sm"
+        >
+          <option value="CDMX">CDMX</option>
+          <option value="Guadalajara">Guadalajara</option>
+        </select>
+      </div>
+
+      {/* Encabezado */}
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold text-gray-800">Carta Patronal</h2>
         <Button onClick={generarPDF}>Generar PDF</Button>
       </div>
 
-      {/* 📄 Contenido exportable */}
+      {/* Contenido exportable */}
       <div
         ref={cartaRef}
         className="p-8 bg-white text-base text-black leading-relaxed space-y-4 border border-gray-300 rounded-md"
       >
-        {/* LOGO */}
+        {/* Logo */}
         <div className="flex justify-center mb-4">
           <Image
             src="/image/logo.png"
@@ -84,7 +112,7 @@ useEffect(() => {
         </div>
 
         <p className="text-right font-medium uppercase">
-          México, Iztapalapa a 13 de marzo de 2025.
+          México, {localidades[ubicacion]} a 13 de marzo de 2025.
         </p>
 
         <p className="font-semibold uppercase">A quien corresponda:</p>
@@ -96,17 +124,14 @@ useEffect(() => {
             {empleado?.Nombre} {empleado?.ApellidoPaterno} {empleado?.ApellidoMaterno}
           </span>
           , con número de colaborador{" "}
-          <span className="font-semibold">{empleado?.Personal }</span>, contando con NSS{" "}
+          <span className="font-semibold">{empleado?.Personal}</span>, contando con NSS{" "}
           <span className="font-semibold">{empleado?.NSS}</span>, RFC{" "}
           <span className="font-semibold">{empleado?.RFC}</span>, quien labora en la empresa denominada{" "}
           <span className="font-semibold">
             COMERCIALIZADORA DE FRUTAS FINAS TARAHUMARA
           </span>, con RPU{" "}
           <span className="font-semibold">r12-34-183-10-8</span>, ubicada en{" "}
-          <span className="font-semibold">
-            AVENIDA RÍO CHURUBUSCO, NÚMERO 1015-Q A Y B 164, CENTRAL DE ABASTOS,
-            IZTAPALAPA, CDMX, C.P. 09040
-          </span>, se desempeña en el puesto de{" "}
+          <span className="font-semibold">{direcciones[ubicacion]}</span>, se desempeña en el puesto de{" "}
           <span className="font-semibold">{empleado?.Puesto}</span> desde el{" "}
           <span className="font-semibold">{empleado?.FechaAlta || empleado?.FechaAntiguedad}</span>.
         </p>
@@ -118,7 +143,14 @@ useEffect(() => {
 
         <p className="mt-8 font-semibold tracking-widest">A T E N T A M E N T E :</p>
 
-        <div className="mt-10 space-y-1">
+        {/* 🖋️ Espacio para firma */}
+        <div className="mt-12 mb-4 flex flex-col items-center space-y-1">
+          <div className="w-64 border-t border-black" />
+          <p className="text-sm text-center">Firma del Coordinador</p>
+        </div>
+
+        {/* Datos del firmante */}
+        <div className="mt-4 space-y-1">
           <p className="font-bold">C. VÍCTOR DANIEL MONROY GUTIÉRREZ</p>
           <p className="text-sm font-medium">COORDINADOR RELACIONES LABORALES</p>
           <p className="text-sm">victor.monroy@grupotarahumara.com.mx</p>

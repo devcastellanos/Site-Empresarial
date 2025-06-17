@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/app/context/AuthContext";
+import Swal from "sweetalert2";
 
 interface ComentariosPostProps {
   idBlog: number;
@@ -55,6 +56,21 @@ const ComentariosPost: React.FC<ComentariosPostProps> = ({ idBlog, isAdmin = fal
     }
   };
 
+  const confirmarEliminacion = (idComentario: number) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleEliminar(idComentario);
+      }
+    });
+  }
+
   const handleEliminar = async (idComentario: number) => {
     try {
       await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/comentarios/${idComentario}`);
@@ -89,7 +105,7 @@ const ComentariosPost: React.FC<ComentariosPostProps> = ({ idBlog, isAdmin = fal
             {user?.rol === "admin" && (
               <div className="flex gap-2">
                 <Button size="sm" onClick={() => setEditando(c)}>Editar</Button>
-                <Button size="sm" variant="destructive" onClick={() => handleEliminar(c.idComentario)}>Eliminar</Button>
+                <Button size="sm" variant="destructive" onClick={() => confirmarEliminacion(c.idComentario)}>Eliminar</Button>
               </div>
             )}
           </div>

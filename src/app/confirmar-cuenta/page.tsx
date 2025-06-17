@@ -70,7 +70,7 @@ function ConfirmarCuentaContent() {
         <h2 className="text-2xl font-bold text-red-600 mb-4">❌ Token inválido o expirado</h2>
         <p className="text-gray-600">Verifica tu correo o vuelve a intentarlo.</p>
         <a
-          href="/signup"
+          href="/Login"
           className="mt-6 inline-block bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
         >
           Ir al registro

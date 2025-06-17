@@ -6,6 +6,7 @@ import Step3RelacionesYRiesgos from "./steps/Step3RelacionesYRiesgos"
 import Step4DatosGenerales from "./steps/Step4DatosGenerales"
 import { crearMovimiento } from "@/services/movementsService"
 import { CheckCircle2, Circle } from "lucide-react"
+import { useAuth } from "@/app/context/AuthContext"
 
 type FormData = {
   num_empleado: string
@@ -47,6 +48,7 @@ type FormData = {
 export default function StepperContainer() {
   const [step, setStep] = useState(1)
   const [data, setData] = useState<Partial<FormData>>({})
+  const { user } = useAuth()
 
   const totalSteps = data.motivo === "Nueva Posición" ? 4 : 3
 

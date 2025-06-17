@@ -15,6 +15,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import { useAuth } from '@/app/context/AuthContext';
 import 'swiper/css';
+import Swal from 'sweetalert2';
 
 
 interface BlogPostCardProps {
@@ -131,6 +132,23 @@ export function BlogPostCard({
     }
   };
 
+  const confirmDeletePost = () => {
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: 'Esta acción eliminará el post permanentemente.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      onPostDelete(idBlog);
+    }
+  });
+};
+
   return (
     <>
       <Card className="rounded-xl shadow-xl p-4 space-y-4">
@@ -208,11 +226,11 @@ export function BlogPostCard({
           </div>
 
           {user?.rol === "admin" && (
-            <div className="ml-4 flex gap-2">
-              <Button variant="destructive" onClick={() => onPostDelete(idBlog)}>Eliminar</Button>
-              <Button onClick={handleEditClick}>Editar</Button>
-            </div>
-          )}
+  <div className="ml-4 flex gap-2">
+    <Button variant="destructive" onClick={() => onPostDelete(idBlog)}>Eliminar</Button>
+    <Button onClick={handleEditClick}>Editar</Button>
+  </div>
+)}
         </div>
 
         <ComentariosPost idBlog={idBlog} isAdmin={user?.rol === "admin" } />

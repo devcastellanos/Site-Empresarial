@@ -99,7 +99,9 @@ const Kardex = () => {
 
   useEffect(() => {
   if (!user) return;
+  console.log("Usuario autenticado:", user);
   setSelectedUserId(Number(user.num_empleado));
+  fetchUsers();
 }, [user]);
 
 useEffect(() => {
@@ -214,7 +216,26 @@ useEffect(() => {
   };
 
   
-   
+   const confirmDeleteCourse = (
+  id_course: number,
+  id_usuario: number,
+  start_date: string
+) => {
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "Esta acción eliminará el curso para el usuario seleccionado.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      handleDeleteCourse(id_course, id_usuario, start_date);
+    }
+  });
+};
 
   const formattedUserId = selectedUserId.toString().padStart(4, "0");
 
@@ -606,27 +627,27 @@ useEffect(() => {
                       Información
                     </button>
                     {user && user.rol === "admin" ? (
-                      <button
-                        style={{
-                          backgroundColor: "#9A3324",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "5px",
-                          padding: "5px 10px",
-                          cursor: "pointer",
-                          marginLeft: "10px",
-                        }}
-                        onClick={() =>
-                          handleDeleteCourse(
-                            course.id_course,
-                            course.id_usuario,
-                            course.start_date
-                          )
-                        }
-                      >
-                        Eliminar
-                      </button>
-                    ) : null}
+  <button
+    style={{
+      backgroundColor: "#9A3324",
+      color: "white",
+      border: "none",
+      borderRadius: "5px",
+      padding: "5px 10px",
+      cursor: "pointer",
+      marginLeft: "10px",
+    }}
+    onClick={() =>
+      confirmDeleteCourse(
+        course.id_course,
+        course.id_usuario,
+        course.start_date
+      )
+    }
+  >
+    Eliminar
+  </button>
+) : null}
                   </td>
                 </tr>
               ))}
