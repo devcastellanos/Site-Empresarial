@@ -12,6 +12,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -27,7 +33,15 @@ import { CalendarIcon, Info } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useEffect, useState } from "react";
-
+import {
+  MdMarkunread,
+  MdTaskAlt,
+  MdCancel,
+  MdDescription,
+  MdPersonOutline,
+  MdErrorOutline,
+} from "react-icons/md";
+import { HiOutlineInformationCircle } from "react-icons/hi";
 // Importar componente dinámico
 import { RestChangeFields } from "@/components/profileComponents/movementsComponents/restChangeFields";
 import { ScheduleChangeFields } from "@/components/profileComponents/movementsComponents/scheduleChangeFields";
@@ -270,7 +284,7 @@ const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>(
     <div className="max-w-7xl mx-auto p-6   lg:grid grid-cols-4 gap-6">
       <Card className="col-span-4 mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
         <div className="flex items-center gap-4">
-          <Info className="w-8 h-8 text-blue-600" />
+          <HiOutlineInformationCircle className="w-6 h-6 text-gray-700" />
           <h1 className="text-4xl font-bold tracking-tight text-gray-800 drop-shadow-sm">
             Movimientos de Personal
           </h1>
@@ -581,8 +595,12 @@ const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>(
                       className={`rounded-xl border-2 ${resaltado} p-4 space-y-3`}
                     >
                       <div className="flex justify-between items-center">
-                        <p className={`text-md font-semibold text-gray-800`}>
-                          {tipo === "Nueva Posición" ? "🚨 " : "📄 "}
+                        <p className="text-md font-semibold text-gray-800 flex items-center gap-1">
+                          {tipo === "Nueva Posición" ? (
+                            <MdErrorOutline className="text-gray-700" />
+                          ) : (
+                            <MdDescription className="text-gray-700" />
+                          )}
                           {tipo}
                         </p>
                         <p className="text-sm text-gray-500">
@@ -592,8 +610,9 @@ const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>(
                         </p>
                       </div>
 
-                      <p className="text-sm text-gray-700">
-                        <strong>Solicitado por:</strong> 👤 Empleado #{mov.num_empleado} {mov.nombre_solicitante}
+                      <p className="text-sm text-gray-700 flex items-center gap-1">
+                        <MdPersonOutline className="text-gray-700" />
+                        <strong>Solicitado por:</strong> Empleado #{mov.num_empleado} {mov.nombre_solicitante}
                       </p>
 
                       {mov.comentarios && (
@@ -763,65 +782,91 @@ const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>(
         <CardHeader>
           <CardTitle className="text-xl">Mis movimientos recientes</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {["pendiente", "aprobado", "rechazado"].map((status) => (
-            <div key={status}>
-              <h2 className="text-lg font-semibold capitalize mb-2 text-gray-700">
-                {status === "pendiente" && "📥 Pendientes"}
-                {status === "aprobado" && "✅ Aprobados"}
-                {status === "rechazado" && "❌ Rechazados"}
-              </h2>
+        <CardContent>
+          <Accordion type="multiple" className="w-full space-y-4">
+            {["pendiente", "aprobado", "rechazado"].map((status) => {
+              const titulo = {
+                pendiente: (
+                  <span className="inline-flex items-center gap-2">
+                    <MdMarkunread className="text-gray-700" />
+                    Pendientes
+                  </span>
+                ),
+                aprobado: (
+                  <span className="inline-flex items-center gap-2">
+                    <MdTaskAlt className="text-gray-700" />
+                    Aprobados
+                  </span>
+                ),
+                rechazado: (
+                  <span className="inline-flex items-center gap-2">
+                    <MdCancel className="text-gray-700" />
+                    Rechazados
+                  </span>
+                ),
+              }[status];
 
-              <div className="grid gap-4">
-                {movementsData.propios.length === 0 ? (
-                  <p className="text-gray-500">No has solicitado movimientos</p>
-                ) : (
-                  movementsData.propios
-                    .filter((mov) => mov.estatus_movimiento === status)
-                    .map((mov) => (
-                      <Card key={mov.idMovimiento} className="bg-white/90 border rounded-xl shadow-sm p-4 space-y-1">
-                        <div className="flex justify-between items-center">
-                          <p className="font-medium text-gray-800">📄 {mov.tipo_movimiento}</p>
-                          <p className="text-sm text-gray-600">
-                            {format(new Date(mov.fecha_solicitud), "PPP", { locale: es })}
-                          </p>
-                        </div>
+              const movimientos = movementsData.propios.filter(
+                (mov) => mov.estatus_movimiento === status
+              );
 
-                        <p className="text-sm text-tinto-500 italic">
-                          {mov.estatus === "pendiente" &&
-                            `En espera de aprobación de: ${mov.supervisorId}`}
-                          {mov.estatus === "aprobado" &&
-                            `Aprobado por: ${mov.supervisorId}`}
-                          {mov.estatus === "rechazado" &&
-                            `Rechazado por: ${mov.supervisorId}`}
-                        </p>
+              return (
+                <AccordionItem key={status} value={status}>
+                  <AccordionTrigger className="text-lg font-semibold text-gray-800">
+                    {titulo}
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    {movimientos.length === 0 ? (
+                      <p className="text-gray-500">No tienes movimientos {status}s</p>
+                    ) : (
+                      <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                        {movimientos.map((mov) => (
+                          <Card
+                            key={mov.idMovimiento}
+                            className="bg-white/90 border rounded-xl shadow-sm p-4 space-y-1"
+                          >
+                            <div className="flex justify-between items-center">
+                              <p className="font-medium text-gray-800 flex items-center gap-1">
+                                <MdDescription className="text-gray-700" />
+                                {mov.tipo_movimiento}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                {format(new Date(mov.fecha_solicitud), "PPP", { locale: es })}
+                              </p>
+                            </div>
 
-                        <div className="mt-2 space-y-1 text-sm text-gray-700">
-                          {renderDatosJsonPorTipo(mov.tipo_movimiento, mov.datos_json)}
+                            <p className="text-sm text-tinto-500 italic">
+                              {status === "pendiente" && `En espera de aprobación de: ${mov.supervisorId}`}
+                              {status === "aprobado" && `Aprobado por: ${mov.supervisorId}`}
+                              {status === "rechazado" && `Rechazado por: ${mov.supervisorId}`}
+                            </p>
 
-                          <div className="mt-2">
-                            <p className="font-medium text-gray-800">Ruta de aprobación:</p>
-                            <ul className="list-disc list-inside text-sm ml-2">
-                              {obtenerEstadoAprobaciones(mov.historial_aprobaciones_detallado).map((ap, i) => (
-                                <p key={i}>
-                                  Nivel {ap.orden}: {ap.nombre} - {ap.estatus}
-                                </p>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                        <div>
-                          <p className="text-sm"> Comentarios: {mov.comentarios}</p>
-                        </div>
-                      </Card>
-                    ))
-                )}
-              </div>
-            </div>
-          ))}
+                            <div className="mt-2 space-y-1 text-sm text-gray-700">
+                              {renderDatosJsonPorTipo(mov.tipo_movimiento, mov.datos_json)}
+
+                              <div className="mt-2">
+                                <p className="font-medium text-gray-800">Ruta de aprobación:</p>
+                                <ul className="list-disc list-inside ml-2">
+                                  {obtenerEstadoAprobaciones(mov.historial_aprobaciones_detallado).map((ap, i) => (
+                                    <li key={i}>
+                                      Nivel {ap.orden}: {ap.nombre} - {ap.estatus}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-600">Comentarios: {mov.comentarios}</p>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
         </CardContent>
       </Card>
-
     </div>
   );
 }
