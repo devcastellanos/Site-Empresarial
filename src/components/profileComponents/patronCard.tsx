@@ -11,18 +11,30 @@ function PatronCard() {
   const [users, setUsers] = useState<User[]>([]);
   const [empleado, setEmpleado] = useState<User | null>(null);
   const { user } = useAuth();
-  const [ubicacion, setUbicacion] = useState("CDMX");
+  const [ubicacion, setUbicacion] = useState("default"); // clave válida
 
   const direcciones: Record<string, string> = {
-    CDMX:
-      "AVENIDA RÍO CHURUBUSCO, NÚMERO 1015-Q A Y B 164, CENTRAL DE ABASTOS, IZTAPALAPA, CDMX, C.P. 09040",
-    Guadalajara:
-      "AV. LÁZARO CÁRDENAS 2345, COLONIA JARDINES DEL BOSQUE, GUADALAJARA, JALISCO, C.P. 44520",
+    BodegaVictoria: "Calle 4 #447 y 449, Comercial Abastos, 44530 Guadalajara, Jal., México",
+    BodegaCentral: "Calle 4 #430, Comercial Abastos, 44530 Guadalajara, Jal., México",
+    BodegaTarahumara: "Calle 4 #419, Comercial Abastos, 44530 Guadalajara, Jal., México",
+    BodegaVictoriaOutlet: "Calle 5, Comercial Abastos, 44530 Guadalajara, Jal., México",
+    BodegaLechuga: "Calle 10 #2620, Comercial Abastos, 44530 Guadalajara, Jal., México",
+    CedisPremier: "Calle Elote #2627, Calle 09, Comercial Abastos, 44530 Guadalajara, Jal., México",
+    BodegaQCDMX: "Calle Q #153, Central de Abasto CDMX, C.P. 09040",
+    BodegaRCDMX: "Calle R #164, Central de Abasto CDMX, C.P. 09040",
+    CEDISMexicali: "Carretera a San Luis #33, Mexicali, Baja California, C.P. 21397",
   };
 
   const localidades: Record<string, string> = {
-    CDMX: "Iztapalapa",
-    Guadalajara: "Guadalajara",
+    BodegaVictoria: "Bodega Victoria (Guadalajara)",
+    BodegaCentral: "Bodega Central (Guadalajara)",
+    BodegaTarahumara: "Bodega Tarahumara (Guadalajara)",
+    BodegaVictoriaOutlet: "Bodega Victoria Outlet (Guadalajara)",
+    BodegaLechuga: "Bodega Lechuga (Guadalajara)",
+    CedisPremier: "Cedis Premier (Guadalajara)",
+    BodegaQCDMX: "Bodega Q (CDMX)",
+    BodegaRCDMX: "Bodega R (CDMX)",
+    CEDISMexicali: "CEDIS Mexicali",
   };
 
   const fetchUsers = async () => {
@@ -84,8 +96,14 @@ function PatronCard() {
           onChange={(e) => setUbicacion(e.target.value)}
           className="border border-gray-300 rounded px-2 py-1 text-sm"
         >
-          <option value="CDMX">CDMX</option>
-          <option value="Guadalajara">Guadalajara</option>
+          <option value="default" disabled hidden>
+            Selecciona una ubicación
+          </option>
+          {Object.entries(localidades).map(([key, label]) => (
+            <option key={key} value={key}>
+              {label}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -111,15 +129,17 @@ function PatronCard() {
           />
         </div>
 
-        <p className="text-right font-medium uppercase">
-          México, {localidades[ubicacion]} a 13 de marzo de 2025.
-        </p>
+        {/* {ubicacion !== "default" && (
+          <p className="text-right font-medium uppercase">
+            México, {localidades[ubicacion]} a 13 de marzo de 2025.
+          </p>
+        )} */}
 
         <p className="font-semibold uppercase">A quien corresponda:</p>
         <p className="uppercase">Presente:</p>
 
         <p>
-          Por medio del presente hago constar que la C.{" "}
+          Por medio del presente hago constar que {" "}
           <span className="font-semibold">
             {empleado?.Nombre} {empleado?.ApellidoPaterno} {empleado?.ApellidoMaterno}
           </span>
@@ -131,7 +151,7 @@ function PatronCard() {
             COMERCIALIZADORA DE FRUTAS FINAS TARAHUMARA
           </span>, con RPU{" "}
           <span className="font-semibold">r12-34-183-10-8</span>, ubicada en{" "}
-          <span className="font-semibold">{direcciones[ubicacion]}</span>, se desempeña en el puesto de{" "}
+          <span className="font-semibold">{ubicacion !== "default" ? direcciones[ubicacion] : "________________________"}</span>, se desempeña en el puesto de{" "}
           <span className="font-semibold">{empleado?.Puesto}</span> desde el{" "}
           <span className="font-semibold">{empleado?.FechaAlta || empleado?.FechaAntiguedad}</span>.
         </p>
@@ -141,8 +161,9 @@ function PatronCard() {
           y para los fines legales que al mismo convengan.
         </p>
 
-        <p className="mt-8 font-semibold tracking-widest">A T E N T A M E N T E :</p>
-
+        <p className="mt-8 font-semibold tracking-widest text-center">A T E N T A M E N T E :</p>
+        <br/>  
+        <br/>
         {/* 🖋️ Espacio para firma */}
         <div className="mt-12 mb-4 flex flex-col items-center space-y-1">
           <div className="w-64 border-t border-black" />
@@ -150,10 +171,10 @@ function PatronCard() {
         </div>
 
         {/* Datos del firmante */}
-        <div className="mt-4 space-y-1">
-          <p className="font-bold">C. VÍCTOR DANIEL MONROY GUTIÉRREZ</p>
+        <div className="mt-4 space-y-1 text-center">
+          <p className="font-bold">LILIANA ESMERALDA ARANA CALDERON</p>
           <p className="text-sm font-medium">COORDINADOR RELACIONES LABORALES</p>
-          <p className="text-sm">victor.monroy@grupotarahumara.com.mx</p>
+          <p className="text-sm">liliana.arana@grupotarahumara.com.mx</p>
           <p className="text-sm">Cel. +52 33-2637-7507</p>
         </div>
       </div>
