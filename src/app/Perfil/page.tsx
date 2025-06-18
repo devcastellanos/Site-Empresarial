@@ -42,10 +42,8 @@ export default function Campaign() {
   const { user } = useAuth();
   // Leer vista desde localStorage al cargar
   useEffect(() => {
-    const storedVista = localStorage.getItem(LOCAL_STORAGE_KEY) as PerfilVista | null
-    if (storedVista) {
-      setVista(storedVista)
-    }
+    setVista("perfil")
+    localStorage.setItem(LOCAL_STORAGE_KEY, "perfil")
   }, [])
 
   // Guardar vista en localStorage cada que cambie
@@ -54,7 +52,7 @@ export default function Campaign() {
   }, [vista])
 
   const breadcrumbMap: Record<PerfilVista, string> = {
-    perfil: "Mi Perfil",
+    perfil: "Asistencia",
     vacaciones: "Vacaciones",
     cursos: "Cursos",
     movimientos: "Movimientos",
