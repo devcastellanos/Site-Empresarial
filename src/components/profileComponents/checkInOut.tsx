@@ -12,12 +12,16 @@ import {
   crearMovimiento,
   obtenerMisMovimientos,
 } from "@/services/movementsService";
-import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { opcionesPorIncidencia } from "@/lib/movimientos";
+import { addDays } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { DateRange } from "react-day-picker";
 
 function RegisterCheckInCheckOut() {
   const { user } = useAuth();
@@ -43,6 +47,10 @@ function RegisterCheckInCheckOut() {
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
   const [comments, setComments] = useState("");
   const [requestStatus, setRequestStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+  from: undefined,
+  to: undefined,
+});
 
   const diasMap: Record<string, string> = {
     "Dom": "Domingo",
@@ -122,6 +130,34 @@ function RegisterCheckInCheckOut() {
     }
     return true;
   });
+
+  const fetchMovimientos = async () => {
+  if (!user || !user.num_empleado) return;
+  const movimientos = await obtenerMisMovimientos(user.num_empleado);
+  setMovimientosSolicitados(movimientos);
+};
+
+  const fetchAsistencias = async () => {
+    if (!user || !user.num_empleado) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/asistencia?codigo=${user.num_empleado}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      setAsistencias(json.data); // solo si json.success === true
+    } catch (error) {
+      console.error("Error al obtener datos de asistencia:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+  fetchMovimientos();
+  fetchAsistencias();
+  const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+  return () => clearInterval(timer);
+}, [user]);
 
   const fechasConChecadasIncompletas = new Set<string>();
   const fechasAgrupadas = registrosFiltrados.reduce((acc, reg) => {
@@ -256,7 +292,7 @@ function RegisterCheckInCheckOut() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="max-w-fit mx-auto p-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Columna izquierda - Foto y Resumen */}
         <div className="space-y-6">
@@ -324,98 +360,136 @@ function RegisterCheckInCheckOut() {
         </div>
 
         {/* Columna derecha - Tabla de Asistencia */}
-<Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4 h-fit lg:col-span-2">
-  <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
-    <CardTitle className="text-lg text-center sm:text-left w-full sm:w-auto">
-      Registros de Asistencia
-    </CardTitle>
-    <span className="text-xl font-mono text-gray-600">
-      {currentTime.toLocaleTimeString()}
-    </span>
-  </CardHeader>
+          <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-2 h-fit lg:col-span-2">
+            <div className="text-xl font-mono text-gray-600 justify-end flex">
+              {currentTime.toLocaleTimeString()}
+            </div>
 
-  <CardContent className="overflow-x-auto">
-    {/* Contenedor con altura fija y scroll vertical */}
-    <div className="max-h-[600px] overflow-y-auto">
-      <table className="w-full text-sm text-left border">
-        <thead className="bg-gray-100 text-black sticky top-0 z-10">
-          <tr>
-            <th className="py-2 px-4">Fecha</th>
-            <th className="py-2 px-4">Día</th>
-            <th className="py-2 px-4">Entrada Prog.</th>
-            <th className="py-2 px-4">Salida Prog.</th>
-            <th className="py-2 px-4">Tipo Asistencia</th>
-            <th className="py-2 px-4">Incidencia</th>
-            <th className="py-2 px-4">Estatus</th>
-            <th className="py-2 px-4">Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          {asistencias
-            .filter((item) => item.CVEINC !== "SD")
-            .sort((a, b) => new Date(b.FECHA).getTime() - new Date(a.FECHA).getTime())
-            .map((item, i) => {
-              const fechaStr = item.FECHA.split("T")[0];
-              const diaSemana = diasMap[item.DIA_SEM] || item.DIA_SEM;
-              const tipoMovimiento = item.NOMBRE_INCIDENCIA;
-              const resultadoMovimiento = getEstatusMovimiento(fechaStr);
-              const estatus = resultadoMovimiento?.icono || null;
-              const tipoMovimientoDetectado = resultadoMovimiento?.tipo || tipoMovimiento;
+            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+              <CardTitle className="text-lg text-center sm:text-left w-full sm:w-auto">
+                Registros de Asistencia
+              </CardTitle>
 
-              let bgColor = "";
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="text-sm">
+                      {dateRange?.from && dateRange?.to
+                        ? `${format(dateRange.from, "dd/MM/yyyy")} - ${format(dateRange.to, "dd/MM/yyyy")}`
+                        : "📅 Filtrar por fecha"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="end">
+                    <Calendar
+                      mode="range"
+                      selected={dateRange}
+                      onSelect={setDateRange}
+                    />
+                  </PopoverContent>
+                </Popover>
 
-              if (estatus) {
-                bgColor = "bg-white";
-              } else {
-                if (item.NOMBRE_INCIDENCIA === null && item.CVEINC !== "SD") {
-                  bgColor = "bg-green-50";
-                } else if (item.NOMBRE_INCIDENCIA === "Retardo E1" && item.CVEINC !== "SD") {
-                  bgColor = "bg-yellow-50";
-                } else {
-                  bgColor = "bg-red-50";
-                }
-              }
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    fetchAsistencias();
+                    fetchMovimientos();
+                  }}
+                  className="text-sm"
+                >
+                  🔄 Refrescar registros
+                </Button>
+              </div>
+            </CardHeader>
 
-              const claseFila = `${bgColor} ${getEstiloFilaPorEstatus(estatus)} border-b text-black`;
-              return (
-                <tr key={i} className={claseFila}>
-                  <td className="py-2 px-4">{fechaStr}</td>
-                  <td className="py-2 px-4">{diaSemana}</td>
-                  <td className="py-2 px-4">
-                    {item.ENTRADA_PROGRAMADA && item.ENTRADA_PROGRAMADA !== "00:00" ? item.ENTRADA_PROGRAMADA : "—"}
-                  </td>
-                  <td className="py-2 px-4">
-                    {item.SALIDA_PROGRAMADA && item.SALIDA_PROGRAMADA !== "00:00" ? item.SALIDA_PROGRAMADA : "—"}
-                  </td>
-                  <td className="py-2 px-4">{item.TIPO_ASISTENCIA || "—"}</td>
-                  <td className="py-2 px-4 italic text-sm">
-                    {estatus
-                      ? `Movimiento "${tipoMovimientoDetectado}"`
-                      : item.NOMBRE_INCIDENCIA || "—"}
-                  </td>
-                  <td className="py-2 px-4">{estatus || "—"}</td>
-                  <td className="py-2 px-4">
-                    {item.NOMBRE_INCIDENCIA && item.CVEINC !== "SD" ? (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleQuickRequestOpciones(item)}
-                        className="text-xs"
-                        disabled={!!getEstatusMovimiento(fechaStr)}
-                      >
-                        Solicitar
-                      </Button>
-                    ) : null}
-                  </td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </table>
-    </div>
-  </CardContent>
-</Card>
+            <CardContent className="overflow-x-auto">
+              <div className="max-h-[600px] overflow-y-auto">
+                <table className="w-full text-sm text-left border">
+                  <thead className="bg-gray-100 text-black sticky top-0 z-10">
+                    <tr>
+                      <th className="py-2 px-4">Fecha</th>
+                      <th className="py-2 px-4">Día</th>
+                      <th className="py-2 px-4">Entrada Prog.</th>
+                      <th className="py-2 px-4">Salida Prog.</th>
+                      <th className="py-2 px-4">Tipo Asistencia</th>
+                      <th className="py-2 px-4">Incidencia</th>
+                      <th className="py-2 px-4">Estatus</th>
+                      <th className="py-2 px-4">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {asistencias
+                      .filter((item) => item.CVEINC !== "SD")
+                      .filter((item) => {
+                        if (!dateRange?.from || !dateRange?.to) return true;
+                        const fecha = new Date(item.FECHA);
+                        return fecha >= dateRange.from && fecha <= addDays(dateRange.to, 1);
+                      })
+                      .sort((a, b) => new Date(b.FECHA).getTime() - new Date(a.FECHA).getTime())
+                      .map((item, i) => {
+                        const fechaStr = item.FECHA.split("T")[0];
+                        const diaSemana = diasMap[item.DIA_SEM] || item.DIA_SEM;
+                        const tipoMovimiento = item.NOMBRE_INCIDENCIA;
+                        const resultadoMovimiento = getEstatusMovimiento(fechaStr);
+                        const estatus = resultadoMovimiento?.icono || null;
+                        const tipoMovimientoDetectado = resultadoMovimiento?.tipo || tipoMovimiento;
 
+                        let bgColor = "";
+                        if (estatus) {
+                          bgColor = "bg-white";
+                        } else {
+                          if (item.NOMBRE_INCIDENCIA === null && item.CVEINC !== "SD") {
+                            bgColor = "bg-green-50";
+                          } else if (item.NOMBRE_INCIDENCIA === "Retardo E1") {
+                            bgColor = "bg-yellow-50";
+                          } else {
+                            bgColor = "bg-red-50";
+                          }
+                        }
+
+                        const claseFila = `${bgColor} ${getEstiloFilaPorEstatus(estatus)} border-b text-black`;
+
+                        return (
+                          <tr key={i} className={claseFila}>
+                            <td className="py-2 px-4">{fechaStr}</td>
+                            <td className="py-2 px-4">{diaSemana}</td>
+                            <td className="py-2 px-4">
+                              {item.ENTRADA_PROGRAMADA && item.ENTRADA_PROGRAMADA !== "00:00"
+                                ? item.ENTRADA_PROGRAMADA
+                                : "—"}
+                            </td>
+                            <td className="py-2 px-4">
+                              {item.SALIDA_PROGRAMADA && item.SALIDA_PROGRAMADA !== "00:00"
+                                ? item.SALIDA_PROGRAMADA
+                                : "—"}
+                            </td>
+                            <td className="py-2 px-4">{item.TIPO_ASISTENCIA || "—"}</td>
+                            <td className="py-2 px-4 italic text-sm">
+                              {estatus
+                                ? `Movimiento "${tipoMovimientoDetectado}"`
+                                : item.NOMBRE_INCIDENCIA || "—"}
+                            </td>
+                            <td className="py-2 px-4">{estatus || "—"}</td>
+                            <td className="py-2 px-4">
+                              {item.NOMBRE_INCIDENCIA && item.CVEINC !== "SD" ? (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleQuickRequestOpciones(item)}
+                                  className="text-xs"
+                                  disabled={!!getEstatusMovimiento(fechaStr)}
+                                >
+                                  Solicitar
+                                </Button>
+                              ) : null}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
       </div>
       <Dialog open={quickModalOpen} onOpenChange={setQuickModalOpen}>
         <DialogContent>

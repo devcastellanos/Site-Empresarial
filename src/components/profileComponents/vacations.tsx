@@ -97,6 +97,29 @@ function Vacations() {
     if (dates) setSelectedDates(dates);
   };
 
+  const [resumenVacaciones, setResumenVacaciones] = useState<{
+    total_primavacacional_vigente: number;
+    total_dias_vacaciones: number;
+    saldo_vigente: number;
+  } | null>(null);
+
+  useEffect(() => {
+    const fetchResumen = async () => {
+      if (!user?.num_empleado) return;
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_NOM_API_URL}/api/vacaciones/resumen/${user.num_empleado}`);
+        const data = await res.json();
+        setResumenVacaciones(data);
+      } catch (e) {
+        console.error("Error al obtener resumen de vacaciones:", e);
+      }
+    };
+
+    fetchResumen();
+  }, [user]);
+
+
+
   const handleSubmit = async () => {
     if (!user || !parsedHireDate || !nextIncrement) return;
     setRequestStatus("submitting");
@@ -165,7 +188,7 @@ function Vacations() {
 
   return (
     <>
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
+    <div className="max-w-fit mx-auto p-6 space-y-6">
       <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
         <div className="flex items-center gap-4">
           <Info className="w-8 h-8 text-blue-600" />
@@ -206,7 +229,9 @@ function Vacations() {
 
               <div className="space-y-2">
                 <p>
-                  <strong>Días disponibles:</strong> {remainingDays}
+                  <strong>Días acumulados:</strong> {resumenVacaciones?.total_primavacacional_vigente ?? "-"} <br />
+                  <strong>Días solicitados:</strong> {resumenVacaciones?.total_dias_vacaciones ?? "-"} <br />
+                  <strong>Días disponibles:</strong> {resumenVacaciones?.saldo_vigente ?? "-"}
                 </p>
                 <p>
                   <strong>Próximo incremento:</strong>{" "}
@@ -214,10 +239,6 @@ function Vacations() {
                 </p>
               </div>
               <div>
-                <p>
-                  <strong>Dias acumulados</strong> {" "} {empleado?.vacaciones_acumuladas} <br />
-                  <strong>Dias disponibles del año</strong> {" "} {empleado?.vacaciones_ley} <br />
-                </p>
               </div>
             </div>
 
@@ -225,7 +246,14 @@ function Vacations() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <InfoBox label="Apto para vacaciones" value={totalDays > 0 ? "Sí" : "No"} icon={totalDays > 0 ? "✅" : "❌"} />
-              <InfoBox label="Días disponibles" value={`${remainingDays} días`} />
+              <InfoBox
+                label="Días disponibles"
+                value={
+                  resumenVacaciones
+                    ? `${resumenVacaciones.saldo_vigente} días`
+                    : "Cargando..."
+                }
+              />
               <InfoBox label="Faltan para incremento" value={`${daysUntilNextIncrement} días`} />
             </div>
 
@@ -310,7 +338,7 @@ function Vacations() {
                     Días restantes después de esta solicitud:
                   </Label>
                   <p className="text-lg font-semibold text-center">
-                    {remainingDays} días
+                    {resumenVacaciones?.saldo_vigente ?? "-"} días
                   </p>
                 </div>
               </div>
