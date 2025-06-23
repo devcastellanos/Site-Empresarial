@@ -4,10 +4,11 @@ import { jwtVerify } from 'jose';
 
 // Mapeo de rutas protegidas por rol
 const roleAccess: Record<string, string[]> = {
-  admin: ['/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva'],
+  admin: ['/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva','/api','/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT', '/kardex', '/Movimientos', 'Usuarios'],
   docente: ['/Cursos', '/Perfil'],
   alumno: ['/PlanEstudio', '/Perfil'],
-  Gerente: ['/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio'],
+  Gerente: ['/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva','/api','/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT', '/kardex', '/Movimientos', 'Usuarios'],
+  Coordinador: ['/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva','/api','/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT', '/kardex', '/Movimientos', 'Usuarios'],
 };
 
 export async function middleware(request: NextRequest) {
