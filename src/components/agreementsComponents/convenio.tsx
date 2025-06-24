@@ -133,7 +133,7 @@ export function Convenio() {
         />
       </div>
 
-      {user?.rol === "admin" && (
+      {(user && (user.rol === "admin" || user.rol === "Capacitacion")) && (
         <>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>

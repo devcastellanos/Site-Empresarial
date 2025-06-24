@@ -109,7 +109,7 @@ const filteredAndSortedPosts = [...posts]
           />
         </div>
 
-        {user && user.rol == "admin" && (
+        {(user && (user.rol === "admin" || user.rol === "Capacitacion")) && (
           <div className="p-6">
             <PostForm
               post={post}

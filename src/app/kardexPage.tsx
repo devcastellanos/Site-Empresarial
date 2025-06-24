@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { useAuth } from "@/app/context/AuthContext"; 
+import { useAuth } from "@/app/context/AuthContext";
 import {
   Button,
   Dialog,
@@ -64,8 +64,8 @@ const Kardex = () => {
     query === ""
       ? cursosPresenciales
       : cursosPresenciales.filter((course) =>
-          course.title.toLowerCase().includes(query.toLowerCase())
-        );
+        course.title.toLowerCase().includes(query.toLowerCase())
+      );
 
   const fetchUsers = async () => {
     try {
@@ -98,23 +98,23 @@ const Kardex = () => {
   };
 
   useEffect(() => {
-  if (!user) return;
-  console.log("Usuario autenticado:", user);
-  setSelectedUserId(Number(user.num_empleado));
-  fetchUsers();
-}, [user]);
+    if (!user) return;
+    console.log("Usuario autenticado:", user);
+    setSelectedUserId(Number(user.num_empleado));
+    fetchUsers();
+  }, [user]);
 
-useEffect(() => {
-  if (!selectedUserId) return;
+  useEffect(() => {
+    if (!selectedUserId) return;
 
-  const userSelected = users.find((u) => u.Personal === selectedUserId) || null;
-  setSelectedUser(userSelected);
+    const userSelected = users.find((u) => u.Personal === selectedUserId) || null;
+    setSelectedUser(userSelected);
 
-  const userCourses = cursosTomados.filter(
-    (curso) => curso.id_usuario === selectedUserId
-  );
-  setSelectedCourses(userCourses);
-}, [selectedUserId, users, cursosTomados]);
+    const userCourses = cursosTomados.filter(
+      (curso) => curso.id_usuario === selectedUserId
+    );
+    setSelectedCourses(userCourses);
+  }, [selectedUserId, users, cursosTomados]);
 
   const handleAddCourse = async () => {
     try {
@@ -215,27 +215,27 @@ useEffect(() => {
     }
   };
 
-  
-   const confirmDeleteCourse = (
-  id_course: number,
-  id_usuario: number,
-  start_date: string
-) => {
-  Swal.fire({
-    title: "¿Estás seguro?",
-    text: "Esta acción eliminará el curso para el usuario seleccionado.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Sí, eliminar",
-    cancelButtonText: "Cancelar",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      handleDeleteCourse(id_course, id_usuario, start_date);
-    }
-  });
-};
+
+  const confirmDeleteCourse = (
+    id_course: number,
+    id_usuario: number,
+    start_date: string
+  ) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción eliminará el curso para el usuario seleccionado.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDeleteCourse(id_course, id_usuario, start_date);
+      }
+    });
+  };
 
   const formattedUserId = selectedUserId.toString().padStart(4, "0");
 
@@ -626,35 +626,35 @@ useEffect(() => {
                     >
                       Información
                     </button>
-                    {user && user.rol === "admin" ? (
-  <button
-    style={{
-      backgroundColor: "#9A3324",
-      color: "white",
-      border: "none",
-      borderRadius: "5px",
-      padding: "5px 10px",
-      cursor: "pointer",
-      marginLeft: "10px",
-    }}
-    onClick={() =>
-      confirmDeleteCourse(
-        course.id_course,
-        course.id_usuario,
-        course.start_date
-      )
-    }
-  >
-    Eliminar
-  </button>
-) : null}
+                    {(user && (user.rol === "admin" || user.rol === "Capacitacion")) ? (
+                      <button
+                        style={{
+                          backgroundColor: "#9A3324",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "5px",
+                          padding: "5px 10px",
+                          cursor: "pointer",
+                          marginLeft: "10px",
+                        }}
+                        onClick={() =>
+                          confirmDeleteCourse(
+                            course.id_course,
+                            course.id_usuario,
+                            course.start_date
+                          )
+                        }
+                      >
+                        Eliminar
+                      </button>
+                    ) : null}
                   </td>
                 </tr>
               ))}
           </tbody>
         </table>
         {/* Add New Course Section */}
-        {user && user.rol === "admin" ? (
+        {(user && (user.rol === "admin" || user.rol === "Capacitacion")) ? (
           <div
             style={{
               marginTop: "20px",
@@ -692,10 +692,9 @@ useEffect(() => {
                         key={course.id_course}
                         value={course}
                         className={({ active }) =>
-                          `cursor-pointer select-none px-4 py-2 text-sm ${
-                            active
-                              ? "bg-[#f8e1e1] text-[#9A3324]"
-                              : "text-gray-900"
+                          `cursor-pointer select-none px-4 py-2 text-sm ${active
+                            ? "bg-[#f8e1e1] text-[#9A3324]"
+                            : "text-gray-900"
                           }`
                         }
                       >
@@ -794,7 +793,7 @@ useEffect(() => {
                   Fecha de Vencimiento {dialogInfo.course.end_date}
                 </Typography>
               )}
-              {user && user.rol === "admin" ? (
+              {(user && (user.rol === "admin" || user.rol === "Capacitacion")) ? (
                 <div className="my-4">
                   <label className="block text-sm font-medium text-gray-700">
                     Progreso
@@ -833,7 +832,7 @@ useEffect(() => {
               >
                 Cerrar
               </Button>
-              {user && user.rol === "admin" ? (
+              {(user && (user.rol === "admin" || user.rol === "Capacitacion")) ? (
                 <Button color="blue" onClick={updateProgress} {...({} as any)}>
                   Actualizar
                 </Button>

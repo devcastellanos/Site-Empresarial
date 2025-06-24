@@ -82,7 +82,7 @@ export default function VistaPlanEstudios() {
     <div className="p-8">
       <h1 className="text-3xl font-bold text-center mb-4">Plan de Estudios</h1>
 
-      {user && user.rol === "admin" && (
+      {(user && (user.rol === "admin" || user.rol === "Capacitacion")) && (
         <div className="flex gap-4 items-center mb-6">
           <Input
             type="text"

@@ -133,21 +133,21 @@ export function BlogPostCard({
   };
 
   const confirmDeletePost = () => {
-  Swal.fire({
-    title: '¿Estás seguro?',
-    text: 'Esta acción eliminará el post permanentemente.',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar',
-  }).then((result) => {
-    if (result.isConfirmed) {
-      onPostDelete(idBlog);
-    }
-  });
-};
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción eliminará el post permanentemente.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        onPostDelete(idBlog);
+      }
+    });
+  };
 
   return (
     <>
@@ -225,15 +225,15 @@ export function BlogPostCard({
             <span className="text-sm text-gray-600">{post.likes}</span>
           </div>
 
-          {user?.rol === "admin" && (
-  <div className="ml-4 flex gap-2">
-    <Button variant="destructive" onClick={() => onPostDelete(idBlog)}>Eliminar</Button>
-    <Button onClick={handleEditClick}>Editar</Button>
-  </div>
-)}
+          {(user && (user.rol === "admin" || user.rol === "Capacitacion"))&& (
+            <div className="ml-4 flex gap-2">
+              <Button variant="destructive" onClick={() => onPostDelete(idBlog)}>Eliminar</Button>
+              <Button onClick={handleEditClick}>Editar</Button>
+            </div>
+          )}
         </div>
 
-        <ComentariosPost idBlog={idBlog} isAdmin={user?.rol === "admin" } />
+        <ComentariosPost idBlog={idBlog} isAdmin={user?.rol === "admin"} />
       </Card>
 
 

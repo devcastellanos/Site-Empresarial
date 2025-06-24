@@ -102,7 +102,7 @@ const ComentariosPost: React.FC<ComentariosPostProps> = ({ idBlog, isAdmin = fal
         <div key={c.idComentario} className="mb-4 bg-white/90 p-4 rounded-xl shadow">
           <div className="flex justify-between items-start mb-1">
             <span className="text-sm font-bold text-gray-800">Empleado #{c.num_empleado}</span>
-            {user?.rol === "admin" && (
+            {(user && (user.rol === "admin" || user.rol === "Capacitacion")) && (
               <div className="flex gap-2">
                 <Button size="sm" onClick={() => setEditando(c)}>Editar</Button>
                 <Button size="sm" variant="destructive" onClick={() => confirmarEliminacion(c.idComentario)}>Eliminar</Button>
