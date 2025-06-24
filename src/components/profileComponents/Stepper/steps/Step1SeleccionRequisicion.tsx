@@ -20,18 +20,17 @@ export default function Step1SeleccionRequisicion({
   data: any
   updateData: (val: any) => void
 }) {
-  const [fecha, setFecha] = useState<Date | undefined>(data.fecha_solicitud || new Date())
+ const [fecha, setFecha] = useState<Date | undefined>(() => {
+  if (data.fecha_solicitud instanceof Date) return data.fecha_solicitud
+  if (typeof data.fecha_solicitud === 'string') return new Date(data.fecha_solicitud)
+  return new Date()
+})
   const { user } = useAuth()
 
-
   useEffect(() => {
-    updateData({ fecha_solicitud: fecha })
-  }, [fecha])
+    updateData({ num_empleado: user?.num_empleado, fecha_solicitud: fecha })
 
-  useEffect(() => {
-    updateData({ num_empleado: user?.num_empleado })
-  }, [user?.num_empleado])
-
+  }, [user?.num_empleado, fecha])
 
   return (
     <div className="space-y-6">

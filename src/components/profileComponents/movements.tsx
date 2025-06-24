@@ -280,6 +280,26 @@ const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>(
     }
   };
 
+  function obtenerAprobadorClave(historial: any[], status: string) {
+  if (!Array.isArray(historial)) return "N/A";
+
+  if (status === "pendiente") {
+    const pendiente = historial.find((h) => h.estatus === "pendiente");
+    return pendiente?.nombre || "N/A";
+  }
+
+  if (status === "rechazado") {
+    const rechazado = historial.find((h) => h.estatus === "rechazado");
+    return rechazado?.nombre || "N/A";
+  }
+
+  if (status === "aprobado") {
+    const aprobados = historial.filter((h) => h.estatus === "aprobado");
+    return aprobados[aprobados.length - 1]?.nombre || "N/A";
+  }
+
+  return "N/A";
+}
   return (
     <div className="max-w-7xl mx-auto p-6   lg:grid grid-cols-4 gap-6">
       <Card className="col-span-4 mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
@@ -836,10 +856,10 @@ const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>(
                             </div>
 
                             <p className="text-sm text-tinto-500 italic">
-                              {status === "pendiente" && `En espera de aprobación de: ${mov.supervisorId}`}
-                              {status === "aprobado" && `Aprobado por: ${mov.supervisorId}`}
-                              {status === "rechazado" && `Rechazado por: ${mov.supervisorId}`}
-                            </p>
+  {status === "pendiente" && `En espera de aprobación de: ${obtenerAprobadorClave(mov.historial_aprobaciones_detallado, status)}`}
+  {status === "aprobado" && `Aprobado por: ${obtenerAprobadorClave(mov.historial_aprobaciones_detallado, status)}`}
+  {status === "rechazado" && `Rechazado por: ${obtenerAprobadorClave(mov.historial_aprobaciones_detallado, status)}`}
+</p>
 
                             <div className="mt-2 space-y-1 text-sm text-gray-700">
                               {renderDatosJsonPorTipo(mov.tipo_movimiento, mov.datos_json)}

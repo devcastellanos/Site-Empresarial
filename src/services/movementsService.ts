@@ -26,7 +26,7 @@ export async function crearMovimiento(movimiento: any) {
           "Content-Type": "application/json",
         },
       });
-
+      console.log("🔍 Obteniendo movimientos pendientes para aprobador:", response);
   
       if (!response.ok) {
         throw new Error("Error obteniendo movimientos pendientes");
@@ -77,6 +77,7 @@ return data.data ?? [];
       }
   
       const data = await response.json();
+      console.log("Mis movimientos solicitados:", data);
 return data.data ?? [];
     } catch (error) {
       console.error("❌ Error al obtener mis movimientos solicitados:", error);

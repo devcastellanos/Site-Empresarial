@@ -22,12 +22,14 @@ import { differenceInDays, isBefore, parse, format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useAuth } from "../../app/context/AuthContext";
 import { User } from "@/lib/interfaces";
+import { crearMovimiento } from "@/services/movementsService";
+import Swal from "sweetalert2";
 
 function Vacations() {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [comments, setComments] = useState<string>("");
   const [requestStatus, setRequestStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
-  const tipoMovimiento = "vacaciones";
+  const tipoMovimiento = "Vacaciones";
   const nivel_aprobacion = 1;
   const { user } = useAuth();
   const [empleado, setEmpleado] = useState<User | null>(null);
@@ -98,41 +100,75 @@ function Vacations() {
   };
 
   const handleSubmit = async () => {
+    if (requestStatus === "submitting") return;
     if (!user || !parsedHireDate || !nextIncrement) return;
     setRequestStatus("submitting");
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/vacaciones`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          num_empleado: user.num_empleado,
-          fechas: selectedDates.map(d => d.toISOString().split("T")[0]),
-          comentarios: comments,
-          tipo_movimiento: tipoMovimiento,
-          nivel_aprobacion,
-          datos_json: {
-            fechas: selectedDates.map(d => d.toISOString().split("T")[0]),
-            fecha_inicio: selectedDates[0].toISOString().split("T")[0],
-            fecha_fin: selectedDates[selectedDates.length - 1].toISOString().split("T")[0],
-            total_dias: totalSolicitados,
-            vacaciones_acumuladas_restantes: vacacionesAcumuladasRestantes,
-            vacaciones_ley_restantes: vacacionesLeyRestantes,
-            fecha_ingreso: parsedHireDate.toISOString().split("T")[0],
-            proximo_incremento: nextIncrement.toISOString().split("T")[0],
-            empleado_apto: totalDays > 0,
-            comentarios: comments
-          }
-        })
-      });
-      if (res.ok) {
-        setRequestStatus("success");
-        setSelectedDates([]);
-        setComments("");
-      } else setRequestStatus("error");
-    } catch (e) {
-      console.error("Error enviando solicitud:", e);
-      setRequestStatus("error");
+
+    const movimientoPayload = {
+      num_empleado: user.num_empleado,
+      fecha_incidencia: new Date().toISOString().split("T")[0],
+      comentarios: comments,
+      tipo_movimiento: tipoMovimiento,
+      nivel_aprobacion,
+      datos_json: {
+        fechas: selectedDates.map(d => d.toISOString().split("T")[0]),
+        fecha_inicio: selectedDates[0].toISOString().split("T")[0],
+        fecha_fin: selectedDates[selectedDates.length - 1].toISOString().split("T")[0],
+        total_dias: totalSolicitados,
+        vacaciones_acumuladas_restantes: vacacionesAcumuladasRestantes,
+        vacaciones_ley_restantes: vacacionesLeyRestantes,
+        fecha_ingreso: parsedHireDate.toISOString().split("T")[0],
+        proximo_incremento: nextIncrement.toISOString().split("T")[0],
+        empleado_apto: totalDays > 0,
+        comentarios: comments
+      }
+    };
+    const movimientoResult = await crearMovimiento(movimientoPayload);
+    if (movimientoResult.success) {
+      setRequestStatus("success");
+Swal.fire({
+  icon: 'success',
+  title: '¡Solicitud enviada!',
+  text: 'Tu solicitud de vacaciones ha sido registrada correctamente.',
+  confirmButtonColor: '#9A3324',
+  confirmButtonText: 'Aceptar',
+  timer: 5000,
+  timerProgressBar: true,
+  allowOutsideClick: false,
+  customClass: {
+    popup: 'rounded-xl shadow-lg',
+    title: 'text-lg font-semibold',
+    confirmButton: 'px-4 py-2 text-white',
+  }
+});
+
+      // Limpiar campos
+      setSelectedDates([]);
+      setComments("");
+      setRequestStatus("idle");
     }
+    else if (!movimientoResult.success) {
+      setRequestStatus("error");
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo crear el movimiento. Por favor, intenta de nuevo más tarde.',
+        confirmButtonColor: '#9A3324',
+        confirmButtonText: 'Entendido',
+        timer: 5000,
+        timerProgressBar: true,
+        customClass: {
+          popup: 'rounded-xl shadow-lg',
+          title: 'text-lg font-semibold',
+          confirmButton: 'px-4 py-2 text-white',
+        }
+      });
+
+      return;
+    }
+
+
   };
 
   // Componente InfoBox mejorado
@@ -165,170 +201,170 @@ function Vacations() {
 
   return (
     <>
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
-      <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
-        <div className="flex items-center gap-4">
-          <Info className="w-8 h-8 text-blue-600" />
-          <h1 className="text-4xl font-bold tracking-tight text-gray-800 drop-shadow-sm">
-            Vacaciones
-          </h1>
-        </div>
-      </Card>
-
-      {/* Grid principal con dos columnas */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Columna izquierda - Información de vacaciones */}
-        <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
-          <CardHeader>
-            <CardTitle>Información de Vacaciones</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <strong>Fecha de ingreso:</strong>{" "}
-                {parsedHireDate && !isNaN(parsedHireDate.getTime()) ?
-                  format(parsedHireDate, "PPP", { locale: es })
-                  : "Fecha no válida"
-                }
-
-                <div>
-                  <strong>Tipo de movimiento:</strong> {tipoMovimiento}
-                  <div>
-                    <strong>Estado:</strong>{" "}
-                    {totalDays > 0 ? (
-                      <Badge variant="default">Apto para vacaciones</Badge>
-                    ) : (
-                      <Badge variant="destructive">No apto para vacaciones</Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <p>
-                  <strong>Días disponibles:</strong> {remainingDays}
-                </p>
-                <p>
-                  <strong>Próximo incremento:</strong>{" "}
-                  {nextIncrement ? format(nextIncrement, "PPP", { locale: es }) : "N/A"}
-                </p>
-              </div>
-              <div>
-                <p>
-                  <strong>Dias acumulados</strong> {" "} {empleado?.vacaciones_acumuladas} <br />
-                  <strong>Dias disponibles del año</strong> {" "} {empleado?.vacaciones_ley} <br />
-                </p>
-              </div>
-            </div>
-
-            <Separator className="my-2" />
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <InfoBox label="Apto para vacaciones" value={totalDays > 0 ? "Sí" : "No"} icon={totalDays > 0 ? "✅" : "❌"} />
-              <InfoBox label="Días disponibles" value={`${remainingDays} días`} />
-              <InfoBox label="Faltan para incremento" value={`${daysUntilNextIncrement} días`} />
-            </div>
-
-            <div className="mt-4">
-              <Label>Progreso anual:</Label>
-              <Progress value={progressValue} className="h-2 mt-2" />
-            </div>
-
-            <Separator className="my-4" />
-
-            <div>
-              <Label className="font-semibold">Cláusulas legales:</Label>
-              <ul className="mt-2 space-y-1 text-sm list-disc pl-5">
-                {legalClauses.map((clause, index) => (
-                  <li key={index}>{clause}</li>
-                ))}
-              </ul>
-            </div>
-          </CardContent>
+      <div className="max-w-6xl mx-auto p-6 space-y-6">
+        <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
+          <div className="flex items-center gap-4">
+            <Info className="w-8 h-8 text-blue-600" />
+            <h1 className="text-4xl font-bold tracking-tight text-gray-800 drop-shadow-sm">
+              Vacaciones
+            </h1>
+          </div>
         </Card>
 
-        {/* Columna derecha - Selección de fechas */}
-        <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
-          <CardHeader>
-            <CardTitle>Selección de días de vacaciones</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="flex-1">
-                {(() => {
-                  const today = new Date(); return (
-                    <Calendar
-                      mode="multiple"
-                      selected={selectedDates}
-                      onSelect={handleDateSelect}
-                      className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
-                      locale={es}
-                      disabled={(date) =>
-                        isBefore(date, today) ||
-                        (!selectedDates.some((d) => d.getTime() === date.getTime()) &&
-                          selectedDates.length >= totalDays)
-                      }
-                    />
-                  );
-                })()}
-              </div>
+        {/* Grid principal con dos columnas */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Columna izquierda - Información de vacaciones */}
+          <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
+            <CardHeader>
+              <CardTitle>Información de Vacaciones</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <strong>Fecha de ingreso:</strong>{" "}
+                  {parsedHireDate && !isNaN(parsedHireDate.getTime()) ?
+                    format(parsedHireDate, "PPP", { locale: es })
+                    : "Fecha no válida"
+                  }
 
-              <div className="flex-1 space-y-4">
-                <div>
-                  <Label>Días seleccionados: {selectedDates.length}</Label>
-                  {selectedDates.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {selectedDates.map((date, index) => (
-                        <Badge
-                          key={index}
-                          variant="outline"
-                          className="text-xs bg-white/95 shadow-md backdrop-blur-sm"
-                        >
-                          {format(date, "dd MMM", { locale: es })}
-                        </Badge>
-                      ))}
+                  <div>
+                    <strong>Tipo de movimiento:</strong> {tipoMovimiento}
+                    <div>
+                      <strong>Estado:</strong>{" "}
+                      {totalDays > 0 ? (
+                        <Badge variant="default">Apto para vacaciones</Badge>
+                      ) : (
+                        <Badge variant="destructive">No apto para vacaciones</Badge>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Rango seleccionado:</Label>
-                  {selectedDates.length > 0 ? (
-                    <p className="text-center w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm">
-                      {format(selectedDates[0], "PPP", { locale: es })} -{" "}
-                      {format(selectedDates[selectedDates.length - 1], "PPP", { locale: es })}
-                    </p>
-                  ) : (
-                    <p className="text-muted-foreground text-sm">
-                      No hay días seleccionados
-                    </p>
-                  )}
+                  <p>
+                    <strong>Días disponibles:</strong> {remainingDays}
+                  </p>
+                  <p>
+                    <strong>Próximo incremento:</strong>{" "}
+                    {nextIncrement ? format(nextIncrement, "PPP", { locale: es }) : "N/A"}
+                  </p>
                 </div>
-
-                <div className="pt-2 border-t">
-                  <Label className="text-center">
-                    Días restantes después de esta solicitud:
-                  </Label>
-                  <p className="text-lg font-semibold text-center">
-                    {remainingDays} días
+                <div>
+                  <p>
+                    <strong>Dias acumulados</strong> {" "} {empleado?.vacaciones_acumuladas} <br />
+                    <strong>Dias disponibles del año</strong> {" "} {empleado?.vacaciones_ley} <br />
                   </p>
                 </div>
               </div>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-end mt-4">
-            <Button
-              onClick={handleSubmit}
-              disabled={selectedDates.length === 0}
-              className="px-6 py-2 rounded-xl text-white font-semibold bg-blue-600 hover:bg-blue-700 transition-all shadow-md backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              🚀 Enviar solicitud
-            </Button>
-          </CardFooter>
-        </Card>
+
+              <Separator className="my-2" />
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <InfoBox label="Apto para vacaciones" value={totalDays > 0 ? "Sí" : "No"} icon={totalDays > 0 ? "✅" : "❌"} />
+                <InfoBox label="Días disponibles" value={`${remainingDays} días`} />
+                <InfoBox label="Faltan para incremento" value={`${daysUntilNextIncrement} días`} />
+              </div>
+
+              <div className="mt-4">
+                <Label>Progreso anual:</Label>
+                <Progress value={progressValue} className="h-2 mt-2" />
+              </div>
+
+              <Separator className="my-4" />
+
+              <div>
+                <Label className="font-semibold">Cláusulas legales:</Label>
+                <ul className="mt-2 space-y-1 text-sm list-disc pl-5">
+                  {legalClauses.map((clause, index) => (
+                    <li key={index}>{clause}</li>
+                  ))}
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Columna derecha - Selección de fechas */}
+          <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
+            <CardHeader>
+              <CardTitle>Selección de días de vacaciones</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex-1">
+                  {(() => {
+                    const today = new Date(); return (
+                      <Calendar
+                        mode="multiple"
+                        selected={selectedDates}
+                        onSelect={handleDateSelect}
+                        className="w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm"
+                        locale={es}
+                        disabled={(date) =>
+                          isBefore(date, today) ||
+                          (!selectedDates.some((d) => d.getTime() === date.getTime()) &&
+                            selectedDates.length >= totalDays)
+                        }
+                      />
+                    );
+                  })()}
+                </div>
+
+                <div className="flex-1 space-y-4">
+                  <div>
+                    <Label>Días seleccionados: {selectedDates.length}</Label>
+                    {selectedDates.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {selectedDates.map((date, index) => (
+                          <Badge
+                            key={index}
+                            variant="outline"
+                            className="text-xs bg-white/95 shadow-md backdrop-blur-sm"
+                          >
+                            {format(date, "dd MMM", { locale: es })}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Rango seleccionado:</Label>
+                    {selectedDates.length > 0 ? (
+                      <p className="text-center w-full rounded-xl border bg-white/95 shadow-md backdrop-blur-sm">
+                        {format(selectedDates[0], "PPP", { locale: es })} -{" "}
+                        {format(selectedDates[selectedDates.length - 1], "PPP", { locale: es })}
+                      </p>
+                    ) : (
+                      <p className="text-muted-foreground text-sm">
+                        No hay días seleccionados
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="pt-2 border-t">
+                    <Label className="text-center">
+                      Días restantes después de esta solicitud:
+                    </Label>
+                    <p className="text-lg font-semibold text-center">
+                      {remainingDays} días
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-end mt-4">
+              <Button
+                onClick={handleSubmit}
+                disabled={selectedDates.length === 0 || requestStatus === "submitting"}
+                className="px-6 py-2 rounded-xl text-white font-semibold bg-blue-600 hover:bg-blue-700 transition-all shadow-md backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {requestStatus === "submitting" ? "Enviando..." : "🚀 Enviar solicitud"}
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
       </div>
-    </div>
-  </>
+    </>
   );
 }
 
