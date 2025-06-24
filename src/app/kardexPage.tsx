@@ -400,7 +400,27 @@ const Kardex = () => {
         >
           Información Personal
         </h2>
-
+        {user && (user.rol === "admin" || user.rol === "Capacitacion") && (
+          <div style={{ margin: "20px 0" }}>
+            <Input
+              type="number"
+              label="Buscar por número de empleado"
+              value={selectedUserId || ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "") {
+                  setSelectedUserId("");
+                  setSelectedUser(null);
+                  setSelectedCourses([]);
+                } else {
+                  setSelectedUserId(Number(val));
+                }
+              }}
+              placeholder="Ej. 1234"
+              {...({} as any)}
+            />
+          </div>
+        )}
         {selectedUser && (
           <div
             key={selectedUser.Personal}
