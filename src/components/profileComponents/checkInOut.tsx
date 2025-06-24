@@ -261,35 +261,42 @@ function RegisterCheckInCheckOut() {
     }
   };
   const getEstiloFilaPorEstatus = (estatus: string | null) => {
-    switch (estatus) {
-      case "📤 Solicitado":
-        return "bg-yellow-100 border-l-4 border-yellow-500 animate-pulse";
-      case "✅ Aprobado":
-        return "bg-green-100 border-l-4 border-green-600 shadow-md ring-2 ring-green-400";
-      case "❌ Rechazado":
-        return "bg-red-100 border-l-4 border-red-500";
-      case "⏳ En revisión":
-        return "bg-blue-100 border-l-4 border-blue-400";
-      default:
-        return ""; // Se aplica el bgColor original si no hay solicitud
-    }
-  };
+  switch (estatus) {
+    case "𝙎𝙊𝙇𝙄𝘾𝙄𝙏𝘼𝘿𝙊":
+      return "bg-yellow-100 border-l-4 border-yellow-500 animate-pulse";
+    case "𝘼𝙋𝙍𝙊𝘽𝘼𝘿𝙊":
+      return "bg-green-100 border-l-4 border-green-600 shadow-md ring-2 ring-green-400";
+    case "𝙍𝙀𝘾𝙃𝘼𝙕𝘼𝘿𝙊":
+      return "bg-red-100 border-l-4 border-red-500";
+    case "𝙋𝙀𝙉𝘿𝙄𝙀𝙉𝙏𝙀":
+      return "bg-blue-100 border-l-4 border-blue-400";
+    default:
+      return "";
+  }
+};
 
-  const getEstatusMovimiento = (fecha: string) => {
-    const match = movimientosSolicitados.find((mov) => {
-      const fechaIncidencia = new Date(mov.fecha_incidencia);
-      return fechaIncidencia.toISOString().split("T")[0] === fecha;
-    });
 
-    if (!match) return null;
+const getEstatusMovimiento = (fecha: string) => {
+  const match = movimientosSolicitados.find((mov) => {
+    const fechaIncidencia = new Date(mov.fecha_incidencia);
+    return fechaIncidencia.toISOString().split("T")[0] === fecha;
+  });
 
-    switch (match.estatus_movimiento) {
-      case "pendiente": return { icono: "📤 Solicitado", tipo: match.tipo_movimiento };
-      case "aprobado": return { icono: "✅ Aprobado", tipo: match.tipo_movimiento };
-      case "rechazado": return { icono: "❌ Rechazado", tipo: match.tipo_movimiento };
-      default: return { icono: "⏳ En revisión", tipo: match.tipo_movimiento };
-    }
-  };
+  if (!match) return null;
+
+  switch (match.estatus_movimiento) {
+    case "pendiente":
+      return { icono: "𝙎𝙊𝙇𝙄𝘾𝙄𝙏𝘼𝘿𝙊", tipo: match.tipo_movimiento };
+    case "aprobado":
+      return { icono: "𝘼𝙋𝙍𝙊𝘽𝘼𝘿𝙊", tipo: match.tipo_movimiento };
+    case "rechazado":
+      return { icono: "𝙍𝙀𝘾𝙃𝘼𝙕𝘼𝘿𝙊", tipo: match.tipo_movimiento };
+    default:
+      return { icono: "𝙋𝙀𝙉𝘿𝙄𝙀𝙉𝙏𝙀", tipo: match.tipo_movimiento };
+  }
+};
+
+
 
   return (
     <div className="max-w-fit mx-auto p-6">
