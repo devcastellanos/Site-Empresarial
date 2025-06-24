@@ -108,7 +108,7 @@ export function ConvenioCard({
           <h2 className="text-xl font-semibold">{titulo}</h2>
           <p className="text-sm text-muted-foreground">{descripcion}</p>
           <p className="text-xs italic text-gray-500">Tipo: {tipo}</p>
-          {user && user.rol === "admin" && (
+          {(user && (user.rol === "admin" || user.rol === "Capacitacion")) && (
             <div className="flex gap-2 pt-2">
               <Button variant="destructive" onClick={confirmDelete}>Eliminar</Button>
               <Button variant="default" onClick={() => setOpenModal(true)}>Editar</Button>

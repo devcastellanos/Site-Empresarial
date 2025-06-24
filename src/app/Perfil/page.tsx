@@ -62,7 +62,7 @@ export default function Campaign() {
   }
 
   const renderVista = () => {
-    if (vista === "requisiciones" && (user?.rol !== "admin" && user?.rol !== "reclutamiento")) {
+    if (vista === "requisiciones" && (user?.rol !== "admin" && user?.rol !== "atraccionT")) {
       return <div className="text-red-500 font-semibold">Acceso denegado: necesitas permisos de administrador.</div>
     }
 
