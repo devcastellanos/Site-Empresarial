@@ -282,18 +282,24 @@ const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>(
 
   return (
     <div className="max-w-fit mx-auto p-6 lg:grid grid-cols-4 gap-2">
-      <Card className="mb-6 px-4 py-3 bg-white/80 backdrop-blur-md rounded-xl shadow-md border border-gray-200">
+      {/* <Card className="mb-6 px-4 py-3 bg-white/80 backdrop-blur-md rounded-xl shadow-md border border-gray-200">
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
           <Info className="w-6 h-6 text-blue-600 shrink-0" />
           <h1 className="text-xl sm:text-2xl font-semibold text-gray-800">
             Movimientos de Personal
           </h1>
         </div>
-      </Card>
+      </Card> */}
 
 
       <Card className={`${user?.rol !== "admin" ? "col-span-4" : "col-span-2"
         } space-y-4 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4 max-h-[650px]`}>
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          <Info className="w-6 h-6 text-blue-600 shrink-0" />
+          <h1 className="text-xl sm:text-2xl font-semibold text-gray-800">
+            Movimientos de Personal
+          </h1>
+        </div>
         <CardHeader>
           <CardTitle>Solicitud de Autorización</CardTitle>
         </CardHeader>
@@ -583,7 +589,7 @@ const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>(
 
                   // Historial formateado
                   const aprobadoresPrevios = mov.historial_aprobaciones_detallado?.map((a: any) => {
-                    return `✅ ${a.nombre} (Nivel ${a.orden})`;
+                    return `✔️ ${a.nombre} (Nivel ${a.orden})`;
                   }) || [];
 
                   const pendientesPrevios = mov.pendientes_previos_detallado?.map((a: any) => {

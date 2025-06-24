@@ -208,14 +208,17 @@ function Vacations() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <strong>Fecha de ingreso:</strong>{" "}
-                {parsedHireDate && !isNaN(parsedHireDate.getTime()) ?
-                  format(parsedHireDate, "PPP", { locale: es })
-                  : "Fecha no válida"
-                }
+                <div>
+                  <strong className="block">Fecha de ingreso:</strong>
+                  <span>
+                    {parsedHireDate && !isNaN(parsedHireDate.getTime())
+                      ? format(parsedHireDate, "PPP", { locale: es })
+                      : "Fecha no válida"}
+                  </span>
+                </div>
 
                 <div>
-                  <strong>Tipo de movimiento:</strong> {tipoMovimiento}
+                  {/* <strong>Tipo de movimiento:</strong> {tipoMovimiento} */}
                   <div>
                     <strong>Estado:</strong>{" "}
                     {totalDays > 0 ? (
@@ -233,10 +236,14 @@ function Vacations() {
                   <strong>Días solicitados:</strong> {resumenVacaciones?.total_dias_vacaciones ?? "-"} <br />
                   <strong>Días disponibles:</strong> {resumenVacaciones?.saldo_vigente ?? "-"}
                 </p>
-                <p>
-                  <strong>Próximo incremento:</strong>{" "}
-                  {nextIncrement ? format(nextIncrement, "PPP", { locale: es }) : "N/A"}
-                </p>
+                <div>
+                  <strong className="block">Próximo incremento:</strong>
+                  <span>
+                    {nextIncrement
+                      ? format(nextIncrement, "PPP", { locale: es })
+                      : "N/A"}
+                  </span>
+                </div>
               </div>
               <div>
               </div>
