@@ -2,14 +2,28 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
-// Mapeo de rutas protegidas por rol
+// Rutas protegidas por rol
 const roleAccess: Record<string, string[]> = {
-  admin: ['/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva','/api','/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT', '/kardex', '/Movimientos', 'Usuarios'],
-  docente: ['/Cursos', '/Perfil'],
-  alumno: ['/PlanEstudio', '/Perfil'],
-  Gerente: ['/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva','/api','/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT', '/kardex', '/Movimientos', 'Usuarios'],
-  Coordinador: ['/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva','/api','/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT', '/kardex', '/Movimientos', 'Usuarios'],
-  'Usuario Común': ['/Cursos', '/Perfil', '/PlanEstudio', '/cargaMasiva','/api','/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT', '/kardex', '/Movimientos', 'Usuarios'],
+  admin: [
+    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
+    '/kardex', '/Movimientos'
+  ],
+  Gerente: [
+    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
+    '/kardex', '/Movimientos'
+  ],
+  Coordinador: [
+    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
+    '/kardex', '/Movimientos'
+  ],
+  'Usuario común': [
+    '/Cursos', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
+    '/kardex', '/Movimientos'
+  ],
 };
 
 export async function middleware(request: NextRequest) {
@@ -17,7 +31,7 @@ export async function middleware(request: NextRequest) {
   console.log('Middleware este es el token:', token);
 
   if (!token) {
-    return NextResponse.redirect(new URL('Login', request.url));
+    return NextResponse.redirect(new URL('/Login', request.url));
   }
 
   try {
@@ -27,7 +41,6 @@ export async function middleware(request: NextRequest) {
     const userRol = payload.rol as string;
     const pathname = request.nextUrl.pathname;
 
-    // Verificar si el rol tiene acceso a la ruta
     const allowedPaths = roleAccess[userRol] || [];
     const isAuthorized = allowedPaths.some((path) => pathname.startsWith(path));
 
@@ -38,7 +51,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   } catch (error) {
     console.error('Error al verificar el token:', error);
-    return NextResponse.redirect(new URL('Login', request.url));
+    return NextResponse.redirect(new URL('/Login', request.url));
   }
 }
 
