@@ -318,10 +318,10 @@ Swal.fire({
           </CardContent>
         </Card>
 
-        {/* Grid principal con dos columnas */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Grid principal con dos columnas
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6"> */}
           {/* Columna izquierda - Información de vacaciones */}
-          <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
+          {/* <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
             <CardHeader>
               <CardTitle>Información de Vacaciones</CardTitle>
             </CardHeader>
@@ -391,7 +391,7 @@ Swal.fire({
                 </ul>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Columna derecha - Selección de fechas */}
           <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
@@ -475,7 +475,7 @@ Swal.fire({
         </div>
       </div>
 
-      </div>
+      {/* </div> */}
 
     </>
   );
