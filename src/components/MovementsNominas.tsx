@@ -43,6 +43,10 @@ function Movements() {
   const [vacacionesOriginales, setVacacionesOriginales] = useState({ acumuladas: 0, ley: 0 });
   const [acumuladasRestantes, setAcumuladasRestantes] = useState(0);
   const [leyRestantes, setLeyRestantes] = useState(0);
+  const [busqueda, setBusqueda] = useState("");
+  const [tipoFiltro, setTipoFiltro] = useState("");
+  const [estatusFiltro, setEstatusFiltro] = useState("");
+
 
   useEffect(() => {
     if (!user) return;
@@ -151,18 +155,22 @@ function Movements() {
     }
   };
 
-
-
   const movimientosFiltrados = movementsData.todos.filter((mov) => {
     const fechaIncidencia = new Date(mov.fecha_incidencia);
-    if (fechaInicio && isBefore(fechaIncidencia, fechaInicio) && !isEqual(fechaIncidencia, fechaInicio)) {
-      return false;
-    }
-    if (fechaFin && isAfter(fechaIncidencia, fechaFin) && !isEqual(fechaIncidencia, fechaFin)) {
-      return false;
-    }
-    return true;
+
+    const coincideFechaInicio = !fechaInicio || isEqual(fechaIncidencia, fechaInicio) || isAfter(fechaIncidencia, fechaInicio);
+    const coincideFechaFin = !fechaFin || isEqual(fechaIncidencia, fechaFin) || isBefore(fechaIncidencia, fechaFin);
+
+    const coincideBusqueda = busqueda === "" ||
+      mov.num_empleado?.toString().includes(busqueda) ||
+      mov.nombre?.toLowerCase().includes(busqueda.toLowerCase());
+
+    const coincideTipo = tipoFiltro === "" || mov.tipo_movimiento === tipoFiltro;
+    const coincideEstatus = estatusFiltro === "" || mov.estatus_movimiento === estatusFiltro;
+
+    return coincideFechaInicio && coincideFechaFin && coincideBusqueda && coincideTipo && coincideEstatus;
   });
+
 
   const exportarAExcel = () => {
     const data = movimientosFiltrados.map((mov) => {
@@ -202,6 +210,52 @@ function Movements() {
           </div>
           <Button onClick={exportarAExcel}>Exportar a Excel</Button>
         </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="Buscar por número o nombre"
+          className="border p-2 rounded-md w-full"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+        />
+
+        <select
+          className="border p-2 rounded-md w-full"
+          value={tipoFiltro}
+          onChange={(e) => setTipoFiltro(e.target.value)}
+        >
+          <option value="">Todos los tipos</option>
+          {[...new Set(movementsData.todos.map(m => m.tipo_movimiento))].map(tipo => (
+            <option key={tipo} value={tipo}>{tipo}</option>
+          ))}
+        </select>
+
+        <select
+          className="border p-2 rounded-md w-full"
+          value={estatusFiltro}
+          onChange={(e) => setEstatusFiltro(e.target.value)}
+        >
+          <option value="">Todos los estatus</option>
+          <option value="aprobado">Aprobado</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="rechazado">Rechazado</option>
+        </select>
+      </div>
+
+      <div className="flex justify-between items-center mb-4 text-sm text-gray-600">
+        <span>{movimientosFiltrados.length} movimientos encontrados</span>
+        <Button variant="ghost" onClick={() => {
+          setFechaInicio(undefined);
+          setFechaFin(undefined);
+          setBusqueda("");
+          setTipoFiltro("");
+          setEstatusFiltro("");
+        }}>
+          Limpiar filtros
+        </Button>
+      </div>
+
 
         <div className="flex flex-wrap gap-4 mb-6">
           <Popover>
