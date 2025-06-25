@@ -9,6 +9,7 @@ const nextConfig = {
     ],
     domains: ["api-img-tara.192.168.29.40.sslip.io"],
   },
+  output: 'standalone', // ✅ Agrega esta línea
 };
 
 module.exports = nextConfig;

@@ -4,12 +4,6 @@ import Image from "next/image";
 import { Button, Typography, Input } from "@material-tailwind/react";
 
 function Hero() {
-  const getProfile = async () => {
-    const response = await axios.get('/api/auth/profile', { withCredentials: true });
-    console.log(response);
-    console.log(response.data.user.email);
-  }
-
   return (
     <header className="relative w-full h-screen flex items-center justify-center text-center">
       {/* Video de fondo */}

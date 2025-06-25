@@ -26,7 +26,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     const getProfile = async () => {
       try {
-        const response = await axios.get('/api/auth/profile', { withCredentials: true });
+        const baseURL = process.env.NEXT_PUBLIC_BASE_URL ?? '';
+        const response = await axios.get(`${baseURL}/api/auth/profile`, { withCredentials: true });
         console.log('Perfil del usuario:', response.data.user); // Verifica la respuesta del perfil
         setUser(response.data.user); // guarda todo el objeto
         setIsAuthenticated(true);
@@ -51,7 +52,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
       const logout = async () => {
         try {
-            await axios.post('/api/auth/logout', {});
+            const baseURL = process.env.NEXT_PUBLIC_BASE_URL ?? '';
+
+await axios.get(`${baseURL}/api/auth/profile`, { withCredentials: true });
+
           
             setIsAuthenticated(false); // Marcar como no autenticado
             setUser(null); // Limpiar el perfil del usuario
