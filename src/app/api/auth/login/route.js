@@ -4,20 +4,29 @@ import { serialize } from 'cookie';
 
 export async function POST(req) {
   try {
-    const { email, num_empleado, password } = await req.json();
+    const body = await req.json();
+    const { email, num_empleado, password } = body;
     const userIdentifier = email || num_empleado;
+
+    console.log('[LOG] Payload recibido:', body);
     console.log('[LOG] Intento de login con:', { email, num_empleado });
 
     if (!userIdentifier || !password) {
-      console.warn('[WARN] Falta usuario o contraseña');
+      console.warn('[WARN] Faltan datos obligatorios');
       return NextResponse.json(
         { success: false, message: 'Por favor, ingresa tu correo o número de empleado y contraseña.' },
         { status: 400 }
       );
     }
 
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/login`;
-    console.log('[LOG] Llamando a backend Express en:', apiUrl);
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const apiUrl = `${apiBase}/login`;
+
+    console.log('[LOG] URL destino del backend:', apiUrl);
+    if (!apiBase) console.warn('[WARN] Variable NEXT_PUBLIC_API_BASE_URL no definida');
+
+    const startTime = Date.now();
+    console.log('[LOG] Enviando request al backend Express...');
 
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -25,9 +34,12 @@ export async function POST(req) {
       body: JSON.stringify({ email, num_empleado, password }),
     });
 
+    const duration = Date.now() - startTime;
+    console.log(`[LOG] Tiempo de respuesta del backend: ${duration}ms`);
+
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('[ERROR] Fallo en respuesta del backend:', errorText);
+      console.error('[ERROR] Backend respondió con error:', errorText);
       return NextResponse.json(
         { success: false, message: 'Credenciales incorrectas o backend falló.' },
         { status: 401 }
@@ -47,7 +59,7 @@ export async function POST(req) {
 
     const serialized = serialize('myToken', token, {
       httpOnly: true,
-      secure: true, // Cambiado a true para producción con HTTPS
+      secure: true,
       sameSite: 'Lax',
       maxAge: 60 * 60 * 24 * 30,
       path: '/',
@@ -64,7 +76,10 @@ export async function POST(req) {
 
   } catch (error) {
     console.error('[ERROR] Excepción en /api/auth/login:', error.message);
+    if (error.cause) console.error('[DEBUG] Causa:', error.cause);
+    if (error.code) console.error('[DEBUG] Código:', error.code);
     console.error('[DEBUG] Stack trace:', error.stack);
+
     return NextResponse.json(
       { success: false, message: 'Error interno en el servidor. Revisa los logs.' },
       { status: 500 }
