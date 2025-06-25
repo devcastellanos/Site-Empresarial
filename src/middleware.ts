@@ -9,6 +9,7 @@ const roleAccess: Record<string, string[]> = {
   alumno: ['/PlanEstudio', '/Perfil'],
   Gerente: ['/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva','/api','/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT', '/kardex', '/Movimientos', 'Usuarios'],
   Coordinador: ['/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva','/api','/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT', '/kardex', '/Movimientos', 'Usuarios'],
+  'Usuario Común': ['/Cursos', '/Perfil', '/PlanEstudio', '/cargaMasiva','/api','/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT', '/kardex', '/Movimientos', 'Usuarios'],
 };
 
 export async function middleware(request: NextRequest) {

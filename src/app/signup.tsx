@@ -51,8 +51,6 @@ const handleLogin = async () => {
     const user = res.data.data;
     
 
-    console.log('[DEBUG] Token generado:', user);
-
     // 3. Guardar el token en cookie vía API interna de Next
     await axios.post('/api/auth/set-token', { user });
 
