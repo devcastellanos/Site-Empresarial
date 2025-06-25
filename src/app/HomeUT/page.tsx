@@ -22,7 +22,7 @@ const ARTICLES = [
     img: "/image/Asistencia.png",
     title: "Asistencia",
     desc: "Da clic aquí para descargar la lista de asistencia de la capacitación de Tarahumara.",
-    link: "https://gpotarahumara-my.sharepoint.com/...",
+    link: "https://gpotarahumara-my.sharepoint.com/:x:/g/personal/mariana_perez_grupotarahumara_com_mx/EQNL9xbkUwJKsVB23tLXhPkBndSs_0WkEpm5VRc1lQMv4w?e=cW0Drb",
   },
   {
     img: "/image/convenio.png",
@@ -34,7 +34,7 @@ const ARTICLES = [
     img: "/image/solicitud.png",
     title: "Formato de solicitud",
     desc: "Da clic aquí para descargar el formato de solicitud de cursos.",
-    link: "https://gpotarahumara-my.sharepoint.com/...",
+    link: "https://gpotarahumara-my.sharepoint.com/:x:/g/personal/mariana_perez_grupotarahumara_com_mx/EXIe6iBPgnNGpMuo63FeZ1gBYdjBXXY1AxVzK418aUpSFQ?e=FM2cS3",
   },
 ];
 
