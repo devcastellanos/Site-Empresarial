@@ -12,9 +12,9 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../hooks/useAuth";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import jwt from "jsonwebtoken";
 
 export function Login() {
-  const { login } = useAuth();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -32,38 +32,41 @@ export function Login() {
 
   const baseURL = process.env.NEXT_PUBLIC_BASE_URL ?? "";
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Swal.fire("Campos requeridos", "Completa todos los campos", "warning");
-      return;
-    }
+const handleLogin = async () => {
+  if (!email || !password) {
+    Swal.fire("Campos requeridos", "Completa todos los campos", "warning");
+    return;
+  }
 
-    const isNumeric = !isNaN(Number(email));
-    const payload = isNumeric
-      ? { num_empleado: email, password }
-      : { email, password };
+  const isNumeric = !isNaN(Number(email));
+  const payload = isNumeric
+    ? { num_empleado: email, password }
+    : { email, password };
 
-    setIsLoading(true);
+  setIsLoading(true);
 
-    try {
-      const res = await axios.post(`${baseURL}/api/auth/login`, payload, {
-        withCredentials: true,
-      });
+  try {
+    // 1. Validar con backend Express
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/login`, payload);
+    const user = res.data.data;
+    
 
-      if (res.status === 200) {
-        await login();
-        Swal.fire("Bienvenido", "Inicio de sesión exitoso", "success").then(() =>
-          router.push("/")
-        );
-      } else {
-        throw new Error("No autorizado");
-      }
-    } catch {
-      Swal.fire("Error", "Credenciales incorrectas o cuenta no verificada", "error");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    console.log('[DEBUG] Token generado:', user);
+
+    // 3. Guardar el token en cookie vía API interna de Next
+    await axios.post('/api/auth/set-token', { user });
+
+    Swal.fire("Bienvenido", "Inicio de sesión exitoso", "success").then(() =>
+      router.push("/")
+    );
+  } catch (error) {
+    console.error("Login error:", error);
+    Swal.fire("Error", "Credenciales incorrectas o cuenta no verificada", "error");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const openRegistroModal = () => {
     setRegistroEmpleado("");
