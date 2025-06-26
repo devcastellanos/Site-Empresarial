@@ -312,7 +312,7 @@ const getEstatusMovimiento = (fecha: string) => {
               <Avatar className="w-32 h-32">
                 {empleado?.Personal ? (
                   <AvatarImage
-                    src={`/api/employees/${empleado.Personal}`}
+                    src={`http://api-img.172.16.15.30.sslip.io/uploads/${empleado.Personal}.jpg`}
                     alt="Avatar"
                     className="object-cover"
                   />
