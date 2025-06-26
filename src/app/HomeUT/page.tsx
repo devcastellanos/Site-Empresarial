@@ -5,6 +5,10 @@ import { useRef } from "react";
 import Image from "next/image";
 import OrgChart from "@/components/OrgChart";
 
+import { useAuth } from "../context/AuthContext";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
 const ARTICLES = [
   {
     img: "/image/crehana.png",
@@ -42,6 +46,7 @@ export default function IntranetHomePage() {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll();
   const orgChartRef = useRef<HTMLElement | null>(null);
+  const { user } = useAuth();
 
   return (
     <>
@@ -138,6 +143,7 @@ export default function IntranetHomePage() {
               </div>
             ))}
           </div>
+
         </div>
       </motion.header>
       {/* ORG CHART SECTION */}
