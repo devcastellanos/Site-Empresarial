@@ -12,9 +12,6 @@
 /.next/
 /out/
 
-# uploads
-/uploads
-
 # production
 /build
 
@@ -41,6 +38,3 @@ package-lock.json
 pnpm-lock.yaml
 yarn.lock
 .env
-uploads/20250210160448583.jpg
-uploads/fotos/0001.jpg
-uploads/fotos
