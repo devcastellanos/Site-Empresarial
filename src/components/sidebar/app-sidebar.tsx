@@ -88,23 +88,28 @@ export function AppSidebar({
           { title: "Vacaciones", url: "/Perfil#vacaciones", icon: Palmtree },
           { title: "Cursos", url: "/Perfil#cursos", icon: GraduationCap },
           { title: "Movimientos", url: "/Perfil#movimientos", icon: Repeat },
-          ...(user.rol === "admin" || user.rol === "reclutamiento"
+          ...(user.rol === "admin" || user.rol === "Reclutamiento"
             ? [{ title: "Requisiciones", url: "/Perfil#requisiciones", icon: FileText }]
             : []),
           { title: "Carta Patronal", url: "/Perfil#patron", icon: Stamp },
-          { title: "Monitorear Equipo", url: "/Perfil#monitorearequipo", icon: Users },
+          ...(user.rol === "admin" || user.rol === "Capacitacion"
+            ? [{ title: "Monitorear Equipo", url: "/Perfil#monitorearequipo", icon: Users }]
+            : []),
+          
         ],
       },
     ],
     projects: [
       { name: "Home", url: "/", icon: Home },
       { name: "Kardex", url: "/kardex", icon: NotebookText },
-      ...(user.rol === "admin"
+      ...(user.rol === "admin" || user.rol === "Capacitacion"
         ? [{ name: "Cargar Archivos Excel", url: "/cargaMasiva", icon: FileSpreadsheet }]
         : []),
       { name: "Usuarios", url: "/Usuarios", icon: UserCog },
       { name: "Cursos", url: "/Cursos", icon: Presentation },
-      { name: "Movimientos Nominas", url: "/Movimientos", icon: CircleDollarSign },
+      ...(user.rol === "admin" || user.rol === "Nominas"
+        ? [{ name: "Movimientos Nominas", url: "/Movimientos", icon: CircleDollarSign }]
+        : []),
     ],
   }
 

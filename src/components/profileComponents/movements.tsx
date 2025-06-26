@@ -589,7 +589,7 @@ const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>(
         </CardFooter>
       </Card>
       {
-        user?.rol === "admin" && (
+        user?.rol === "admin" || user?.rol === "Coordinador" || user?.rol === "Jefe" || user?.rol === "Gerente" || user?.rol === "Direccion" || user?.rol === "Director"  && (
           <Card className="col-span-2 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-3 max-h-[650px]">
             <CardHeader>
               <CardTitle className="text-xl">

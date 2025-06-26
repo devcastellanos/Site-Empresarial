@@ -17,10 +17,45 @@ const roleAccess: Record<string, string[]> = {
   Coordinador: [
     '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
     '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
-    '/kardex', '/Movimientos'
+    '/kardex'
   ],
   'Usuario común': [
     '/Cursos', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
+    '/kardex'
+  ],
+  Nominas:[
+    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
+    '/kardex', '/Movimientos'
+  ],
+  Capacitacion: [
+    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
+    '/kardex'
+  ],
+  Reclutamiento: [
+    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
+    '/kardex'
+  ],
+  Jefe:[
+    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
+    '/kardex'
+  ],
+  Subjefe: [
+    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
+    '/kardex'
+  ],
+  Direccion: [
+    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
+    '/kardex', '/Movimientos'
+  ],
+  Director: [
+    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
     '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
     '/kardex', '/Movimientos'
   ],

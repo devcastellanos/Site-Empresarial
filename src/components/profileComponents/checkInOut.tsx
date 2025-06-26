@@ -63,11 +63,11 @@ function RegisterCheckInCheckOut() {
     "Sab": "Sábado",
   };
 
-  useEffect(() => {
     const fetchMovimientos = async () => {
       if (!user || !user.num_empleado) return;
       const movimientos = await obtenerMisMovimientos(user.num_empleado);
       setMovimientosSolicitados(movimientos);
+      
     };
     const fetchAsistencias = async () => {
       if (!user || !user.num_empleado) return;
@@ -82,6 +82,9 @@ function RegisterCheckInCheckOut() {
         setLoading(false);
       }
     };
+
+  useEffect(() => {
+
     fetchMovimientos();
     fetchAsistencias();
 
@@ -105,25 +108,6 @@ function RegisterCheckInCheckOut() {
     fetchEmpleado();
   }, [user]);
 
-  const esRetardo = (time: string) => {
-    const [hora, minuto, meridiano] = time.match(/(\d+):(\d+)\s(AM|PM)/i)?.slice(1) || [];
-    let horas = parseInt(hora);
-    const minutos = parseInt(minuto);
-    if (meridiano === "PM" && horas < 12) horas += 12;
-    return horas > 7 || (horas === 7 && minutos > 40);
-  };
-
-  const getRangoDeFechas = (start: string, end: string) => {
-    const fechas = [];
-    let current = new Date(start);
-    const last = new Date(end);
-    while (current <= last) {
-      fechas.push(current.toISOString().split("T")[0]);
-      current.setDate(current.getDate() + 1);
-    }
-    return fechas;
-  };
-
   const registrosFiltrados = registros.filter((r) => {
     if (filtrarPorFecha && startDate && endDate) {
       return r.date >= startDate && r.date <= endDate;
@@ -131,30 +115,8 @@ function RegisterCheckInCheckOut() {
     return true;
   });
 
-  const fetchMovimientos = async () => {
-  if (!user || !user.num_empleado) return;
-  const movimientos = await obtenerMisMovimientos(user.num_empleado);
-  setMovimientosSolicitados(movimientos);
-};
-
-  const fetchAsistencias = async () => {
-    if (!user || !user.num_empleado) return;
-    setLoading(true);
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/asistencia?codigo=${user.num_empleado}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-      setAsistencias(json.data); // solo si json.success === true
-    } catch (error) {
-      console.error("Error al obtener datos de asistencia:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-  fetchMovimientos();
-  fetchAsistencias();
+
   const timer = setInterval(() => setCurrentTime(new Date()), 1000);
   return () => clearInterval(timer);
 }, [user]);
@@ -172,29 +134,58 @@ function RegisterCheckInCheckOut() {
     }
   });
 
-  const fechasParaMostrar =
-    filtrarPorFecha && startDate && endDate
-      ? getRangoDeFechas(startDate, endDate)
-      : Array.from(new Set(registrosFiltrados.map((r) => r.date)))
-        .sort()
-        .reverse();
+  const movimientosAprobados = movimientosSolicitados.filter(
+  (m) => m.estatus_movimiento === "aprobado"
+);
 
-  const registrosPorFecha = fechasParaMostrar.map((fecha) => {
-    const entrada = registrosFiltrados.find((r) => r.date === fecha && r.type === "Entrada");
-    const salida = registrosFiltrados.find((r) => r.date === fecha && r.type === "Salida");
-    const retardo = entrada?.time ? esRetardo(entrada.time) : false;
-    const incompleta = !entrada || !salida;
-    return { fecha, entrada, salida, retardo, incompleta };
-  });
+const fechasJustificadas = new Set(
+  movimientosAprobados.map((m) => new Date(m.fecha_incidencia).toISOString().split("T")[0])
+);
+const movimientosPorFecha = Object.fromEntries(
+  movimientosAprobados.map((m) => [new Date(m.fecha_incidencia).toISOString().split("T")[0], m.tipo_movimiento])
+);
 
-  const asistenciasTotales = asistencias.filter((a) => a.NOMBRE_INCIDENCIA === null && a.CVEINC !== "SD").length;
-  const retardosTotales = asistencias.filter((a) => a.NOMBRE_INCIDENCIA === "Retardo E1" && a.CVEINC !== "SD").length;
-  const inasistenciasTotales = asistencias.filter(
-    (a) => a.NOMBRE_INCIDENCIA !== null && a.NOMBRE_INCIDENCIA !== "Retardo E1" && a.CVEINC !== "SD"
-  ).length;
 
-  const totalDías = asistenciasTotales + retardosTotales + inasistenciasTotales;
-  const puntualidadPorcentaje = totalDías > 0 ? Math.round((asistenciasTotales / totalDías) * 100) : 0;
+let asistenciasTotales = 0;
+let retardosTotales = 0;
+let inasistenciasTotales = 0;
+
+asistencias.forEach((a) => {
+  const fecha = a.FECHA.split("T")[0];
+  const incidencia = a.NOMBRE_INCIDENCIA;
+  const clave = a.CVEINC;
+
+  const movimientoJustificado = fechasJustificadas.has(fecha);
+  const tipoMovimiento = movimientosPorFecha[fecha];
+
+  if (clave === "SD") {
+    return; // día sin deber asistencia
+  }
+
+  if (incidencia === null) {
+    // Asistencia normal
+    asistenciasTotales++;
+  } else if (incidencia === "Retardo E1") {
+    if (movimientoJustificado && tipoMovimiento === "Retardo justificado") {
+      asistenciasTotales++; // contar como asistencia normal
+    } else {
+      retardosTotales++;
+    }
+  } else {
+    // Otras incidencias
+    if (movimientoJustificado && tipoMovimiento === "Falta justificada") {
+      asistenciasTotales++; // contar como asistencia normal
+    } else {
+      inasistenciasTotales++;
+    }
+  }
+});
+
+
+const totalDías = asistenciasTotales + retardosTotales + inasistenciasTotales;
+const puntualidadPorcentaje = totalDías > 0
+  ? Math.round((asistenciasTotales / totalDías) * 100)
+  : 0;
 
   if (loading) {
     return <div className="p-6 text-center text-gray-600">Cargando registros de asistencia...</div>;
