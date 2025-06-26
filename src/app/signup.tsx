@@ -54,8 +54,7 @@ export function Login() {
 
       // Mostrar mensaje de éxito y redirigir con recarga
       Swal.fire("Bienvenido", "Inicio de sesión exitoso", "success").then(() => {
-        router.push("/");
-        window.location.reload();
+        window.location.href = "/"; // navega y recarga a la vez
       });
       
     } catch (error) {
