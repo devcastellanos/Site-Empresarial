@@ -439,7 +439,7 @@ const Kardex = () => {
               <Image
                 width={180}
                 height={180}
-                src={`http://api-img-tara.192.168.29.40.sslip.io/uploads/${formattedUserId}.jpg`}
+                src={`http://api-img.172.16.15.30.sslip.io/uploads/${formattedUserId}.jpg`}
                 alt="Foto del empleado"
                 style={{
                   borderRadius: "50%",
