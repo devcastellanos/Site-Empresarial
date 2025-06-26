@@ -22,6 +22,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { DateRange } from "react-day-picker";
+import Image from "next/image";
 
 function RegisterCheckInCheckOut() {
   const { user } = useAuth();
@@ -309,19 +310,23 @@ const getEstatusMovimiento = (fecha: string) => {
             </div>
 
             <CardHeader className="flex flex-col items-center justify-center space-y-4 text-center">
-              <Avatar className="w-32 h-32">
-                {empleado?.Personal ? (
-                  <AvatarImage
-                    src={`http://api-img.172.16.15.30.sslip.io/uploads/${empleado.Personal}.jpg`}
-                    alt="Avatar"
-                    className="object-cover"
-                  />
-                ) : null}
-                <AvatarFallback className="text-xl">
-                  {empleado?.Nombre?.[0]}
-                  {empleado?.ApellidoPaterno?.[0]}
-                </AvatarFallback>
-              </Avatar>
+<div className="w-32 h-32 rounded-full overflow-hidden border-2 border-gray-300">
+  {empleado?.Personal ? (
+    <Image
+      width={128}
+      height={128}
+      src={`http://api-img.172.16.15.30.sslip.io/uploads/${empleado.Personal}.jpg`}
+      alt="Foto del empleado"
+      className="object-cover w-full h-full"
+    />
+  ) : (
+    <div className="flex items-center justify-center w-full h-full bg-gray-200 text-xl font-semibold">
+      {empleado?.Nombre?.[0]}
+      {empleado?.ApellidoPaterno?.[0]}
+    </div>
+  )}
+</div>
+
 
               <div>
                 <CardTitle className="text-2xl font-semibold tracking-tight">
