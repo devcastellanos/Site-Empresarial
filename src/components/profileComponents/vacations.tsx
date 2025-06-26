@@ -33,6 +33,29 @@ function Vacations() {
   const nivel_aprobacion = 1;
   const { user } = useAuth();
   const [empleado, setEmpleado] = useState<User | null>(null);
+  const [vacacionesHistorico, setVacacionesHistorico] = useState<any[]>([]);
+
+  useEffect(() => {
+    const obtenerHistorialVacaciones = async () => {
+      if (!user?.num_empleado) return;
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_NOM_API_URL}/api/vacaciones/${user.num_empleado}`);
+        const data = await res.json();
+
+        setResumenVacaciones({
+          total_primavacacional_vigente: data?.[0]?.diasprimavacacional ?? 0,
+          total_dias_vacaciones: data.reduce((sum: number, row: any) => sum + (row.diasvacaciones ?? 0), 0),
+          saldo_vigente: data?.[0]?.saldo_vigente ?? 0,
+        });
+
+        setVacacionesHistorico(data);
+      } catch (e) {
+        console.error("Error al obtener historial de vacaciones:", e);
+      }
+    };
+
+    obtenerHistorialVacaciones();
+  }, [user]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -149,21 +172,21 @@ function Vacations() {
     const movimientoResult = await crearMovimiento(movimientoPayload);
     if (movimientoResult.success) {
       setRequestStatus("success");
-Swal.fire({
-  icon: 'success',
-  title: '¡Solicitud enviada!',
-  text: 'Tu solicitud de vacaciones ha sido registrada correctamente.',
-  confirmButtonColor: '#9A3324',
-  confirmButtonText: 'Aceptar',
-  timer: 5000,
-  timerProgressBar: true,
-  allowOutsideClick: false,
-  customClass: {
-    popup: 'rounded-xl shadow-lg',
-    title: 'text-lg font-semibold',
-    confirmButton: 'px-4 py-2 text-white',
-  }
-});
+        Swal.fire({
+          icon: 'success',
+          title: '¡Solicitud enviada!',
+          text: 'Tu solicitud de vacaciones ha sido registrada correctamente.',
+          confirmButtonColor: '#9A3324',
+          confirmButtonText: 'Aceptar',
+          timer: 5000,
+          timerProgressBar: true,
+          allowOutsideClick: false,
+          customClass: {
+            popup: 'rounded-xl shadow-lg',
+            title: 'text-lg font-semibold',
+            confirmButton: 'px-4 py-2 text-white',
+          }
+        });
 
       // Limpiar campos
       setSelectedDates([]);
@@ -318,81 +341,6 @@ Swal.fire({
           </CardContent>
         </Card>
 
-        {/* Grid principal con dos columnas
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6"> */}
-          {/* Columna izquierda - Información de vacaciones */}
-          {/* <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
-            <CardHeader>
-              <CardTitle>Información de Vacaciones</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <strong>Fecha de ingreso:</strong>{" "}
-                  {parsedHireDate && !isNaN(parsedHireDate.getTime()) ?
-                    format(parsedHireDate, "PPP", { locale: es })
-                    : "Fecha no válida"
-                  }
-
-                  <div>
-                    <strong>Tipo de movimiento:</strong> {tipoMovimiento}
-                    <div>
-                      <strong>Estado:</strong>{" "}
-                      {totalDays > 0 ? (
-                        <Badge variant="default">Apto para vacaciones</Badge>
-                      ) : (
-                        <Badge variant="destructive">No apto para vacaciones</Badge>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <p>
-                    <strong>Días disponibles:</strong> {remainingDays}
-                  </p>
-                  <p>
-                    <strong>Próximo incremento:</strong>{" "}
-                    {nextIncrement ? format(nextIncrement, "PPP", { locale: es }) : "N/A"}
-                  </p>
-                </div>
-
-                <div className="pt-2 border-t">
-                  <Label className="text-center">
-                    Días restantes después de esta solicitud:
-                  </Label>
-                  <p className="text-lg font-semibold text-center">
-                    {resumenVacaciones?.saldo_vigente ?? "-"} días
-                  </p>
-                </div>
-              </div>
-
-              <Separator className="my-2" />
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <InfoBox label="Apto para vacaciones" value={totalDays > 0 ? "Sí" : "No"} icon={totalDays > 0 ? "✅" : "❌"} />
-                <InfoBox label="Días disponibles" value={`${remainingDays} días`} />
-                <InfoBox label="Faltan para incremento" value={`${daysUntilNextIncrement} días`} />
-              </div>
-
-              <div className="mt-4">
-                <Label>Progreso anual:</Label>
-                <Progress value={progressValue} className="h-2 mt-2" />
-              </div>
-
-              <Separator className="my-4" />
-
-              <div>
-                <Label className="font-semibold">Cláusulas legales:</Label>
-                <ul className="mt-2 space-y-1 text-sm list-disc pl-5">
-                  {legalClauses.map((clause, index) => (
-                    <li key={index}>{clause}</li>
-                  ))}
-                </ul>
-              </div>
-            </CardContent>
-          </Card> */}
-
           {/* Columna derecha - Selección de fechas */}
           <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
             <CardHeader>
@@ -473,6 +421,48 @@ Swal.fire({
             </CardFooter>
           </Card>
         </div>
+
+        <Separator className="my-4" />
+<div>
+  <Label className="font-semibold">Historial de vacaciones:</Label>
+  <div className="mt-2 overflow-auto rounded-lg border">
+    <table className="min-w-full text-sm text-gray-700">
+      <thead className="bg-gray-100 border-b">
+        <tr>
+          <th className="px-4 py-2 text-left">Ejercicio</th>
+          <th className="px-4 py-2 text-left">Inicio</th>
+          <th className="px-4 py-2 text-left">Fin</th>
+          <th className="px-4 py-2 text-left">Días Vacaciones</th>
+          <th className="px-4 py-2 text-left">Prima Vacacional</th>
+          <th className="px-4 py-2 text-left">Otorgados por ley</th>
+          <th className="px-4 py-2 text-left">Saldo vigente</th>
+        </tr>
+      </thead>
+      <tbody>
+        {vacacionesHistorico.length === 0 ? (
+          <tr>
+            <td colSpan={7} className="px-4 py-2 text-center text-muted-foreground">
+              Cargando historial...
+            </td>
+          </tr>
+        ) : (
+          vacacionesHistorico.map((item, index) => (
+            <tr key={index} className="border-b hover:bg-muted/30">
+              <td className="px-4 py-2">{item.ejercicio}</td>
+              <td className="px-4 py-2">{format(new Date(item.fechainicio), "dd/MM/yyyy")}</td>
+              <td className="px-4 py-2">{format(new Date(item.fechafin), "dd/MM/yyyy")}</td>
+              <td className="px-4 py-2">{item.diasvacaciones}</td>
+              <td className="px-4 py-2">{item.diasprimavacacional}</td>
+              <td className="px-4 py-2">{item.dias_otorgados_ley}</td>
+              <td className="px-4 py-2">{item.saldo_vigente}</td>
+            </tr>
+          ))
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
+
       </div>
 
       {/* </div> */}
