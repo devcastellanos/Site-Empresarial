@@ -59,7 +59,7 @@ export function NavbarRH() {
           { name: "Universidad Tarahumara", icon: UserCircleIcon, href: "/HomeUT" },
           { name: "Capital Humano", icon: UserCircleIcon, href: "/HomeCH" },
           { name: "Perfil", icon: UserCircleIcon, href: "/Perfil" },
-          { name: "Plan de Estudios", icon: BookOpenIcon, href: "/PlanEstudio" },
+          // { name: "Plan de Estudios", icon: BookOpenIcon, href: "/PlanEstudio" },
         ]
       : []),
   ];

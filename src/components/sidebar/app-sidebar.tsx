@@ -17,6 +17,7 @@ import {
   Presentation,
   CircleDollarSign,
   Briefcase,
+  University,
 } from "lucide-react"
 
 import { NavMain } from "@/components/sidebar/nav-main"
@@ -30,6 +31,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import Image from "next/image"
 
 import { useAuth } from "@/app/context/AuthContext"
 
@@ -86,7 +88,7 @@ export function AppSidebar({
         items: [
           { title: "Asistencia", url: "/Perfil#perfil", icon: CalendarCheck },
           { title: "Vacaciones", url: "/Perfil#vacaciones", icon: Palmtree },
-          { title: "Cursos", url: "/Perfil#cursos", icon: GraduationCap },
+          { title: "Kardex", url: "/Perfil#cursos", icon: GraduationCap },
           { title: "Movimientos", url: "/Perfil#movimientos", icon: Repeat },
           ...(user.rol === "admin" || user.rol === "Reclutamiento"
             ? [{ title: "Requisiciones", url: "/Perfil#requisiciones", icon: FileText }]
@@ -101,7 +103,9 @@ export function AppSidebar({
     ],
     projects: [
       { name: "Home", url: "/", icon: Home },
-      { name: "Kardex", url: "/kardex", icon: NotebookText },
+      { name: "Capital Humano", url: "/HomeCH", icon: Briefcase },
+      { name: "Universidad Tarahumara", url: "/HomeUT", icon: University },
+      // { name: "Kardex", url: "/kardex", icon: NotebookText },
 
       ...(user.rol === "admin" || user.rol === "Capacitacion"
         ? [{ name: "Cargar Archivos Excel", url: "/cargaMasiva", icon: FileSpreadsheet }]
@@ -124,12 +128,22 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={sidebarData.teams} />
+        <div className="flex flex-col items-center justify-center ">
+          <Image
+            src="/image/logo.png"
+            alt="Logo Grupo Tarahumara"
+            width={200}
+            height={100}
+          />
+          {/* <TeamSwitcher teams={sidebarData.teams} /> */}
+        </div>
       </SidebarHeader>
+
       <SidebarContent>
         <NavMain items={sidebarData.navMain} setVista={setVista} />
         <NavProjects projects={sidebarData.projects} />
       </SidebarContent>
+
       <SidebarFooter>
         <NavUser
           user={{
@@ -139,6 +153,7 @@ export function AppSidebar({
           }}
         />
       </SidebarFooter>
+
       <SidebarRail />
     </Sidebar>
   )

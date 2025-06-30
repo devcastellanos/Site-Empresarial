@@ -14,12 +14,12 @@ const ARTICLES = [
     desc: "Crehana es una plataforma de educación online que ofrece cursos de diseño, marketing, fotografía, programación y más.",
     link: "https://www.crehana.com/entrar/",
   },
-  {
-    img: "/image/Plan.webp",
-    title: "Plan de Capacitación",
-    desc: "Da clic para conocer el Plan anual de capacitación actualizada.",
-    link: "",
-  },
+  // {
+  //   img: "/image/Plan.webp",
+  //   title: "Plan de Capacitación",
+  //   desc: "Da clic para conocer el Plan anual de capacitación actualizada.",
+  //   link: "",
+  // },
   {
     img: "/image/asistencia.png",
     title: "Asistencia",

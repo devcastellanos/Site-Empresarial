@@ -16,12 +16,12 @@ const ARTICLES = [
     desc: "Crehana es una plataforma de educación online que ofrece cursos de diseño, marketing, fotografía, programación y más.",
     link: "https://www.crehana.com/entrar/",
   },
-  {
-    img: "/image/cap.png",
-    title: "Plan de Capacitación",
-    desc: "Da clic para conocer el Plan anual de capacitación actualizada.",
-    link: "https://gpotarahumara-my.sharepoint.com/:x:/g/personal/mariana_perez_grupotarahumara_com_mx/EQ3-FxxGPsVNh60Zw3dmeZ8Bi2HSd6ymFhP-aqy1ogQRIA?e=0EDtU2",
-  },
+  // {
+  //   img: "/image/cap.png",
+  //   title: "Plan de Capacitación",
+  //   desc: "Da clic para conocer el Plan anual de capacitación actualizada.",
+  //   link: "https://gpotarahumara-my.sharepoint.com/:x:/g/personal/mariana_perez_grupotarahumara_com_mx/EQ3-FxxGPsVNh60Zw3dmeZ8Bi2HSd6ymFhP-aqy1ogQRIA?e=0EDtU2",
+  // },
   {
     img: "/image/Asistencia.png",
     title: "Asistencia",

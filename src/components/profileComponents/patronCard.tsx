@@ -17,6 +17,7 @@ function PatronCard() {
     BodegaVictoria: "Calle 4 #447 y 449, Comercial Abastos, 44530 Guadalajara, Jal., México",
     BodegaCentral: "Calle 4 #430, Comercial Abastos, 44530 Guadalajara, Jal., México",
     BodegaTarahumara: "Calle 4 #419, Comercial Abastos, 44530 Guadalajara, Jal., México",
+    BodegaAdministracion: "Calle 4 #2568, Comercial Abastos, 44530 Guadalajara, Jal., México",
     BodegaVictoriaOutlet: "Calle 5, Comercial Abastos, 44530 Guadalajara, Jal., México",
     BodegaLechuga: "Calle 10 #2620, Comercial Abastos, 44530 Guadalajara, Jal., México",
     CedisPremier: "Calle Elote #2627, Calle 09, Comercial Abastos, 44530 Guadalajara, Jal., México",
@@ -29,6 +30,7 @@ function PatronCard() {
     BodegaVictoria: "Bodega Victoria (Guadalajara)",
     BodegaCentral: "Bodega Central (Guadalajara)",
     BodegaTarahumara: "Bodega Tarahumara (Guadalajara)",
+    BodegaAdministracion: "Bodega Administración (Guadalajara)",
     BodegaVictoriaOutlet: "Bodega Victoria Outlet (Guadalajara)",
     BodegaLechuga: "Bodega Lechuga (Guadalajara)",
     CedisPremier: "Cedis Premier (Guadalajara)",
@@ -70,8 +72,25 @@ function PatronCard() {
   }, [user]);
 
   const generarPDF = () => {
+    if (ubicacion === "default") {
+      alert("Por favor selecciona una ubicación antes de generar el PDF.");
+      return;
+    }
+
     if (cartaRef.current) {
       const html2pdf = require("html2pdf.js");
+
+      // Clonamos el nodo y quitamos clases visuales que no deben verse en PDF
+      const cartaClone = cartaRef.current.cloneNode(true) as HTMLElement;
+      cartaClone.classList.remove("border", "border-gray-300", "rounded-md");
+
+      // Generamos un contenedor temporal
+      const tempContainer = document.createElement("div");
+      tempContainer.style.position = "absolute";
+      tempContainer.style.left = "-9999px";
+      tempContainer.appendChild(cartaClone);
+      document.body.appendChild(tempContainer);
+
       const opt = {
         margin: 0.5,
         filename: "Carta_Patronal.pdf",
@@ -79,9 +98,17 @@ function PatronCard() {
         html2canvas: { scale: 2 },
         jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
       };
-      html2pdf().set(opt).from(cartaRef.current).save();
+
+      html2pdf()
+        .set(opt)
+        .from(cartaClone)
+        .save()
+        .then(() => {
+          document.body.removeChild(tempContainer);
+        });
     }
   };
+
 
   return (
     <div className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow-md">
@@ -116,7 +143,7 @@ function PatronCard() {
       {/* Contenido exportable */}
       <div
         ref={cartaRef}
-        className="p-8 bg-white text-base text-black leading-relaxed space-y-4 border border-gray-300 rounded-md"
+        className="p-8 bg-white text-base text-black leading-relaxed space-y-4 border border-gray-300 rounded-md print:border-none"
       >
         {/* Logo */}
         <div className="flex justify-center mb-4">
@@ -166,6 +193,13 @@ function PatronCard() {
         <br/>
         {/* 🖋️ Espacio para firma */}
         <div className="mt-12 mb-4 flex flex-col items-center space-y-1">
+          <Image 
+            src="/image/firmaLiliana.png" 
+            alt="Firma del Coordinador" 
+            width={96} // equivalente a w-48
+            height={40} // puedes ajustar según la proporción de la imagen
+            className="mb-2"
+          />
           <div className="w-64 border-t border-black" />
           <p className="text-sm text-center">Firma del Coordinador</p>
         </div>

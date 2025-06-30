@@ -342,17 +342,6 @@ const Kardex = () => {
 
   return (
     <div style={{ marginTop: "150px" }}>
-      <motion.video
-        autoPlay
-        loop
-        muted
-        className="fixed top-0 left-0 w-full h-full object-cover -z-20"
-        style={{ opacity: videoOpacity }}
-      >
-        <source src="/image/background.mp4" type="video/mp4" />
-        Tu navegador no soporta videos.
-      </motion.video>
-
       <div
         style={{
           fontFamily: "Arial, sans-serif",
