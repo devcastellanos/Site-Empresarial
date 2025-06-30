@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Course } from "@/lib/interfaces";
+import { useAuth } from "@/app/context/AuthContext";
 
 function CourseCatalog() {
   const [formatJson, setFormatJson] = useState<Course[]>([]);
@@ -32,6 +33,7 @@ function CourseCatalog() {
   const [departments, setDepartments] = useState<string[]>([]);
   const [visibleCourses, setVisibleCourses] = useState(5);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/cursosPresenciales`)
@@ -86,9 +88,14 @@ function CourseCatalog() {
             onChange={e => setSearchTerm(e.target.value)}
             className="md:w-2/3"
           />
-          <Button onClick={() => setIsModalOpen(true)}>
-            <FaPlus className="mr-2" /> Agregar Curso
-          </Button>
+          {(user?.rol === "admin" || user?.rol === "Capacitacion") && (
+            <>
+              <Button onClick={() => setIsModalOpen(true)}>
+                <FaPlus className="mr-2" /> Agregar Curso
+              </Button>
+            </>
+          )}
+
         </div>
 
         <div className="grid grid-cols-4 gap-4 font-semibold text-gray-700 p-4 bg-white rounded-lg shadow">
@@ -104,10 +111,14 @@ function CourseCatalog() {
             <span>{course.description}</span>
             <span>{course.tutor}</span>
             <div className="flex justify-center gap-2">
-              <Button variant="ghost" onClick={() => { setSelectedCourse(course); setIsDialogOpen(true); }}><FaEye /></Button>
-              <Button variant="ghost" onClick={() => { setEditCourse(course); setIsEditDialogOpen(true); }}><FaEdit /></Button>
-              <Button variant="ghost" onClick={() => handleDeleteCourse(course)}><FaTrash /></Button>
-              <Button variant="default" onClick={() => { setSelectedCourse(course); setIsAssignModalOpen(true); }}><FaPlus /></Button>
+              <Button variant="ghost" onClick={() => { setSelectedCourse(course); setIsDialogOpen(true); }}><FaEye /></Button>´
+              {(user?.rol === "admin" || user?.rol === "Capacitacion") && (
+                <>
+                  <Button variant="ghost" onClick={() => { setEditCourse(course); setIsEditDialogOpen(true); }}><FaEdit /></Button>
+                  <Button variant="ghost" onClick={() => handleDeleteCourse(course)}><FaTrash /></Button>
+                  <Button variant="default" onClick={() => { setSelectedCourse(course); setIsAssignModalOpen(true); }}><FaPlus /></Button>
+                </>
+              )}
             </div>
           </div>
         ))}

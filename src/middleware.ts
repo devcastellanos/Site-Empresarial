@@ -10,54 +10,54 @@ const roleAccess: Record<string, string[]> = {
     '/kardex', '/Movimientos'
   ],
   Gerente: [
-    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/Perfil',
     '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
-    '/kardex', '/Movimientos'
+    '/kardex', 
   ],
   Coordinador: [
-    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/Perfil', 
     '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
     '/kardex'
   ],
   'Usuario común': [
-    '/Cursos', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+     '/Perfil',
     '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
     '/kardex'
   ],
   Nominas:[
-    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/Perfil',
     '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
     '/kardex', '/Movimientos'
   ],
   Capacitacion: [
-    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/Cursos',  '/Perfil', '/PlanEstudio', '/cargaMasiva',
     '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
     '/kardex'
   ],
   Reclutamiento: [
-    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/Usuarios', '/Perfil',
     '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
     '/kardex'
   ],
   Jefe:[
-    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+     '/Usuarios', '/Perfil',
     '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
     '/kardex'
   ],
   Subjefe: [
-    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/Usuarios', '/Perfil',
     '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
     '/kardex'
   ],
   Direccion: [
-    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+    '/Usuarios', '/Perfil',
     '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
-    '/kardex', '/Movimientos'
+    '/kardex',
   ],
   Director: [
-    '/Cursos', '/Usuarios', '/Perfil', '/PlanEstudio', '/cargaMasiva',
+     '/Usuarios', '/Perfil',
     '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
-    '/kardex', '/Movimientos'
+    '/kardex',
   ],
 };
 

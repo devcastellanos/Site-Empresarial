@@ -92,9 +92,8 @@ export function AppSidebar({
             ? [{ title: "Requisiciones", url: "/Perfil#requisiciones", icon: FileText }]
             : []),
           { title: "Carta Patronal", url: "/Perfil#patron", icon: Stamp },
-          ...(user.rol === "admin" || user.rol === "Capacitacion"
-            ? [{ title: "Monitorear Equipo", url: "/Perfil#monitorearequipo", icon: Users }]
-            : []),
+        { title: "Monitorear Equipo", url: "/Perfil#monitorearequipo", icon: Users }
+
           
         ],
       },
