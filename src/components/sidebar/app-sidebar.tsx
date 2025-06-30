@@ -102,14 +102,22 @@ export function AppSidebar({
     projects: [
       { name: "Home", url: "/", icon: Home },
       { name: "Kardex", url: "/kardex", icon: NotebookText },
+
       ...(user.rol === "admin" || user.rol === "Capacitacion"
         ? [{ name: "Cargar Archivos Excel", url: "/cargaMasiva", icon: FileSpreadsheet }]
         : []),
-      { name: "Usuarios", url: "/Usuarios", icon: UserCog },
-      { name: "Cursos", url: "/Cursos", icon: Presentation },
-      ...(user.rol === "admin" || user.rol === "Nominas"
-        ? [{ name: "Movimientos Nominas", url: "/Movimientos", icon: CircleDollarSign }]
+
+        ...(user.rol === "admin" || user.rol === "Capacitacion"
+        ? [{ name: "Cursos", url: "/Cursos", icon: Presentation }]
         : []),
+
+        ...(user.rol === "admin" || user.rol === "Capacitacion"
+        ? [{ name: "Usuarios", url: "/Usuarios", icon: UserCog }]
+        : []),
+
+        ...(user.rol === "admin" || user.rol === "Nominas"
+          ? [{ name: "Movimientos Nominas", url: "/Movimientos", icon: CircleDollarSign }]
+          : []),
     ],
   }
 

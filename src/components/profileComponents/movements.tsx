@@ -32,7 +32,7 @@ import {
 import { CalendarIcon, Info } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   MdMarkunread,
   MdTaskAlt,
@@ -63,7 +63,9 @@ import { UnpaidLeaveFields } from "@/components/profileComponents/movementsCompo
 import { WorkedRestDayFields } from "@/components/profileComponents/movementsComponents/workedRestDayFields";
 import { WorkMeetingFields } from "@/components/profileComponents/movementsComponents/workMeetingFields";
 import { WorkTripFields } from "@/components/profileComponents/movementsComponents/workTripFields";
-import { delay } from "framer-motion";
+import Image from "next/image"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { HelpCircle } from "lucide-react";
 import {
   crearMovimiento,
   responderAprobacion,
@@ -82,6 +84,7 @@ function Movements() {
   const [incidentDate, setIncidentDate] = useState<Date>();
   const [movementType, setMovementType] = useState("");
   const [comments, setComments] = useState("");
+  const bounceRef = useRef<HTMLButtonElement>(null);
 
   // Campos comunes
   const [assignedRestDay, setAssignedRestDay] = useState("");
@@ -300,26 +303,33 @@ const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>(
 
   return "N/A";
 }
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    if (bounceRef.current) {
+      bounceRef.current.classList.add("animate-bounce");
+      setTimeout(() => {
+        bounceRef.current?.classList.remove("animate-bounce");
+      }, 1000); // duración real de `animate-bounce`
+    }
+  }, 5000); // cada 5 segundos
+
+  return () => clearInterval(interval);
+}, []);
+
   return (
-    <div className="max-w-fit mx-auto p-6 lg:grid grid-cols-4 gap-2">
-      {/* <Card className="mb-6 px-4 py-3 bg-white/80 backdrop-blur-md rounded-xl shadow-md border border-gray-200">
-        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-          <Info className="w-6 h-6 text-blue-600 shrink-0" />
-          <h1 className="text-xl sm:text-2xl font-semibold text-gray-800">
-            Movimientos de Personal
-          </h1>
-        </div>
-      </Card> */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6 mt-12">
 
-
-      <Card className={`${user?.rol !== "admin" ? "col-span-4" : "col-span-2"
-        } space-y-4 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4 max-h-[650px]`}>
-          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-          <Info className="w-6 h-6 text-blue-600 shrink-0" />
-          <h1 className="text-xl sm:text-2xl font-semibold text-gray-800">
-            Movimientos de Personal
-          </h1>
+      <Card className="space-y-4 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
+        <div className="flex items-center justify-between flex-wrap sm:flex-nowrap">
+          <div className="flex items-center gap-2">
+            <Info className="w-6 h-6 text-blue-600 shrink-0" />
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-800">
+              Movimientos de Personal
+            </h1>
+          </div>
         </div>
+
         <CardHeader>
           <CardTitle>Solicitud de Autorización</CardTitle>
         </CardHeader>
@@ -805,30 +815,39 @@ const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>(
         )
       }
 
-      <Card className="col-span-4 space-y-4 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-6">
+      <Card className="space-y-4 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
         <CardHeader>
           <CardTitle className="text-xl">Mis movimientos recientes</CardTitle>
         </CardHeader>
         <CardContent>
-          <Accordion type="multiple" className="w-full space-y-4">
+          <Accordion type="multiple" defaultValue={["pendiente"]} className="w-full space-y-4">
             {["pendiente", "aprobado", "rechazado"].map((status) => {
               const titulo = {
                 pendiente: (
                   <span className="inline-flex items-center gap-2">
                     <MdMarkunread className="text-gray-700" />
                     Pendientes
+                    <div className="ml-auto text-sm text-muted-foreground font-medium mt-2 sm:mt-0">
+                      {movementsData?.propios?.filter((m) => m.estatus_movimiento === "pendiente").length || 0}
+                    </div>
                   </span>
                 ),
                 aprobado: (
                   <span className="inline-flex items-center gap-2">
                     <MdTaskAlt className="text-gray-700" />
                     Aprobados
+                    <div className="ml-auto text-sm text-muted-foreground font-medium mt-2 sm:mt-0">
+                      {movementsData?.propios?.filter((m) => m.estatus_movimiento === "aprobado").length || 0}
+                    </div>
                   </span>
                 ),
                 rechazado: (
                   <span className="inline-flex items-center gap-2">
                     <MdCancel className="text-gray-700" />
                     Rechazados
+                    <div className="ml-auto text-sm text-muted-foreground font-medium mt-2 sm:mt-0">
+                      {movementsData?.propios?.filter((m) => m.estatus_movimiento === "rechazado").length || 0}
+                    </div>
                   </span>
                 ),
               }[status];
@@ -863,10 +882,10 @@ const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>(
                             </div>
 
                             <p className="text-sm text-tinto-500 italic">
-  {status === "pendiente" && `En espera de aprobación de: ${obtenerAprobadorClave(mov.historial_aprobaciones_detallado, status)}`}
-  {status === "aprobado" && `Aprobado por: ${obtenerAprobadorClave(mov.historial_aprobaciones_detallado, status)}`}
-  {status === "rechazado" && `Rechazado por: ${obtenerAprobadorClave(mov.historial_aprobaciones_detallado, status)}`}
-</p>
+                              {status === "pendiente" && `En espera de aprobación de: ${obtenerAprobadorClave(mov.historial_aprobaciones_detallado, status)}`}
+                              {status === "aprobado" && `Aprobado por: ${obtenerAprobadorClave(mov.historial_aprobaciones_detallado, status)}`}
+                              {status === "rechazado" && `Rechazado por: ${obtenerAprobadorClave(mov.historial_aprobaciones_detallado, status)}`}
+                            </p>
 
                             <div className="mt-2 space-y-1 text-sm text-gray-700">
                               {renderDatosJsonPorTipo(mov.tipo_movimiento, mov.datos_json)}
@@ -894,6 +913,115 @@ const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>(
           </Accordion>
         </CardContent>
       </Card>
+
+      <Dialog>
+
+  <DialogContent className="max-w-3xl w-full bg-white/90 backdrop-blur-md rounded-xl shadow-2xl">
+    <div className="space-y-4">
+      <h2 className="text-xl font-bold text-gray-800">Aviso importante</h2>
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        Esta página se encuentra en constante mejora. Si experimentas problemas relacionados con su funcionamiento, por favor contacta al área de desarrollo para recibir asistencia.
+      </p>
+
+      <CardFooter className="flex justify-end mt-4">
+        <div className="w-full bg-white/90 border rounded-lg p-4 shadow-sm max-w-4xl">
+          <h3 className="text-base font-semibold mb-2">¿Problemas con tu asistencia?</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Para cualquier duda o aclaración, comunícate al área de nóminas:
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            {/* Francisco Castellanos */}
+            <div className="border rounded-md p-3 bg-gray-50 flex flex-col gap-2">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-300">
+                  <Image
+                    width={48}
+                    height={48}
+                    src={`http://api-img.172.16.15.30.sslip.io/uploads/2294.jpg`}
+                    alt="Foto de Francisco Castellanos"
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div>
+                  <h2 className="font-medium leading-none">Francisco Castellanos</h2>
+                  <h4 className="font-thin leading-none">Ing. Desarrollo y Aplicaciones</h4>
+                  <p className="text-muted-foreground text-xs">📞 331 363 6028</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <a
+                  href="https://wa.me/5213313636028?text=Hola%2C%20tengo%20una%20duda%20sobre%20movimientos%20de%20personal"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700"
+                >
+                  WhatsApp
+                </a>
+                <a
+                  href="tel:3313331464"
+                  className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700"
+                >
+                  Llamar
+                </a>
+                <a
+                  href="mailto:juan.castellanos@grupotarahumara.com.mx"
+                  className="bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700"
+                >
+                  Correo
+                </a>
+              </div>
+            </div>
+
+            {/* Mauricio Monterde */}
+            <div className="border rounded-md p-3 bg-gray-50 flex flex-col gap-2">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-300">
+                  <Image
+                    width={48}
+                    height={48}
+                    src={`http://api-img.172.16.15.30.sslip.io/uploads/2525.jpg`}
+                    alt="Foto de Mauricio Monterde"
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div>
+                  <h2 className="font-medium leading-none">Mauricio Monterde</h2>
+                  <h4 className="font-thin leading-none">Analista de Nominas</h4>
+                  <p className="text-muted-foreground text-xs">📞 333 662 8849</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <a
+                  href="https://wa.me/5213336628849?text=Hola%2C%20necesito%20aclarar%20un%20registro%20de%20asistencia"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700"
+                >
+                  WhatsApp
+                </a>
+                <a
+                  href="tel:3336628849"
+                  className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700"
+                >
+                  Llamar
+                </a>
+                <a
+                  href="mailto:mauricio.monterde@grupotarahumara.com.mx"
+                  className="bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700"
+                >
+                  Correo
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardFooter>
+    </div>
+  </DialogContent>
+</Dialog>
+
+      
     </div>
   );
 }

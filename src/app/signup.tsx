@@ -29,7 +29,7 @@ export function Login() {
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmarRef = useRef<HTMLInputElement>(null);
 
-  const baseURL = process.env.NEXT_PUBLIC_BASE_URL ?? "";
+  // const baseURL = process.env.NEXT_PUBLIC_BASE_URL ?? "";
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -88,7 +88,7 @@ export function Login() {
     setRegistroLoading(true);
 
     try {
-      const check = await fetch(`${baseURL}/api/validarEmpleado`, {
+      const check = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/validarEmpleado`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ num_empleado: registroEmpleado }),
@@ -106,7 +106,7 @@ export function Login() {
         return;
       }
 
-      await axios.post(`${baseURL}/api/agregarUsuario`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/agregarUsuario`, {
         num_empleado: registroEmpleado,
         password: registroPassword,
       });

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { format } from "date-fns";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,7 +12,7 @@ import {
   crearMovimiento,
   obtenerMisMovimientos,
 } from "@/services/movementsService";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,6 +23,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { DateRange } from "react-day-picker";
 import Image from "next/image";
+import { HelpCircle } from "lucide-react";
 
 function RegisterCheckInCheckOut() {
   const { user } = useAuth();
@@ -44,7 +45,7 @@ function RegisterCheckInCheckOut() {
     horaEntradaReal?: string;
     horaSalidaReal?: string;
   };
-
+  const bounceRef = useRef<HTMLButtonElement>(null);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
   const [comments, setComments] = useState("");
   const [requestStatus, setRequestStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -291,12 +292,12 @@ const getEstatusMovimiento = (fecha: string) => {
 
 
   return (
-    <div className="max-w-fit mx-auto p-6">
+    <div className="max-w-fit mx-auto p-6 mt-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Columna izquierda - Foto y Resumen */}
         <div className="space-y-6">
           {/* Card de Foto y datos principales */}
-          <Card className="relative rounded-3xl shadow-lg border border-muted bg-white/80 backdrop-blur-md">
+          <Card className="relative rounded-3xl p-6 shadow-lg border border-muted bg-white/80 backdrop-blur-md">
             <div className="absolute top-4 right-4">
               <Badge
                 variant="outline"
@@ -310,22 +311,22 @@ const getEstatusMovimiento = (fecha: string) => {
             </div>
 
             <CardHeader className="flex flex-col items-center justify-center space-y-4 text-center">
-<div className="w-32 h-32 rounded-full overflow-hidden border-2 border-gray-300">
-  {empleado?.Personal ? (
-    <Image
-      width={128}
-      height={128}
-      src={`http://api-img.172.16.15.30.sslip.io/uploads/${empleado.Personal}.jpg`}
-      alt="Foto del empleado"
-      className="object-cover w-full h-full"
-    />
-  ) : (
-    <div className="flex items-center justify-center w-full h-full bg-gray-200 text-xl font-semibold">
-      {empleado?.Nombre?.[0]}
-      {empleado?.ApellidoPaterno?.[0]}
-    </div>
-  )}
-</div>
+              <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-gray-300">
+                {empleado?.Personal ? (
+                  <Image
+                    width={128}
+                    height={128}
+                    src={`http://api-img.172.16.15.30.sslip.io/uploads/${empleado.Personal}.jpg`}
+                    alt="Foto del empleado"
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center w-full h-full bg-gray-200 text-xl font-semibold">
+                    {empleado?.Nombre?.[0]}
+                    {empleado?.ApellidoPaterno?.[0]}
+                  </div>
+                )}
+              </div>
 
 
               <div>
@@ -336,7 +337,7 @@ const getEstatusMovimiento = (fecha: string) => {
               </div>
             </CardHeader>
 
-            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 px-6 py-4">
+            <CardContent className="flex flex-wrap justify-between gap-4 px-4 py-1">
               <InfoItem label="Puesto" value={empleado?.Puesto || ""} />
               <InfoItem label="Departamento" value={empleado?.Departamento || ""} />
               <InfoItem label="Tipo de Pago" value={empleado?.PeriodoTipo || "No especificado"} />
@@ -555,7 +556,116 @@ const getEstatusMovimiento = (fecha: string) => {
         </DialogContent>
       </Dialog>
 
+      <Dialog>
+
+
+  <DialogContent className="max-w-3xl w-full bg-white/90 backdrop-blur-md rounded-xl shadow-2xl">
+    <div className="space-y-4">
+      <h2 className="text-xl font-bold text-gray-800">Aviso importante</h2>
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        Esta página se encuentra en constante mejora. Si experimentas problemas relacionados con su funcionamiento, por favor contacta al área de desarrollo para recibir asistencia.
+      </p>
+
+      <CardFooter className="flex justify-end mt-4">
+        <div className="w-full bg-white/90 border rounded-lg p-4 shadow-sm max-w-4xl">
+          <h3 className="text-base font-semibold mb-2">¿Problemas con tu asistencia?</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Para cualquier duda o aclaración, comunícate con los siguientes contactos:
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            {/* Francisco Castellanos */}
+            <div className="border rounded-md p-3 bg-gray-50 flex flex-col gap-2">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-300">
+                  <Image
+                    width={48}
+                    height={48}
+                    src={`http://api-img.172.16.15.30.sslip.io/uploads/2294.jpg`}
+                    alt="Foto de Francisco Castellanos"
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div>
+                  <h2 className="font-medium leading-none">Francisco Castellanos</h2>
+                  <h4 className="font-thin leading-none">Ing. Desarrollo y Aplicaciones</h4>
+                  <p className="text-muted-foreground text-xs">📞 331 363 6028</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <a
+                  href="https://wa.me/5213313636028?text=Hola%2C%20tengo%20una%20duda%20sobre%20movimientos%20de%20personal"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700"
+                >
+                  WhatsApp
+                </a>
+                <a
+                  href="tel:3313331464"
+                  className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700"
+                >
+                  Llamar
+                </a>
+                <a
+                  href="mailto:juan.castellanos@grupotarahumara.com.mx"
+                  className="bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700"
+                >
+                  Correo
+                </a>
+              </div>
+            </div>
+
+            {/* Mauricio Monterde */}
+            <div className="border rounded-md p-3 bg-gray-50 flex flex-col gap-2">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-300">
+                  <Image
+                    width={48}
+                    height={48}
+                    src={`http://api-img.172.16.15.30.sslip.io/uploads/2525.jpg`}
+                    alt="Foto de Mauricio Monterde"
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div>
+                  <h2 className="font-medium leading-none">Mauricio Monterde</h2>
+                  <h4 className="font-thin leading-none">Analista de Nominas</h4>
+                  <p className="text-muted-foreground text-xs">📞 333 662 8849</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <a
+                  href="https://wa.me/5213336628849?text=Hola%2C%20necesito%20aclarar%20un%20registro%20de%20asistencia"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700"
+                >
+                  WhatsApp
+                </a>
+                <a
+                  href="tel:3336628849"
+                  className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700"
+                >
+                  Llamar
+                </a>
+                <a
+                  href="mailto:mauricio.monterde@grupotarahumara.com.mx"
+                  className="bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700"
+                >
+                  Correo
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardFooter>
     </div>
+  </DialogContent>
+</Dialog>
+
+    </div>
+    
 
   );
 

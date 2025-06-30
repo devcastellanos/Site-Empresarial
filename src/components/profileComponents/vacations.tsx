@@ -24,7 +24,9 @@ import { useAuth } from "../../app/context/AuthContext";
 import { User } from "@/lib/interfaces";
 import { crearMovimiento } from "@/services/movementsService";
 import Swal from "sweetalert2";
-
+import Image from "next/image"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { HelpCircle } from "lucide-react";
 function Vacations() {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [comments, setComments] = useState<string>("");
@@ -33,29 +35,6 @@ function Vacations() {
   const nivel_aprobacion = 1;
   const { user } = useAuth();
   const [empleado, setEmpleado] = useState<User | null>(null);
-  const [vacacionesHistorico, setVacacionesHistorico] = useState<any[]>([]);
-
-  useEffect(() => {
-    const obtenerHistorialVacaciones = async () => {
-      if (!user?.num_empleado) return;
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_NOM_API_URL}/api/vacaciones/${user.num_empleado}`);
-        const data = await res.json();
-
-        setResumenVacaciones({
-          total_primavacacional_vigente: data?.[0]?.diasprimavacacional ?? 0,
-          total_dias_vacaciones: data.reduce((sum: number, row: any) => sum + (row.diasvacaciones ?? 0), 0),
-          saldo_vigente: data?.[0]?.saldo_vigente ?? 0,
-        });
-
-        setVacacionesHistorico(data);
-      } catch (e) {
-        console.error("Error al obtener historial de vacaciones:", e);
-      }
-    };
-
-    obtenerHistorialVacaciones();
-  }, [user]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -247,22 +226,24 @@ function Vacations() {
 
   return (
     <>
-    <div className="max-w-fit mx-auto p-6 space-y-6">
-      <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
+    <div className="max-w-fit mx-auto p-6 space-y-6 mt-6">
+      {/* <Card className="mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
         <div className="flex items-center gap-4">
           <Info className="w-8 h-8 text-blue-600" />
           <h1 className="text-4xl font-bold tracking-tight text-gray-800 drop-shadow-sm">
             Vacaciones
           </h1>
         </div>
-      </Card>
+      </Card> */}
 
       {/* Grid principal con dos columnas */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Columna izquierda - Información de vacaciones */}
         <Card className="bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
           <CardHeader>
-            <CardTitle>Información de Vacaciones</CardTitle>
+            <h1 className="text-4xl font-bold tracking-tight text-gray-800 drop-shadow-sm">
+              Vacaciones
+            </h1>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -400,69 +381,116 @@ function Vacations() {
                   </div>
 
                   <div className="pt-2 border-t">
+                    <Button
+                      onClick={handleSubmit}
+                      disabled={selectedDates.length === 0 || requestStatus === "submitting"}
+                      className="px-6 py-2 rounded-xl text-white font-semibold bg-[#9A3324] hover:bg-[#7f2a1c] transition-all shadow-md backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {requestStatus === "submitting" ? "Enviando..." : " Enviar solicitud"}
+                    </Button>
+                    <br />
+                    <br />
                     <Label className="text-center">
-                      Días restantes después de esta solicitud:
+                      El registro no se ve reflejado inmediatamente en el sistema. Por favor, espera a que sea procesado por el departamento de Recursos Humanos.
                     </Label>
-                    <p className="text-lg font-semibold text-center">
-                      {remainingDays} días
-                    </p>
                   </div>
                 </div>
               </div>
             </CardContent>
             <CardFooter className="flex justify-end mt-4">
-              <Button
-                onClick={handleSubmit}
-                disabled={selectedDates.length === 0 || requestStatus === "submitting"}
-                className="px-6 py-2 rounded-xl text-white font-semibold bg-blue-600 hover:bg-blue-700 transition-all shadow-md backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {requestStatus === "submitting" ? "Enviando..." : "🚀 Enviar solicitud"}
-              </Button>
+              <div className="w-full bg-white/90 border rounded-lg p-4 shadow-sm max-w-4xl">
+                <h3 className="text-base font-semibold mb-2">¿Problemas con tu asistencia?</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Para cualquier duda o aclaración, comunícate al área de nóminas:
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                  {/* Jesús Yañez */}
+                  <div className="border rounded-md p-3 bg-gray-50 flex flex-col gap-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-300">
+                        <Image
+                          width={48}
+                          height={48}
+                          src={`http://api-img.172.16.15.30.sslip.io/uploads/1440.jpg`}
+                          alt="Foto de Jesús Yañez"
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                      <div>
+                        <h4 className="font-medium leading-none">Jesús Yañez</h4>
+                        <p className="text-muted-foreground text-xs">📞 331 333 1464</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <a
+                        href="https://wa.me/5213313331464?text=Hola%2C%20tengo%20una%20duda%20sobre%20mi%20asistencia"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700"
+                      >
+                        WhatsApp
+                      </a>
+                      <a
+                        href="tel:3313331464"
+                        className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700"
+                      >
+                        Llamar
+                      </a>
+                      <a
+                        href="mailto:jesus.yanez@grupotarahumara.com.mx"
+                        className="bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700"
+                      >
+                        Correo
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Mauricio Monterde */}
+                  <div className="border rounded-md p-3 bg-gray-50 flex flex-col gap-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-300">
+                        <Image
+                          width={48}
+                          height={48}
+                          src={`http://api-img.172.16.15.30.sslip.io/uploads/2525.jpg`}
+                          alt="Foto de Mauricio Monterde"
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                      <div>
+                        <h4 className="font-medium leading-none">Mauricio Monterde</h4>
+                        <p className="text-muted-foreground text-xs">📞 333 662 8849</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <a
+                        href="https://wa.me/5213336628849?text=Hola%2C%20necesito%20aclarar%20un%20registro%20de%20asistencia"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700"
+                      >
+                        WhatsApp
+                      </a>
+                      <a
+                        href="tel:3336628849"
+                        className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700"
+                      >
+                        Llamar
+                      </a>
+                      <a
+                        href="mailto:mauricio.monterde@grupotarahumara.com.mx"
+                        className="bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700"
+                      >
+                        Correo
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </CardFooter>
           </Card>
         </div>
-
-        <Separator className="my-4" />
-<div>
-  <Label className="font-semibold">Historial de vacaciones:</Label>
-  <div className="mt-2 overflow-auto rounded-lg border">
-    <table className="min-w-full text-sm text-gray-700">
-      <thead className="bg-gray-100 border-b">
-        <tr>
-          <th className="px-4 py-2 text-left">Ejercicio</th>
-          <th className="px-4 py-2 text-left">Inicio</th>
-          <th className="px-4 py-2 text-left">Fin</th>
-          <th className="px-4 py-2 text-left">Días Vacaciones</th>
-          <th className="px-4 py-2 text-left">Prima Vacacional</th>
-          <th className="px-4 py-2 text-left">Otorgados por ley</th>
-          <th className="px-4 py-2 text-left">Saldo vigente</th>
-        </tr>
-      </thead>
-      <tbody>
-        {vacacionesHistorico.length === 0 ? (
-          <tr>
-            <td colSpan={7} className="px-4 py-2 text-center text-muted-foreground">
-              Cargando historial...
-            </td>
-          </tr>
-        ) : (
-          vacacionesHistorico.map((item, index) => (
-            <tr key={index} className="border-b hover:bg-muted/30">
-              <td className="px-4 py-2">{item.ejercicio}</td>
-              <td className="px-4 py-2">{format(new Date(item.fechainicio), "dd/MM/yyyy")}</td>
-              <td className="px-4 py-2">{format(new Date(item.fechafin), "dd/MM/yyyy")}</td>
-              <td className="px-4 py-2">{item.diasvacaciones}</td>
-              <td className="px-4 py-2">{item.diasprimavacacional}</td>
-              <td className="px-4 py-2">{item.dias_otorgados_ley}</td>
-              <td className="px-4 py-2">{item.saldo_vigente}</td>
-            </tr>
-          ))
-        )}
-      </tbody>
-    </table>
-  </div>
-</div>
-
       </div>
 
       {/* </div> */}
