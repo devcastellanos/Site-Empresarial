@@ -242,16 +242,37 @@ const UsuariosPage = () => {
                     <SelectValue placeholder="Selecciona un rol" />
                   </SelectTrigger>
                   <SelectContent>
-                    {(user?.rol === "admin" || currentUsuario.rol === "admin") && (
-  <SelectItem value="admin">Administrador</SelectItem>
-)}
-                    <SelectItem value="Usuario común">Usuario</SelectItem>
-                    <SelectItem value="Gerente">Gerente</SelectItem>
-                    <SelectItem value="Coordinador">Coordinador</SelectItem>
-                    <SelectItem value="Jefe">Jefe</SelectItem>
-                    <SelectItem value="nominas">Nóminas</SelectItem>
-                    <SelectItem value="atraccion de talento">Atracción de Talento</SelectItem>
-                  </SelectContent>
+  {user?.rol === "admin" && (
+    <>
+      <SelectItem value="admin">Administrador</SelectItem>
+      <SelectItem value="Usuario común">Usuario</SelectItem>
+      <SelectItem value="Gerente">Gerente</SelectItem>
+      <SelectItem value="Coordinador">Coordinador</SelectItem>
+      <SelectItem value="Jefe">Jefe</SelectItem>
+      <SelectItem value="Nominas">Nóminas</SelectItem>
+      <SelectItem value="Capacitacion">Capacitación</SelectItem>
+      <SelectItem value="Reclutamiento">Reclutamiento</SelectItem>
+      <SelectItem value="Subjefe">Subjefe</SelectItem>
+      <SelectItem value="Direccion">Dirección</SelectItem>
+      <SelectItem value="Director">Director</SelectItem>
+    </>
+  )}
+
+  {user?.rol === "Capacitacion" && (
+    <>
+      <SelectItem value="Usuario común">Usuario</SelectItem>
+      <SelectItem value="Gerente">Gerente</SelectItem>
+      <SelectItem value="Coordinador">Coordinador</SelectItem>
+      <SelectItem value="Jefe">Jefe</SelectItem>
+      <SelectItem value="Nominas">Nóminas</SelectItem>
+      <SelectItem value="Capacitacion">Capacitación</SelectItem>
+      <SelectItem value="Reclutamiento">Reclutamiento</SelectItem>
+      <SelectItem value="Subjefe">Subjefe</SelectItem>
+      <SelectItem value="Direccion">Dirección</SelectItem>
+      <SelectItem value="Director">Director</SelectItem>
+    </>
+  )}
+</SelectContent>
                 </Select>
               </div>
 
