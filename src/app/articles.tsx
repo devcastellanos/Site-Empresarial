@@ -42,7 +42,7 @@ const ARTICLES = [
 
 export function Articles() {
   return (
-    <section className="w-full min-h-screen bg-gray-900 bg-opacity-95 text-center py-10 px-4 md:px-16">
+    <section className="w-full min-h-screen text-center py-10 px-4 md:px-16">
       
       {/* Título */}
       <Typography color="white" className="text-[36px] lg:text-[50px] font-bold leading-tight" {...({} as any)}>

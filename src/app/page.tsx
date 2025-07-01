@@ -115,7 +115,7 @@ export default function IntranetHomePage() {
                   </div>
 
                   {/* Reverso */}
-                  <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gray-900 rounded-2xl p-4 text-white shadow-lg shadow-black/30 flex flex-col justify-between">
+                  <div className="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl p-4 text-white shadow-lg shadow-black/30 flex flex-col justify-between">
                     <div>
                       <h3 className="text-xl font-semibold mb-2 break-words">
                         {article.title}
@@ -145,7 +145,7 @@ export default function IntranetHomePage() {
 
       <motion.section
         ref={orgPostsRef}
-        className="w-full bg-gray-900 bg-opacity-95 text-center py-8 px-4 md:px-16"
+        className="w-full text-center py-8 px-4 md:px-16"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: false }}

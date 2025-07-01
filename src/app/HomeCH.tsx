@@ -51,13 +51,13 @@ export default function CapacitacionPage() {
       <NavbarRH />
       <motion.header
         ref={ref}
-        className="relative w-full min-h-screen flex flex-col items-center justify-start text-center overflow-hidden bg-gray-900"
+        className="relative w-full min-h-screen flex flex-col items-center justify-start text-center overflow-hidden "
         initial={{ opacity: 0, y: -50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false }}
         transition={{ duration: 1 }}
       >
-        <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50" />
+        <div className="absolute top-0 left-0 w-full h-full bg-[#9A3324] bg-opacity-50" />
         <div className="relative z-10 w-full max-w-6xl px-6 text-white mt-48">
           <h1 className="text-[48px] lg:text-[64px] font-extrabold leading-tight">
             Capital Humano
@@ -89,7 +89,7 @@ export default function CapacitacionPage() {
                 viewport={{ once: false }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
                 whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-gray-800 rounded-2xl overflow-hidden shadow-lg shadow-black/30 hover:shadow-xl transition-all duration-300"
+                className="bg-[#9A3324] rounded-2xl overflow-hidden shadow-lg shadow-black/30 hover:shadow-xl transition-all duration-300"
               >
                 <Image
                   src={article.img}
@@ -130,7 +130,7 @@ export default function CapacitacionPage() {
       {/* ORG CHART SECTION */}
       <motion.section
         ref={orgChartRef}
-        className="w-full bg-gray-900 bg-opacity-95 text-center py-10 px-4 md:px-16"
+        className="w-full bg-[#9A3324] text-center py-10 px-4 md:px-16"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: false }}

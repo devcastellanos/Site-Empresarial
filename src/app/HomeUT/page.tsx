@@ -148,8 +148,8 @@ export default function IntranetHomePage() {
       </motion.header>
       {/* ORG CHART SECTION */}
       <motion.section
-        ref={orgChartRef}
-        className="w-full bg-gray-900 bg-opacity-95 text-center py-10 px-4 md:px-16"
+        ref={orgChartRef} 
+        className="w-full bg-red text-center py-10 px-4 md:px-16"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: false }}

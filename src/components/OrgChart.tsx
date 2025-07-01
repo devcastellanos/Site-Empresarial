@@ -114,7 +114,7 @@ const PersonCard = ({ person }: { person: Person }) => (
         transition={{ type: "spring", stiffness: 200 }}
         className="cursor-pointer"
       >
-        <Card className="w-44 bg-white/60 dark:bg-zinc-900/30 backdrop-blur border border-gray-300 dark:border-zinc-700 shadow-md hover:shadow-lg transition-all rounded-xl">
+        <Card className="w-44 bg-white/60 backdrop-blur border border-gray-300 dark:border-zinc-700 shadow-md hover:shadow-lg transition-all rounded-xl">
           <CardContent className="flex flex-col items-center justify-center p-4 space-y-3">
             <img
               src={person.image}

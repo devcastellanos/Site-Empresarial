@@ -73,12 +73,18 @@ export default function Campaign() {
   }, [])
 
   useEffect(() => {
-    const yaMostrado = sessionStorage.getItem("intro_checkin_shown")
-    if (!yaMostrado && vista === "perfil") {
+    const intro = introDialogs[vista]
+    if (!intro) return
+
+    const yaMostrado = sessionStorage.getItem(intro.storageKey)
+    if (!yaMostrado) {
       setShowIntro(true)
-      sessionStorage.setItem("intro_checkin_shown", "true")
+      sessionStorage.setItem(intro.storageKey, "true")
+    } else {
+      setShowIntro(false) // Oculta si ya se mostró
     }
   }, [vista])
+
 
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, vista)
@@ -105,6 +111,106 @@ export default function Campaign() {
     patron: "Modo Patrón",
     monitorearequipo: "Monitorear Equipo",
   }
+
+  const introDialogs: Partial<Record<PerfilVista, { title: string; content: React.ReactNode; storageKey: string }>> = {
+    perfil: {
+      title: "👋 Bienvenido a tu vista de asistencia",
+      storageKey: "intro_checkin_shown",
+      content: (
+        <div className="space-y-4 text-sm text-muted-foreground">
+          <p>Desde aquí puedes:</p>
+          <ul className="list-disc pl-4">
+            <li>Ver tu asistencia diaria (entradas y salidas).</li>
+            <li>Justificar faltas o retardos con un solo clic.</li>
+            <li>Consultar tu historial de asistencia.</li>
+            <li>Revisar tu porcentaje de puntualidad.</li>
+          </ul>
+          <p className="text-xs text-gray-400">Este mensaje solo se mostrará una vez por sesión.</p>
+        </div>
+      ),
+    },
+    vacaciones: {
+      title: "🌴 ¡Consulta tus vacaciones!",
+      storageKey: "intro_vacaciones_shown",
+      content: (
+        <div className="text-sm text-muted-foreground space-y-2">
+          <p>Aquí puedes:</p>
+          <ul className="list-disc pl-4">
+            <li>Revisar cuántos días tienes disponibles.</li>
+            <li>Seleccionar tus días de vacaciones fácilmente.</li>
+            <li>Enviar tu solicitud para aprobación.</li>
+          </ul>
+        </div>
+      ),
+    },
+    cursos: {
+      title: "📚 Bienvenido a tus cursos",
+      storageKey: "intro_cursos_shown",
+      content: (
+        <div className="text-sm text-muted-foreground space-y-2">
+          <p>Desde aquí puedes:</p>
+          <ul className="list-disc pl-4">
+            <li>Ver los cursos disponibles.</li>
+            <li>Consultar tus avances.</li>
+            <li>Entrar a tus clases y actividades.</li>
+          </ul>
+        </div>
+      ),
+    },
+    movimientos: {
+      title: "📝 Solicita tus movimientos",
+      storageKey: "intro_movimientos_shown",
+      content: (
+        <div className="text-sm text-muted-foreground space-y-2">
+          <p>En esta sección puedes:</p>
+          <ul className="list-disc pl-4">
+            <li>Solicitar cambios de turno, retardos justificados, etc.</li>
+            <li>Dar seguimiento al estatus de tus solicitudes.</li>
+          </ul>
+        </div>
+      ),
+    },
+    requisiciones: {
+      title: "📋 Panel de Requisiciones",
+      storageKey: "intro_requisiciones_shown",
+      content: (
+        <div className="text-sm text-muted-foreground space-y-2">
+          <p>Desde aquí puedes:</p>
+          <ul className="list-disc pl-4">
+            <li>Consultar y aprobar requisiciones de personal.</li>
+            <li>Revisar su estatus y observaciones.</li>
+          </ul>
+        </div>
+      ),
+    },
+    patron: {
+      title: "🎩 Modo Patrón Activado",
+      storageKey: "intro_patron_shown",
+      content: (
+        <div className="text-sm text-muted-foreground space-y-2">
+          <p>Esta vista te permite:</p>
+          <ul className="list-disc pl-4">
+            <li>Ver información consolidada del equipo.</li>
+            <li>Acceder a datos avanzados.</li>
+          </ul>
+        </div>
+      ),
+    },
+    monitorearequipo: {
+      title: "🧑‍💼 Monitoreo de Subordinados",
+      storageKey: "intro_monitor_shown",
+      content: (
+        <div className="text-sm text-muted-foreground space-y-2">
+          <p>Aquí puedes:</p>
+          <ul className="list-disc pl-4">
+            <li>Revisar asistencias y vacaciones del equipo.</li>
+            <li>Tomar decisiones basadas en reportes en tiempo real.</li>
+          </ul>
+        </div>
+      ),
+    },
+  }
+
 
   const renderVista = () => {
     if (
@@ -170,23 +276,16 @@ export default function Campaign() {
         </div>
       </SidebarInset>
 
-      <Dialog open={showIntro} onOpenChange={setShowIntro}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>👋 Bienvenido a tu vista de asistencia</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 text-sm text-muted-foreground">
-            <p>Desde aquí puedes:</p>
-            <ul className="list-disc pl-4">
-              <li>Ver tu asistencia diaria (entradas y salidas).</li>
-              <li>Justificar faltas o retardos con un solo clic.</li>
-              <li>Consultar tu historial de asistencia.</li>
-              <li>Revisar tu porcentaje de puntualidad.</li>
-            </ul>
-            <p className="text-xs text-gray-400">Este mensaje solo se mostrará una vez por sesión.</p>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {introDialogs[vista] && (
+        <Dialog open={showIntro} onOpenChange={setShowIntro}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{introDialogs[vista]?.title}</DialogTitle>
+            </DialogHeader>
+            {introDialogs[vista]?.content}
+          </DialogContent>
+        </Dialog>
+      )}
 
       <Dialog open={openHelpDialog} onOpenChange={setOpenHelpDialog}>
         <DialogTrigger asChild>
