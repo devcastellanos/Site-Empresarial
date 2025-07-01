@@ -136,7 +136,7 @@ const PersonImage = ({
   className: string
 }) => {
   const [hasError, setHasError] = useState(false)
-  const imageUrl = `http://api-img.172.16.15.30.sslip.io/uploads/${employeeId}.jpg`
+  const imageUrl = `${process.env.NEXT_PUBLIC_IMAGE_URL}/uploads/${employeeId}.jpg`;
 
   if (hasError) {
     return <UserCircle className={`${className} text-zinc-400 bg-white`} />

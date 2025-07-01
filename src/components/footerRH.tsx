@@ -1,6 +1,5 @@
 import { Mail, User, Smartphone } from "lucide-react";
-
-const CURRENT_YEAR = new Date().getFullYear();
+import { useState } from "react";
 
 export function FooterRH() {
   const currentYear = new Date().getFullYear();
@@ -54,13 +53,24 @@ interface ContactCardProps {
 }
 
 function ContactCard({ name, email, phone, employeeId }: ContactCardProps) {
+  const [hasError, setHasError] = useState(false);
+
+  const imageSrc = `${process.env.NEXT_PUBLIC_IMAGE_URL}/uploads/${employeeId}.jpg`;
+
   return (
     <div className="flex items-center gap-4 bg-gray-700/50 p-4 rounded-lg shadow-lg hover:bg-gray-600/50 transition-all duration-300 w-full max-w-sm md:max-w-none">
-      <img
-        src={`http://api-img.172.16.15.30.sslip.io/uploads/${employeeId}.jpg`}
-        alt={name}
-        className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md"
-      />
+      {hasError ? (
+        <div className="w-14 h-14 rounded-full border-2 border-white bg-white flex items-center justify-center shadow-md">
+          <User className="w-7 h-7 text-gray-500" />
+        </div>
+      ) : (
+        <img
+          src={imageSrc}
+          alt={name}
+          className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md"
+          onError={() => setHasError(true)}
+        />
+      )}
       <div className="text-left">
         <p className="text-lg font-medium text-white">{name}</p>
         <p className="text-sm text-gray-400 flex items-center gap-1">
@@ -84,5 +94,4 @@ function ContactCard({ name, email, phone, employeeId }: ContactCardProps) {
     </div>
   );
 }
-
 export default FooterRH;
