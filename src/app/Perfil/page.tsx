@@ -53,9 +53,23 @@ export default function Campaign() {
 
   const { user } = useAuth()
 
+  // ✅ Detectar el hash inicial
   useEffect(() => {
-    setVista("perfil")
-    localStorage.setItem(LOCAL_STORAGE_KEY, "perfil")
+    const hash = window.location.hash.replace("#", "")
+    const vistaInicial = hash || "perfil"
+    setVista(vistaInicial as PerfilVista)
+    localStorage.setItem(LOCAL_STORAGE_KEY, vistaInicial)
+  }, [])
+
+  // ✅ Detectar cambios futuros en el hash
+  useEffect(() => {
+    const onHashChange = () => {
+      const nuevaVista = window.location.hash.replace("#", "") || "perfil"
+      setVista(nuevaVista as PerfilVista)
+    }
+
+    window.addEventListener("hashchange", onHashChange)
+    return () => window.removeEventListener("hashchange", onHashChange)
   }, [])
 
   useEffect(() => {
@@ -93,8 +107,16 @@ export default function Campaign() {
   }
 
   const renderVista = () => {
-    if (vista === "requisiciones" && (user?.rol !== "admin" && user?.rol !== "atraccionT")) {
-      return <div className="text-red-500 font-semibold">Acceso denegado: necesitas permisos de administrador.</div>
+    if (
+      vista === "requisiciones" &&
+      user?.rol !== "admin" &&
+      user?.rol !== "atraccionT"
+    ) {
+      return (
+        <div className="text-red-500 font-semibold">
+          Acceso denegado: necesitas permisos de administrador.
+        </div>
+      )
     }
 
     switch (vista) {
@@ -118,7 +140,13 @@ export default function Campaign() {
 
   return (
     <SidebarProvider>
-      <AppSidebar setVista={(vista: string) => setVista(vista as PerfilVista)} vistaActual={vista} />
+      <AppSidebar
+        setVista={(vista: string) => {
+          window.location.hash = `#${vista}`
+          setVista(vista as PerfilVista)
+        }}
+        vistaActual={vista}
+      />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">

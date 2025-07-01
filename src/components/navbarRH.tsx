@@ -68,7 +68,7 @@ export function NavbarRH() {
     <MTNavbar
       shadow={false}
       fullWidth
-      className="bg-[#818181] bg-opacity-30 backdrop-blur-md border-0 fixed top-0 left-0 right-0 z-50 transition-all duration-300 margin-bottom-4 rounded-lg px-4 py-2 lg:px-8 lg:py-4 lg:rounded-xl"
+      className="bg-[#818181] bg-opacity-60 backdrop-blur-md border-0 fixed top-0 left-0 right-0 z-50 transition-all duration-300 margin-bottom-4 rounded-lg px-4 py-2 lg:px-8 lg:py-4 lg:rounded-xl"
       
 {...({} as any)}
     >

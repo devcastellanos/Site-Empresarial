@@ -35,6 +35,7 @@ import Image from "next/image"
 
 import { useAuth } from "@/app/context/AuthContext"
 
+
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   setVista: (vista: string) => void
   vistaActual?: string

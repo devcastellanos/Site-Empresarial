@@ -101,7 +101,7 @@ export function ConvenioCard({
             alt="Imagen del convenio"
             width={600}
             height={300}
-            className="w-full h-60 object-cover"
+            className="w-full h-120 transition-transform duration-300 hover:scale-105"
           />
         </a>
         <CardContent className="p-4 space-y-2">

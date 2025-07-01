@@ -89,14 +89,14 @@ const filteredAndSortedPosts = [...posts]
 
   return (
     <section className=" flex flex-col items-center justify-center px-4 pt-24 pb-12">
-      <motion.video
+      {/* <motion.video
         autoPlay
         loop
         muted
         className="fixed top-0 left-0 w-full h-full object-cover -z-20 opacity-40"
       >
         <source src="/image/background.mp4" type="video/mp4" />
-      </motion.video>
+      </motion.video> */}
 
       <Card className="shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl max-w-screen-lg w-full">
         <div className="h-64 relative">

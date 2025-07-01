@@ -7,34 +7,35 @@ import OrgChart from "@/components/OrgChart";
 
 const ARTICLES = [
   {
-    img: "/image/osticket.png",
-    title: "Osticket",
-    desc: "Plataforma para generar y dar seguimiento a tickets de soporte técnico y otros servicios.",
-    link: "https://soporte.grupotarahumara.com.mx/",
+    img: "/image/AsistenciaCH.png",
+    title: "Asistencia",
+    desc: "Revisa tu asistencia e incidencias en tu perfil Tarahumara.",
+    // usar variable de entorno para el link
+    link: `${process.env.NEXT_PUBLIC_BASE_URL}/Perfil`,
   },
   {
-    img: "/image/convenio.jpg",
-    title: "Convenios",
-    desc: "Explora los convenios con instituciones educativas, descuentos y beneficios para colaboradores.",
-    link: "/Convenios?tipo=no educativo",
+    img: "/image/VacacionesCH.png",
+    title: "Vacaciones",
+    desc: "Consulta y solicita tus vacaciones desde tu perfil Tarahumara.",
+    link: `${process.env.NEXT_PUBLIC_BASE_URL}/Perfil#vacaciones`,
   },
   {
-    img: "/image/UT.png",
-    title: "Universidad Tarahumara",
-    desc: "Accede a los programas de formación y desarrollo profesional internos de la organización.",
-    link: "/HomeUT",
+    img: "/image/MovimientosCH.png",
+    title: "Movimientos de Personal",
+    desc: "Consulta y solicita tus movimientos de personal desde tu perfil Tarahumara.",
+    link: `${process.env.NEXT_PUBLIC_BASE_URL}/Perfil#movimientos`,
   },
   {
-    img: "/image/fotos.jpg",
-    title: "Fotos",
-    desc: "Mira las galerías de eventos, actividades y momentos importantes de Grupo Tarahumara.",
-    link: "https://gpotarahumara.sharepoint.com/:u:/r/sites/Intranet_Tarahumara_/SitePages/GALERIA-DE-FOTOS-EVENTOS-TARAHUMARA.aspx?csf=1&web=1&share=EZL7_tW-NehCkexJiK2j-jIBDJ8VuW--BSErAK8hGhefUA&e=tchd4L",
+    img: "/image/CursosCH.png",
+    title: "Cursos y Capacitación",
+    desc: "Revisa los cursos y capacitaciones disponibles para tu desarrollo profesional.",
+    link: `${process.env.NEXT_PUBLIC_BASE_URL}/Perfil#cursos`,
   },
   {
-    img: "/image/sharepoint.jpg",
-    title: "Sitios de SharePoint",
-    desc: "Accede a los sitios SharePoint de cada área, organizados por departamento o función.",
-    link: "https://gpotarahumara.sharepoint.com/:u:/s/Intranet_Tarahumara_/EXG3EdX-9JFDhPff0nhO_h0BcKbAE_zZ1B372dPJYPScXQ?e=f9YAZR",
+    img: "/image/InformacionCH.png",
+    title: "Ayuda y Soporte del Site",
+    desc: "Consulta la información y recursos de ayuda para el uso del site Tarahumara.",
+    link: "#",
   },
 ];
 
@@ -46,7 +47,7 @@ export default function IntranetHomePage() {
   return (
     <>
       <NavbarRH />
-      <motion.video
+      {/* <motion.video
         autoPlay
         loop
         muted
@@ -56,7 +57,7 @@ export default function IntranetHomePage() {
       >
         <source src="/image/background.mp4" type="video/mp4" />
         Tu navegador no soporta videos.
-      </motion.video>
+      </motion.video> */}
 
       <motion.header
         ref={ref}
@@ -67,17 +68,16 @@ export default function IntranetHomePage() {
         transition={{ duration: 1 }}
       >
         <div className="absolute top-0 left-0 w-full h-full md:px-16" />
-        <div className="relative z-10 w-full max-w-6xl px-6 text-white mt-20">
+        <div className="relative z-10 w-full max-w-6xl px-6 text-black mt-20">
           <h1 className="text-[48px] lg:text-[64px] font-extrabold leading-tight">
             Capital Humano
           </h1>
-          <p className="mt-2 text-lg lg:text-2xl text-gray-200">
+          <p className="mt-2 text-lg lg:text-2xl text-gray-800">
             El área de Capital Humano gestiona el talento de la organización, promoviendo el desarrollo profesional, el bienestar laboral y la alineación estratégica entre colaboradores y empresa.
           </p>
-
           <div className="mt-12 flex justify-center">
             <Image
-              src="/image/Logo-Outline.png"
+              src="/image/logoNegro.png"
               alt="Logo"
               width={256}
               height={256}

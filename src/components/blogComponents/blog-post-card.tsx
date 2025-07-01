@@ -168,7 +168,7 @@ export function BlogPostCard({
               <SwiperSlide>
                 <div className="aspect-video">
                   <iframe
-                    className="w-full h-full rounded-md pointer-events-none"
+                    className="w-full h-full rounded-md"
                     src={`https://www.youtube.com/embed/${extractYouTubeID(post.videoUrl)}`}
                     title="YouTube video"
                     frameBorder="0"

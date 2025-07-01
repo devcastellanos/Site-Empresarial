@@ -1,7 +1,6 @@
 "use client"
 
 import { ChevronRight, type LucideIcon } from "lucide-react"
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -17,6 +16,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import { useRouter } from "next/navigation"
 
 export function NavMain({
   items,
@@ -27,7 +27,7 @@ export function NavMain({
     url: string
     icon?: LucideIcon
     isActive?: boolean
-    expanded?: boolean 
+    expanded?: boolean
     items?: {
       title: string
       url: string
@@ -35,6 +35,8 @@ export function NavMain({
   }[]
   setVista: (vista: string) => void
 }) {
+  const router = useRouter()
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel></SidebarGroupLabel>
@@ -54,23 +56,23 @@ export function NavMain({
                   <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
+
               <CollapsibleContent>
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => {
-                    const anchor = subItem.url.split("#")[1] // obtenemos solo 'perfil', 'vacaciones', etc.
+                    const anchor = subItem.url.split("#")[1]
 
                     return (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton
-                          asChild
-                          onClick={(e) => {
-                            e.preventDefault()
-                            if (anchor) setVista(anchor)
+                          onClick={() => {
+                            if (anchor) {
+                              setVista(anchor)
+                              router.push(subItem.url)
+                            }
                           }}
                         >
-                          <a href={subItem.url}>
-                            <span>{subItem.title}</span>
-                          </a>
+                          <span>{subItem.title}</span>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     )

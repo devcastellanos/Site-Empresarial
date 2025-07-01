@@ -266,8 +266,8 @@ const handleSubmit = async () => {
               Vacaciones
             </h1>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CardContent className="space-y-4 text-lg">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
               <div className="space-y-2">
                 <div>
                   <strong className="block">Fecha de ingreso:</strong>
@@ -309,21 +309,25 @@ const handleSubmit = async () => {
                       ? format(nextIncrement, "PPP", { locale: es })
                       : "N/A"}
                   </span>
+                  <strong className="block">Días faltantes para incremento:</strong>
+                  <span>
+                    {`${daysUntilNextIncrement} días`}
+                  </span>
                 </div>
               </div>
               <div>
               </div>
             </div>
 
-            <Separator className="my-2" />
+            {/* <Separator className="my-2" /> */}
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* <InfoBox label="Apto para vacaciones" value={totalDays > 0 ? "Sí" : "No"} icon={totalDays > 0 ? "✅" : "❌"} /> */}
-              <InfoBox
+              {/* <InfoBox
                 label="Apto para vacaciones"
                 value={hasOneYearOfService && totalDays > 0 ? "Sí" : "No"}
                 icon={hasOneYearOfService && totalDays > 0 ? "✅" : "❌"}
-              />
+              /> */}
               {/* <InfoBox
                 label="Días disponibles"
                 value={
@@ -332,24 +336,25 @@ const handleSubmit = async () => {
                     : "Cargando..."
                 }
               /> */}
-              <InfoBox label="Faltan para incremento" value={`${daysUntilNextIncrement} días`} />
+              {/* <InfoBox label="Faltan para incremento" value={`${daysUntilNextIncrement} días`} /> */}
             </div>
 
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <Label>Progreso anual:</Label>
               <Progress value={progressValue} className="h-2 mt-2" />
-            </div>
+            </div> */}
 
             <Separator className="my-4" />
 
-            <div>
-              <Label className="font-semibold">Cláusulas legales:</Label>
-              <ul className="mt-2 space-y-1 text-sm list-disc pl-5">
+            <div className="space-y-2">
+              <Label className="font-semibold text-lg mb-3 block">Cláusulas legales:</Label>
+              <ul className="mt-3 space-y-1 text-base list-disc pl-5">
                 {legalClauses.map((clause, index) => (
                   <li key={index}>{clause}</li>
                 ))}
               </ul>
             </div>
+
           </CardContent>
         </Card>
 

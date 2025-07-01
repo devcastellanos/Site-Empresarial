@@ -216,7 +216,7 @@ export function Convenio() {
         </div>
       )}
 
-      <div className="container grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-2">
+      <div className="container grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-2 height-auto">
         {conveniosFiltrados.length > 0 ? conveniosFiltrados.map(({ img, titulo, descripcion, link, idConvenio, tipo }) => (
           <ConvenioCard
             key={idConvenio}
