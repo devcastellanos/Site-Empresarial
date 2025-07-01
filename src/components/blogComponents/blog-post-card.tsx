@@ -169,7 +169,7 @@ export function BlogPostCard({
                 <div className="aspect-video">
                   <iframe
                     className="w-full h-full rounded-md"
-                    src={`https://www.youtube.com/embed/${extractYouTubeID(post.videoUrl)}`}
+                    src={`https://www.youtube.com/embed/${extractYouTubeID(post.videoUrl)}?rel=0`}
                     title="YouTube video"
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

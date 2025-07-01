@@ -142,22 +142,26 @@ export default function IntranetHomePage() {
       </motion.header>
       {/* ORG CHART SECTION */}
       <motion.section
-        ref={orgChartRef}
-        className="w-full bg-[#9A3324] text-center py-10 px-4 md:px-16"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: false }}  
-        transition={{ duration: 1 }}
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.8 }}
-        >
-          <OrgChart />
-        </motion.div>
-      </motion.section>
+  ref={orgChartRef}
+  className="w-full text-center py-10 px-4 md:px-16"
+  style={{
+  backgroundImage: 'linear-gradient(to bottom, white, rgb(154, 51, 36))',
+}}
+  initial={{ opacity: 0 }}
+  whileInView={{ opacity: 1 }}
+  viewport={{ once: false }}
+  transition={{ duration: 1 }}
+>
+  <motion.div
+    initial={{ opacity: 0, y: 50 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: false }}
+    transition={{ duration: 0.8 }}
+  >
+    <OrgChart />
+  </motion.div>
+</motion.section>
+
 
       {/* BOTÓN FLOTANTE ANIMADO */}
       <button

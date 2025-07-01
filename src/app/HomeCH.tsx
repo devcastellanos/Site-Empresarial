@@ -130,7 +130,7 @@ export default function CapacitacionPage() {
       {/* ORG CHART SECTION */}
       <motion.section
         ref={orgChartRef}
-        className="w-full bg-[#9A3324] text-center py-10 px-4 md:px-16"
+        className="w-full  bg-opacity-95 text-center py-10 px-4 md:px-16"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: false }}
