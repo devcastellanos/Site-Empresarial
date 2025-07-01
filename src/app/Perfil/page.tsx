@@ -150,9 +150,8 @@ export default function Campaign() {
         <div className="text-sm text-muted-foreground space-y-2">
           <p>Desde aquí puedes:</p>
           <ul className="list-disc pl-4">
-            <li>Ver los cursos disponibles.</li>
+            <li>Aquí podras ver los cursos concluidos y cursos asignados.</li>
             <li>Consultar tus avances.</li>
-            <li>Entrar a tus clases y actividades.</li>
           </ul>
         </div>
       ),
@@ -184,14 +183,14 @@ export default function Campaign() {
       ),
     },
     patron: {
-      title: "🎩 Modo Patrón Activado",
+      title: "📄 Carta Patronal",
       storageKey: "intro_patron_shown",
       content: (
         <div className="text-sm text-muted-foreground space-y-2">
-          <p>Esta vista te permite:</p>
+          <p>Esta vista te permite generar:</p>
           <ul className="list-disc pl-4">
-            <li>Ver información consolidada del equipo.</li>
-            <li>Acceder a datos avanzados.</li>
+            <li>Seleccionar la ubicación exacta de la bodega en la que laboras.</li>
+            <li>Generar la carta patronal previamente firmada por la coordinadora de relaciones.</li>
           </ul>
         </div>
       ),
