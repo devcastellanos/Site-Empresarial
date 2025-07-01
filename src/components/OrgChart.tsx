@@ -1,16 +1,18 @@
 "use client"
 import React from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Mail, Phone } from "lucide-react"
+import { useState } from "react"
+import { UserCircle } from "lucide-react"
 
 type Person = {
   name: string
   role: string
-  image: string
+  employeeId: string
   email?: string
   phone?: string
   extraInfo?: string
@@ -21,90 +23,134 @@ const people: Person[] = [
   {
     name: "Jesús Rodríguez",
     role: "Gerente de CH",
-    image: "/fotos/1848.jpg",
+    employeeId: "1848",
     email: "jesus.rodriguez@tarahumara.com",
+    phone: "3322563398",
     team: [
       {
         name: "Jesús Yánez",
         role: "Coord. Nóminas",
-        image: "/fotos/1444.jpg",
-        email: "jesus.yanez@tarahumara.com",
+        employeeId: "1444",
+        email: "jesus.yanez@grupotarahumara.com.mx",
+        phone: "3313331464",
         team: [
           {
             name: "Mauricio Monterde",
             role: "Auxiliar de Nóminas",
-            image: "/fotos/2525.jpg",
-            email: "mauricio.monterde@tarahumara.com",
+            employeeId: "2525",
+            email: "mauricio.monterde@grupotarahumara.com.mx",
+            phone:"3336628849",
           }
         ]
       },
       {
         name: "Marcela Rosas",
         role: "Coord. DO",
-        image: "/fotos/1190.jpg",
-        email: "marcela.rosas@tarahumara.com",
+        employeeId: "1190",
+        email: "marcela.rosas@grupotarahumara.com.mx ",
+        phone:"3334961512",
         team: [
           {
             name: "Julio Rodríguez",
             role: "Auxiliar de DO",
-            image: "/fotos/1985.jpg",
-            email: "julio.rodriguez@tarahumara.com",
+            employeeId: "1985",
+            email: "julio.rodriguez@grupotarahumara.com.mx",
+            phone:"3310112308",
           }
         ]
       },
       {
         name: "Mariana Pérez",
         role: "Coord. de Capacitación",
-        image: "/fotos/2323.jpg",
-        email: "mariana.perez@tarahumara.com",
+        employeeId: "2323",
+        email: "mariana.perez@grupotarahumara.com.mx" ,
+        phone: "3314179174",
         team: [
           {
             name: "Lezly Rodríguez",
             role: "Auxiliar de DO",
-            image: "/fotos/2557.jpg",
-            email: "lezly.rodriguez@tarahumara.com",
+            employeeId: "2557",
+            email: "lezly.rodriguez@grupotarahumara.com.mx",
+            phone: "3310963475",
           }
         ]
       },
       {
         name: "Néstor Bañuelos",
         role: "Coord. Entrenamiento Operativo",
-        image: "/fotos/2324.jpg",
-        email: "nestor.banuelos@tarahumara.com",
+        employeeId: "2324",
+        email: "nestor.banuelos@grupotarahumara.com.mx",
+        phone: "3334428913",
       },
       {
         name: "Edith Correa",
         role: "Coord. Atracción de Talento",
-        image: "/fotos/2164.png",
-        email: "edith.correa@tarahumara.com",
+        employeeId: "2164",
+        email: "edith.correa@grupotarahumara.com.mx",
+        phone: "3323893410",
         team: [
           {
             name: "Karen Arriaga",
             role: "Aux. Atracción de Talento",
-            image: "/fotos/2188.jpg",
-            email: "karen.arriaga@tarahumara.com",
+            employeeId: "2188",
+            email: "karen.arriaga@grupotarahumara.com.mx",
+            phone: "3339473454",
             team: [
               {
-                name: "Fernanda Glez",
+                name: "Fernanda Gonzalez",
                 role: "Aux. Atracción de Talento",
-                image: "/fotos/2522.jpg",
-                email: "fernanda.glez@tarahumara.com",
+                employeeId: "2522",
+                email: "fernanda.gonzalez@grupotarahumara.com.mx",
+                phone: "3315644772",
               }
             ]
           }
         ]
       },
       {
+        name: "Liliana Arana",
+        role: "Coord. Relaciones",
+        employeeId: "2640",
+        email: "liliana.arana@grupotarahumara.com.mx",
+        phone: "3326377507",
+      },
+      {
         name: "Helio García",
         role: "Paramédico",
-        image: "/fotos/helio.jpg",
-        phone: "523311234567",
-        email: "helio.garcia@tarahumara.com",
+        employeeId: "2464",
+        phone: "3320809592",
+        email: "helio.garcia@grupotarahumara.com.mx",
         extraInfo: "Responsable de primeros auxilios y emergencias médicas",
       }
     ]
   }
 ]
+
+const PersonImage = ({
+  employeeId,
+  alt,
+  className,
+}: {
+  employeeId: string
+  alt: string
+  className: string
+}) => {
+  const [hasError, setHasError] = useState(false)
+  const imageUrl = `http://api-img.172.16.15.30.sslip.io/uploads/${employeeId}.jpg`
+
+  if (hasError) {
+    return <UserCircle className={`${className} text-zinc-400 bg-white`} />
+  }
+
+  return (
+    <img
+      src={imageUrl}
+      alt={alt}
+      className={className}
+      onError={() => setHasError(true)}
+    />
+  )
+}
 
 const PersonCard = ({ person }: { person: Person }) => (
   <Dialog>
@@ -116,8 +162,8 @@ const PersonCard = ({ person }: { person: Person }) => (
       >
         <Card className="w-44 bg-white/60 dark:bg-zinc-900/30 backdrop-blur border border-gray-300 dark:border-zinc-700 shadow-md hover:shadow-lg transition-all rounded-xl">
           <CardContent className="flex flex-col items-center justify-center p-4 space-y-3">
-            <img
-              src={person.image}
+            <PersonImage
+              employeeId={person.employeeId}
               alt={person.name}
               className="w-24 h-24 rounded-full object-cover border-2 border-primary"
             />
@@ -133,8 +179,13 @@ const PersonCard = ({ person }: { person: Person }) => (
     </DialogTrigger>
 
     <DialogContent className="max-w-md text-center">
-      <img src={person.image} alt={person.name} className="w-32 h-32 mx-auto rounded-full object-cover mb-4 border-2 border-primary" />
-      <h2 className="text-lg font-bold">{person.name}</h2>
+        
+      <PersonImage
+        employeeId={person.employeeId}
+        alt={person.name}
+        className="w-32 h-32 mx-auto rounded-full object-cover mb-4 border-2 border-primary"
+      />
+      <DialogTitle>{person.name}</DialogTitle>
       <p className="text-muted-foreground text-sm mb-2">{person.role}</p>
       {person.extraInfo && <p className="mb-4 text-sm text-zinc-700">{person.extraInfo}</p>}
       <div className="flex justify-center gap-4">
@@ -187,12 +238,12 @@ const OrgChart = () => {
   const jesus = people[0]
   const helio = jesus.team?.find(p => p.name === "Helio García")
   const coordinadores = jesus.team?.filter(p =>
-    !["Alberto Cardona", "Helio García"].includes(p.name)
+    !["Helio García"].includes(p.name)
   ) || []
 
   return (
     <div className="p-8 max-w-screen-2xl mx-auto rounded-lg">
-      <h2 className="text-center text-4xl font-extrabold mb-10 tracking-tight text-white">
+      <h2 className="text-center text-4xl font-extrabold mb-10 tracking-tight text-black">
         Capital Humano Tarahumara
       </h2>
 
@@ -212,14 +263,13 @@ const OrgChart = () => {
             <PersonCard person={helio} />
           </div>
         )}
-
       </div>
 
       <div className="mb-6 text-center">
         <span className="text-sm bg-green-600 text-white px-4 py-1 rounded-full shadow">Coordinaciones</span>
       </div>
 
-      <div className="flex justify-center gap-12 flex-wrap">
+      <div className="flex justify-center gap-6 flex-wrap">
         {coordinadores.map((coord, i) => (
           <motion.div
             key={i}

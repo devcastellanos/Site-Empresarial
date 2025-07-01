@@ -20,19 +20,19 @@ export function FooterRH() {
             name="Mariana Pérez"
             email="mariana.perez@grupotarahumara.com.mx"
             phone="+523314179174"
-            imageUrl="/fotos/2323.jpg"
+            employeeId="2323"
           />
           <ContactCard
             name="Néstor Bañuelos"
             email="nestor.banuelos@grupotarahumara.com.mx"
             phone="+523334428913"
-            imageUrl="/fotos/2324.jpg"
+            employeeId="2324"
           />
           <ContactCard
             name="Lezly Rodriguez"
             email="lezly.rodriguez@grupotarahumara.com.mx"
             phone="+523310963475"
-            imageUrl="/fotos/2557.jpg"
+            employeeId="2557"
           />
         </div>
 
@@ -50,14 +50,14 @@ interface ContactCardProps {
   name: string;
   email: string;
   phone: string;
-  imageUrl: string;
+  employeeId: string;
 }
 
-function ContactCard({ name, email, phone, imageUrl }: ContactCardProps) {
+function ContactCard({ name, email, phone, employeeId }: ContactCardProps) {
   return (
     <div className="flex items-center gap-4 bg-gray-700/50 p-4 rounded-lg shadow-lg hover:bg-gray-600/50 transition-all duration-300 w-full max-w-sm md:max-w-none">
       <img
-        src={imageUrl}
+        src={`http://api-img.172.16.15.30.sslip.io/uploads/${employeeId}.jpg`}
         alt={name}
         className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md"
       />
