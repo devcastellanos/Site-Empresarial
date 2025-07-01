@@ -1,5 +1,6 @@
 import { Mail, User, Smartphone } from "lucide-react";
 import { useState } from "react";
+import Image from "next/image";
 
 export function FooterRH() {
   const currentYear = new Date().getFullYear();
@@ -64,8 +65,10 @@ function ContactCard({ name, email, phone, employeeId }: ContactCardProps) {
           <User className="w-7 h-7 text-gray-500" />
         </div>
       ) : (
-        <img
+        <Image
           src={imageSrc}
+          width={56}
+          height={56}
           alt={name}
           className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md"
           onError={() => setHasError(true)}

@@ -1,5 +1,6 @@
 "use client"
 import React from "react"
+import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
@@ -143,9 +144,11 @@ const PersonImage = ({
   }
 
   return (
-    <img
+    <Image
       src={imageUrl}
       alt={alt}
+      width={96}
+      height={96}
       className={className}
       onError={() => setHasError(true)}
     />
