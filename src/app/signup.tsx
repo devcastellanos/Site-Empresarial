@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../hooks/useAuth";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 export function Login() {
   const router = useRouter();
@@ -34,69 +35,69 @@ export function Login() {
 
   // const baseURL = process.env.NEXT_PUBLIC_BASE_URL ?? "";
 
-const handleLogin = async () => {
-  if (!email || !password) {
-    Swal.fire("Campos requeridos", "Completa todos los campos", "warning");
-    return;
-  }
-
-  const isNumeric = !isNaN(Number(email));
-  const payload = isNumeric
-    ? { num_empleado: email, password }
-    : { email, password };
-
-  setIsLoading(true);
-
-  try {
-    const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/login`, payload);
-    const user = res.data.data;
-
-    await axios.post('/api/auth/set-token', { user });
-
-    Swal.fire("Bienvenido", "Inicio de sesión exitoso", "success").then(() => {
-      window.location.href = "/";
-    });
-
-  } catch (error) {
-
-    let response;
-    let message = "Error desconocido";
-
-    if (axios.isAxiosError(error)) {
-      response = error.response;
-      message = response?.data?.message || "Error desconocido";
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Swal.fire("Campos requeridos", "Completa todos los campos", "warning");
+      return;
     }
 
-    switch (response?.data?.code) {
-      case 'NOT_FOUND':
-        Swal.fire("No encontrado", message, "error");
-        break;
+    const isNumeric = !isNaN(Number(email));
+    const payload = isNumeric
+      ? { num_empleado: email, password }
+      : { email, password };
 
-      case 'ACCOUNT_NOT_CONFIRMED':
-        Swal.fire(
-          "Cuenta no confirmada",
-          `${message}<br>Por favor revisa tu correo electrónico para confirmar tu cuenta.`,
-          "warning"
-        );
-        // Opcional: aquí podrías ofrecer reenviar el correo
-        break;
+    setIsLoading(true);
 
-      case 'INACTIVE_EXTERNAL':
-        Swal.fire("Usuario dado de baja", message, "warning");
-        break;
+    try {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/login`, payload);
+      const user = res.data.data;
 
-      case 'INVALID_PASSWORD':
-        Swal.fire("Contraseña incorrecta", message, "error");
-        break;
+      await axios.post('/api/auth/set-token', { user });
 
-      default:
-        Swal.fire("Error", message, "error");
-        break;
+      Swal.fire("Bienvenido", "Inicio de sesión exitoso", "success").then(() => {
+        window.location.href = "/";
+      });
+
+    } catch (error) {
+
+      let response;
+      let message = "Error desconocido";
+
+      if (axios.isAxiosError(error)) {
+        response = error.response;
+        message = response?.data?.message || "Error desconocido";
+      }
+
+      switch (response?.data?.code) {
+        case 'NOT_FOUND':
+          Swal.fire("No encontrado", message, "error");
+          break;
+
+        case 'ACCOUNT_NOT_CONFIRMED':
+          Swal.fire(
+            "Cuenta no confirmada",
+            `${message}<br>Por favor revisa tu correo electrónico para confirmar tu cuenta.`,
+            "warning"
+          );
+          // Opcional: aquí podrías ofrecer reenviar el correo
+          break;
+
+        case 'INACTIVE_EXTERNAL':
+          Swal.fire("Usuario dado de baja", message, "warning");
+          break;
+
+        case 'INVALID_PASSWORD':
+          Swal.fire("Contraseña incorrecta", message, "error");
+          break;
+
+        default:
+          Swal.fire("Error", message, "error");
+          break;
+      }
+    } finally {
+      setIsLoading(false);
     }
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   const openRegistroModal = () => {
     setRegistroEmpleado("");
@@ -236,10 +237,19 @@ const handleLogin = async () => {
                 className="bg-white/10 text-white placeholder:text-white/50 border border-white/20 rounded-lg focus:ring-2 focus:ring-[#9A3324] focus:outline-none"
                 ref={passwordRef}
               />
+
+              {/* 🔐 Link de recuperación */}
+              <div className="text-right pt-1">
+                <Link
+                  href="/recuperar"
+                  className="text-xs text-white/80 underline hover:text-red-400 transition"
+                >
+                  ¿Olvidaste tu contraseña o todavia no la tienes?
+                </Link>
+              </div>
             </div>
 
-            {/* Botón de login */}
-            <div className="pt-2">
+            {/* <div className="pt-2">
               <Button
                 onClick={handleLogin}
                 disabled={isLoading || email.trim() === "" || password.trim() === ""}
@@ -248,10 +258,10 @@ const handleLogin = async () => {
               >
                 {isLoading ? "Cargando..." : "INICIAR SESIÓN"}
               </Button>
-            </div>
+            </div> */}
 
-            {/* Link a registro */}
-            <p className="text-center text-sm text-gray-300 pt-2">
+           
+            {/* <p className="text-center text-sm text-gray-300 pt-2">
               ¿No tienes cuenta?{" "}
               <button
                 onClick={openRegistroModal}
@@ -259,7 +269,7 @@ const handleLogin = async () => {
               >
                 Regístrate aquí
               </button>
-            </p>
+            </p> */}
           </div>
         </Card>
 
@@ -267,118 +277,118 @@ const handleLogin = async () => {
 
       {/* REGISTRO */}
       <Dialog open={openModal} onOpenChange={setOpenModal}>
-  <DialogContent className="bg-black/70 backdrop-blur-2xl border border-white/10 text-white shadow-2xl rounded-2xl px-6 py-8 animate-in fade-in zoom-in-90">
+        <DialogContent className="bg-black/70 backdrop-blur-2xl border border-white/10 text-white shadow-2xl rounded-2xl px-6 py-8 animate-in fade-in zoom-in-90">
 
-    {/* Logo */}
-    <div className="flex justify-center mb-6">
-      <Image
-        src="/image/logowhite.png"
-        alt="Logo Grupo Tarahumara"
-        width={260}
-        height={80}
-        className="object-contain drop-shadow-2xl"
-        priority
-      />
-    </div>
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <Image
+              src="/image/logowhite.png"
+              alt="Logo Grupo Tarahumara"
+              width={260}
+              height={80}
+              className="object-contain drop-shadow-2xl"
+              priority
+            />
+          </div>
 
-    {/* Título */}
-    <DialogTitle className="text-2xl font-extrabold text-center mb-6 tracking-tight">
-      Crear Nueva Cuenta
-    </DialogTitle>
+          {/* Título */}
+          <DialogTitle className="text-2xl font-extrabold text-center mb-6 tracking-tight">
+            Crear Nueva Cuenta
+          </DialogTitle>
 
-    {/* Inputs */}
-    <div className="space-y-5">
-      {/* Número de empleado */}
-      <div className="space-y-1">
-        <label className="text-sm font-medium text-white/90">Número de empleado</label>
-        <Input
-          type="text"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          value={registroEmpleado}
-          onChange={(e) => {
-            const val = e.target.value.replace(/\D/g, "");
-            setRegistroEmpleado(val);
-          }}
-          onKeyDown={(e) => {
-            // Prevenir caracteres no numéricos (como e, +, -)
-            if (
-              ["e", "E", "+", "-", ".", ","].includes(e.key)
-            ) {
-              e.preventDefault();
-            }
-            if (e.key === "Enter") passwordRef.current?.focus();
-          }}
-          className="bg-white/10 text-white placeholder:text-white/50 border border-white/20 rounded-lg focus:ring-2 focus:ring-[#9A3324] focus:outline-none"
-        />
-      </div>
+          {/* Inputs */}
+          <div className="space-y-5">
+            {/* Número de empleado */}
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-white/90">Número de empleado</label>
+              <Input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={registroEmpleado}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "");
+                  setRegistroEmpleado(val);
+                }}
+                onKeyDown={(e) => {
+                  // Prevenir caracteres no numéricos (como e, +, -)
+                  if (
+                    ["e", "E", "+", "-", ".", ","].includes(e.key)
+                  ) {
+                    e.preventDefault();
+                  }
+                  if (e.key === "Enter") passwordRef.current?.focus();
+                }}
+                className="bg-white/10 text-white placeholder:text-white/50 border border-white/20 rounded-lg focus:ring-2 focus:ring-[#9A3324] focus:outline-none"
+              />
+            </div>
 
-      {/* Contraseña */}
-      <div className="space-y-1 relative">
-        <label className="text-sm font-medium text-white/90">Contraseña</label>
-        <Input
-          type={verPassword ? "text" : "password"}
-          value={registroPassword}
-          onChange={(e) => setRegistroPassword(e.target.value)}
-          ref={passwordRef}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") confirmarRef.current?.focus();
-          }}
-          className="bg-white/10 text-white placeholder:text-white/50 border border-white/20 rounded-lg pr-10 focus:ring-2 focus:ring-[#9A3324] focus:outline-none"
-        />
-        <button
-          type="button"
-          onClick={() => setVerPassword((prev) => !prev)}
-          className="absolute right-2 top-9 text-white/70 hover:text-white"
-        >
-          {verPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
-      </div>
+            {/* Contraseña */}
+            <div className="space-y-1 relative">
+              <label className="text-sm font-medium text-white/90">Contraseña</label>
+              <Input
+                type={verPassword ? "text" : "password"}
+                value={registroPassword}
+                onChange={(e) => setRegistroPassword(e.target.value)}
+                ref={passwordRef}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") confirmarRef.current?.focus();
+                }}
+                className="bg-white/10 text-white placeholder:text-white/50 border border-white/20 rounded-lg pr-10 focus:ring-2 focus:ring-[#9A3324] focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setVerPassword((prev) => !prev)}
+                className="absolute right-2 top-9 text-white/70 hover:text-white"
+              >
+                {verPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
 
-      {/* Confirmar contraseña */}
-      <div className="space-y-1 relative">
-        <label className="text-sm font-medium text-white/90">Confirmar contraseña</label>
-        <Input
-          type={verConfirmar ? "text" : "password"}
-          value={registroConfirmar}
-          onChange={(e) => setRegistroConfirmar(e.target.value)}
-          ref={confirmarRef}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") enviarRegistro();
-          }}
-          className="bg-white/10 text-white placeholder:text-white/50 border border-white/20 rounded-lg pr-10 focus:ring-2 focus:ring-[#9A3324] focus:outline-none"
-        />
-        <button
-          type="button"
-          onClick={() => setVerConfirmar((prev) => !prev)}
-          className="absolute right-2 top-9 text-white/70 hover:text-white"
-        >
-          {verConfirmar ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
-      </div>
-    </div>
+            {/* Confirmar contraseña */}
+            <div className="space-y-1 relative">
+              <label className="text-sm font-medium text-white/90">Confirmar contraseña</label>
+              <Input
+                type={verConfirmar ? "text" : "password"}
+                value={registroConfirmar}
+                onChange={(e) => setRegistroConfirmar(e.target.value)}
+                ref={confirmarRef}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") enviarRegistro();
+                }}
+                className="bg-white/10 text-white placeholder:text-white/50 border border-white/20 rounded-lg pr-10 focus:ring-2 focus:ring-[#9A3324] focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setVerConfirmar((prev) => !prev)}
+                className="absolute right-2 top-9 text-white/70 hover:text-white"
+              >
+                {verConfirmar ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+          </div>
 
-    {/* Botones */}
-    <div className="mt-8 flex justify-end gap-3">
-      <Button
-        variant="ghost"
-        onClick={() => setOpenModal(false)}
-        className="text-white/80 hover:text-white hover:bg-white/10 transition-colors"
-      >
-        Cancelar
-      </Button>
-      <Button
-        onClick={enviarRegistro}
-        disabled={registroLoading}
-        className="text-white px-5 py-2 font-semibold rounded-md transition-all hover:brightness-110 disabled:opacity-50"
-        style={{ backgroundColor: "#9A3324" }}
-      >
-        {registroLoading ? "Registrando..." : "Registrar"}
-      </Button>
-    </div>
+          {/* Botones */}
+          <div className="mt-8 flex justify-end gap-3">
+            <Button
+              variant="ghost"
+              onClick={() => setOpenModal(false)}
+              className="text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={enviarRegistro}
+              disabled={registroLoading}
+              className="text-white px-5 py-2 font-semibold rounded-md transition-all hover:brightness-110 disabled:opacity-50"
+              style={{ backgroundColor: "#9A3324" }}
+            >
+              {registroLoading ? "Registrando..." : "Registrar"}
+            </Button>
+          </div>
 
-  </DialogContent>
-</Dialog>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
