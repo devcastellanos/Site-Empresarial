@@ -34,39 +34,69 @@ export function Login() {
 
   // const baseURL = process.env.NEXT_PUBLIC_BASE_URL ?? "";
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Swal.fire("Campos requeridos", "Completa todos los campos", "warning");
-      return;
+const handleLogin = async () => {
+  if (!email || !password) {
+    Swal.fire("Campos requeridos", "Completa todos los campos", "warning");
+    return;
+  }
+
+  const isNumeric = !isNaN(Number(email));
+  const payload = isNumeric
+    ? { num_empleado: email, password }
+    : { email, password };
+
+  setIsLoading(true);
+
+  try {
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/login`, payload);
+    const user = res.data.data;
+
+    await axios.post('/api/auth/set-token', { user });
+
+    Swal.fire("Bienvenido", "Inicio de sesión exitoso", "success").then(() => {
+      window.location.href = "/";
+    });
+
+  } catch (error) {
+
+    let response;
+    let message = "Error desconocido";
+
+    if (axios.isAxiosError(error)) {
+      response = error.response;
+      message = response?.data?.message || "Error desconocido";
     }
 
-    const isNumeric = !isNaN(Number(email));
-    const payload = isNumeric
-      ? { num_empleado: email, password }
-      : { email, password };
+    switch (response?.data?.code) {
+      case 'NOT_FOUND':
+        Swal.fire("No encontrado", message, "error");
+        break;
 
-    setIsLoading(true);
+      case 'ACCOUNT_NOT_CONFIRMED':
+        Swal.fire(
+          "Cuenta no confirmada",
+          `${message}<br>Por favor revisa tu correo electrónico para confirmar tu cuenta.`,
+          "warning"
+        );
+        // Opcional: aquí podrías ofrecer reenviar el correo
+        break;
 
-    try {
-      // 1. Validar con backend Express
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/login`, payload);
-      const user = res.data.data;
+      case 'INACTIVE_EXTERNAL':
+        Swal.fire("Usuario dado de baja", message, "warning");
+        break;
 
-      // 3. Guardar el token en cookie vía API interna de Next
-      await axios.post('/api/auth/set-token', { user });
+      case 'INVALID_PASSWORD':
+        Swal.fire("Contraseña incorrecta", message, "error");
+        break;
 
-      // Mostrar mensaje de éxito y redirigir con recarga
-      Swal.fire("Bienvenido", "Inicio de sesión exitoso", "success").then(() => {
-        window.location.href = "/"; // navega y recarga a la vez
-      });
-      
-    } catch (error) {
-      console.error("Login error:", error);
-      Swal.fire("Error", "Credenciales incorrectas o cuenta no verificada", "error");
-    } finally {
-      setIsLoading(false);
+      default:
+        Swal.fire("Error", message, "error");
+        break;
     }
-  };
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const openRegistroModal = () => {
     setRegistroEmpleado("");
