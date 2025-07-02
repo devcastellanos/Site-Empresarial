@@ -1,3 +1,5 @@
+"use client";
+
 import { ForgotPasswordForm } from "../ForgotPasswordForm";
 
 export default function RecuperarPage() {

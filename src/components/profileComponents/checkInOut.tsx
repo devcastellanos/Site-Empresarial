@@ -93,7 +93,7 @@ function RegisterCheckInCheckOut() {
 
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
-  }, [user]);
+  }, [user, fetchAsistencias, fetchMovimientos]);
 
   useEffect(() => {
     const fetchEmpleado = async () => {
