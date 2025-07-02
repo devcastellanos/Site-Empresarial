@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -49,21 +48,31 @@ export function ForgotPasswordForm() {
   };
 
   return (
-    <Card className="max-w-md mx-auto mt-10 shadow-xl">
-      <CardHeader>
-        <CardTitle>¿Olvidaste tu contraseña?</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <Label>Correo electrónico o número de empleado</Label>
+    <div className="space-y-5 text-white">
+      <div className="text-center">
+        <h2 className="text-xl font-bold">¿Olvidaste tu contraseña?</h2>
+        <p className="text-sm text-white/80 mt-1">
+          Ingresa tu correo electrónico o número de empleado para enviarte un enlace seguro.
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-white">Correo o número de empleado</Label>
         <Input
           placeholder="usuario@empresa.com o 12345"
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          className="bg-white/10 text-white placeholder:text-white/50 border border-white/20 rounded-lg focus:ring-2 focus:ring-[#9A3324] focus:outline-none"
         />
-        <Button onClick={handleSend} disabled={loading}>
-          {loading ? "Enviando..." : "Enviar enlace de recuperación"}
-        </Button>
-      </CardContent>
-    </Card>
+      </div>
+
+      <Button
+        onClick={handleSend}
+        disabled={loading}
+        className="w-full bg-[#9A3324] text-white hover:brightness-110 disabled:opacity-50"
+      >
+        {loading ? "Enviando..." : "Enviar enlace de recuperación"}
+      </Button>
+    </div>
   );
 }

@@ -14,6 +14,8 @@ import { useAuth } from "../hooks/useAuth";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { ForgotPasswordForm } from "./ForgotPasswordForm";
+import { ResetPasswordForm } from './ResetPasswordForm';
 
 export function Login() {
   const router = useRouter();
@@ -32,6 +34,9 @@ export function Login() {
 
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmarRef = useRef<HTMLInputElement>(null);
+
+  const [openForgot, setOpenForgot] = useState(false);
+const [openReset, setOpenReset] = useState(false);
 
   // const baseURL = process.env.NEXT_PUBLIC_BASE_URL ?? "";
 
@@ -240,16 +245,16 @@ export function Login() {
 
               {/* 🔐 Link de recuperación */}
               <div className="text-right pt-1">
-                <Link
-                  href="/recuperar"
-                  className="text-xs text-white/80 underline hover:text-red-400 transition"
-                >
-                  ¿Olvidaste tu contraseña o todavia no la tienes?
-                </Link>
+                <button
+  onClick={() => setOpenForgot(true)}
+  className="text-xs text-white/80 underline hover:text-red-400 transition"
+>
+  ¿Olvidaste tu contraseña o todavía no la tienes?
+</button>
               </div>
             </div>
 
-            {/* <div className="pt-2">
+            <div className="pt-2">
               <Button
                 onClick={handleLogin}
                 disabled={isLoading || email.trim() === "" || password.trim() === ""}
@@ -258,7 +263,7 @@ export function Login() {
               >
                 {isLoading ? "Cargando..." : "INICIAR SESIÓN"}
               </Button>
-            </div> */}
+            </div>
 
            
             {/* <p className="text-center text-sm text-gray-300 pt-2">
@@ -389,6 +394,21 @@ export function Login() {
 
         </DialogContent>
       </Dialog>
+
+{/* Recuperar contraseña */}
+<Dialog open={openForgot} onOpenChange={setOpenForgot}>
+  <DialogContent className="bg-black/70 backdrop-blur-2xl border border-white/10 text-white shadow-2xl rounded-2xl px-6 py-8 animate-in fade-in zoom-in-90">
+    <ForgotPasswordForm />
+
+  </DialogContent>
+</Dialog>
+
+{/* Restablecer contraseña */}
+<Dialog open={openReset} onOpenChange={setOpenReset}>
+  <DialogContent className="bg-black/70 backdrop-blur-2xl border border-white/10 text-white shadow-2xl rounded-2xl px-6 py-8 animate-in fade-in zoom-in-90">
+    <ResetPasswordForm />
+  </DialogContent>
+</Dialog>
     </div>
   );
 }
