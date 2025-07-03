@@ -139,7 +139,7 @@ function RequisitionsPage() {
             Descargar Reporte
           </Button>
 
-          {user?.rol === 'admin' && (
+          {user?.rol === 'admin' || user?.rol === "Gerente" && (
             <Button onClick={() => setShowForm(true)}>
               <PlusIcon className="mr-2 h-4 w-4" />
               Nueva Requisición
