@@ -33,6 +33,9 @@ const UsuariosPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [currentUsuario, setCurrentUsuario] = useState<Usuario>({ id: 0, name: "", email: "", password: "", status: "Activo", num_empleado: 0, rol: "" });
   const { user } = useAuth();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredUsuarios, setFilteredUsuarios] = useState<Usuario[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchUsuarios = async () => {
     try {
@@ -113,6 +116,66 @@ const UsuariosPage = () => {
     }
   };
 
+  const handleEnviarRecuperacion = async (email: string, num_empleado: number) => {
+  const confirm = await Swal.fire({
+    title: "¿Enviar recuperación?",
+    text: `¿Deseas generar y enviar un enlace para que el usuario cambie su contraseña?`,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#9A3324",
+    cancelButtonColor: "#6b7280",
+    confirmButtonText: "Sí, enviar",
+    cancelButtonText: "Cancelar",
+  });
+
+  if (!confirm.isConfirmed) return;
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/solicitar-recuperacion`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, num_empleado }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Error al enviar");
+    }
+
+    await Swal.fire({
+      icon: "success",
+      title: "¡Enlace generado y enviado!",
+      html: `
+        <p>Se envió un enlace de recuperación al correo registrado.</p>
+        <p class="mt-2"><strong>Link generado:</strong></p>
+        <code style="display:block; word-break:break-all; background:#f4f4f4; padding:8px; border-radius:6px;">
+          ${data.enlace}
+        </code>
+      `,
+      showCancelButton: true,
+      confirmButtonText: "Copiar link",
+      cancelButtonText: "Cerrar",
+      confirmButtonColor: "#9A3324",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigator.clipboard.writeText(data.enlace);
+        Swal.fire("Copiado", "El enlace fue copiado al portapapeles", "success");
+      }
+    });
+  } catch (err: any) {
+    Swal.fire("Error", err.message || "No se pudo generar el enlace", "error");
+  }
+};
+
+useEffect(() => {
+  const term = searchTerm.toLowerCase();
+  const filtered = usuarios.filter((usuario) =>
+    usuario.name.toLowerCase().includes(term)
+  );
+  setFilteredUsuarios(filtered);
+}, [searchTerm, usuarios]);
+
   return (
     <div className="flex justify-center items-center w-full pb-20">
       <Card className="w-full max-w-6xl mt-32 bg-white/70 backdrop-blur-md shadow-xl rounded-xl p-6" {...({} as any)}>
@@ -129,73 +192,120 @@ const UsuariosPage = () => {
           </div>
         </CardHeader>
 
-        <CardContent className="px-4 space-y-3">
-          <div className="grid grid-cols-12 px-4 py-2 bg-white/50 backdrop-blur-md rounded-md font-semibold text-center text-sm">
-            <div className="col-span-3">Nombre</div>
-            <div className="col-span-4">Correo electrónico</div>
-            <div className="col-span-2">Rol</div>
-            <div className="col-span-2">Estado</div>
-            <div className="col-span-1">Acciones</div>
+        <CardContent className="px-6 py-6 space-y-4 bg-white/60 rounded-b-xl">
+          {/* Título y buscador */}
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-semibold text-gray-800">Usuarios registrados</h2>
+            <Input
+              placeholder="Buscar por nombre..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1); // Reiniciar página si cambia filtro
+              }}
+              className="max-w-sm"
+            />
           </div>
 
-          {usuarios.length > 0 ? (
-            usuarios.map(({ id, name, email, rol, status, num_empleado }) => (
-              <div
-                key={id}
-                className="grid grid-cols-12 items-center bg-white/40 backdrop-blur-md rounded-lg px-4 py-3 shadow-sm hover:bg-white/60 transition"
-              >
-                <div className="col-span-3 text-center font-semibold ">{name}</div>
-                <div className="col-span-4 truncate text-sm  opacity-80">{email}</div>
-                <div className="col-span-2 text-center text-sm  opacity-80">{rol}</div>
-                <div className="col-span-2 flex justify-center">
-                  <Badge variant={status === "Activo" ? "default" : "outline"} className="text-xs px-2 py-0.5">
-                    {status}
-                  </Badge>
-                </div>
-                <div className="col-span-1 flex justify-end gap-2">
-                  {status === "Activo" && (
-                    <>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="hover:bg-white/70 p-1"
-                              onClick={() => handleOpenModal({ id, name, email, status, num_empleado, rol })}
-                            >
-                              <PencilIcon className="h-4 w-4 " />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Editar</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+          {/* Tabla */}
+          <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+            <table className="min-w-full divide-y divide-gray-200 text-sm">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left font-semibold text-gray-700">Nombre</th>
+                  <th className="px-6 py-3 text-left font-semibold text-gray-700">Correo electrónico</th>
+                  <th className="px-6 py-3 text-left font-semibold text-gray-700">Rol</th>
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700">Estado</th>
+                  <th className="px-6 py-3 text-right font-semibold text-gray-700">Acciones</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {filteredUsuarios
+                  .slice((currentPage - 1) * 10, currentPage * 10)
+                  .map(({ id, name, email, rol, status, num_empleado }) => (
+                    <tr key={id} className="hover:bg-gray-50">
+                      <td className="px-6 py-3 font-medium text-gray-900">{name}</td>
+                      <td className="px-6 py-3 text-gray-700">{email}</td>
+                      <td className="px-6 py-3 text-gray-700">{rol}</td>
+                      <td className="px-6 py-3 text-center">
+                        <Badge
+                          variant={status === "Activo" ? "default" : "outline"}
+                          className={`text-xs ${status === "Activo" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"}`}
+                        >
+                          {status}
+                        </Badge>
+                      </td>
+                      <td className="px-6 py-3 text-right space-x-1">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="p-1"
+                          onClick={() => handleOpenModal({ id, name, email, status, num_empleado, rol })}
+                        >
+                          <PencilIcon className="h-4 w-4 text-gray-700" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="p-1"
+                          onClick={() => id !== undefined && handleDeleteUsuario(id)}
+                        >
+                          <TrashIcon className="h-4 w-4 text-red-600" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="p-1"
+                          onClick={() => handleEnviarRecuperacion(email, num_empleado)}
+                        >
+                          🔐
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
 
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="hover:bg-white/70 p-1"
-                              onClick={() => id !== undefined && handleDeleteUsuario(id)}
-                            >
-                              <TrashIcon className="h-4 w-4 text-red-600" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Eliminar</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </>
-                  )}
-                </div>
+                {filteredUsuarios.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
+                      No hay usuarios disponibles.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Paginación */}
+          {filteredUsuarios.length > 10 && (
+            <div className="flex justify-between items-center pt-4">
+              <span className="text-sm text-gray-600">
+                Página {currentPage} de {Math.ceil(filteredUsuarios.length / 10)}
+              </span>
+              <div className="space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                >
+                  Anterior
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      prev < Math.ceil(filteredUsuarios.length / 10) ? prev + 1 : prev
+                    )
+                  }
+                  disabled={currentPage >= Math.ceil(filteredUsuarios.length / 10)}
+                >
+                  Siguiente
+                </Button>
               </div>
-            ))
-          ) : (
-            <div className="text-center text-sm">No hay usuarios disponibles.</div>
+            </div>
           )}
         </CardContent>
-
 
         <Dialog open={openModal} onOpenChange={setOpenModal}>
           <DialogContent className=" backdrop-blur-xl rounded-xl shadow-lg p-6 max-w-lg w-full">

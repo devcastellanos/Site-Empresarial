@@ -73,29 +73,47 @@ const [openReset, setOpenReset] = useState(false);
         message = response?.data?.message || "Error desconocido";
       }
 
+      setOpenForgot(false);
+      setOpenReset(false);
+      setOpenModal(false); // si lo usas para registro
+
       switch (response?.data?.code) {
         case 'NOT_FOUND':
+          setOpenModal(false);       // ⬅️ Por si estaba abierto
+          setOpenForgot(false);      // ⬅️ Por si estaba abierto
+          setOpenReset(false);       // ⬅️ Por si estaba abierto
           Swal.fire("No encontrado", message, "error");
           break;
 
         case 'ACCOUNT_NOT_CONFIRMED':
+          setOpenModal(false);
+          setOpenForgot(false);
+          setOpenReset(false);
           Swal.fire(
             "Cuenta no confirmada",
             `${message}<br>Por favor revisa tu correo electrónico para confirmar tu cuenta.`,
             "warning"
           );
-          // Opcional: aquí podrías ofrecer reenviar el correo
           break;
 
         case 'INACTIVE_EXTERNAL':
+          setOpenModal(false);
+          setOpenForgot(false);
+          setOpenReset(false);
           Swal.fire("Usuario dado de baja", message, "warning");
           break;
 
         case 'INVALID_PASSWORD':
+          setOpenModal(false);
+          setOpenForgot(false);
+          setOpenReset(false);
           Swal.fire("Contraseña incorrecta", message, "error");
           break;
 
         default:
+          setOpenModal(false);
+          setOpenForgot(false);
+          setOpenReset(false);
           Swal.fire("Error", message, "error");
           break;
       }
@@ -246,11 +264,11 @@ const [openReset, setOpenReset] = useState(false);
               {/* 🔐 Link de recuperación */}
               <div className="text-right pt-1">
                 <button
-  onClick={() => setOpenForgot(true)}
-  className="text-xs text-white/80 underline hover:text-red-400 transition"
->
-  ¿Olvidaste tu contraseña o todavía no la tienes?
-</button>
+                onClick={() => setOpenForgot(true)}
+                className="text-xs text-white/80 underline hover:text-red-400 transition"
+              >
+                ¿Olvidaste tu contraseña o todavía no la tienes?
+              </button>
               </div>
             </div>
 
@@ -398,17 +416,17 @@ const [openReset, setOpenReset] = useState(false);
 {/* Recuperar contraseña */}
 <Dialog open={openForgot} onOpenChange={setOpenForgot}>
   <DialogContent className="bg-black/70 backdrop-blur-2xl border border-white/10 text-white shadow-2xl rounded-2xl px-6 py-8 animate-in fade-in zoom-in-90">
-    <ForgotPasswordForm />
-
+    <ForgotPasswordForm onClose={() => setOpenForgot(false)} />
   </DialogContent>
 </Dialog>
 
 {/* Restablecer contraseña */}
 <Dialog open={openReset} onOpenChange={setOpenReset}>
   <DialogContent className="bg-black/70 backdrop-blur-2xl border border-white/10 text-white shadow-2xl rounded-2xl px-6 py-8 animate-in fade-in zoom-in-90">
-    <ResetPasswordForm />
+    <ResetPasswordForm onClose={() => setOpenReset(false)} />
   </DialogContent>
 </Dialog>
+
     </div>
   );
 }

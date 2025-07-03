@@ -91,7 +91,7 @@ export default function IntranetHomePage() {
           </div>
 
           {/* TARJETAS / ARTICLES */}
-          <div className="mt-14 max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 px-2">
+          <div className="mt-14 max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-2">
             {ARTICLES.map((article, idx) => (
               <div key={idx} className="group perspective">
                 <motion.div

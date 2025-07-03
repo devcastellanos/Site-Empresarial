@@ -7,13 +7,19 @@ import { Label } from "@/components/ui/label";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-export function ForgotPasswordForm() {
+type ForgotPasswordFormProps = {
+  onClose?: () => void;
+};
+
+export function ForgotPasswordForm({ onClose }: ForgotPasswordFormProps) {
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSend = async () => {
-    if (!value) {
-      Swal.fire({
+    if (loading) return; // ⛔ Evita múltiples clics
+
+    if (!value.trim()) {
+      await Swal.fire({
         icon: "warning",
         title: "Campo requerido",
         text: "Por favor ingresa tu correo o número de empleado",
@@ -24,19 +30,34 @@ export function ForgotPasswordForm() {
 
     setLoading(true);
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/solicitar-recuperacion`, {
-        email: value.includes("@") ? value : undefined,
-        num_empleado: !value.includes("@") ? value : undefined,
-      });
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/solicitar-recuperacion`,
+        {
+          email: value.includes("@") ? value : undefined,
+          num_empleado: !value.includes("@") ? value : undefined,
+        }
+      );
 
-      Swal.fire({
+      // ✅ Cierra el modal y limpia input ANTES del Swal
+      setTimeout(() => {
+        onClose?.();
+        setValue("");
+      }, 0);
+
+      await Swal.fire({
         icon: "success",
         title: "¡Listo!",
         text: res.data.message || "Correo de recuperación enviado",
         confirmButtonColor: "#9A3324",
       });
     } catch (err: any) {
-      Swal.fire({
+      // ✅ También cierra y limpia si falla
+      setTimeout(() => {
+        onClose?.();
+        setValue("");
+      }, 0);
+
+      await Swal.fire({
         icon: "error",
         title: "Error",
         text: err.response?.data?.message || "Error al enviar solicitud",
@@ -63,6 +84,7 @@ export function ForgotPasswordForm() {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           className="bg-white/10 text-white placeholder:text-white/50 border border-white/20 rounded-lg focus:ring-2 focus:ring-[#9A3324] focus:outline-none"
+          disabled={loading}
         />
       </div>
 

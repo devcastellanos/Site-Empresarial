@@ -5,11 +5,19 @@ import { useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Eye, EyeOff } from "lucide-react";
+import { motion } from "framer-motion";
+import NavbarRH from "@/components/navbarRH"; // Ajusta la ruta si es diferente
+import Image from "next/image";
 
-export function ResetPasswordForm() {
+type ResetPasswordFormProps = {
+  onClose?: () => void;
+};
+
+export function ResetPasswordForm({ onClose }: ResetPasswordFormProps) {
   const [password, setPassword] = useState("");
   const [confirmar, setConfirmar] = useState("");
   const [token, setToken] = useState("");
@@ -17,7 +25,6 @@ export function ResetPasswordForm() {
   const [verPassword, setVerPassword] = useState(false);
   const [verConfirmar, setVerConfirmar] = useState(false);
   const searchParams = useSearchParams();
-
   const confirmarRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -48,19 +55,26 @@ export function ResetPasswordForm() {
 
     setLoading(true);
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/restablecer-password`, {
-        token,
-        nuevaPassword: password,
-      });
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/restablecer-password`,
+        {
+          token,
+          nuevaPassword: password,
+        }
+      );
 
-      Swal.fire({
+      await Swal.fire({
         icon: "success",
         title: "¡Contraseña actualizada!",
         text: "Serás redirigido al inicio de sesión.",
         confirmButtonColor: "#9A3324",
-      }).then(() => {
-        window.location.href = "/Login"; // ajusta según tu ruta real
       });
+
+      if (onClose) {
+        onClose();
+      } else {
+        window.location.href = "/Login";
+      }
 
     } catch (err: any) {
       Swal.fire({
@@ -75,65 +89,91 @@ export function ResetPasswordForm() {
   };
 
   return (
-    <div className="space-y-6 text-white max-w-md w-full">
-      <div className="text-center">
-        <h2 className="text-xl font-bold">Restablecer contraseña</h2>
-        <p className="text-sm text-white/80 mt-1">
-          Ingresa tu nueva contraseña para continuar
-        </p>
-      </div>
+    <>
+      <NavbarRH />
 
-      {/* Contraseña */}
-      <div className="space-y-1 relative">
-        <Label className="text-white">Nueva contraseña</Label>
-        <Input
-          type={verPassword ? "text" : "password"}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") confirmarRef.current?.focus();
-          }}
-          className="bg-white/10 text-white placeholder:text-white/50 border border-white/20 rounded-lg pr-10 focus:ring-2 focus:ring-[#9A3324] focus:outline-none"
-        />
-        <button
-          type="button"
-          onClick={() => setVerPassword((prev) => !prev)}
-          className="absolute right-2 top-9 text-white/70 hover:text-white"
-        >
-          {verPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
-      </div>
-
-      {/* Confirmar contraseña */}
-      <div className="space-y-1 relative">
-        <Label className="text-white">Confirmar contraseña</Label>
-        <Input
-          type={verConfirmar ? "text" : "password"}
-          value={confirmar}
-          onChange={(e) => setConfirmar(e.target.value)}
-          ref={confirmarRef}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSubmit();
-          }}
-          className="bg-white/10 text-white placeholder:text-white/50 border border-white/20 rounded-lg pr-10 focus:ring-2 focus:ring-[#9A3324] focus:outline-none"
-        />
-        <button
-          type="button"
-          onClick={() => setVerConfirmar((prev) => !prev)}
-          className="absolute right-2 top-9 text-white/70 hover:text-white"
-        >
-          {verConfirmar ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
-      </div>
-
-      {/* Botón */}
-      <Button
-        onClick={handleSubmit}
-        disabled={loading}
-        className="w-full bg-[#9A3324] text-white hover:brightness-110 disabled:opacity-50"
+      <motion.video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="fixed top-0 left-0 w-full h-full object-cover -z-20"
+        style={{ opacity: 1 }}
       >
-        {loading ? "Actualizando..." : "Guardar nueva contraseña"}
-      </Button>
-    </div>
+        <source src="/image/background.mp4" type="video/mp4" />
+        Tu navegador no soporta videos.
+      </motion.video>
+
+      <div className="flex justify-center items-center min-h-[80vh] px-4 relative z-10">
+        <Card className="w-full max-w-md bg-black/50 backdrop-blur-md text-white shadow-2xl rounded-2xl border border-white/10">
+          <CardHeader className="text-center space-y-4">
+            <Image
+              src="/image/logowhite.png"
+              alt="Logo"
+              width={240}
+              height={80}
+              className="mx-auto rounded-full"
+            />
+            <div>
+              <CardTitle className="text-xl">Restablecer contraseña</CardTitle>
+              <CardDescription className="text-zinc-400">
+                Ingresa tu nueva contraseña para continuar
+              </CardDescription>
+            </div>
+          </CardHeader>
+
+          <CardContent className="space-y-5">
+            <div className="space-y-1 relative">
+              <Label>Nueva contraseña</Label>
+              <Input
+                type={verPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") confirmarRef.current?.focus();
+                }}
+                className="bg-black/40 text-white placeholder:text-white/60 border border-white/20 rounded-lg pr-10 focus:ring-2 focus:ring-[#9A3324] focus:outline-none backdrop-blur-sm"
+              />
+              <button
+                type="button"
+                onClick={() => setVerPassword((prev) => !prev)}
+                className="absolute right-2 top-9 text-zinc-400 hover:text-white"
+              >
+                {verPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+
+            <div className="space-y-1 relative">
+              <Label>Confirmar contraseña</Label>
+              <Input
+                type={verConfirmar ? "text" : "password"}
+                value={confirmar}
+                onChange={(e) => setConfirmar(e.target.value)}
+                ref={confirmarRef}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSubmit();
+                }}
+                className="bg-black/40 text-white placeholder:text-white/60 border border-white/20 rounded-lg pr-10 focus:ring-2 focus:ring-[#9A3324] focus:outline-none backdrop-blur-sm"
+              />
+              <button
+                type="button"
+                onClick={() => setVerConfirmar((prev) => !prev)}
+                className="absolute right-2 top-9 text-zinc-400 hover:text-white"
+              >
+                {verConfirmar ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+
+            <Button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="w-full bg-[#9A3324] text-white hover:brightness-110 disabled:opacity-50"
+            >
+              {loading ? "Actualizando..." : "Guardar nueva contraseña"}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 }
