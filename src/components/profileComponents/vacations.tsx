@@ -432,7 +432,7 @@ const handleSubmit = async () => {
             </CardContent>
             <CardFooter className="flex justify-end mt-4">
               <div className="w-full bg-white/90 border rounded-lg p-4 shadow-sm max-w-4xl">
-                <h3 className="text-base font-semibold mb-2">¿Problemas con tu asistencia?</h3>
+                <h3 className="text-base font-semibold mb-2">¿Tienes duda con tus vacaciones?</h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   Para cualquier duda o aclaración, comunícate al área de nóminas:
                 </p>

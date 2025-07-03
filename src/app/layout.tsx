@@ -12,7 +12,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Site Capacitacion",
+  title: "Grupo Tarahumara",
   description:
     "Sitio web para la capacitacion de los empleados de la empresa, desarrollado por el equipo de Sistemas. Grupo Tarahumara",
 };
@@ -24,7 +24,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-
+      <head>
+        {/* Agrega esta línea para el favicon */}
+        <link rel="icon" href="/image/favicon.png" />
+      </head>
       <body className={roboto.className}>
         {/* Asegúrate de envolver tu aplicación con AuthProvider */}
         <AuthProvider>
