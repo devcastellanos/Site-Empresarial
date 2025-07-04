@@ -264,11 +264,11 @@ const [openReset, setOpenReset] = useState(false);
               {/* 🔐 Link de recuperación */}
               <div className="text-right pt-1">
                 <button
-                onClick={() => setOpenForgot(true)}
-                className="text-xs text-white/80 underline hover:text-red-400 transition"
-              >
-                ¿Olvidaste tu contraseña o todavía no la tienes?
-              </button>
+                  onClick={() => setOpenForgot(true)}
+                  className="inline-flex items-center rounded-full bg-gray-100 text-black px-3 py-1 text-xs font-semibold hover:bg-blue-200 transition"
+                >
+                  Regístrate o recupera tu contraseña
+                </button>
               </div>
             </div>
 
