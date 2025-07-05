@@ -66,15 +66,12 @@ export default function IntranetHomePage() {
         viewport={{ once: false }}
         transition={{ duration: 1 }}
       >
-
         <div className="relative z-10 w-full max-w-6xl px-6 text-white mt-20">
           <h1 className="text-[48px] lg:text-[64px] font-extrabold leading-tight">
             Grupo Tarahumara
           </h1>
           <p className="mt-2 text-lg lg:text-2xl text-gray-200">
-            En Grupo Tarahumara valoramos el esfuerzo colectivo y la dedicación
-            diaria que construye nuestro éxito. Esta intranet es tu espacio para
-            conectar, colaborar y crecer juntos.
+            En Grupo Tarahumara valoramos el esfuerzo colectivo y la dedicación diaria que construye nuestro éxito. Esta intranet es tu espacio para conectar, colaborar y crecer juntos.
           </p>
 
           <div className="mt-12 flex justify-center">
@@ -89,56 +86,61 @@ export default function IntranetHomePage() {
 
           {/* TARJETAS / ARTICLES */}
           <div className="mt-28 max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 px-2">
-            {ARTICLES.map((article, idx) => (
-              <div key={idx} className="group perspective">
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  whileHover={{ rotateY: 180 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
-                  className="relative w-full min-h-[260px] h-full transform-style-preserve-3d transition-transform duration-300"
-                >
-                  {/* Frente */}
-                  <div className="absolute inset-0 backface-hidden bg-gray-800 rounded-2xl overflow-hidden shadow-lg shadow-black/30 flex flex-col">
-                    <Image
-                      src={article.img}
-                      alt={article.title}
-                      width={600}
-                      height={400}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="p-4 flex-grow flex items-center justify-center">
-                      <h3 className="text-white text-lg font-semibold text-center break-words leading-tight">
-                        {article.title}
-                      </h3>
-                    </div>
-                  </div>
+            {ARTICLES.map((article, idx) => {
+              const isExternal = article.link?.startsWith("http");
+              const Wrapper = isExternal ? "a" : "a"; // puedes usar Link si Next.js requiere para rutas internas
 
-                  {/* Reverso */}
-                  <div className="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl p-4 text-white shadow-lg shadow-black/30 flex flex-col justify-between">
-                    <div>
-                      <h3 className="text-xl font-semibold mb-2 break-words">
-                        {article.title}
-                      </h3>
-                      <p className="text-sm text-gray-300 break-words">
-                        {article.desc}
-                      </p>
-                    </div>
-                    {article.link && (
-                      <div className="mt-4">
-                        <a
-                          href={article.link}
-                          target="_blank"
-                          className="inline-block bg-blue-500 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm transition"
-                        >
-                          Ver más
-                        </a>
+              return (
+                <Wrapper
+                  key={idx}
+                  href={article.link}
+                  target={isExternal ? "_blank" : undefined}
+                  rel={isExternal ? "noopener noreferrer" : undefined}
+                  className="group perspective no-underline block"
+                >
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ rotateY: 180 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="relative w-full min-h-[260px] h-full transform-style-preserve-3d transition-transform duration-300 cursor-pointer"
+                  >
+                    {/* Frente */}
+                    <div className="absolute inset-0 backface-hidden bg-gray-800 rounded-2xl overflow-hidden shadow-lg shadow-black/30 flex flex-col">
+                      <Image
+                        src={article.img}
+                        alt={article.title}
+                        width={600}
+                        height={400}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="p-4 flex-grow flex items-center justify-center">
+                        <h3 className="text-white text-lg font-semibold text-center break-words leading-tight">
+                          {article.title}
+                        </h3>
                       </div>
-                    )}
-                  </div>
-                </motion.div>
-              </div>
-            ))}
+                    </div>
+
+                    {/* Reverso */}
+                    <div className="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl p-4 text-white shadow-lg shadow-black/30 flex flex-col justify-between bg-gray-900">
+                      <div>
+                        <h3 className="text-xl font-semibold mb-2 break-words">
+                          {article.title}
+                        </h3>
+                        <p className="text-sm text-gray-300 break-words">
+                          {article.desc}
+                        </p>
+                      </div>
+                      <div className="mt-4">
+                        <span className="inline-block bg-blue-500 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm transition">
+                          Ver más
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                </Wrapper>
+              );
+            })}
           </div>
         </div>
       </motion.header>
@@ -150,14 +152,11 @@ export default function IntranetHomePage() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: false }}
       >
-        <motion.div
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-        >
-        <Posts />
+        <motion.div whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }}>
+          <Posts />
         </motion.div>
       </motion.section>
-      
+
       {/* BOTÓN FLOTANTE ANIMADO */}
       <button
         onClick={() =>
@@ -168,7 +167,6 @@ export default function IntranetHomePage() {
       >
         Entérate de las últimas noticias de Grupo Tarahumara
       </button>
-
     </>
   );
 }

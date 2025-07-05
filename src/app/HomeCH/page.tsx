@@ -10,7 +10,6 @@ const ARTICLES = [
     img: "/image/AsistenciaCH.png",
     title: "Asistencia",
     desc: "Revisa tu asistencia e incidencias en tu perfil Tarahumara.",
-    // usar variable de entorno para el link
     link: `${process.env.NEXT_PUBLIC_BASE_URL}/Perfil`,
   },
   {
@@ -47,17 +46,6 @@ export default function IntranetHomePage() {
   return (
     <>
       <NavbarRH />
-      {/* <motion.video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="fixed top-0 left-0 w-full h-full object-cover -z-20"
-        style={{ opacity: 1 }}
-      >
-        <source src="/image/background.mp4" type="video/mp4" />
-        Tu navegador no soporta videos.
-      </motion.video> */}
 
       <motion.header
         ref={ref}
@@ -87,83 +75,93 @@ export default function IntranetHomePage() {
 
           {/* TARJETAS / ARTICLES */}
           <div className="mt-28 max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 px-2">
-            {ARTICLES.map((article, idx) => (
-              <div key={idx} className="group perspective">
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  whileHover={{ rotateY: 180 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
-                  className="relative w-full min-h-[260px] h-full transform-style-preserve-3d transition-transform duration-300"
-                >
-                  {/* Frente */}
-                  <div className="absolute inset-0 backface-hidden bg-gray-800 rounded-2xl overflow-hidden shadow-lg shadow-black/30 flex flex-col">
-                    <Image
-                      src={article.img}
-                      alt={article.title}
-                      width={600}
-                      height={400}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="p-4 flex-grow flex items-center justify-center">
-                      <h3 className="text-white text-lg font-semibold text-center break-words leading-tight">
-                        {article.title}
-                      </h3>
-                    </div>
-                  </div>
+            {ARTICLES.map((article, idx) => {
+              const isClickable = article.link && article.link !== "#";
+              const isExternal =
+                article.link?.startsWith("http") ||
+                article.link?.startsWith(`${process.env.NEXT_PUBLIC_BASE_URL}`);
+              const Wrapper = isClickable ? "a" : "div";
 
-                  {/* Reverso */}
-                  <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gray-900 rounded-2xl p-4 text-white shadow-lg shadow-black/30 flex flex-col justify-between">
-                    <div>
-                      <h3 className="text-xl font-semibold mb-2 break-words">
-                        {article.title}
-                      </h3>
-                      <p className="text-sm text-gray-300 break-words">
-                        {article.desc}
-                      </p>
-                    </div>
-                    {article.link && (
-                      <div className="mt-4">
-                        <a
-                          href={article.link}
-                          target="_blank"
-                          className="inline-block bg-blue-500 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm transition"
-                        >
-                          Ver más
-                        </a>
+              return (
+                <Wrapper
+                  key={idx}
+                  href={isClickable ? article.link : undefined}
+                  target={isExternal ? "_blank" : undefined}
+                  rel={isExternal ? "noopener noreferrer" : undefined}
+                  className="group perspective no-underline block"
+                >
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ rotateY: 180 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="relative w-full min-h-[260px] h-full transform-style-preserve-3d transition-transform duration-300 cursor-pointer"
+                  >
+                    {/* Frente */}
+                    <div className="absolute inset-0 backface-hidden bg-gray-800 rounded-2xl overflow-hidden shadow-lg shadow-black/30 flex flex-col">
+                      <Image
+                        src={article.img}
+                        alt={article.title}
+                        width={600}
+                        height={400}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="p-4 flex-grow flex items-center justify-center">
+                        <h3 className="text-white text-lg font-semibold text-center break-words leading-tight">
+                          {article.title}
+                        </h3>
                       </div>
-                    )}
-                  </div>
-                </motion.div>
-              </div>
-            ))}
+                    </div>
+
+                    {/* Reverso */}
+                    <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gray-900 rounded-2xl p-4 text-white shadow-lg shadow-black/30 flex flex-col justify-between">
+                      <div>
+                        <h3 className="text-xl font-semibold mb-2 break-words">
+                          {article.title}
+                        </h3>
+                        <p className="text-sm text-gray-300 break-words">
+                          {article.desc}
+                        </p>
+                      </div>
+                      {article.link && (
+                        <div className="mt-4">
+                          <span className="inline-block bg-blue-500 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm transition">
+                            Ver más
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                </Wrapper>
+              );
+            })}
           </div>
         </div>
       </motion.header>
+
       {/* ORG CHART SECTION */}
       <motion.section
-  ref={orgChartRef}
-  className="w-full text-center py-10 px-4 md:px-16"
-  style={{
-  backgroundImage: 'linear-gradient(to bottom, white, rgb(154, 51, 36))',
-}}
-  initial={{ opacity: 0 }}
-  whileInView={{ opacity: 1 }}
-  viewport={{ once: false }}
-  transition={{ duration: 1 }}
->
-  <motion.div
-    initial={{ opacity: 0, y: 50 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: false }}
-    transition={{ duration: 0.8 }}
-  >
-    <OrgChart />
-  </motion.div>
-</motion.section>
+        ref={orgChartRef}
+        className="w-full text-center py-10 px-4 md:px-16"
+        style={{
+          backgroundImage: "linear-gradient(to bottom, white, rgb(154, 51, 36))",
+        }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: false }}
+        transition={{ duration: 1 }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.8 }}
+        >
+          <OrgChart />
+        </motion.div>
+      </motion.section>
 
-
-      {/* BOTÓN FLOTANTE ANIMADO */}
+      {/* BOTÓN FLOTANTE */}
       <button
         onClick={() =>
           orgChartRef.current?.scrollIntoView({ behavior: "smooth" })

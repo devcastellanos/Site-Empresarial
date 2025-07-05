@@ -75,55 +75,61 @@ export default function IntranetHomePage() {
             </div>
 
             <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {ARTICLES.map((article, idx) => (
-                <div key={idx} className="group perspective">
-                  <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    whileHover={{ rotateY: 180 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
-                    className="relative w-full min-h-[260px] h-full transform-style-preserve-3d transition-transform duration-300"
+              {ARTICLES.map((article, idx) => {
+                const isExternal = article.link.startsWith("http");
+                const Wrapper = isExternal ? "a" : Link;
+
+                return (
+                  <Wrapper
+                    key={idx}
+                    href={article.link}
+                    target={isExternal ? "_blank" : undefined}
+                    rel={isExternal ? "noopener noreferrer" : undefined}
+                    className="group perspective no-underline"
                   >
-                    {/* Frente */}
-                    <div className="absolute inset-0 backface-hidden bg-gray-800 rounded-2xl overflow-hidden shadow-lg shadow-black/30 flex flex-col">
-                      <Image
-                        src={article.img}
-                        alt={article.title}
-                        width={600}
-                        height={400}
-                        className="w-full h-48 object-cover"
-                      />
-                      <div className="p-4 flex-grow flex items-center justify-center">
-                        <h3 className="text-white text-lg font-semibold text-center break-words leading-tight">
-                          {article.title}
-                        </h3>
-                      </div>
-                    </div>
-                    {/* Reverso */}
-                    <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gray-900 rounded-2xl p-4 text-white shadow-lg shadow-black/30 flex flex-col justify-between">
-                      <div>
-                        <h3 className="text-xl font-semibold mb-2 break-words">
-                          {article.title}
-                        </h3>
-                        <p className="text-sm text-gray-300 break-words">
-                          {article.desc}
-                        </p>
-                      </div>
-                      {article.link && (
-                        <div className="mt-4">
-                          <a
-                            href={article.link}
-                            target="_blank"
-                            className="inline-block bg-blue-500 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm transition"
-                          >
-                            Ver más
-                          </a>
+                    <motion.div
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      whileHover={{ rotateY: 180 }}
+                      transition={{ duration: 0.3, ease: "easeOut" }}
+                      className="relative w-full min-h-[260px] h-full transform-style-preserve-3d transition-transform duration-300 cursor-pointer"
+                    >
+                      {/* Frente */}
+                      <div className="absolute inset-0 backface-hidden bg-gray-800 rounded-2xl overflow-hidden shadow-lg shadow-black/30 flex flex-col">
+                        <Image
+                          src={article.img}
+                          alt={article.title}
+                          width={600}
+                          height={400}
+                          className="w-full h-48 object-cover"
+                        />
+                        <div className="p-4 flex-grow flex items-center justify-center">
+                          <h3 className="text-white text-lg font-semibold text-center break-words leading-tight">
+                            {article.title}
+                          </h3>
                         </div>
-                      )}
-                    </div>
-                  </motion.div>
-                </div>
-              ))}
+                      </div>
+                      {/* Reverso */}
+                      <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gray-900 rounded-2xl p-4 text-white shadow-lg shadow-black/30 flex flex-col justify-between">
+                        <div>
+                          <h3 className="text-xl font-semibold mb-2 break-words">
+                            {article.title}
+                          </h3>
+                          <p className="text-sm text-gray-300 break-words">
+                            {article.desc}
+                          </p>
+                        </div>
+                        <div className="mt-4">
+                          <span className="inline-block bg-blue-500 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm transition">
+                            Ver más
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </Wrapper>
+                );
+              })}
+
             </div>
           </div>
         </motion.header>
