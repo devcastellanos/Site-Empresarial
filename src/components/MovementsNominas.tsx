@@ -334,8 +334,16 @@ function Movements() {
               <p><strong>ID Movimiento:</strong> {selectedMovimiento.idMovimiento}</p>
               <p><strong>Tipo:</strong> {selectedMovimiento.tipo_movimiento}</p>
               <p><strong>Empleado:</strong> {selectedMovimiento.num_empleado}</p>
-              <p><strong>Fecha Incidencia:</strong> {format(new Date(selectedMovimiento.fecha_incidencia), "yyyy-MM-dd")}</p>
-              <p><strong>Fecha Solicitud:</strong> {format(new Date(selectedMovimiento.fecha_solicitud), "yyyy-MM-dd HH:mm")}</p>
+              <p>
+                <strong>Fecha Incidencia:</strong>{" "}
+                {selectedMovimiento.fecha_incidencia?.slice(0, 10)}
+              </p>
+              <p>
+                <strong>Fecha Solicitud:</strong>{" "}
+                {selectedMovimiento.fecha_solicitud
+                  ?.replace("T", " ")
+                  .slice(0, 16)}
+              </p>
               <p><strong>Estatus:</strong> {selectedMovimiento.estatus_movimiento}</p>
               <p><strong>Historial:</strong> {selectedMovimiento.historial_aprobaciones}</p>
 

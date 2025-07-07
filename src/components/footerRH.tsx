@@ -7,7 +7,7 @@ export function FooterRH() {
 
   return (
     <footer className="flex justify-center p-10 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-gray-300">
-      <div className="w-full max-w-none bg-gray-800/60 backdrop-blur-lg rounded-2xl p-8 md:p-10 px-6 md:px-12 text-center shadow-2xl border border-gray-700">
+      <div className="w-full max-w-7xl bg-gray-800/60 backdrop-blur-lg rounded-2xl p-8 md:p-10 px-6 md:px-12 text-center shadow-2xl border border-gray-700">
         <h3 className="text-2xl font-bold tracking-wide text-white">
           Contacto - Área de Capacitación
         </h3>
@@ -55,11 +55,10 @@ interface ContactCardProps {
 
 function ContactCard({ name, email, phone, employeeId }: ContactCardProps) {
   const [hasError, setHasError] = useState(false);
-
   const imageSrc = `${process.env.NEXT_PUBLIC_IMAGE_URL}/uploads/${employeeId}.jpg`;
 
   return (
-    <div className="flex items-center gap-4 bg-gray-700/50 p-4 rounded-lg shadow-lg hover:bg-gray-600/50 transition-all duration-300 w-full max-w-sm md:max-w-none">
+    <div className="flex items-start gap-4 bg-gray-700/50 p-4 rounded-lg shadow-lg hover:bg-gray-600/50 transition-all duration-300 w-full max-w-xs md:max-w-sm lg:max-w-sm">
       {hasError ? (
         <div className="w-14 h-14 rounded-full border-2 border-white bg-white flex items-center justify-center shadow-md">
           <User className="w-7 h-7 text-gray-500" />
@@ -74,21 +73,27 @@ function ContactCard({ name, email, phone, employeeId }: ContactCardProps) {
           onError={() => setHasError(true)}
         />
       )}
-      <div className="text-left">
-        <p className="text-lg font-medium text-white">{name}</p>
-        <p className="text-sm text-gray-400 flex items-center gap-1">
-          <Mail className="w-4 h-4" />
-          <a href={`mailto:${email}`} className="hover:text-white transition-colors">
+
+      <div className="text-left overflow-hidden">
+        <p className="text-lg font-medium text-white break-words">{name}</p>
+
+        <p className="text-sm text-gray-400 flex items-center gap-1 break-words">
+          <Mail className="w-4 h-4 shrink-0" />
+          <a
+            href={`mailto:${email}`}
+            className="hover:text-white transition-colors break-all"
+          >
             {email}
           </a>
         </p>
-        <p className="text-sm text-gray-400 flex items-center gap-1">
-          <Smartphone className="w-4 h-4" />
+
+        <p className="text-sm text-gray-400 flex items-center gap-1 break-words">
+          <Smartphone className="w-4 h-4 shrink-0" />
           <a
             href={`https://wa.me/${phone.replace(/\D/g, "")}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-white transition-colors"
+            className="hover:text-white transition-colors break-all"
           >
             {phone}
           </a>
@@ -97,4 +102,5 @@ function ContactCard({ name, email, phone, employeeId }: ContactCardProps) {
     </div>
   );
 }
+
 export default FooterRH;

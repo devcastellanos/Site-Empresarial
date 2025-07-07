@@ -64,8 +64,12 @@ import { WorkedRestDayFields } from "@/components/profileComponents/movementsCom
 import { WorkMeetingFields } from "@/components/profileComponents/movementsComponents/workMeetingFields";
 import { WorkTripFields } from "@/components/profileComponents/movementsComponents/workTripFields";
 import Image from "next/image"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { HelpCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   crearMovimiento,
   responderAprobacion,
@@ -95,7 +99,7 @@ function Movements() {
   const [endDate, setEndDate] = useState("");
   const [resumeDate, setResumeDate] = useState("");
   const [tripLocation, setTripLocation] = useState("");
-
+  const [selectedMovimiento, setSelectedMovimiento] = useState<any | null>(null);
   const [specialType, setSpecialType] = useState(""); // Define specialType state
   const [entryTime, setEntryTime] = useState(""); // Define entryTime state
   const [delayTime, setDelayTime] = useState(""); // Define delayTime state
@@ -709,9 +713,7 @@ function Movements() {
         ) && (
           <Card className="col-span-2 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-3 max-h-[650px]">
             <CardHeader>
-              <CardTitle className="text-xl">
-                Movimientos que debes aprobar
-              </CardTitle>
+              <CardTitle className="text-xl">Movimientos que debes aprobar</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 overflow-y-auto pr-2 max-h-[520px]">
               {movementsData.pendientes.length === 0 ? (
@@ -724,14 +726,11 @@ function Movements() {
                       ? "border-red-600 bg-red-50 shadow-md"
                       : "border-gray-200";
 
-                  // Historial formateado
-                  const aprobadoresPrevios = mov.historial_aprobaciones_detallado?.map((a: any) => {
-                    return `✔️ ${a.nombre} (Nivel ${a.orden})`;
-                  }) || [];
+                  const aprobadoresPrevios =
+                    mov.historial_aprobaciones_detallado?.map((a: any) => `✔️ ${a.nombre} (Nivel ${a.orden})`) || [];
 
-                  const pendientesPrevios = mov.pendientes_previos_detallado?.map((a: any) => {
-                    return `⏳ Pendiente: ${a.nombre} (Nivel ${a.orden})`;
-                  }) || [];
+                  const pendientesPrevios =
+                    mov.pendientes_previos_detallado?.map((a: any) => `⏳ Pendiente: ${a.nombre} (Nivel ${a.orden})`) || [];
 
                   return (
                     <Card
@@ -760,12 +759,10 @@ function Movements() {
                       </p>
 
                       {mov.comentarios && (
-                        <p className="text-sm text-muted-foreground italic">
-                          “{mov.comentarios}”
-                        </p>
+                        <p className="text-sm text-muted-foreground italic">“{mov.comentarios}”</p>
                       )}
 
-                      {aprobadoresPrevios.length > 0 && (
+                      {aprobadoresPrevios.length > 0 ? (
                         <div className="text-sm text-green-600">
                           <p className="font-medium">✅ Ya aprobado por:</p>
                           <ul className="list-disc list-inside ml-4">
@@ -774,12 +771,10 @@ function Movements() {
                             ))}
                           </ul>
                         </div>
+                      ) : (
+                        <p className="text-sm text-red-600">❌ No ha sido aprobado por nadie</p>
                       )}
-                      {aprobadoresPrevios.length === 0 && (
-                        <p className="text-sm text-red-600">
-                          ❌ No ha sido aprobado por nadie
-                        </p>
-                      )}
+
                       {pendientesPrevios.length > 0 && (
                         <div className="text-sm text-red-600">
                           <p className="font-medium">⏳ Pendiente de:</p>
@@ -803,14 +798,25 @@ function Movements() {
                         }
                       />
 
-                      <div className="flex gap-2 justify-end mt-2">
+                      <div className="flex flex-wrap gap-2 justify-end mt-2">
+                        <Button
+                          variant="outline"
+                          className="border-gray-400 text-gray-700"
+                          onClick={() => {
+                            console.log("📦 Movimiento seleccionado:", mov);
+                            setSelectedMovimiento(mov);
+                          }}
+                        >
+                          Ver detalles
+                        </Button>
+
                         <Button
                           variant="outline"
                           className="border-green-500 text-green-700"
                           disabled={loadingActions[mov.idMovimiento]}
                           onClick={async () => {
                             try {
-                              setLoadingActions(prev => ({ ...prev, [mov.idMovimiento]: true }));
+                              setLoadingActions((prev) => ({ ...prev, [mov.idMovimiento]: true }));
                               await responderAprobacion(
                                 mov.idAprobacion,
                                 "aprobado",
@@ -824,34 +830,28 @@ function Movements() {
                                 }));
                               }
                               Swal.fire({
-                                icon: 'success',
-                                title: 'Aprobación exitosa',
-                                text: 'El movimiento ha sido aprobado correctamente.',
-                                confirmButtonColor: '#9A3324',
-                                confirmButtonText: 'Entendido',
+                                icon: "success",
+                                title: "Aprobación exitosa",
+                                text: "El movimiento ha sido aprobado correctamente.",
+                                confirmButtonColor: "#9A3324",
+                                confirmButtonText: "Entendido",
                                 customClass: {
-                                  popup: 'rounded-xl shadow-lg',
-                                  title: 'text-lg font-semibold',
-                                  confirmButton: 'px-4 py-2 text-white',
-                                }
+                                  popup: "rounded-xl shadow-lg",
+                                  title: "text-lg font-semibold",
+                                  confirmButton: "px-4 py-2 text-white",
+                                },
                               });
                             } catch (error) {
                               console.error(error);
                               Swal.fire({
-                                icon: 'error',
-                                title: 'Error al aprobar',
-                                text: 'Ocurrió un error al aprobar el movimiento. Por favor, intenta de nuevo más tarde.',
-                                confirmButtonColor: '#9A3324',
-                                confirmButtonText: 'Entendido',
-                                customClass: {
-                                  popup: 'rounded-xl shadow-lg',
-                                  title: 'text-lg font-semibold',
-                                  confirmButton: 'px-4 py-2 text-white',
-                                }
+                                icon: "error",
+                                title: "Error al aprobar",
+                                text: "Ocurrió un error al aprobar el movimiento.",
+                                confirmButtonColor: "#9A3324",
+                                confirmButtonText: "Entendido",
                               });
-
                             } finally {
-                              setLoadingActions(prev => ({ ...prev, [mov.idMovimiento]: false }));
+                              setLoadingActions((prev) => ({ ...prev, [mov.idMovimiento]: false }));
                             }
                           }}
                         >
@@ -864,7 +864,7 @@ function Movements() {
                           disabled={loadingActions[mov.idMovimiento]}
                           onClick={async () => {
                             try {
-                              setLoadingActions(prev => ({ ...prev, [mov.idMovimiento]: true }));
+                              setLoadingActions((prev) => ({ ...prev, [mov.idMovimiento]: true }));
                               await responderAprobacion(
                                 mov.idAprobacion,
                                 "rechazado",
@@ -878,35 +878,23 @@ function Movements() {
                                 }));
                               }
                               Swal.fire({
-                                icon: 'error',
-                                title: 'Movimiento rechazado',
-                                text: 'El movimiento ha sido rechazado correctamente.',
-                                confirmButtonColor: '#9A3324',
-                                confirmButtonText: 'Entendido',
-                                customClass: {
-                                  popup: 'rounded-xl shadow-lg',
-                                  title: 'text-lg font-semibold',
-                                  confirmButton: 'px-4 py-2 text-white',
-                                }
+                                icon: "error",
+                                title: "Movimiento rechazado",
+                                text: "El movimiento ha sido rechazado correctamente.",
+                                confirmButtonColor: "#9A3324",
+                                confirmButtonText: "Entendido",
                               });
                             } catch (error) {
                               console.error(error);
-
                               Swal.fire({
-                                icon: 'error',
-                                title: 'Error al rechazar',
-                                text: 'Ocurrió un error al rechazar el movimiento. Por favor, intenta de nuevo más tarde.',
-                                confirmButtonColor: '#9A3324',
-                                confirmButtonText: 'Entendido',
-                                customClass: {
-                                  popup: 'rounded-xl shadow-lg',
-                                  title: 'text-lg font-semibold',
-                                  confirmButton: 'px-4 py-2 text-white',
-                                }
+                                icon: "error",
+                                title: "Error al rechazar",
+                                text: "Ocurrió un error al rechazar el movimiento.",
+                                confirmButtonColor: "#9A3324",
+                                confirmButtonText: "Entendido",
                               });
-
                             } finally {
-                              setLoadingActions(prev => ({ ...prev, [mov.idMovimiento]: false }));
+                              setLoadingActions((prev) => ({ ...prev, [mov.idMovimiento]: false }));
                             }
                           }}
                         >
@@ -917,8 +905,39 @@ function Movements() {
                   );
                 })
               )}
+
+              {/* 🔍 Detalles del Movimiento */}
+              <Dialog open={!!selectedMovimiento} onOpenChange={() => setSelectedMovimiento(null)}>
+                <DialogContent className="max-w-3xl">
+                  <DialogHeader>
+                    <DialogTitle>Detalles del Movimiento</DialogTitle>
+                  </DialogHeader>
+                  {selectedMovimiento ? (
+                    <div className="space-y-2 max-h-[70vh] overflow-y-auto text-sm">
+                      <p><strong>ID Movimiento:</strong> {selectedMovimiento.idMovimiento}</p>
+                      <p><strong>Tipo:</strong> {selectedMovimiento.tipo_movimiento}</p>
+                      <p><strong>Empleado:</strong> {selectedMovimiento.num_empleado}</p>
+                      <p><strong>Fecha Incidencia:</strong> {selectedMovimiento.fecha_incidencia?.slice(0, 10)}</p>
+                      <p><strong>Fecha Solicitud:</strong> {selectedMovimiento.fecha_solicitud?.slice(0, 16) || "-"}</p>
+                      <p><strong>Estatus:</strong> {selectedMovimiento.estatus_movimiento || "-"}</p>
+                      <p><strong>Historial:</strong> {selectedMovimiento.historial_aprobaciones || "-"}</p>
+
+                      <p className="pt-2 font-bold">Datos Específicos:</p>
+                      {renderDatosJsonPorTipo(
+                        selectedMovimiento.tipo_movimiento,
+                        selectedMovimiento.datos_json
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center text-muted-foreground py-8">
+                      <p>No hay información del movimiento seleccionada.</p>
+                    </div>
+                  )}
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
+
         )
       }
 
