@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -66,34 +66,32 @@ function RegisterCheckInCheckOut() {
     "Sab": "Sábado",
   };
 
-  const fetchMovimientos = async () => {
-    if (!user || !user.num_empleado) return;
-    const movimientos = await obtenerMisMovimientos(user.num_empleado);
-    setMovimientosSolicitados(movimientos);
+  const fetchMovimientos = useCallback(async () => {
+  if (!user || !user.num_empleado) return;
+  const movimientos = await obtenerMisMovimientos(user.num_empleado);
+  setMovimientosSolicitados(movimientos);
+}, [user?.num_empleado]);
 
-  };
-  const fetchAsistencias = async () => {
-    if (!user || !user.num_empleado) return;
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/asistencia?codigo=${user.num_empleado}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-      setAsistencias(json.data); // solo si json.success === true
-    } catch (error) {
-      console.error("Error al obtener datos de asistencia:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+const fetchAsistencias = useCallback(async () => {
+  if (!user || !user.num_empleado) return;
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/asistencia?codigo=${user.num_empleado}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    setAsistencias(json.data);
+  } catch (error) {
+    console.error("Error al obtener datos de asistencia:", error);
+  } finally {
+    setLoading(false);
+  }
+}, [user?.num_empleado]);
 
-  useEffect(() => {
-
-    fetchMovimientos();
-    fetchAsistencias();
-
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, [user, fetchAsistencias, fetchMovimientos]);
+useEffect(() => {
+  fetchMovimientos();
+  fetchAsistencias();
+  const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+  return () => clearInterval(timer);
+}, [user, fetchMovimientos, fetchAsistencias]);
 
   useEffect(() => {
     const fetchEmpleado = async () => {
