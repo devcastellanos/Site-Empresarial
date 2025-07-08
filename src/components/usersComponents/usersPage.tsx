@@ -394,7 +394,7 @@ useEffect(() => {
                   onChange={(e) =>
                     setCurrentUsuario({ ...currentUsuario, num_empleado: Number(e.target.value) })
                   }
-                  disabled={currentUsuario.id !== undefined}
+                  // disabled={currentUsuario.id !== undefined}
                 />
               </div>
             </div>

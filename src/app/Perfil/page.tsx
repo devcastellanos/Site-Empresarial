@@ -215,7 +215,10 @@ export default function Campaign() {
     if (
       vista === "requisiciones" &&
       user?.rol !== "admin" &&
-      user?.rol !== "atraccionT"
+      user?.rol !== "Gerente" &&
+      user?.rol !== "Director" &&
+      user?.rol !== "Dirección" &&
+      user?.rol !== "Reclutamiento"
     ) {
       return (
         <div className="text-red-500 font-semibold">

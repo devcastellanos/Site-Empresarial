@@ -24,6 +24,7 @@ import * as XLSX from 'xlsx';
 type MovimientoPersonal = {
   idMovimiento: number
   num_empleado: number
+  nombre: string
   tipo_movimiento: string
   fecha_incidencia: string
   datos_json: any
@@ -68,7 +69,7 @@ function RequisitionsPage() {
         let filteredData = data;
 
         // 🎯 Filtrado según el rol
-        if (user.rol !== "admin") {
+        if (user.rol !== "Reclutamiento" && user.rol !== "admin") {
           filteredData = data.filter((mov: MovimientoPersonal) => mov.estatus === "aprobado");
         }
         console.log('🚀 Movimientos obtenidos:', data)
@@ -139,12 +140,11 @@ function RequisitionsPage() {
             Descargar Reporte
           </Button>
 
-          {user?.rol === 'admin' && (
             <Button onClick={() => setShowForm(true)}>
               <PlusIcon className="mr-2 h-4 w-4" />
               Nueva Requisición
             </Button>
-          )}
+          
         </div>
       </div>
 
@@ -157,9 +157,10 @@ function RequisitionsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>#</TableHead>
-                <TableHead>Empleado</TableHead>
-                <TableHead>Tipo</TableHead>
-                <TableHead>Fecha</TableHead>
+                <TableHead>Número Empleado</TableHead>
+                <TableHead>Nombre Solicitante</TableHead>
+                <TableHead>Tipo Requisición</TableHead>
+                <TableHead>Fecha Solicitud</TableHead>
                 <TableHead>Estatus</TableHead>
                 <TableHead>Acciones</TableHead>
               </TableRow>
@@ -169,6 +170,7 @@ function RequisitionsPage() {
                 <TableRow key={mov.idMovimiento} className="hover:bg-muted/40">
                   <TableCell>{i + 1}</TableCell>
                   <TableCell>{mov.num_empleado}</TableCell>
+                  <TableCell>{mov.nombre}</TableCell>
                   <TableCell>
                     {mov.tipo_movimiento === 'Sustitución'
                       ? `${mov.tipo_movimiento} (${mov.datos_json?.tipo_sustitucion})`
