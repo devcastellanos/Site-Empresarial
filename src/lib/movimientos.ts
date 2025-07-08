@@ -53,7 +53,6 @@ export const opcionesPorIncidencia: Record<string, string[]> = {
     "Permisos Especiales",
     "Permiso con goce de sueldo",
     "Permiso sin goce de sueldo",
-    "Viaje de Trabajo",
     "Descanso laborado",
     "Descanso por comisión laboral",
   ],
