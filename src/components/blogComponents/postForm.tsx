@@ -56,7 +56,7 @@ const PostForm: React.FC<PostFormProps> = ({ post, setPost, imgFiles, setImgFile
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Sistemas">Sistemas</SelectItem>
-                <SelectItem value="Recursos Humanos">Recursos Humanos</SelectItem>
+                <SelectItem value="Capital Humano">Capital Humano</SelectItem>
                 <SelectItem value="Contabilidad">Contabilidad</SelectItem>
                 <SelectItem value="Compras">Compras</SelectItem>
                 <SelectItem value="Ventas">Ventas</SelectItem>

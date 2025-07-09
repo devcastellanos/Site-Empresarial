@@ -143,7 +143,7 @@ const filteredAndSortedPosts = [...posts]
               <SelectContent>
                 <SelectItem value="todos">Todos</SelectItem>
                 <SelectItem value="Sistemas">Sistemas</SelectItem>
-                <SelectItem value="Recursos Humanos">Recursos Humanos</SelectItem>
+                <SelectItem value="Capital Humano">Capital Humano</SelectItem>
                 <SelectItem value="Contabilidad">Contabilidad</SelectItem>
                 <SelectItem value="Compras">Compras</SelectItem>
                 <SelectItem value="Ventas">Ventas</SelectItem>

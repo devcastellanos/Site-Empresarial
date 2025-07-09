@@ -4,10 +4,9 @@ import { useEffect, useState } from "react";
 import { format, isAfter, isBefore, isEqual } from "date-fns";
 import { Info, CalendarIcon } from "lucide-react";
 import * as XLSX from "xlsx";
-
+import { Combobox as UICombobox, Transition } from "@headlessui/react";
 import { useAuth } from "@/app/context/AuthContext";
 import { cargarMovimientos } from "@/services/movementsService";
-
 import {
   Table,
   TableBody,
@@ -31,6 +30,8 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
+import { Fragment } from "react";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
 function Movements() {
   const [employeeNumber, setEmployeeNumber] = useState("");
@@ -156,6 +157,9 @@ function Movements() {
   };
 
   const movimientosFiltrados = movementsData.todos.filter((mov) => {
+    const tiposExcluidos = ["Sustitución", "Nueva Posición", "Aumento Plantilla"];
+    if (tiposExcluidos.includes(mov.tipo_movimiento)) return false;
+
     const fechaIncidencia = new Date(mov.fecha_incidencia);
 
     const coincideFechaInicio = !fechaInicio || isEqual(fechaIncidencia, fechaInicio) || isAfter(fechaIncidencia, fechaInicio);
@@ -170,7 +174,6 @@ function Movements() {
 
     return coincideFechaInicio && coincideFechaFin && coincideBusqueda && coincideTipo && coincideEstatus;
   });
-
 
   const exportarAExcel = () => {
     const data = movimientosFiltrados.map((mov) => {
@@ -198,6 +201,23 @@ function Movements() {
     XLSX.writeFile(workbook, "movimientos_personal.xlsx");
   };
 
+  const tiposExcluidos = ["Sustitución", "Nueva Posición", "Aumento Plantilla"];
+
+const tiposDisponibles = [...new Set(
+  movementsData.todos
+    .map(m => m.tipo_movimiento)
+    .filter(tipo => !tiposExcluidos.includes(tipo))
+)];
+
+const [query, setQuery] = useState("");
+
+const tiposFiltrados =
+  query === ""
+    ? tiposDisponibles
+    : tiposDisponibles.filter((tipo) =>
+        tipo.toLowerCase().includes(query.toLowerCase())
+      );
+
   return (
     <div className="max-w-7xl mx-auto p-6 lg:grid grid-cols-4 gap-6">
       <Card className="col-span-4 mb-8 p-6 bg-white/80 backdrop-blur-md rounded-2xl shadow-md border border-gray-200">
@@ -220,16 +240,68 @@ function Movements() {
           onChange={(e) => setBusqueda(e.target.value)}
         />
 
-        <select
-          className="border p-2 rounded-md w-full"
-          value={tipoFiltro}
-          onChange={(e) => setTipoFiltro(e.target.value)}
-        >
-          <option value="">Todos los tipos</option>
-          {[...new Set(movementsData.todos.map(m => m.tipo_movimiento))].map(tipo => (
-            <option key={tipo} value={tipo}>{tipo}</option>
-          ))}
-        </select>
+        <div className="w-full">
+          <UICombobox value={tipoFiltro} onChange={(value: string) => setTipoFiltro(value)}>
+            <div className="relative">
+              <div className="relative w-full cursor-default overflow-hidden rounded-md bg-white text-left border p-2">
+                <UICombobox.Input
+                  className="w-full border-none focus:ring-0"
+                  displayValue={(tipo: string) => tipo}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Buscar tipo de movimiento"
+                />
+                <UICombobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                  <ChevronUpDownIcon className="h-5 w-5 text-gray-400" />
+                </UICombobox.Button>
+              </div>
+              <Transition
+                as={Fragment}
+                leave="transition ease-in duration-100"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+                afterLeave={() => setQuery("")}
+              >
+                <UICombobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-sm z-10">
+                  <UICombobox.Option
+                    key="all"
+                    value=""
+                    className={({ active }) =>
+                      `cursor-default select-none relative py-2 px-4 ${
+                        active ? "bg-blue-500 text-white" : "text-gray-900"
+                      }`
+                    }
+                  >
+                    
+                  </UICombobox.Option>
+                  {tiposFiltrados.map((tipo) => (
+                    <UICombobox.Option
+                      key={tipo}
+                      value={tipo}
+                      className={({ active }) =>
+                        `cursor-default select-none relative py-2 px-4 ${
+                          active ? "bg-blue-500 text-white" : "text-gray-900"
+                        }`
+                      }
+                    >
+                      {({ selected }) => (
+                        <>
+                          <span className={`${selected ? "font-semibold" : "font-normal"}`}>
+                            {tipo}
+                          </span>
+                          {selected && (
+                            <span className="absolute inset-y-0 right-2 flex items-center pl-3 text-white">
+                              <CheckIcon className="h-5 w-5" />
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </UICombobox.Option>
+                  ))}
+                </UICombobox.Options>
+              </Transition>
+            </div>
+          </UICombobox>
+        </div>
 
         <select
           className="border p-2 rounded-md w-full"

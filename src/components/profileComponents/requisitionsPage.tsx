@@ -46,6 +46,14 @@ function RequisitionsPage() {
   const [selectedMovimiento, setSelectedMovimiento] = useState<MovimientoPersonal | null>(null)
   const [showForm, setShowForm] = useState(false)
   const { user } = useAuth();
+  
+
+  const formatDateStr = (str: string) => {
+    if (!str) return '—'
+    const datePart = str.split('T')[0] || str.split(' ')[0]; // toma la parte "YYYY-MM-DD"
+    const [year, month, day] = datePart.split('-');
+    return `${day}/${month}/${year}`;
+  }
 
   // Simulación de fetch de datos
   useEffect(() => {
@@ -89,15 +97,16 @@ function RequisitionsPage() {
     const matchesSearch =
       movimiento.num_empleado.toString().includes(searchTerm.toLowerCase()) ||
       movimiento.tipo_movimiento.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      movimiento.comentarios.toLowerCase().includes(searchTerm.toLowerCase())
+      movimiento.comentarios.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus = filterStatus === 'all' || movimiento.estatus === filterStatus
-    const matchesType = filterType === 'all' || movimiento.tipo_movimiento === filterType
+    const matchesStatus = filterStatus === 'all' || movimiento.estatus === filterStatus;
+    const matchesType = filterType === 'all' || movimiento.tipo_movimiento === filterType;
     const matchesDate = !dateFilter ||
-      new Date(movimiento.fecha_solicitud).toDateString() === dateFilter.toDateString()
+      movimiento.fecha_solicitud.slice(0, 10) === dateFilter.toISOString().slice(0, 10);
 
-    return matchesSearch && matchesStatus && matchesType && matchesDate
-  })
+    return matchesSearch && matchesStatus && matchesType && matchesDate;
+  });
+
 
   const handleRefresh = () => {
     setLoading(true)
@@ -110,10 +119,10 @@ function RequisitionsPage() {
       ID: mov.idMovimiento,
       Empleado: mov.num_empleado,
       Tipo: mov.tipo_movimiento,
-      'Fecha Incidencia': format(new Date(mov.fecha_incidencia), 'dd/MM/yyyy'),
+      'Fecha Incidencia': formatDateStr(mov.fecha_incidencia),
       Estatus: mov.estatus.toUpperCase(),
       Comentarios: mov.comentarios || '',
-      'Fecha Solicitud': format(new Date(mov.fecha_solicitud), 'dd/MM/yyyy'),
+      'Fecha Solicitud': formatDateStr(mov.fecha_solicitud),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -176,9 +185,7 @@ function RequisitionsPage() {
                       ? `${mov.tipo_movimiento} (${mov.datos_json?.tipo_sustitucion})`
                       : mov.tipo_movimiento}
                   </TableCell>
-                  <TableCell>
-                    {format(new Date(mov.fecha_incidencia), 'dd MMM yyyy', { locale: es })}
-                  </TableCell>
+                  <TableCell>{formatDateStr(mov.fecha_incidencia)}</TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"
@@ -223,7 +230,7 @@ function RequisitionsPage() {
 
             <Card className="bg-muted/30 p-4 mt-4">
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                <div><strong>Fecha solicitud:</strong><br />{format(new Date(selectedMovimiento.datos_json?.fecha_solicitud), 'dd MMM yyyy', { locale: es })}</div>
+                <div><strong>Fecha solicitud:</strong><br />{formatDateStr(selectedMovimiento.datos_json?.fecha_solicitud)}</div>
                 <div><strong>Puesto:</strong><br />{selectedMovimiento.datos_json?.puesto || selectedMovimiento.datos_json?.nombre_posicion || '—'}</div>
                 <div><strong>Motivo:</strong><br />{selectedMovimiento.datos_json?.motivo}</div>
                 <div><strong>Justificación:</strong><br />{selectedMovimiento.datos_json?.justificacion || '—'}</div>

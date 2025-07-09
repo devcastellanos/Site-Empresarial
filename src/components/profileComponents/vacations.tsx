@@ -423,7 +423,7 @@ const handleSubmit = async () => {
                       <br />
                       <br />
                       <Label className="text-center">
-                        El registro no se ve reflejado inmediatamente en el sistema. Por favor, espera a que sea procesado por el departamento de Recursos Humanos.
+                        El registro no se ve reflejado inmediatamente en el sistema. Por favor, espera a que sea procesado por el departamento de Nóminas de Capital Humano.
                       </Label>
                     </div>
                   </div>

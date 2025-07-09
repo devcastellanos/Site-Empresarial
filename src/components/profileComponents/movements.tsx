@@ -208,7 +208,7 @@ function Movements() {
       Has alcanzado el limite de retardos justificados este mes
     </p>
     <p style="margin-top: 10px; font-size: 14px; color: #555;">
-      Si requieres apoyo adicional, por favor contacta a Recursos Humanos.
+      Si requieres apoyo adicional, por favor contacta a Capital Humano.
     </p>
   `,
             confirmButtonColor: '#9A3324',
