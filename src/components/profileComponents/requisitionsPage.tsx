@@ -22,14 +22,15 @@ import * as XLSX from 'xlsx';
 import { startOfDay, endOfDay } from 'date-fns'
 
 // Utilidad para formatear fecha tipo 'YYYY-MM-DD' o 'YYYY-MM-DD HH:mm:ss'
-function formatDateStr(dateStr?: string): string {
+function formatDateTimeStr(dateStr?: string): string {
   if (!dateStr) return '—';
-  const [fullDate] = dateStr.split('T'); // "2025-07-09"
-  const [year, month, day] = fullDate.split('-');
+
+  const [datePart] = dateStr.split(/[T\s]/); // se queda con "YYYY-MM-DD"
+  const [year, month, day] = datePart.split('-');
+
   const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
   return `${day} ${meses[parseInt(month, 10) - 1]} ${year}`;
 }
-
 
 type MovimientoPersonal = {
   idMovimiento: number
@@ -149,10 +150,10 @@ const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date |
       ID: mov.idMovimiento,
       Empleado: mov.num_empleado,
       Tipo: mov.tipo_movimiento,
-      'Fecha Incidencia': formatDateStr(mov.fecha_incidencia),
+      'Fecha Incidencia': formatDateTimeStr(mov.fecha_incidencia),
       Estatus: mov.estatus.toUpperCase(),
       Comentarios: mov.comentarios || '',
-      'Fecha Solicitud': formatDateStr(mov.fecha_solicitud),
+      'Fecha Solicitud': formatDateTimeStr(mov.fecha_solicitud),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -284,7 +285,7 @@ const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date |
                       ? `${mov.tipo_movimiento} (${mov.datos_json?.tipo_sustitucion})`
                       : mov.tipo_movimiento}
                   </TableCell>
-                  <TableCell>{formatDateStr(mov.fecha_incidencia)}</TableCell>
+                  <TableCell>{formatDateTimeStr(mov.fecha_incidencia)}</TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"
@@ -358,7 +359,7 @@ const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date |
               <td className="px-3 py-2">{aprob.nota || '—'}</td>
               <td className="px-3 py-2">
                 {aprob.fecha_aprobacion
-                  ? format(new Date(aprob.fecha_aprobacion), 'dd MMM yyyy HH:mm', { locale: es })
+                  ? formatDateTimeStr(aprob.fecha_aprobacion)
                   : '—'}
               </td>
             </tr>
@@ -386,7 +387,7 @@ const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date |
 
             <Card className="bg-muted/30 p-4 mt-4">
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                <div><strong>Fecha solicitud:</strong><br />{formatDateStr(selectedMovimiento.datos_json?.fecha_solicitud)}</div>
+                <div><strong>Fecha solicitud:</strong><br />{formatDateTimeStr(selectedMovimiento.datos_json?.fecha_solicitud)}</div>
                 <div><strong>Puesto:</strong><br />{selectedMovimiento.datos_json?.puesto || selectedMovimiento.datos_json?.nombre_posicion || '—'}</div>
                 <div><strong>Motivo:</strong><br />{selectedMovimiento.datos_json?.motivo}</div>
                 <div><strong>Justificación:</strong><br />{selectedMovimiento.datos_json?.justificacion || '—'}</div>
