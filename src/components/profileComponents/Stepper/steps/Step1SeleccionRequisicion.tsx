@@ -30,7 +30,7 @@ export default function Step1SeleccionRequisicion({
   useEffect(() => {
     updateData({ num_empleado: user?.num_empleado, fecha_solicitud: fecha })
 
-  }, [user?.num_empleado, fecha])
+  }, [user?.num_empleado, fecha, updateData, data])
 
   return (
     <div className="space-y-6">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useMemo } from "react"
 import RegisterCheckInCheckOut from "@/components/profileComponents/checkInOut"
 import Vacations from "@/components/profileComponents/vacations"
 import Courses from "@/components/profileComponents/courses"
@@ -72,47 +72,7 @@ export default function Campaign() {
     return () => window.removeEventListener("hashchange", onHashChange)
   }, [])
 
-  useEffect(() => {
-    const intro = introDialogs[vista]
-    if (!intro) return
-
-    const yaMostrado = sessionStorage.getItem(intro.storageKey)
-    if (!yaMostrado) {
-      setShowIntro(true)
-      sessionStorage.setItem(intro.storageKey, "true")
-    } else {
-      setShowIntro(false) // Oculta si ya se mostró
-    }
-  }, [vista])
-
-
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, vista)
-  }, [vista])
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (bounceRef.current) {
-        bounceRef.current.classList.add("animate-bounce")
-        setTimeout(() => {
-          bounceRef.current?.classList.remove("animate-bounce")
-        }, 1000)
-      }
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [])
-
-  const breadcrumbMap: Record<PerfilVista, string> = {
-    perfil: "Asistencia",
-    vacaciones: "Vacaciones",
-    cursos: "Cursos",
-    movimientos: "Movimientos",
-    requisiciones: "requisiciones",
-    patron: "Modo Patrón",
-    monitorearequipo: "Monitorear Equipo",
-  }
-
-  const introDialogs: Partial<Record<PerfilVista, { title: string; content: React.ReactNode; storageKey: string }>> = {
+  const introDialogs = useMemo(() => ({
     perfil: {
       title: "👋 Bienvenido a tu vista de asistencia",
       storageKey: "intro_checkin_shown",
@@ -208,8 +168,46 @@ export default function Campaign() {
         </div>
       ),
     },
-  }
+  }), [])
 
+  useEffect(() => {
+    const intro = introDialogs[vista]
+    if (!intro) return
+
+    const yaMostrado = sessionStorage.getItem(intro.storageKey)
+    if (!yaMostrado) {
+      setShowIntro(true)
+      sessionStorage.setItem(intro.storageKey, "true")
+    } else {
+      setShowIntro(false) // Oculta si ya se mostró
+    }
+  }, [vista, introDialogs])
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, vista)
+  }, [vista])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (bounceRef.current) {
+        bounceRef.current.classList.add("animate-bounce")
+        setTimeout(() => {
+          bounceRef.current?.classList.remove("animate-bounce")
+        }, 1000)
+      }
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const breadcrumbMap: Record<PerfilVista, string> = {
+    perfil: "Asistencia",
+    vacaciones: "Vacaciones",
+    cursos: "Cursos",
+    movimientos: "Movimientos",
+    requisiciones: "requisiciones",
+    patron: "Modo Patrón",
+    monitorearequipo: "Monitorear Equipo",
+  }
 
   const renderVista = () => {
     if (

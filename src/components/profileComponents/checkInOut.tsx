@@ -23,7 +23,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { DateRange } from "react-day-picker";
 import Image from "next/image";
-import { HelpCircle } from "lucide-react";
 
 function RegisterCheckInCheckOut() {
   const { user } = useAuth();
@@ -45,7 +44,6 @@ function RegisterCheckInCheckOut() {
     horaEntradaReal?: string;
     horaSalidaReal?: string;
   };
-  const bounceRef = useRef<HTMLButtonElement>(null);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
   const [comments, setComments] = useState("");
   const [requestStatus, setRequestStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -70,7 +68,7 @@ function RegisterCheckInCheckOut() {
   if (!user || !user.num_empleado) return;
   const movimientos = await obtenerMisMovimientos(user.num_empleado);
   setMovimientosSolicitados(movimientos);
-}, [user?.num_empleado]);
+}, [user]);
 
 const fetchAsistencias = useCallback(async () => {
   if (!user || !user.num_empleado) return;
@@ -84,7 +82,7 @@ const fetchAsistencias = useCallback(async () => {
   } finally {
     setLoading(false);
   }
-}, [user?.num_empleado]);
+}, [user]);
 
 useEffect(() => {
   fetchMovimientos();

@@ -21,15 +21,28 @@ export default function Step3RelacionesYRiesgos({
   const [laterales, setLaterales] = useState<number>(data.puestos_laterales?.length || 0)
 
   // Inicializar campos en blanco si no existen
-  useEffect(() => {
-    updateData({
-      relaciones_internas: Array.from({ length: internas }, (_, i) => data.relaciones_internas?.[i] || { area: "", descripcion: "" }),
-      relaciones_externas: Array.from({ length: externas }, (_, i) => data.relaciones_externas?.[i] || { area: "", descripcion: "" }),
-      riesgos: Array.from({ length: riesgos }, (_, i) => data.riesgos?.[i] || { riesgo: "", accion: "" }),
-      puestos_ascendentes: Array.from({ length: ascendentes }, (_, i) => data.puestos_ascendentes?.[i] || ""),
-      puestos_laterales: Array.from({ length: laterales }, (_, i) => data.puestos_laterales?.[i] || ""),
-    })
-  }, [internas, externas, riesgos, ascendentes, laterales])
+useEffect(() => {
+  updateData({
+    relaciones_internas: Array.from({ length: internas }, (_, i) => data.relaciones_internas?.[i] || { area: "", descripcion: "" }),
+    relaciones_externas: Array.from({ length: externas }, (_, i) => data.relaciones_externas?.[i] || { area: "", descripcion: "" }),
+    riesgos: Array.from({ length: riesgos }, (_, i) => data.riesgos?.[i] || { riesgo: "", accion: "" }),
+    puestos_ascendentes: Array.from({ length: ascendentes }, (_, i) => data.puestos_ascendentes?.[i] || ""),
+    puestos_laterales: Array.from({ length: laterales }, (_, i) => data.puestos_laterales?.[i] || ""),
+  });
+}, [
+  internas,
+  externas,
+  riesgos,
+  ascendentes,
+  laterales,
+  updateData,
+  data.relaciones_internas,
+  data.relaciones_externas,
+  data.riesgos,
+  data.puestos_ascendentes,
+  data.puestos_laterales
+]);
+
 
   // Renderizador de campos dobles
   const renderCamposDobles = (

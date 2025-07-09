@@ -36,7 +36,7 @@ export default function Step4DatosGenerales({
         equipo,
       },
     })
-  }, [equipo])
+  }, [equipo, data, updateData, data.datos_generales])
 
   const handleEquipoToggle = (item: string, checked: boolean) => {
     if (checked) {

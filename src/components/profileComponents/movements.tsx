@@ -995,7 +995,7 @@ useEffect(() => {
                         Empleado: <span className="font-semibold">{mov.nombre_empleado}</span>
                       </p>
                       <p className="text-sm text-gray-700 italic">
-                        {status === 'aprobado' ? 'Aprobado' : 'Rechazado'} con nota: <span className="text-gray-900 font-medium">"{mov.nota_aprobacion || 'Sin comentarios'}"</span>
+                        {status === 'aprobado' ? 'Aprobado' : 'Rechazado'} con nota: <span className="text-gray-900 font-medium">{mov.nota_aprobacion || 'Sin comentarios'}</span>
                       </p>
                       <div className="text-sm text-gray-700">
                         Comentarios generales: {mov.comentarios || 'N/A'}
