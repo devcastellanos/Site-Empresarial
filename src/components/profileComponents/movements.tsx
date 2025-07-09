@@ -108,8 +108,9 @@ function Movements() {
   const [exitTime, setExitTime] = useState(""); // Define exitTime state
   const [approvalNotes, setApprovalNotes] = useState<{ [id: number]: string }>({});
   const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>({});
-
-
+const [misAprobaciones, setMisAprobaciones] = useState<any[]>([]);
+const aprobados = misAprobaciones.filter(m => m.estatus_aprobacion === 'aprobado');
+const rechazados = misAprobaciones.filter(m => m.estatus_aprobacion === 'rechazado');
   const [movementsData, setMovementsData] = useState<{
     pendientes: any[];
     aprobaciones: any[];
@@ -128,30 +129,28 @@ function Movements() {
   const canSubmit =
     employeeNumber.trim() !== "" && incidentDate && movementType !== "";
 
-  useEffect(() => {
-    if (user?.num_empleado) {
-      setEmployeeNumber(user.num_empleado.toString());
+useEffect(() => {
+  async function cargarTodo() {
+    if (!user?.num_empleado) return;
+    try {
+      const [pendientes, aprobaciones, movimientosPropios] = await Promise.all([
+        obtenerMovimientosPendientes(user.num_empleado),
+        obtenerAprobaciones(user.num_empleado),
+        obtenerMisMovimientos(user.num_empleado),
+      ]);
+      setMovementsData({ pendientes, aprobaciones, propios: movimientosPropios });
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/movimientos/aprobados-rechazados/${user.num_empleado}`);
+      console.log("Respuesta de la API:", res);
+      const data = await res.json();
+      setMisAprobaciones(data?.data || []);
+    } catch (err) {
+      console.error("Error cargando información:", err);
     }
+  }
 
-    async function cargarMovimientos() {
-      if (!user || !user.num_empleado) return;
-      try {
-        const pendientes = await obtenerMovimientosPendientes(user.num_empleado);
-        const aprobaciones = await obtenerAprobaciones(user.num_empleado);
-        const movimientosPropios = await obtenerMisMovimientos(user.num_empleado);
-
-        setMovementsData({
-          pendientes,
-          aprobaciones,
-          propios: movimientosPropios,
-        });
-      } catch (error) {
-        console.error("Error al cargar movimientos:", error);
-      }
-    }
-
-    if (user?.num_empleado) cargarMovimientos();
-  }, [user]);
+  cargarTodo();
+}, [user]);
 
 
   function obtenerEstadoAprobaciones(historialDetallado: any[]) {
@@ -702,7 +701,7 @@ function Movements() {
         </CardContent>
       </Card>
 
-            {
+      {
         (
           user?.rol === "admin" ||
           user?.rol === "Coordinador" ||
@@ -711,7 +710,7 @@ function Movements() {
           user?.rol === "Direccion" ||
           user?.rol === "Director"
         ) && (
-          <Card className="col-span-2 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-3 max-h-[650px]">
+          <Card className="col-span-1 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-3 max-h-[650px]">
             <CardHeader>
               <CardTitle className="text-xl">Movimientos que debes aprobar</CardTitle>
             </CardHeader>
@@ -940,6 +939,80 @@ function Movements() {
 
         )
       }
+
+      {/* Historial de aprobaciones realizadas */}
+       <Card className="space-y-4 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
+  <CardHeader>
+    <CardTitle className="text-xl">Aprobaciones que he realizado</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <Accordion type="multiple" defaultValue={["aprobado", "rechazado"]} className="w-full space-y-4">
+      {["aprobado", "rechazado"].map((status) => {
+        const movimientos = status === "aprobado" ? aprobados : rechazados;
+        const titulo = {
+          aprobado: (
+            <span className="inline-flex items-center gap-2">
+              <MdTaskAlt className="text-gray-700" />
+              Aprobados
+              <span className="ml-auto text-sm text-muted-foreground font-medium">
+                {aprobados.length}
+              </span>
+            </span>
+          ),
+          rechazado: (
+            <span className="inline-flex items-center gap-2">
+              <MdCancel className="text-gray-700" />
+              Rechazados
+              <span className="ml-auto text-sm text-muted-foreground font-medium">
+                {rechazados.length}
+              </span>
+            </span>
+          ),
+        }[status];
+
+        return (
+          <AccordionItem key={status} value={status}>
+            <AccordionTrigger className="text-lg font-semibold text-gray-800">
+              {titulo}
+            </AccordionTrigger>
+            <AccordionContent>
+              {movimientos.length === 0 ? (
+                <p className="text-gray-500">No has {status === 'aprobado' ? 'aprobado' : 'rechazado'} ningún movimiento.</p>
+              ) : (
+                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                  {movimientos.map((mov) => (
+                    <Card key={mov.idMovimiento} className="bg-white/90 border rounded-xl shadow-sm p-4 space-y-2">
+                      <div className="flex justify-between items-center">
+                        <p className="font-medium text-gray-800 flex items-center gap-1">
+                          <MdDescription className="text-gray-700" />
+                          {mov.tipo_movimiento}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {format(new Date(mov.fecha_aprobacion), "PPP", { locale: es })}
+                        </p>
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        Empleado: <span className="font-semibold">{mov.nombre_empleado}</span>
+                      </p>
+                      <p className="text-sm text-gray-700 italic">
+                        {status === 'aprobado' ? 'Aprobado' : 'Rechazado'} con nota: <span className="text-gray-900 font-medium">{mov.nota_aprobacion || 'Sin comentarios'}</span>
+                      </p>
+                      <div className="text-sm text-gray-700">
+                        Comentarios generales: {mov.comentarios || 'N/A'}
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        );
+      })}
+    </Accordion>
+  </CardContent>
+</Card>
+
+      
 
       <Dialog>
 

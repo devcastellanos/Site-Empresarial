@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { User } from "@/lib/interfaces";
@@ -39,37 +39,38 @@ function PatronCard() {
     CEDISMexicali: "CEDIS Mexicali",
   };
 
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/all`
-      );
-      const data = await response.json();
-      const mappedUsers = data.map((user: any) => ({
-        ...user,
-        Personal: Number(user.Personal),
-      }));
-      setUsers(mappedUsers);
+  const fetchUsers = useCallback(async () => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/all`
+    );
+    const data = await response.json();
+    const mappedUsers = data.map((user: any) => ({
+      ...user,
+      Personal: Number(user.Personal),
+    }));
+    setUsers(mappedUsers);
 
-      const dataUser = mappedUsers.find(
-        (u: User) => u.Personal === user?.num_empleado
-      );
-      setEmpleado(dataUser || null);
+    const dataUser = mappedUsers.find(
+      (u: User) => u.Personal === user?.num_empleado
+    );
+    setEmpleado(dataUser || null);
 
-      console.log(
-        dataUser ? "Usuario encontrado:" : "Usuario no encontrado",
-        dataUser
-      );
-    } catch (error) {
-      console.error("Error al obtener usuarios:", error);
-    }
-  };
+    console.log(
+      dataUser ? "Usuario encontrado:" : "Usuario no encontrado",
+      dataUser
+    );
+  } catch (error) {
+    console.error("Error al obtener usuarios:", error);
+  }
+}, [user?.num_empleado]);
+
 
   useEffect(() => {
     if (user && users.length === 0) {
       fetchUsers();
     }
-  }, [user]);
+  }, [user, users.length, fetchUsers]);
 
   const generarPDF = () => {
     if (ubicacion === "default") {

@@ -19,6 +19,16 @@ import { crearMovimiento } from "@/services/movementsService"
 import StepperContainer from './Stepper/StepperContainer'
 import { useAuth } from '../../app/context/AuthContext'
 import * as XLSX from 'xlsx';
+import { startOfDay, endOfDay } from 'date-fns'
+
+// Utilidad para formatear fecha tipo 'YYYY-MM-DD' o 'YYYY-MM-DD HH:mm:ss'
+function formatDateStr(dateStr?: string): string {
+  if (!dateStr) return '—';
+  const [fullDate] = dateStr.split('T'); // "2025-07-09"
+  const [year, month, day] = fullDate.split('-');
+  const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  return `${day} ${meses[parseInt(month, 10) - 1]} ${year}`;
+}
 
 
 type MovimientoPersonal = {
@@ -34,6 +44,14 @@ type MovimientoPersonal = {
   rechazado_por: number | null
   nota: string | null
   nivel_aprobacion: number
+  historial_aprobaciones?: {
+    orden: number
+    id_aprobador: number
+    nombre_aprobador?: string
+    estatus: string
+    nota?: string
+    fecha_aprobacion?: string
+  }[]
 }
 
 function RequisitionsPage() {
@@ -46,14 +64,16 @@ function RequisitionsPage() {
   const [selectedMovimiento, setSelectedMovimiento] = useState<MovimientoPersonal | null>(null)
   const [showForm, setShowForm] = useState(false)
   const { user } = useAuth();
-  
+  const [filterByNombre, setFilterByNombre] = useState('');
+const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date | undefined }>({
+  from: undefined,
+  to: undefined,
+});
 
-  const formatDateStr = (str: string) => {
-    if (!str) return '—'
-    const datePart = str.split('T')[0] || str.split(' ')[0]; // toma la parte "YYYY-MM-DD"
-    const [year, month, day] = datePart.split('-');
-    return `${day}/${month}/${year}`;
-  }
+  // Removed invalid reference to 'movimiento' here.
+  const fromStr = dateRange.from ? dateRange.from.toISOString().slice(0, 10) : null;
+  const toStr = dateRange.to ? dateRange.to.toISOString().slice(0, 10) : null;
+
 
   // Simulación de fetch de datos
   useEffect(() => {
@@ -97,14 +117,24 @@ function RequisitionsPage() {
     const matchesSearch =
       movimiento.num_empleado.toString().includes(searchTerm.toLowerCase()) ||
       movimiento.tipo_movimiento.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      movimiento.comentarios.toLowerCase().includes(searchTerm.toLowerCase());
+      movimiento.comentarios?.toLowerCase().includes(searchTerm.toLowerCase());
 
+    const matchesNombre = !filterByNombre || movimiento.nombre?.toLowerCase().includes(filterByNombre.toLowerCase());
     const matchesStatus = filterStatus === 'all' || movimiento.estatus === filterStatus;
     const matchesType = filterType === 'all' || movimiento.tipo_movimiento === filterType;
-    const matchesDate = !dateFilter ||
-      movimiento.fecha_solicitud.slice(0, 10) === dateFilter.toISOString().slice(0, 10);
 
-    return matchesSearch && matchesStatus && matchesType && matchesDate;
+    const fechaIncidenciaStr = movimiento.fecha_incidencia?.slice(0, 10); // Extraer YYYY-MM-DD
+
+    const fromStr = dateRange.from ? dateRange.from.toISOString().slice(0, 10) : null;
+    const toStr = dateRange.to ? dateRange.to.toISOString().slice(0, 10) : null;
+
+    const matchesDateRange =
+      (!fromStr && !toStr) ||
+      (fromStr && toStr && fechaIncidenciaStr >= fromStr && fechaIncidenciaStr <= toStr) ||
+      (fromStr && !toStr && fechaIncidenciaStr >= fromStr) ||
+      (!fromStr && toStr && fechaIncidenciaStr <= toStr);
+
+    return matchesSearch && matchesNombre && matchesStatus && matchesType && matchesDateRange;
   });
 
 
@@ -156,6 +186,75 @@ function RequisitionsPage() {
           
         </div>
       </div>
+
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-5 gap-4">
+
+  <div>
+    <Label>Solicitante</Label>
+    <Input
+      placeholder="Nombre del solicitante"
+      value={filterByNombre}
+      onChange={(e) => setFilterByNombre(e.target.value)}
+    />
+  </div>
+
+  <div>
+    <Label>Estatus</Label>
+    <Select value={filterStatus} onValueChange={setFilterStatus}>
+      <SelectTrigger>
+        <SelectValue placeholder="Estatus" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">Todos</SelectItem>
+        <SelectItem value="pendiente">Pendiente</SelectItem>
+        <SelectItem value="aprobado">Aprobado</SelectItem>
+        <SelectItem value="rechazado">Rechazado</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
+
+  <div>
+    <Label>Tipo</Label>
+    <Select value={filterType} onValueChange={setFilterType}>
+      <SelectTrigger>
+        <SelectValue placeholder="Tipo de Movimiento" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">Todos</SelectItem>
+        <SelectItem value="Sustitución">Sustitución</SelectItem>
+        <SelectItem value="Aumento Plantilla">Aumento Plantilla</SelectItem>
+        <SelectItem value="Nueva Posición">Nueva Posición</SelectItem>
+        {/* Agrega más tipos si es necesario */}
+      </SelectContent>
+    </Select>
+  </div>
+
+  <div>
+    <Label>Fecha de Solicitud</Label>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" className="w-full justify-start text-left">
+          <CalendarIcon className="mr-2 h-4 w-4" />
+          {dateRange.from
+            ? dateRange.to
+              ? `${format(dateRange.from, 'dd MMM yyyy')} - ${format(dateRange.to, 'dd MMM yyyy')}`
+              : format(dateRange.from, 'dd MMM yyyy')
+            : 'Seleccionar rango'}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0">
+        <Calendar
+          initialFocus
+          mode="range"
+          selected={dateRange}
+          onSelect={(range) => setDateRange(range ?? { from: undefined, to: undefined })}
+          numberOfMonths={2}
+        />
+      </PopoverContent>
+    </Popover>
+  </div>
+</div>
+
 
       <Card className="shadow-md">
         <CardHeader>
@@ -224,9 +323,66 @@ function RequisitionsPage() {
             <DialogHeader>
               <DialogTitle>📝 Detalles del Movimiento</DialogTitle>
               <DialogDescription>
-                {selectedMovimiento.tipo_movimiento} – Empleado #{selectedMovimiento.num_empleado}
+                {selectedMovimiento.tipo_movimiento} – Empleado {selectedMovimiento.nombre}
               </DialogDescription>
             </DialogHeader>
+
+<Card className="bg-muted/30 p-4">
+  <div className="flex items-center justify-between mb-4">
+    <div>
+      <strong>Historial de Aprobaciones</strong>
+    </div>
+    <div className="text-sm text-muted-foreground">
+      Nivel de Aprobación: {selectedMovimiento.nivel_aprobacion}
+    </div>
+  </div>
+
+  {(selectedMovimiento.historial_aprobaciones && selectedMovimiento.historial_aprobaciones.length > 0) ? (
+    <div className="overflow-auto">
+      <table className="w-full text-sm border border-muted rounded-md overflow-hidden">
+        <thead className="bg-muted/50">
+          <tr>
+            <th className="text-left px-3 py-2 border-b">Orden</th>
+            <th className="text-left px-3 py-2 border-b">Aprobador</th>
+            <th className="text-left px-3 py-2 border-b">Estatus</th>
+            <th className="text-left px-3 py-2 border-b">Nota</th>
+            <th className="text-left px-3 py-2 border-b">Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          {selectedMovimiento.historial_aprobaciones.map((aprob: any, i: number) => (
+            <tr key={i} className="even:bg-muted/20">
+              <td className="px-3 py-2">{aprob.orden}</td>
+              <td className="px-3 py-2">{aprob.nombre_aprobador || `Empleado #${aprob.id_aprobador}`}</td>
+              <td className="px-3 py-2 capitalize">{aprob.estatus}</td>
+              <td className="px-3 py-2">{aprob.nota || '—'}</td>
+              <td className="px-3 py-2">
+                {aprob.fecha_aprobacion
+                  ? format(new Date(aprob.fecha_aprobacion), 'dd MMM yyyy HH:mm', { locale: es })
+                  : '—'}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ) : (
+    <p className="text-sm text-muted-foreground italic">Sin historial de aprobaciones.</p>
+  )}
+
+  {selectedMovimiento.nota && (
+    <div className="mt-2">
+      <strong>Nota:</strong> {selectedMovimiento.nota}
+    </div>
+  )}
+
+  {selectedMovimiento.rechazado_por && (
+    <div className="text-red-600 mt-1">
+      Rechazado por Empleado #{selectedMovimiento.rechazado_por}
+    </div>
+  )}
+</Card>
+
 
             <Card className="bg-muted/30 p-4 mt-4">
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
