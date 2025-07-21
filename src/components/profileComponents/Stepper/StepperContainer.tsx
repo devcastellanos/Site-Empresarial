@@ -55,7 +55,7 @@ export default function StepperContainer() {
   const updateData = (newData: Partial<FormData>) => {
     const updated = { ...data, ...newData }
     setData(updated)
-    console.log("📦 Datos actuales (datos_json):", updated)
+    // console.log("📦 Datos actuales (datos_json):", updated)
   }
 
   const handleNext = () => {

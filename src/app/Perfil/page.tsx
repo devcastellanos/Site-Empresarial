@@ -23,6 +23,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import Personal from "@/app/Personal/page"
 import { Separator } from "@/components/ui/separator"
 import {
   Dialog,
@@ -169,6 +170,7 @@ export default function Campaign() {
       ),
     },
   }), [])
+  
 
   useEffect(() => {
     const intro = introDialogs[vista]
@@ -204,7 +206,7 @@ export default function Campaign() {
     vacaciones: "Vacaciones",
     cursos: "Cursos",
     movimientos: "Movimientos",
-    requisiciones: "requisiciones",
+    requisiciones: "Requisiciones",
     patron: "Modo Patrón",
     monitorearequipo: "Monitorear Equipo",
   }
@@ -216,6 +218,7 @@ export default function Campaign() {
       user?.rol !== "Gerente" &&
       user?.rol !== "Director" &&
       user?.rol !== "Dirección" &&
+      user?.rol !== "Jefe" &&
       user?.rol !== "Reclutamiento"
     ) {
       return (
@@ -239,6 +242,7 @@ export default function Campaign() {
       case "monitorearequipo":
         return <MonitorSubordinates />
       case "perfil":
+
       default:
         return <RegisterCheckInCheckOut />
     }

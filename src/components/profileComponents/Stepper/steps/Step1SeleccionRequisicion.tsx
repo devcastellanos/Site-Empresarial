@@ -5,11 +5,19 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Textarea } from "@/components/ui/textarea"
 import { puestos } from "@/lib/puestos"
 import { useAuth } from "@/app/context/AuthContext"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command"
+
 const motivos = ["Sustitución", "Nueva Posición", "Aumento Plantilla"]
 const tiposIncapacidad = ["Enfermedad General", "Accidente de trabajo", "Accidente en trayecto"]
 
@@ -20,17 +28,34 @@ export default function Step1SeleccionRequisicion({
   data: any
   updateData: (val: any) => void
 }) {
- const [fecha, setFecha] = useState<Date | undefined>(() => {
-  if (data.fecha_solicitud instanceof Date) return data.fecha_solicitud
-  if (typeof data.fecha_solicitud === 'string') return new Date(data.fecha_solicitud)
-  return new Date()
-})
+  const [fecha, setFecha] = useState<Date>(() => {
+    if (data.fecha_solicitud instanceof Date) return data.fecha_solicitud
+    if (typeof data.fecha_solicitud === 'string') return new Date(data.fecha_solicitud)
+    return new Date()
+  })
+
+  const [puestoInput, setPuestoInput] = useState("")
   const { user } = useAuth()
 
   useEffect(() => {
-    updateData({ num_empleado: user?.num_empleado, fecha_solicitud: fecha })
+    if (!data.fecha_solicitud && user?.num_empleado) {
+      updateData({
+        fecha_solicitud: fecha,
+        num_empleado: user.num_empleado,
+      })
+    }
+  }, [])
 
-  }, [user?.num_empleado, fecha, updateData, data])
+  const handleSelectFecha = (newFecha: Date | undefined) => {
+    if (!newFecha) return
+    setFecha(newFecha)
+    updateData({ fecha_solicitud: newFecha })
+  }
+
+  const handleSelectPuesto = (value: string) => {
+    updateData({ puesto: value })
+    setPuestoInput("")
+  }
 
   return (
     <div className="space-y-6">
@@ -59,7 +84,12 @@ export default function Step1SeleccionRequisicion({
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0">
-            <Calendar mode="single" selected={fecha} onSelect={setFecha} initialFocus />
+            <Calendar
+              mode="single"
+              selected={fecha}
+              onSelect={handleSelectFecha}
+              initialFocus
+            />
           </PopoverContent>
         </Popover>
       </div>
@@ -89,7 +119,6 @@ export default function Step1SeleccionRequisicion({
 
       {(data.motivo === "Sustitución" || data.motivo === "Aumento Plantilla") && (
         <>
-          {/* Si motivo es Sustitución, mostrar selección del tipo */}
           {data.motivo === "Sustitución" && (
             <div className="space-y-2">
               <Label>Tipo de Sustitución</Label>
@@ -118,7 +147,6 @@ export default function Step1SeleccionRequisicion({
             </div>
           )}
 
-          {/* Si tipo de sustitución es incapacidad, pedir tipo y tiempo */}
           {data.tipo_sustitucion === "incapacidad" && (
             <div className="space-y-4 pt-2">
               <div>
@@ -149,19 +177,67 @@ export default function Step1SeleccionRequisicion({
 
           <div>
             <Label>Puesto requerido</Label>
-            <select
-              value={data.puesto || ""}
-              onChange={(e) => updateData({ puesto: e.target.value })}
-              className="w-full border border-gray-300 rounded-md p-2"
-            >
-              <option value="">Selecciona un puesto</option>
-              {puestos.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" role="combobox" className="w-full justify-between">
+                  {data.puesto || "Selecciona o escribe un puesto"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-full max-h-64 overflow-auto p-0 shadow-md border rounded-md"
+                side="bottom"
+                align="start"
+                sideOffset={4}
+                avoidCollisions={false} // 👈 desactiva el reposicionamiento automático
+              >
+                <Command>
+                  <CommandInput
+                    placeholder="Buscar o escribir puesto"
+                    value={puestoInput}
+                    onValueChange={setPuestoInput}
+                  />
+                  <CommandEmpty>
+                    <div className="px-3 py-2 text-sm text-muted-foreground">
+                      No encontrado. Presiona Enter para usar: <strong>{puestoInput}</strong>
+                    </div>
+                  </CommandEmpty>
+                  <CommandGroup>
+                    {puestos.map((p) => (
+                      <CommandItem
+                        key={p}
+                        onSelect={() => handleSelectPuesto(p)}
+                        className="cursor-pointer"
+                      >
+                        <Check
+                          className={cn("mr-2 h-4 w-4", p === data.puesto ? "opacity-100" : "opacity-0")}
+                        />
+                        {p}
+                      </CommandItem>
+                    ))}
+                    {puestoInput && !puestos.includes(puestoInput) && (
+                      <CommandItem onSelect={() => handleSelectPuesto(puestoInput)}>
+                        <Check className="mr-2 h-4 w-4 opacity-100" />
+                        {puestoInput} <span className="ml-1 text-xs text-muted-foreground">(nuevo)</span>
+                      </CommandItem>
+                    )}
+                  </CommandGroup>
+                </Command>
+              </PopoverContent>
+
+            </Popover>
           </div>
+
+          {data.puesto && !puestos.includes(data.puesto) && (
+            <div className="mt-3">
+              <Label>Especificar otro puesto</Label>
+              <Input
+                placeholder="Ingresa el nombre del puesto"
+                value={data.puesto}
+                onChange={(e) => updateData({ puesto: e.target.value })}
+              />
+            </div>
+          )}
 
           <div>
             <Label>Justificación</Label>

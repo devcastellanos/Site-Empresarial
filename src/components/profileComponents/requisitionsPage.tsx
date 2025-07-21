@@ -116,7 +116,6 @@ const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date |
 
   const filteredMovimientos = movimientos.filter(movimiento => {
     const matchesSearch =
-      movimiento.num_empleado.toString().includes(searchTerm.toLowerCase()) ||
       movimiento.tipo_movimiento.toLowerCase().includes(searchTerm.toLowerCase()) ||
       movimiento.comentarios?.toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -124,7 +123,7 @@ const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date |
     const matchesStatus = filterStatus === 'all' || movimiento.estatus === filterStatus;
     const matchesType = filterType === 'all' || movimiento.tipo_movimiento === filterType;
 
-    const fechaIncidenciaStr = movimiento.fecha_incidencia?.slice(0, 10); // Extraer YYYY-MM-DD
+    const fechaIncidenciaStr = movimiento.fecha_incidencia?.slice(0, 10);
 
     const fromStr = dateRange.from ? dateRange.from.toISOString().slice(0, 10) : null;
     const toStr = dateRange.to ? dateRange.to.toISOString().slice(0, 10) : null;
@@ -137,7 +136,6 @@ const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date |
 
     return matchesSearch && matchesNombre && matchesStatus && matchesType && matchesDateRange;
   });
-
 
   const handleRefresh = () => {
     setLoading(true)
@@ -257,60 +255,63 @@ const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date |
 </div>
 
 
-      <Card className="shadow-md">
-        <CardHeader>
-          <CardTitle className="text-xl">Listado de Movimientos</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>#</TableHead>
-                <TableHead>Número Empleado</TableHead>
-                <TableHead>Nombre Solicitante</TableHead>
-                <TableHead>Tipo Requisición</TableHead>
-                <TableHead>Fecha Solicitud</TableHead>
-                <TableHead>Estatus</TableHead>
-                <TableHead>Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredMovimientos.map((mov, i) => (
-                <TableRow key={mov.idMovimiento} className="hover:bg-muted/40">
-                  <TableCell>{i + 1}</TableCell>
-                  <TableCell>{mov.num_empleado}</TableCell>
-                  <TableCell>{mov.nombre}</TableCell>
-                  <TableCell>
-                    {mov.tipo_movimiento === 'Sustitución'
-                      ? `${mov.tipo_movimiento} (${mov.datos_json?.tipo_sustitucion})`
-                      : mov.tipo_movimiento}
-                  </TableCell>
-                  <TableCell>{formatDateTimeStr(mov.fecha_incidencia)}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={
-                        mov.estatus === 'aprobado'
-                          ? 'border-green-500 text-green-700'
-                          : mov.estatus === 'rechazado'
-                            ? 'border-red-500 text-red-700'
-                            : 'border-yellow-500 text-yellow-700'
-                      }
-                    >
-                      {mov.estatus}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Button size="sm" variant="secondary" onClick={() => setSelectedMovimiento(mov)}>
-                      Ver Detalles
-                    </Button>
-                  </TableCell>
+      {(user?.rol === "Reclutamiento" || user?.rol === "admin") && (
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle className="text-xl">Listado de Movimientos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>#</TableHead>
+                  <TableHead>Número Empleado</TableHead>
+                  <TableHead>Nombre Solicitante</TableHead>
+                  <TableHead>Tipo Requisición</TableHead>
+                  <TableHead>Fecha Solicitud</TableHead>
+                  <TableHead>Estatus</TableHead>
+                  <TableHead>Acciones</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+              </TableHeader>
+              <TableBody>
+                {filteredMovimientos.map((mov, i) => (
+                  <TableRow key={mov.idMovimiento} className="hover:bg-muted/40">
+                    <TableCell>{i + 1}</TableCell>
+                    <TableCell>{mov.num_empleado}</TableCell>
+                    <TableCell>{mov.nombre}</TableCell>
+                    <TableCell>
+                      {mov.tipo_movimiento === 'Sustitución'
+                        ? `${mov.tipo_movimiento} (${mov.datos_json?.tipo_sustitucion})`
+                        : mov.tipo_movimiento}
+                    </TableCell>
+                    <TableCell>{formatDateTimeStr(mov.fecha_incidencia)}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="outline"
+                        className={
+                          mov.estatus === 'aprobado'
+                            ? 'border-green-500 text-green-700'
+                            : mov.estatus === 'rechazado'
+                              ? 'border-red-500 text-red-700'
+                              : 'border-yellow-500 text-yellow-700'
+                        }
+                      >
+                        {mov.estatus}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Button size="sm" variant="secondary" onClick={() => setSelectedMovimiento(mov)}>
+                        Ver Detalles
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
+
 
       {showForm && (
         <div className="mt-8">

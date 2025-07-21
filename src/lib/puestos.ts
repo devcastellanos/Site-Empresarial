@@ -92,7 +92,7 @@ export const puestos = [
   "Gte. de Planeación e Inteligencia del Mer",
   "Ingeniero de aplicaciones",
   "Ingeniero de infraestructura",
-  "Ingeniero de soporte RP",
+  "Ingeniero de soporte ERP",
   "Ingeniero Desarrollo Jr",
   "Inspector de calidad de pisos",
   "Inspector Calidad Llegadas",

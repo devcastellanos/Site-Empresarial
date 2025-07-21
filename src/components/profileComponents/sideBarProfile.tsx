@@ -41,7 +41,7 @@ export default function ProfilePage() {
           {view === "movements" && <Movements />}
           {view === "patronales" && <PatronCard />}
           {view === "requisiciones" ? (
-            user?.rol === "admin" || user?.rol === "Reclutamiento" || user?.rol === "Gerente" ? (
+            user?.rol === "admin" || user?.rol === "Reclutamiento" || user?.rol === "Gerente" || user?.rol === "Jefe" || user?.rol === "Director" || user?.rol === "Direccion" ? (
               <div className="text-red-500 font-semibold">
                 Acceso denegado: necesitas permisos de administrador.
               </div>

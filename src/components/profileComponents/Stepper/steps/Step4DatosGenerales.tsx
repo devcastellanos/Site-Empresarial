@@ -30,13 +30,15 @@ export default function Step4DatosGenerales({
   const [equipo, setEquipo] = useState<string[]>(data?.datos_generales?.equipo || [])
 
   useEffect(() => {
-    updateData({
-      datos_generales: {
-        ...data.datos_generales,
-        equipo,
-      },
-    })
-  }, [equipo, data, updateData, data.datos_generales])
+    if (JSON.stringify(data.datos_generales?.equipo || []) !== JSON.stringify(equipo)) {
+      updateData({
+        datos_generales: {
+          ...data.datos_generales,
+          equipo,
+        },
+      })
+    }
+  }, [equipo])
 
   const handleEquipoToggle = (item: string, checked: boolean) => {
     if (checked) {

@@ -667,6 +667,7 @@ useEffect(() => {
                                 {format(new Date(mov.fecha_solicitud), "PPP", { locale: es })}
                               </p>
                             </div>
+                            <p className="font-medium text-gray-800">Fecha Incidencia{format(new Date(mov.fecha_incidencia), " - PPP", { locale: es })}</p>
 
                             <p className="text-sm text-tinto-500 italic">
                               {status === "pendiente" && `En espera de aprobación de: ${obtenerAprobadorClave(mov.historial_aprobaciones_detallado, status)}`}

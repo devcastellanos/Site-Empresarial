@@ -91,7 +91,7 @@ export function AppSidebar({
           { title: "Vacaciones", url: "/Perfil#vacaciones", icon: Palmtree },
           { title: "Kardex", url: "/Perfil#cursos", icon: GraduationCap },
           { title: "Movimientos", url: "/Perfil#movimientos", icon: Repeat },
-          ...(user.rol === "admin" || user.rol === "Reclutamiento" || user.rol === "Gerente" || user.rol === "Director" || user.rol === "Direccion"
+          ...(user.rol === "admin" || user.rol === "Reclutamiento" || user.rol === "Gerente" || user.rol === "Jefe" || user.rol === "Director" || user.rol === "Direccion"
             ? [{ title: "Requisiciones", url: "/Perfil#requisiciones", icon: FileText }]
             : []),
           { title: "Carta Patronal", url: "/Perfil#patron", icon: Stamp },
@@ -122,6 +122,10 @@ export function AppSidebar({
         ...(user.rol === "admin" || user.rol === "Nominas"
           ? [{ name: "Movimientos Nominas", url: "/Movimientos", icon: CircleDollarSign }]
           : []),
+
+        ...(user.rol === "admin" || user.rol === "Reclutamiento"
+          ? [{ name: "Personal", url: "/Personal", icon: Users }]
+          : []),   
     ],
   }
 
