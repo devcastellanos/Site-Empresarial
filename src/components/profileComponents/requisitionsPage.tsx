@@ -63,7 +63,7 @@ function RequisitionsPage() {
   const [filterType, setFilterType] = useState<string>('all')
   const [dateFilter, setDateFilter] = useState<Date | undefined>(undefined)
   const [selectedMovimiento, setSelectedMovimiento] = useState<MovimientoPersonal | null>(null)
-  const [showForm, setShowForm] = useState(false)
+  const [showForm, setShowForm] = useState(true)
   const { user } = useAuth();
   const [filterByNombre, setFilterByNombre] = useState('');
 const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date | undefined }>({
@@ -174,86 +174,88 @@ const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date |
             Actualizar
           </Button>
 
-          <Button variant="outline" onClick={exportToExcel}>
-            Descargar Reporte
-          </Button>
-
-            <Button onClick={() => setShowForm(true)}>
-              <PlusIcon className="mr-2 h-4 w-4" />
-              Nueva Requisición
+          {/* Mostrar solo si el rol es Reclutamiento o admin */}
+          {(user?.rol === "Reclutamiento" || user?.rol === "admin") && (
+            <Button variant="outline" onClick={exportToExcel}>
+              Descargar Reporte
             </Button>
-          
+          )}
+
+          <Button onClick={() => setShowForm(true)}>
+            <PlusIcon className="mr-2 h-4 w-4" />
+            Nueva Requisición
+          </Button>
         </div>
       </div>
 
-      <div className="mb-6 grid grid-cols-1 md:grid-cols-5 gap-4">
+      {(user?.rol === "Reclutamiento" || user?.rol === "admin") && (
+        <div className="mb-6 grid grid-cols-1 md:grid-cols-5 gap-4">
+          {/* Filtros actuales */}
+          <div>
+            <Label>Solicitante</Label>
+            <Input
+              placeholder="Nombre del solicitante"
+              value={filterByNombre}
+              onChange={(e) => setFilterByNombre(e.target.value)}
+            />
+          </div>
 
-  <div>
-    <Label>Solicitante</Label>
-    <Input
-      placeholder="Nombre del solicitante"
-      value={filterByNombre}
-      onChange={(e) => setFilterByNombre(e.target.value)}
-    />
-  </div>
+          <div>
+            <Label>Estatus</Label>
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger>
+                <SelectValue placeholder="Estatus" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="pendiente">Pendiente</SelectItem>
+                <SelectItem value="aprobado">Aprobado</SelectItem>
+                <SelectItem value="rechazado">Rechazado</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-  <div>
-    <Label>Estatus</Label>
-    <Select value={filterStatus} onValueChange={setFilterStatus}>
-      <SelectTrigger>
-        <SelectValue placeholder="Estatus" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="all">Todos</SelectItem>
-        <SelectItem value="pendiente">Pendiente</SelectItem>
-        <SelectItem value="aprobado">Aprobado</SelectItem>
-        <SelectItem value="rechazado">Rechazado</SelectItem>
-      </SelectContent>
-    </Select>
-  </div>
+          <div>
+            <Label>Tipo</Label>
+            <Select value={filterType} onValueChange={setFilterType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Tipo de Movimiento" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="Sustitución">Sustitución</SelectItem>
+                <SelectItem value="Aumento Plantilla">Aumento Plantilla</SelectItem>
+                <SelectItem value="Nueva Posición">Nueva Posición</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-  <div>
-    <Label>Tipo</Label>
-    <Select value={filterType} onValueChange={setFilterType}>
-      <SelectTrigger>
-        <SelectValue placeholder="Tipo de Movimiento" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="all">Todos</SelectItem>
-        <SelectItem value="Sustitución">Sustitución</SelectItem>
-        <SelectItem value="Aumento Plantilla">Aumento Plantilla</SelectItem>
-        <SelectItem value="Nueva Posición">Nueva Posición</SelectItem>
-        {/* Agrega más tipos si es necesario */}
-      </SelectContent>
-    </Select>
-  </div>
-
-  <div>
-    <Label>Fecha de Solicitud</Label>
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" className="w-full justify-start text-left">
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {dateRange.from
-            ? dateRange.to
-              ? `${format(dateRange.from, 'dd MMM yyyy')} - ${format(dateRange.to, 'dd MMM yyyy')}`
-              : format(dateRange.from, 'dd MMM yyyy')
-            : 'Seleccionar rango'}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
-        <Calendar
-          initialFocus
-          mode="range"
-          selected={dateRange}
-          onSelect={(range) => setDateRange(range ?? { from: undefined, to: undefined })}
-          numberOfMonths={2}
-        />
-      </PopoverContent>
-    </Popover>
-  </div>
-</div>
-
+          <div>
+            <Label>Fecha de Solicitud</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full justify-start text-left">
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dateRange.from
+                    ? dateRange.to
+                      ? `${format(dateRange.from, 'dd MMM yyyy')} - ${format(dateRange.to, 'dd MMM yyyy')}`
+                      : format(dateRange.from, 'dd MMM yyyy')
+                    : 'Seleccionar rango'}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  selected={dateRange}
+                  onSelect={(range) => setDateRange(range ?? { from: undefined, to: undefined })}
+                  numberOfMonths={2}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+      )}
 
       {(user?.rol === "Reclutamiento" || user?.rol === "admin") && (
         <Card className="shadow-md">
