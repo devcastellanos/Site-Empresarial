@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
@@ -19,7 +19,12 @@ import { crearMovimiento } from "@/services/movementsService"
 import StepperContainer from './Stepper/StepperContainer'
 import { useAuth } from '../../app/context/AuthContext'
 import * as XLSX from 'xlsx';
-import { startOfDay, endOfDay } from 'date-fns'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 // Utilidad para formatear fecha tipo 'YYYY-MM-DD' o 'YYYY-MM-DD HH:mm:ss'
 function formatDateTimeStr(dateStr?: string): string {
@@ -27,7 +32,6 @@ function formatDateTimeStr(dateStr?: string): string {
 
   const [datePart] = dateStr.split(/[T\s]/); // se queda con "YYYY-MM-DD"
   const [year, month, day] = datePart.split('-');
-
   const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
   return `${day} ${meses[parseInt(month, 10) - 1]} ${year}`;
 }
@@ -74,7 +78,7 @@ const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date |
   // Removed invalid reference to 'movimiento' here.
   const fromStr = dateRange.from ? dateRange.from.toISOString().slice(0, 10) : null;
   const toStr = dateRange.to ? dateRange.to.toISOString().slice(0, 10) : null;
-
+  const stepperRef = useRef<HTMLDivElement | null>(null);
 
   // Simulación de fetch de datos
   useEffect(() => {
@@ -168,155 +172,169 @@ const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date |
           <h1 className="text-3xl font-bold text-gray-800">Requisiciones de Personal</h1>
           <p className="text-sm text-muted-foreground">Gestiona y visualiza solicitudes de cambio o sustitución</p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="ghost" onClick={handleRefresh} disabled={loading}>
-            <RefreshCwIcon className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            Actualizar
-          </Button>
-
-          {/* Mostrar solo si el rol es Reclutamiento o admin */}
-          {(user?.rol === "Reclutamiento" || user?.rol === "admin") && (
-            <Button variant="outline" onClick={exportToExcel}>
-              Descargar Reporte
-            </Button>
-          )}
-
-          <Button onClick={() => setShowForm(true)}>
-            <PlusIcon className="mr-2 h-4 w-4" />
-            Nueva Requisición
-          </Button>
-        </div>
       </div>
 
       {(user?.rol === "Reclutamiento" || user?.rol === "admin") && (
-        <div className="mb-6 grid grid-cols-1 md:grid-cols-5 gap-4">
-          {/* Filtros actuales */}
-          <div>
-            <Label>Solicitante</Label>
-            <Input
-              placeholder="Nombre del solicitante"
-              value={filterByNombre}
-              onChange={(e) => setFilterByNombre(e.target.value)}
-            />
-          </div>
+        <Accordion type="single" collapsible>
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Listado de Requisiciones</AccordionTrigger>
+            <AccordionContent>
+              <Card className="shadow-md">
+                <CardHeader className="flex flex-row justify-between items-center">
+                  <CardTitle className="text-xl">Requisiciones</CardTitle>
 
-          <div>
-            <Label>Estatus</Label>
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger>
-                <SelectValue placeholder="Estatus" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="pendiente">Pendiente</SelectItem>
-                <SelectItem value="aprobado">Aprobado</SelectItem>
-                <SelectItem value="rechazado">Rechazado</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+                  {/* Botones en la misma fila que el título */}
+                  <div className="flex gap-3">
+                    <Button variant="ghost" onClick={handleRefresh} disabled={loading}>
+                      <RefreshCwIcon className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                      Actualizar
+                    </Button>
 
-          <div>
-            <Label>Tipo</Label>
-            <Select value={filterType} onValueChange={setFilterType}>
-              <SelectTrigger>
-                <SelectValue placeholder="Tipo de Movimiento" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="Sustitución">Sustitución</SelectItem>
-                <SelectItem value="Aumento Plantilla">Aumento Plantilla</SelectItem>
-                <SelectItem value="Nueva Posición">Nueva Posición</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+                    <Button variant="outline" onClick={exportToExcel}>
+                      Descargar Reporte
+                    </Button>
 
-          <div>
-            <Label>Fecha de Solicitud</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full justify-start text-left">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dateRange.from
-                    ? dateRange.to
-                      ? `${format(dateRange.from, 'dd MMM yyyy')} - ${format(dateRange.to, 'dd MMM yyyy')}`
-                      : format(dateRange.from, 'dd MMM yyyy')
-                    : 'Seleccionar rango'}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  initialFocus
-                  mode="range"
-                  selected={dateRange}
-                  onSelect={(range) => setDateRange(range ?? { from: undefined, to: undefined })}
-                  numberOfMonths={2}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
+                    <Button
+                      onClick={() => {
+                        setShowForm(true);
+                        setTimeout(() => {
+                          stepperRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 100); // pequeño delay para asegurar que el componente se renderizó
+                      }}
+                    >
+                      Formulario de Requisiciones
+                    </Button>
+                  </div>
+                </CardHeader>
+
+                <CardContent>
+                  {/* Filtros */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div>
+                      <Label>Solicitante</Label>
+                      <Input
+                        placeholder="Nombre del solicitante"
+                        value={filterByNombre}
+                        onChange={(e) => setFilterByNombre(e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <Label>Estatus</Label>
+                      <Select value={filterStatus} onValueChange={setFilterStatus}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Estatus" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Todos</SelectItem>
+                          <SelectItem value="pendiente">Pendiente</SelectItem>
+                          <SelectItem value="aprobado">Aprobado</SelectItem>
+                          <SelectItem value="rechazado">Rechazado</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label>Tipo</Label>
+                      <Select value={filterType} onValueChange={setFilterType}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Tipo de Movimiento" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Todos</SelectItem>
+                          <SelectItem value="Sustitución">Sustitución</SelectItem>
+                          <SelectItem value="Aumento Plantilla">Aumento Plantilla</SelectItem>
+                          <SelectItem value="Nueva Posición">Nueva Posición</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label>Fecha de Solicitud</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className="w-full justify-start text-left">
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {dateRange.from
+                              ? dateRange.to
+                                ? `${format(dateRange.from, 'dd MMM yyyy')} - ${format(dateRange.to, 'dd MMM yyyy')}`
+                                : format(dateRange.from, 'dd MMM yyyy')
+                              : 'Seleccionar rango'}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar
+                            initialFocus
+                            mode="range"
+                            selected={dateRange}
+                            onSelect={(range) => setDateRange(range ?? { from: undefined, to: undefined })}
+                            numberOfMonths={2}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                  </div>
+
+                  {/* Tabla de movimientos */}
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>#</TableHead>
+                        <TableHead>Número Empleado</TableHead>
+                        <TableHead>Nombre Solicitante</TableHead>
+                        <TableHead>Tipo Requisición</TableHead>
+                        <TableHead>Fecha Solicitud</TableHead>
+                        <TableHead>Estatus</TableHead>
+                        <TableHead>Acciones</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredMovimientos.map((mov, i) => (
+                        <TableRow key={mov.idMovimiento} className="hover:bg-muted/40">
+                          <TableCell>{i + 1}</TableCell>
+                          <TableCell>{mov.num_empleado}</TableCell>
+                          <TableCell>{mov.nombre}</TableCell>
+                          <TableCell>
+                            {mov.tipo_movimiento === 'Sustitución'
+                              ? `${mov.tipo_movimiento} (${mov.datos_json?.tipo_sustitucion})`
+                              : mov.tipo_movimiento}
+                          </TableCell>
+                          <TableCell>{formatDateTimeStr(mov.fecha_incidencia)}</TableCell>
+                          <TableCell>
+                            <Badge
+                              variant="outline"
+                              className={
+                                mov.estatus === 'aprobado'
+                                  ? 'border-green-500 text-green-700'
+                                  : mov.estatus === 'rechazado'
+                                    ? 'border-red-500 text-red-700'
+                                    : 'border-yellow-500 text-yellow-700'
+                              }
+                            >
+                              {mov.estatus}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => setSelectedMovimiento(mov)}
+                            >
+                              Ver Detalles
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       )}
-
-      {(user?.rol === "Reclutamiento" || user?.rol === "admin") && (
-        <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle className="text-xl">Listado de Movimientos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>#</TableHead>
-                  <TableHead>Número Empleado</TableHead>
-                  <TableHead>Nombre Solicitante</TableHead>
-                  <TableHead>Tipo Requisición</TableHead>
-                  <TableHead>Fecha Solicitud</TableHead>
-                  <TableHead>Estatus</TableHead>
-                  <TableHead>Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredMovimientos.map((mov, i) => (
-                  <TableRow key={mov.idMovimiento} className="hover:bg-muted/40">
-                    <TableCell>{i + 1}</TableCell>
-                    <TableCell>{mov.num_empleado}</TableCell>
-                    <TableCell>{mov.nombre}</TableCell>
-                    <TableCell>
-                      {mov.tipo_movimiento === 'Sustitución'
-                        ? `${mov.tipo_movimiento} (${mov.datos_json?.tipo_sustitucion})`
-                        : mov.tipo_movimiento}
-                    </TableCell>
-                    <TableCell>{formatDateTimeStr(mov.fecha_incidencia)}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={
-                          mov.estatus === 'aprobado'
-                            ? 'border-green-500 text-green-700'
-                            : mov.estatus === 'rechazado'
-                              ? 'border-red-500 text-red-700'
-                              : 'border-yellow-500 text-yellow-700'
-                        }
-                      >
-                        {mov.estatus}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Button size="sm" variant="secondary" onClick={() => setSelectedMovimiento(mov)}>
-                        Ver Detalles
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
-
-
       {showForm && (
-        <div className="mt-8">
+        <div ref={stepperRef} className="mt-8">
           <StepperContainer />
         </div>
       )}
@@ -331,61 +349,61 @@ const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date |
               </DialogDescription>
             </DialogHeader>
 
-<Card className="bg-muted/30 p-4">
-  <div className="flex items-center justify-between mb-4">
-    <div>
-      <strong>Historial de Aprobaciones</strong>
-    </div>
-    <div className="text-sm text-muted-foreground">
-      Nivel de Aprobación: {selectedMovimiento.nivel_aprobacion}
-    </div>
-  </div>
+            <Card className="bg-muted/30 p-4">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <strong>Historial de Aprobaciones</strong>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Nivel de Aprobación: {selectedMovimiento.nivel_aprobacion}
+                </div>
+              </div>
 
-  {(selectedMovimiento.historial_aprobaciones && selectedMovimiento.historial_aprobaciones.length > 0) ? (
-    <div className="overflow-auto">
-      <table className="w-full text-sm border border-muted rounded-md overflow-hidden">
-        <thead className="bg-muted/50">
-          <tr>
-            <th className="text-left px-3 py-2 border-b">Orden</th>
-            <th className="text-left px-3 py-2 border-b">Aprobador</th>
-            <th className="text-left px-3 py-2 border-b">Estatus</th>
-            <th className="text-left px-3 py-2 border-b">Nota</th>
-            <th className="text-left px-3 py-2 border-b">Fecha</th>
-          </tr>
-        </thead>
-        <tbody>
-          {selectedMovimiento.historial_aprobaciones.map((aprob: any, i: number) => (
-            <tr key={i} className="even:bg-muted/20">
-              <td className="px-3 py-2">{aprob.orden}</td>
-              <td className="px-3 py-2">{aprob.nombre_aprobador || `Empleado #${aprob.id_aprobador}`}</td>
-              <td className="px-3 py-2 capitalize">{aprob.estatus}</td>
-              <td className="px-3 py-2">{aprob.nota || '—'}</td>
-              <td className="px-3 py-2">
-                {aprob.fecha_aprobacion
-                  ? formatDateTimeStr(aprob.fecha_aprobacion)
-                  : '—'}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  ) : (
-    <p className="text-sm text-muted-foreground italic">Sin historial de aprobaciones.</p>
-  )}
+              {(selectedMovimiento.historial_aprobaciones && selectedMovimiento.historial_aprobaciones.length > 0) ? (
+                <div className="overflow-auto">
+                  <table className="w-full text-sm border border-muted rounded-md overflow-hidden">
+                    <thead className="bg-muted/50">
+                      <tr>
+                        <th className="text-left px-3 py-2 border-b">Orden</th>
+                        <th className="text-left px-3 py-2 border-b">Aprobador</th>
+                        <th className="text-left px-3 py-2 border-b">Estatus</th>
+                        <th className="text-left px-3 py-2 border-b">Nota</th>
+                        <th className="text-left px-3 py-2 border-b">Fecha</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedMovimiento.historial_aprobaciones.map((aprob: any, i: number) => (
+                        <tr key={i} className="even:bg-muted/20">
+                          <td className="px-3 py-2">{aprob.orden}</td>
+                          <td className="px-3 py-2">{aprob.nombre_aprobador || `Empleado #${aprob.id_aprobador}`}</td>
+                          <td className="px-3 py-2 capitalize">{aprob.estatus}</td>
+                          <td className="px-3 py-2">{aprob.nota || '—'}</td>
+                          <td className="px-3 py-2">
+                            {aprob.fecha_aprobacion
+                              ? formatDateTimeStr(aprob.fecha_aprobacion)
+                              : '—'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground italic">Sin historial de aprobaciones.</p>
+              )}
 
-  {selectedMovimiento.nota && (
-    <div className="mt-2">
-      <strong>Nota:</strong> {selectedMovimiento.nota}
-    </div>
-  )}
+              {selectedMovimiento.nota && (
+                <div className="mt-2">
+                  <strong>Nota:</strong> {selectedMovimiento.nota}
+                </div>
+              )}
 
-  {selectedMovimiento.rechazado_por && (
-    <div className="text-red-600 mt-1">
-      Rechazado por Empleado #{selectedMovimiento.rechazado_por}
-    </div>
-  )}
-</Card>
+              {selectedMovimiento.rechazado_por && (
+                <div className="text-red-600 mt-1">
+                  Rechazado por Empleado #{selectedMovimiento.rechazado_por}
+                </div>
+              )}
+            </Card>
 
 
             <Card className="bg-muted/30 p-4 mt-4">

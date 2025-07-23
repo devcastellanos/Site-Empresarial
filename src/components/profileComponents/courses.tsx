@@ -13,6 +13,7 @@ import {
   Slider,
   Typography,
 } from "@material-tailwind/react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import axios from "axios";
 import sweetAlert from "sweetalert2";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -22,15 +23,20 @@ import { Combobox } from "@headlessui/react";
 import { User, CursoTomado, CursosPresencialesJson } from "@/lib/interfaces";
 // Ajusta la ruta según tu estructura de archivos
 
+interface Subordinado {
+    Personal: number;
+    Nombre: string;
+  }
+
 const Kardex = () => {
   const { user } = useAuth();
-
   const [users, setUsers] = useState<User[]>([]);
-
+  const [subordinados, setSubordinados] = useState<Subordinado[]>([]);
   const [newCourseId, setNewCourseId] = useState<number | "">(""); // For selected course from the dropdown
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [newProgress, setNewProgress] = useState<number>(0);
+  const [loadingSubs, setLoadingSubs] = useState(false);
 
   const [dialogInfo, setDialogInfo] = useState<{
     course: CursoTomado;
@@ -96,6 +102,32 @@ const Kardex = () => {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    const fetchSubordinados = async () => {
+      if (!user?.num_empleado) return;
+
+      setLoadingSubs(true);
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/subordinados_kardex?num_empleado=${user.num_empleado}`);
+        const json = await res.json();
+        if (json.success) {
+          setSubordinados(json.data);
+          console.log("Subordinados cargados:", json.data); // Debug
+        } else {
+          console.warn("No se encontraron subordinados");
+        }
+      } catch (err) {
+        console.error("Error al obtener subordinados", err);
+      } finally {
+        setLoadingSubs(false);
+      }
+    };
+
+    if (["Jefe", "Coordinador", "Gerente", "Director", "Dirección"].includes(user?.rol ?? "")) {
+      fetchSubordinados();
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -395,25 +427,56 @@ const Kardex = () => {
         >
           Información Personal
         </h2>
-        {user && (user.rol === "admin" || user.rol === "Capacitacion") && (
-          <div style={{ margin: "20px 0" }}>
-            <Input
-              type="number"
-              label="Buscar por número de empleado"
-              value={selectedUserId || ""}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === "") {
-                  setSelectedUserId("");
-                  setSelectedUser(null);
-                  setSelectedCourses([]);
-                } else {
+        {user && (
+          <div className="my-4">
+            {/* Mostrar el SELECT si es Jefe, Coordinador, Gerente, Director o Dirección */}
+            {["Jefe", "Coordinador", "Gerente", "Director", "Dirección"].includes(user.rol) ? (
+              <Select
+                onValueChange={(val) => {
                   setSelectedUserId(Number(val));
-                }
-              }}
-              placeholder="Ej. 1234"
-              {...({} as any)}
-            />
+                  const userObj = users.find(u => String(u.Personal) === val);
+                  if (userObj) {
+                    setSelectedUser(userObj);
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecciona un subordinado" />
+                </SelectTrigger>
+                <SelectContent>
+                  {subordinados.length === 0 ? (
+                    <SelectItem value="0">No hay subordinados</SelectItem>
+                  ) : (
+                    subordinados.map((sub) => (
+                      <SelectItem key={sub.Personal} value={String(sub.Personal)}>
+                        {sub.Nombre} ({sub.Personal})
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            ) : null}
+
+            {/* Mostrar el INPUT si es admin o Reclutamiento */}
+            {["admin", "Reclutamiento"].includes(user.rol) && (
+              <Input
+                type="number"
+                label="Buscar por número de empleado"
+                value={selectedUserId || ""}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === "") {
+                    setSelectedUserId("");
+                    setSelectedUser(null);
+                    setSelectedCourses([]);
+                  } else {
+                    setSelectedUserId(Number(val));
+                  }
+                }}
+                placeholder="Ej. 1234"
+                {...({} as any)}
+              />
+            )}
           </div>
         )}
         {selectedUser && (
@@ -434,7 +497,7 @@ const Kardex = () => {
               <Image
                 width={180}
                 height={180}
-                src={`http://api-img.172.16.15.30.sslip.io/uploads/${formattedUserId}.jpg`}
+                src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/uploads/${formattedUserId}.jpg`}
                 alt="Foto del empleado"
                 style={{
                   borderRadius: "50%",

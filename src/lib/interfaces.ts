@@ -1,6 +1,7 @@
 
 export interface User {
   Personal: number;
+  num_empleado?: number;
   ApellidoPaterno: string;
   ApellidoMaterno: string;
   Nombre: string;

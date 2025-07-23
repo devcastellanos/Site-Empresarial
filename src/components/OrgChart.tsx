@@ -118,7 +118,7 @@ const people: Person[] = [
       {
         name: "Helio García",
         role: "Paramédico",
-        employeeId: "2464",
+        employeeId: "1856",
         phone: "3320809592",
         email: "helio.garcia@grupotarahumara.com.mx",
         extraInfo: "Responsable de primeros auxilios y emergencias médicas",

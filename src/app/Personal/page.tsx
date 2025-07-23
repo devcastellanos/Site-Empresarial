@@ -28,10 +28,26 @@ import * as XLSX from "xlsx";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+type Personal = {
+  Personal: string; // será el identificador
+  Nombre: string;
+  ApellidoPaterno: string;
+  ApellidoMaterno: string;
+  Sexo?: string | null;
+  Puesto?: string | null;
+  Departamento?: string | null;
+  Estatus?: string;
+  CURP?: string;
+  Tipo?: string;
+  eMail?: string;
+  Telefono?: string;
+  // puedes seguir agregando campos según lo que devuelva la API
+};
+
 export default function PersonalPage() {
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState<Personal[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedRow, setSelectedRow] = useState<any | null>(null);
+  const [selectedRow, setSelectedRow] = useState<Partial<Personal> | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedIds, setSelectedIds] = useState<GridRowId[]>([]);
 
@@ -44,15 +60,33 @@ export default function PersonalPage() {
     fetch("http://localhost:3041/api/personal")
       .then((res) => res.json())
       .then((data) => {
-        const formatted = data.map((item: any, index: number) => ({
-          id: item.id || index,
-          ...item,
-        }));
-        setRows(formatted);
+        setRows(data);
       })
       .catch((err) => console.error("Error loading data:", err))
       .finally(() => setLoading(false));
   }, []);
+
+  const handleReturn = () => {
+    router.push("/Perfil");
+  };
+
+  const handleFieldChange = (field: string, value: string) => {
+    setSelectedRow((prev) => ({ ...prev!, [field]: value }));
+  };
+
+  const exportToExcel = () => {
+    if (!apiRef.current) return;
+
+    const dataToExport =
+      selectedIds.length > 0
+        ? selectedIds.map((id) => apiRef.current!.getRow(id))
+        : rows;
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Personal");
+    XLSX.writeFile(workbook, `Personal_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  };
 
   const handleRowClick = (params: GridRowParams) => {
     setSelectedRow(params.row);
@@ -64,34 +98,35 @@ export default function PersonalPage() {
     setSelectedRow(null);
   };
 
-  const handleSave = () => {
-    console.log("Registro actualizado:", selectedRow);
-    setOpenDialog(false);
-  };
+  const handleSave = async () => {
+    try {
+      const isNew = !selectedRow?.Personal;
 
-  const handleFieldChange = (field: string, value: string) => {
-    setSelectedRow((prev: any) => ({ ...prev, [field]: value }));
-  };
+      const response = await fetch(`http://localhost:3041/api/personal${isNew ? '' : `/${selectedRow.Personal}`}`, {
+        method: isNew ? 'POST' : 'PUT',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(selectedRow),
+      });
 
-  const handleReturn = () => {
-    router.push("/Perfil");
-  };
+      if (!response.ok) throw new Error("Error al guardar el registro");
 
-  const exportToExcel = () => {
-    if (!apiRef.current) return;
+      const updated = await response.json();
 
-    const dataToExport =
-        selectedIds.length > 0
-            ? selectedIds.map((id) => apiRef.current!.getRow(id))  // ← aserción no nula aquí
-            : rows;
+      if (isNew) {
+        setRows((prev) => [...prev, updated]);
+      } else {
+        setRows((prev) =>
+          prev.map((row) => (row.Personal === updated.Personal ? updated : row))
+        );
+      }
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Personal");
-    XLSX.writeFile(
-      workbook,
-      `Personal_${new Date().toISOString().slice(0, 10)}.xlsx`
-    );
+      setOpenDialog(false);
+      setSelectedRow(null);
+    } catch (error) {
+      console.error("Error al guardar:", error);
+    }
   };
 
   const columns = rows.length
@@ -105,30 +140,9 @@ export default function PersonalPage() {
     : [];
 
   return (
-    <Box
-      sx={{
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        backgroundColor: "#FAF4F2",
-        overflow: "hidden",
-        minHeight: "100%",
-        minWidth: 0,
-        p: { xs: 2, sm: 3, md: 4 },
-      }}
-    >
+    <Box sx={{ flex: 1, display: "flex", flexDirection: "column", backgroundColor: "#FAF4F2", overflow: "hidden", minHeight: "100%", p: { xs: 2, sm: 3, md: 4 } }}>
       {/* Encabezado */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          mb: 3,
-          flexWrap: "wrap",
-          gap: 2,
-        }}
-      >
-        {/* Logo + regresar */}
+      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 3, flexWrap: "wrap", gap: 2 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Image src="/image/logo.png" alt="Logo" width={120} height={80} />
           <IconButton onClick={handleReturn} sx={{ color: "#9A3324" }}>
@@ -136,32 +150,16 @@ export default function PersonalPage() {
           </IconButton>
         </Box>
 
-        {/* Título */}
-        <Typography
-          variant={isMobile ? "h5" : "h4"}
-          fontWeight="bold"
-          textAlign="center"
-          sx={{
-            color: "#9A3324",
-            flexGrow: 1,
-          }}
-        >
+        <Typography variant={isMobile ? "h5" : "h4"} fontWeight="bold" textAlign="center" sx={{ color: "#9A3324", flexGrow: 1 }}>
           Personal
         </Typography>
 
-        {/* Botón exportar */}
-        <Button
-          variant="contained"
-          onClick={exportToExcel}
-          startIcon={<DownloadIcon />}
-          sx={{
-            backgroundColor: "#9A3324",
-            "&:hover": {
-              backgroundColor: "#7A281C",
-            },
-          }}
-        >
+        <Button variant="contained" onClick={exportToExcel} startIcon={<DownloadIcon />} sx={{ backgroundColor: "#9A3324", "&:hover": { backgroundColor: "#7A281C" } }}>
           Exportar a Excel
+        </Button>
+
+        <Button variant="outlined" onClick={() => { setSelectedRow({}); setOpenDialog(true); }} sx={{ borderColor: "#9A3324", color: "#9A3324", "&:hover": { borderColor: "#7A281C", backgroundColor: "#F8EDEB" } }}>
+          Nuevo registro
         </Button>
       </Box>
 
@@ -171,22 +169,17 @@ export default function PersonalPage() {
           <CircularProgress sx={{ color: "#9A3324" }} />
         </Box>
       ) : (
-        <Box
-          sx={{
-            flexGrow: 1,
-            width: "100%",
-            height: "100%",
-            minHeight: "70vh",
-          }}
-        >
+        <Box sx={{ flexGrow: 1, width: "100%", minHeight: "70vh" }}>
           <DataGrid
             apiRef={apiRef}
             rows={rows}
             columns={columns}
+            getRowId={(row) => row.Personal}
             checkboxSelection
             onRowClick={handleRowClick}
-            onRowSelectionModelChange={(ids) => setSelectedIds(ids as unknown as GridRowId[])}
-
+            onRowSelectionModelChange={(ids) =>
+              setSelectedIds(Array.isArray(ids) ? ids : [])
+            }
             initialState={{
               pagination: {
                 paginationModel: { pageSize: 20, page: 0 },
@@ -231,11 +224,11 @@ export default function PersonalPage() {
               <TextField
                 key={key}
                 label={key}
-                value={selectedRow[key]}
+                value={selectedRow[key as keyof Personal] ?? ""}
                 onChange={(e) => handleFieldChange(key, e.target.value)}
                 fullWidth
                 margin="dense"
-                disabled={key === "id"}
+                disabled={key === "Personal"}
               />
             ))}
         </DialogContent>
@@ -244,11 +237,7 @@ export default function PersonalPage() {
           <Button
             onClick={handleSave}
             variant="contained"
-            sx={{
-              backgroundColor: "#B7422B",
-              color: "#fff",
-              "&:hover": { backgroundColor: "#9A3324" },
-            }}
+            sx={{ backgroundColor: "#B7422B", color: "#fff", "&:hover": { backgroundColor: "#9A3324" } }}
           >
             Guardar
           </Button>
