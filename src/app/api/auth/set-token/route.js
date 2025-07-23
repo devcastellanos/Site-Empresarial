@@ -12,6 +12,7 @@ export async function POST(req) {
 
     const token = jwt.sign(
       {
+        id: user.id, // Asegúrate de que el objeto user tenga un campo id
         email: user.email,
         user: user.name,
         num_empleado: user.num_empleado,

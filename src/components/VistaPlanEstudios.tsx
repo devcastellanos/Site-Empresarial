@@ -1,168 +1,112 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
 import { useAuth } from "@/app/context/AuthContext";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { toast } from "sonner";
+import { MatrizAsignacionCursos } from "./matrizPlan";
+import { FormularioEtapas } from "./FormularioEtapas";
 import { Button } from "@/components/ui/button";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-
-interface Modulo {
-  modulo_id: number;
-  nombre: string;
-  categoria: string;
-  descripcion?: string;
-  estatus: number;
-  fecha_completado: string | null;
-}
-
-const categoriasOrden = [
-  "Básicos",
-  "Técnicos",
-  "Prácticos",
-  "Habilidades y competencias",
-  "Formación",
-];
+import { PlusCircle, Table } from "lucide-react";
 
 export default function VistaPlanEstudios() {
   const { user } = useAuth();
-  const [modulos, setModulos] = useState<Modulo[]>([]);
-  const [empleadoBuscado, setEmpleadoBuscado] = useState(user?.num_empleado ?? "");
-  const [inputBusqueda, setInputBusqueda] = useState("");
+
+  type Curso = {
+    id_etapa: number;
+    etapa: string;
+    id_course: number;
+    title: string;
+    progress?: number;
+    description?: string;
+  };
+
+  const [cursos, setCursos] = useState<Curso[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (empleadoBuscado) {
-      fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/plan-estudios/${empleadoBuscado}`)
-        .then((res) => res.json())
-        .then(setModulos)
-        .catch(() => toast.error("Error al cargar el plan de estudios"));
-    }
-  }, [empleadoBuscado]);
+    if (!user?.num_empleado) return;
 
-  const total = modulos.length;
-  const completados = modulos.filter((m) => m.estatus === 1).length;
-  const porcentaje = total > 0 ? Math.round((completados / total) * 100) : 0;
+    const fetchCursos = async () => {
+      try {
+        const res = await fetch(`http://localhost:3041/usuarios/${user.num_empleado}/planCompleto`);
+        if (!res.ok) throw new Error("Error al obtener cursos");
+        const data = await res.json();
+        setCursos(
+          (data.cursos || []).filter((c: Curso) => c.id_course && c.title && c.etapa && c.id_etapa)
+        );
+      } catch (err) {
+        console.error("❌ Error cargando cursos del plan:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleCheck = async (modulo_id: number, checked: boolean) => {
-    const estatus = checked ? 1 : 0;
-    const body = { num_empleado: empleadoBuscado, modulo_id, estatus };
+    fetchCursos();
+  }, [user]);
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/plan-estudios`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-
-    if (res.ok) {
-      setModulos((prev) =>
-        prev.map((m) =>
-          m.modulo_id === modulo_id ? { ...m, estatus } : m
-        )
-      );
-    } else {
-      toast.error("Error al actualizar el estatus");
-    }
-  };
-
-  const buscarEmpleado = () => {
-    if (inputBusqueda.trim() === "") return toast("Ingresa un número de empleado");
-    setEmpleadoBuscado(inputBusqueda.trim());
-  };
+  const etapas = cursos.reduce((acc: Record<string, Curso[]>, curso) => {
+    if (!acc[curso.etapa]) acc[curso.etapa] = [];
+    acc[curso.etapa].push(curso);
+    return acc;
+  }, {});
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold text-center mb-4">Plan de Estudios</h1>
+      <h1 className="text-3xl font-bold text-center mb-6">Plan de Estudios</h1>
+      <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-8">
+  <Button asChild variant="default" className="px-6 py-2 text-base">
+    <a href="/PlanEstudio/CrearEtapa">
+      <PlusCircle className="inline-block mr-2" size={18} />
+      Crear Etapa
+    </a>
+  </Button>
+  <Button asChild variant="secondary" className="px-6 py-2 text-base">
+    <a href="/PlanEstudio/Asignar">
+      <Table className="inline-block mr-2" size={18} />
+      Ver Matriz de Asignación
+    </a>
+  </Button>
+</div>
+      {loading ? (
+        <p className="text-center">Cargando cursos...</p>
+      ) : cursos.length === 0 ? (
+        <p className="text-center text-gray-500">No hay cursos asignados actualmente.</p>
+      ) : (
+        <><div className="space-y-10">
+          {Object.entries(etapas).map(([nombreEtapa, cursosEtapa], index) => {
+            const completados = cursosEtapa.filter(c => (c.progress ?? 0) >= 100).length;
+            const porcentaje = Math.round((completados / cursosEtapa.length) * 100);
 
-      {(user && (user.rol === "admin" || user.rol === "Capacitacion")) && (
-        <div className="flex gap-4 items-center mb-6">
-          <Input
-            type="text"
-            placeholder="Buscar por número de empleado"
-            value={inputBusqueda}
-            onChange={(e) => setInputBusqueda(e.target.value)}
-          />
-          <Button onClick={buscarEmpleado}>Buscar</Button>
+            return (
+              <div key={index}>
+                <h2 className="text-2xl font-bold mb-2">{nombreEtapa}</h2>
+                <p className="mb-4 text-blue-600">
+                  {completados} / {cursosEtapa.length} cursos completados ({porcentaje}%)
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {cursosEtapa.map((curso, i) => (
+                    <div key={i} className="border p-4 rounded-lg shadow hover:shadow-md transition">
+                      <h3 className="text-lg font-semibold flex justify-between mb-2">
+                        {curso.title}
+                        {curso.progress === 100 ? (
+                          <span className="text-green-600 font-medium">✓</span>
+                        ) : (
+                          <span className="text-yellow-600 font-medium">…</span>
+                        )}
+                      </h3>
+                      <p className="text-gray-600 mb-2">Descripción: {curso.description || '—'}</p>
+                      <p className="text-gray-600">Progreso: {curso.progress ?? 0}%</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
+        </>
       )}
 
-      {/* Progreso general */}
-      <div className="mb-6">
-        <h2 className="text-lg font-medium mb-1">Progreso general</h2>
-        <div className="w-full bg-gray-300 rounded-full h-4">
-          <div
-            className="bg-gray-700 h-4 rounded-full transition-all duration-500"
-            style={{ width: `${porcentaje}%` }}
-          ></div>
-        </div>
-        <p className="text-sm mt-1 text-muted-foreground">
-          {completados} de {total} módulos completados ({porcentaje}%)
-        </p>
-      </div>
-
-      {/* Categorías como acordeón */}
-      <Accordion type="multiple" className="space-y-2">
-        {categoriasOrden.map((categoria) => {
-          const modulosCategoria = modulos.filter((m) => m.categoria === categoria);
-          if (modulosCategoria.length === 0) return null;
-
-          return (
-  <AccordionItem key={categoria} value={categoria}>
-    <AccordionTrigger className="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md text-lg font-semibold flex justify-between items-center">
-      <span>{categoria}</span>
-      <span className="text-sm font-normal text-gray-500">
-        {
-          modulosCategoria.filter((m) => m.estatus === 1).length
-        }{" "}
-        de {modulosCategoria.length} módulos
-      </span>
-    </AccordionTrigger>
-    <AccordionContent className="bg-white rounded-md shadow-inner px-4 py-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {modulosCategoria.map((modulo) => (
-          <Card
-            key={modulo.modulo_id}
-            className="bg-gray-50 hover:bg-gray-100 transition"
-          >
-            <CardContent className="flex items-center gap-4 py-4">
-              <Checkbox
-                id={`modulo-${modulo.modulo_id}`}
-                checked={!!modulo.estatus}
-                onCheckedChange={(checked) =>
-                  handleCheck(modulo.modulo_id, !!checked)
-                }
-              />
-              <div>
-                <Label
-                  htmlFor={`modulo-${modulo.modulo_id}`}
-                  className="text-base font-medium"
-                >
-                  {modulo.nombre}
-                </Label>
-                {modulo.descripcion && (
-                  <p className="text-sm text-muted-foreground">
-                    {modulo.descripcion}
-                  </p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </AccordionContent>
-  </AccordionItem>
-);
-
-        })}
-      </Accordion>
     </div>
   );
 }
+
+// Componente de matriz de asignación de cursos (importar en admin dashboard si aplica)

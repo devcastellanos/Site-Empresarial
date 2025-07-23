@@ -32,12 +32,12 @@ const roleAccess: Record<string, string[]> = {
   Capacitacion: [
     '/Cursos',  '/Perfil', '/PlanEstudio', '/cargaMasiva',
     '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
-    '/kardex'
+    '/kardex', '/PlanEstudio'
   ],
   Reclutamiento: [
     '/Usuarios', '/Perfil',
     '/confirmar-cuenta', '/Convenios', '/HomeCH', '/HomeUT',
-    '/kardex'
+    '/kardex', 
   ],
   Jefe:[
      '/Usuarios', '/Perfil',

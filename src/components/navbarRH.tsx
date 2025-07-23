@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Navbar as MTNavbar,
-  Collapse,
-  Button,
-  IconButton,
-  Typography,
-} from "@material-tailwind/react";
+import { Navbar, Typography, Button, IconButton, Collapse } from "@material-tailwind/react";
 import {
   RectangleStackIcon,
   UserCircleIcon,
@@ -65,7 +59,7 @@ export function NavbarRH() {
   ];
 
   return (
-    <MTNavbar
+    <Navbar
       shadow={false}
       fullWidth
       className="bg-[#818181] bg-opacity-60 backdrop-blur-md border-0 fixed top-0 left-0 right-0 z-50 transition-all duration-300 margin-bottom-4 rounded-lg px-4 py-2 lg:px-8 lg:py-4 lg:rounded-xl"
@@ -135,7 +129,7 @@ export function NavbarRH() {
           </ul>
         </div>
       </Collapse>
-    </MTNavbar>
+    </Navbar>
   );
 }
 

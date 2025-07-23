@@ -40,30 +40,30 @@ function PatronCard() {
   };
 
   const fetchUsers = useCallback(async () => {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/all`
-    );
-    const data = await response.json();
-    const mappedUsers = data.map((user: any) => ({
-      ...user,
-      Personal: Number(user.Personal),
-    }));
-    setUsers(mappedUsers);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/all`
+      );
+      const data = await response.json();
+      const mappedUsers = data.map((user: any) => ({
+        ...user,
+        Personal: Number(user.Personal),
+      }));
+      setUsers(mappedUsers);
 
-    const dataUser = mappedUsers.find(
-      (u: User) => u.Personal === user?.num_empleado
-    );
-    setEmpleado(dataUser || null);
+      const dataUser = mappedUsers.find(
+        (u: User) => u.Personal === user?.num_empleado
+      );
+      setEmpleado(dataUser || null);
 
-    console.log(
-      dataUser ? "Usuario encontrado:" : "Usuario no encontrado",
-      dataUser
-    );
-  } catch (error) {
-    console.error("Error al obtener usuarios:", error);
-  }
-}, [user?.num_empleado]);
+      console.log(
+        dataUser ? "Usuario encontrado:" : "Usuario no encontrado",
+        dataUser
+      );
+    } catch (error) {
+      console.error("Error al obtener usuarios:", error);
+    }
+  }, [user?.num_empleado]);
 
 
   useEffect(() => {
@@ -158,16 +158,16 @@ function PatronCard() {
         </div>
 
         {/* {ubicacion !== "default" && (
-          <p className="text-right font-medium uppercase">
-            México, {localidades[ubicacion]} a 13 de marzo de 2025.
-          </p>
-        )} */}
+    <p className="text-right font-medium uppercase">
+      México, {localidades[ubicacion]} a 13 de marzo de 2025.
+    </p>
+  )} */}
 
         <p className="font-semibold uppercase">A quien corresponda:</p>
         <p className="uppercase">Presente:</p>
 
         <p>
-          Por medio del presente hago constar que {" "}
+          Por medio del presente hago constar que{" "}
           <span className="font-semibold">
             {empleado?.Nombre} {empleado?.ApellidoPaterno} {empleado?.ApellidoMaterno}
           </span>
@@ -179,26 +179,35 @@ function PatronCard() {
             COMERCIALIZADORA DE FRUTAS FINAS TARAHUMARA
           </span>, con RPU{" "}
           <span className="font-semibold">r12-34-183-10-8</span>, ubicada en{" "}
-          <span className="font-semibold">{ubicacion !== "default" ? direcciones[ubicacion] : "________________________"}</span>, se desempeña en el puesto de{" "}
+          {ubicacion !== "default" ? (
+            <>
+              <span className="font-semibold">{direcciones[ubicacion]}</span>, con domicilio fiscal en{" "}
+              <span className="font-semibold">
+                Calle 4, #419 y #421, Comercial Abastos, 44530, Guadalajara, Jal.
+              </span>
+            </>
+          ) : (
+            <span className="font-semibold">________________________</span>
+          )}
+          , se desempeña en el puesto de{" "}
           <span className="font-semibold">{empleado?.Puesto}</span> desde el{" "}
           <span className="font-semibold">{empleado?.FechaAlta || empleado?.FechaAntiguedad}</span>.
         </p>
-
         <p>
           Se extiende la presente constancia laboral a solicitud del interesado
           y para los fines legales que al mismo convengan.
         </p>
 
         <p className="mt-8 font-semibold tracking-widest text-center">A T E N T A M E N T E :</p>
-        <br/>  
-        <br/>
+        <br />
+        <br />
         {/* 🖋️ Espacio para firma */}
         <div className="mt-12 mb-4 flex flex-col items-center space-y-1">
-          <Image 
-            src="/image/firmaLiliana.png" 
-            alt="Firma del Coordinador" 
-            width={96} // equivalente a w-48
-            height={40} // puedes ajustar según la proporción de la imagen
+          <Image
+            src="/image/firmaLiliana.png"
+            alt="Firma del Coordinador"
+            width={96}
+            height={40}
             className="mb-2"
           />
           <div className="w-64 border-t border-black" />
@@ -213,6 +222,7 @@ function PatronCard() {
           <p className="text-sm">Cel. +52 33-2637-7507</p>
         </div>
       </div>
+
     </div>
   );
 }

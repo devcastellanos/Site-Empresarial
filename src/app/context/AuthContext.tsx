@@ -4,6 +4,7 @@ import axios from 'axios';
 import { createContext, useContext, useState, useEffect } from 'react';
 
 interface UserProfile {
+  id: number;
   email: string;
   user: string;
   num_empleado: number;
