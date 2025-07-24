@@ -175,7 +175,7 @@ const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date |
       </div>
 
       {(user?.rol === "Reclutamiento" || user?.rol === "admin") && (
-        <Accordion type="single" collapsible>
+        <Accordion type="single" collapsible defaultValue="item-1">
           <AccordionItem value="item-1">
             <AccordionTrigger>Listado de Requisiciones</AccordionTrigger>
             <AccordionContent>

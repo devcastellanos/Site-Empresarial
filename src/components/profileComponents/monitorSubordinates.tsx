@@ -68,6 +68,11 @@ export default function MonitorSubordinates() {
 
   const [modalAbierto, setModalAbierto] = useState(false);
 
+  const ayer = new Date();
+  ayer.setDate(ayer.getDate() - 1);
+  const fechaAyerStr = ayer.toISOString().split("T")[0];
+
+
   // Fetch empleados y sus asistencias
   useEffect(() => {
     if (!user?.num_empleado) return;
@@ -116,10 +121,13 @@ export default function MonitorSubordinates() {
       faltas: 0,
       retardos: 0,
       noCheco: 0,
+      sincronizar: 0,
     };
 
     empleados.forEach((emp) => {
       emp.asistencia?.forEach((a) => {
+        const fecha = a.FECHA.split("T")[0];
+
         if (
           a.TIPO_ASISTENCIA.toLowerCase().includes("descanso") ||
           a.TIPO_ASISTENCIA.toLowerCase().includes("séptimo")
@@ -127,13 +135,21 @@ export default function MonitorSubordinates() {
           return;
 
         resumen.dias++;
-        if (a.TIPO_ASISTENCIA.toLowerCase().includes("falta")) resumen.faltas++;
-        else if (a.INC === "RET" || a.NOMBRE_INCIDENCIA?.toLowerCase().includes("retardo")) resumen.retardos++;
-        else if (
+
+        if (a.TIPO_ASISTENCIA.toLowerCase().includes("falta")) {
+          resumen.faltas++;
+        } else if (a.INC === "RET" || a.NOMBRE_INCIDENCIA?.toLowerCase().includes("retardo")) {
+          resumen.retardos++;
+        } else if (
           a.TIPO_ASISTENCIA.toLowerCase().includes("no chec") ||
           a.NOMBRE_INCIDENCIA?.toLowerCase().includes("no chec")
-        )
-          resumen.noCheco++;
+        ) {
+          if (fecha === fechaAyerStr) {
+            resumen.sincronizar++;
+          } else {
+            resumen.noCheco++;
+          }
+        }
       });
     });
 
@@ -226,11 +242,11 @@ export default function MonitorSubordinates() {
                             badgeColor = "border-yellow-500 text-yellow-500";
                             badgeText = "Retardo";
                         } else if (
-                            a.TIPO_ASISTENCIA.toLowerCase().includes("no chec") ||
-                            a.NOMBRE_INCIDENCIA?.toLowerCase().includes("no chec")
+                          a.TIPO_ASISTENCIA.toLowerCase().includes("no chec") ||
+                          a.NOMBRE_INCIDENCIA?.toLowerCase().includes("no chec")
                         ) {
-                            badgeColor = "border-blue-500 text-blue-500";
-                            badgeText = "No checó";
+                          badgeColor = "border-blue-500 text-blue-500";
+                          badgeText = a.FECHA.startsWith(fechaAyerStr) ? "Falta sincronizar" : "No checó";
                         }
 
                         return (

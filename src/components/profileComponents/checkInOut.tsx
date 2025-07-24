@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -144,51 +144,79 @@ useEffect(() => {
     movimientosAprobados.map((m) => [new Date(m.fecha_incidencia).toISOString().split("T")[0], m.tipo_movimiento])
   );
 
+  const getEstatusMovimiento = (fecha: string) => {
+    const match = movimientosSolicitados.find((mov) => {
+      const fechaIncidencia = new Date(mov.fecha_incidencia);
+      return fechaIncidencia.toISOString().split("T")[0] === fecha;
+    });
 
-  let asistenciasTotales = 0;
-  let retardosTotales = 0;
-  let inasistenciasTotales = 0;
+    if (!match) return null;
 
-  asistencias.forEach((a) => {
-    const fecha = a.FECHA.split("T")[0];
-    const incidencia = a.NOMBRE_INCIDENCIA;
-    const clave = a.CVEINC;
-
-    const movimientoJustificado = fechasJustificadas.has(fecha);
-    const tipoMovimiento = movimientosPorFecha[fecha];
-
-    if (clave === "SD") {
-      return; // día sin deber asistencia
+    switch (match.estatus_movimiento) {
+      case "pendiente":
+        return { icono: "𝙎𝙊𝙇𝙄𝘾𝙄𝙏𝘼𝘿𝙊", tipo: match.tipo_movimiento };
+      case "aprobado":
+        return { icono: "𝘼𝙋𝙍𝙊𝘽𝘼𝘿𝙊", tipo: match.tipo_movimiento };
+      case "rechazado":
+        return { icono: "𝙍𝙀𝘾𝙃𝘼𝙕𝘼𝘿𝙊", tipo: match.tipo_movimiento };
+      case "falta sincronizar":
+        return { icono: "FALTA SINCRONIZAR", tipo: match.tipo_movimiento };
+      default:
+        return { icono: "𝙋𝙀𝙉𝘿𝙄𝙀𝙉𝙏𝙀", tipo: match.tipo_movimiento };
     }
+  };
 
-    if (incidencia === null) {
-      // Asistencia normal
-      asistenciasTotales++;
-    } else if (incidencia === "Retardo E1") {
-      if (movimientoJustificado && tipoMovimiento === "Retardo justificado") {
-        asistenciasTotales++; // contar como asistencia normal
-      } else {
-        retardosTotales++;
-      }
-    } else {
-      // Otras incidencias
-      if (movimientoJustificado && tipoMovimiento === "Falta justificada") {
-        asistenciasTotales++; // contar como asistencia normal
-      } else {
-        inasistenciasTotales++;
-      }
+  const ayer = new Date();
+  ayer.setDate(ayer.getDate() - 1);
+  const fechaAyerStr = ayer.toISOString().split("T")[0];
+
+  const resumenAsistencia = useMemo(() => {
+  let asistenciasCount = 0;
+  let inasistenciasCount = 0;
+  let retardosCount = 0;
+
+  asistencias.forEach((item) => {
+    const tipo = item.TIPO_ASISTENCIA?.toLowerCase() || "";
+    const incidencia = item.NOMBRE_INCIDENCIA || "";
+    const fechaStr = item.FECHA.split("T")[0];
+    const estatusMovimiento = getEstatusMovimiento(fechaStr)?.icono?.toLowerCase();
+
+    const esFaltaSincronizar =
+      tipo.includes("no chec") && item.FECHA.startsWith(fechaAyerStr);
+
+    const esAsistencia =
+      tipo === "asistencia";
+
+    const esJustificada =
+      tipo.includes("falta") && estatusMovimiento === "𝘼𝙋𝙍𝙊𝘽𝘼𝘿𝙊".toLowerCase(); // visualmente "Asistencia justificada"
+
+    const esRetardo = incidencia === "Retardo E1";
+
+    const esFalta =
+      tipo === "falta" && !esJustificada;
+
+    if (esFaltaSincronizar || esAsistencia || esJustificada) {
+      asistenciasCount++;
+    } else if (esRetardo) {
+      retardosCount++;
+    } else if (esFalta) {
+      inasistenciasCount++;
     }
   });
 
+  const total = asistenciasCount + inasistenciasCount + retardosCount;
+  const puntualidad = total > 0 ? Math.round((asistenciasCount / total) * 100) : 0;
 
-  const totalDías = asistenciasTotales + retardosTotales + inasistenciasTotales;
-  const puntualidadPorcentaje = totalDías > 0
-    ? Math.round((asistenciasTotales / totalDías) * 100)
-    : 0;
+  return {
+    asistencias: asistenciasCount,
+    inasistencias: inasistenciasCount,
+    retardos: retardosCount,
+    puntualidad,
+  };
+}, [asistencias, movimientosSolicitados]);
 
-  if (loading) {
-    return <div className="p-6 text-center text-gray-600">Cargando registros de asistencia...</div>;
-  }
+
+
 
   const handleQuickRequestOpciones = (item: any) => {
     const opciones = opcionesPorIncidencia[item.NOMBRE_INCIDENCIA] || [];
@@ -260,33 +288,12 @@ useEffect(() => {
         return "bg-red-100 border-l-4 border-red-500";
       case "𝙋𝙀𝙉𝘿𝙄𝙀𝙉𝙏𝙀":
         return "bg-blue-100 border-l-4 border-blue-400";
+      case "FALTA SINCRONIZAR":
+        return "bg-blue-100 border-l-4 border-blue-500 animate-pulse"; 
       default:
         return "";
     }
   };
-
-
-  const getEstatusMovimiento = (fecha: string) => {
-    const match = movimientosSolicitados.find((mov) => {
-      const fechaIncidencia = new Date(mov.fecha_incidencia);
-      return fechaIncidencia.toISOString().split("T")[0] === fecha;
-    });
-
-    if (!match) return null;
-
-    switch (match.estatus_movimiento) {
-      case "pendiente":
-        return { icono: "𝙎𝙊𝙇𝙄𝘾𝙄𝙏𝘼𝘿𝙊", tipo: match.tipo_movimiento };
-      case "aprobado":
-        return { icono: "𝘼𝙋𝙍𝙊𝘽𝘼𝘿𝙊", tipo: match.tipo_movimiento };
-      case "rechazado":
-        return { icono: "𝙍𝙀𝘾𝙃𝘼𝙕𝘼𝘿𝙊", tipo: match.tipo_movimiento };
-      default:
-        return { icono: "𝙋𝙀𝙉𝘿𝙄𝙀𝙉𝙏𝙀", tipo: match.tipo_movimiento };
-    }
-  };
-
-
 
   return (
     <div className="max-w-fit mx-auto p-6 mt-6">
@@ -346,17 +353,16 @@ useEffect(() => {
               <CardTitle>Resumen de asistencia</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
-
               <Separator className="my-4 h-1 bg-gray-200 rounded-full" />
-
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
-                <InfoBox color="green" label="Asistencias" value={asistenciasTotales.toString()} />
-                <InfoBox color="red" label="Inasistencias" value={inasistenciasTotales.toString()} />
-                <InfoBox color="orange" label="Retardos" value={retardosTotales.toString()} />
-                <InfoBox color="blue" label="Puntualidad" value={`${puntualidadPorcentaje}%`} />
+                <InfoBox color="green" label="Asistencias" value={resumenAsistencia.asistencias.toString()} />
+                <InfoBox color="red" label="Inasistencias" value={resumenAsistencia.inasistencias.toString()} />
+                <InfoBox color="orange" label="Retardos" value={resumenAsistencia.retardos.toString()} />
+                <InfoBox color="blue" label="Puntualidad" value={`${resumenAsistencia.puntualidad}%`} />
               </div>
             </CardContent>
           </Card>
+
         </div>
 
         {/* Columna derecha - Tabla de Asistencia */}
@@ -437,7 +443,12 @@ useEffect(() => {
                       if (estatus) {
                         bgColor = "bg-white";
                       } else {
-                        if (item.NOMBRE_INCIDENCIA === null && item.CVEINC !== "SD") {
+                        if (
+                          item.TIPO_ASISTENCIA?.toLowerCase().includes("no chec") &&
+                          item.FECHA.startsWith(fechaAyerStr)
+                        ) {
+                          bgColor = "bg-blue-50"; // Falta sincronizar
+                        } else if (item.NOMBRE_INCIDENCIA === null && item.CVEINC !== "SD") {
                           bgColor = "bg-green-50";
                         } else if (item.NOMBRE_INCIDENCIA === "Retardo E1") {
                           bgColor = "bg-yellow-50";
@@ -462,15 +473,40 @@ useEffect(() => {
                               ? item.SALIDA_PROGRAMADA
                               : "—"}
                           </td>
-                          <td className="py-2 px-4">{item.TIPO_ASISTENCIA || "—"}</td>
+                          <td className="py-2 px-4">
+                            {item.TIPO_ASISTENCIA?.toLowerCase().includes("no chec") &&
+                            item.FECHA.startsWith(fechaAyerStr) ? (
+                              <Badge variant="outline" className="border-blue-600 text-blue-700">
+                                Falta sincronizar
+                              </Badge>
+                            ) : estatus?.toLowerCase() === "𝘼𝙋𝙍𝙊𝘽𝘼𝘿𝙊" &&
+                              item.TIPO_ASISTENCIA?.toLowerCase().includes("falta") ? (
+                              <Badge variant="outline" className="border-green-700 text-green-700">
+                                Asistencia justificada
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="border-gray-400 text-gray-700">
+                                {item.TIPO_ASISTENCIA || "—"}
+                              </Badge>
+                            )}
+                          </td>
+
                           <td className="py-2 px-4 italic text-sm">
-                            {estatus
+                            {item.TIPO_ASISTENCIA?.toLowerCase().includes("no chec") &&
+                            item.FECHA.startsWith(fechaAyerStr)
+                              ? "—"
+                              : estatus
                               ? `Movimiento "${tipoMovimientoDetectado}"`
                               : item.NOMBRE_INCIDENCIA || "—"}
                           </td>
                           <td className="py-2 px-4">{estatus || "—"}</td>
                           <td className="py-2 px-4">
-                            {item.NOMBRE_INCIDENCIA && item.CVEINC !== "SD" ? (
+                            {item.NOMBRE_INCIDENCIA &&
+                            item.CVEINC !== "SD" &&
+                            !(
+                              item.TIPO_ASISTENCIA?.toLowerCase().includes("no chec") &&
+                              item.FECHA.startsWith(fechaAyerStr)
+                            ) ? (
                               <Button
                                 size="sm"
                                 variant="outline"
@@ -507,7 +543,7 @@ useEffect(() => {
               <Input
                 value={
                   selectedIncident?.fecha
-                    ? format(selectedIncident.fecha, "yyyy-MM-dd")
+                    ? new Date(selectedIncident.fecha).toLocaleDateString("sv-SE") // formato ISO yyyy-MM-dd
                     : ""
                 }
                 disabled
