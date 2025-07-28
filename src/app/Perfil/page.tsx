@@ -218,7 +218,6 @@ export default function Campaign() {
       user?.rol !== "Gerente" &&
       user?.rol !== "Director" &&
       user?.rol !== "Dirección" &&
-      user?.rol !== "Jefe" &&
       user?.rol !== "Reclutamiento"
     ) {
       return (

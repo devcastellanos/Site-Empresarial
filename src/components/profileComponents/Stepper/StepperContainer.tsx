@@ -71,7 +71,7 @@ export default function StepperContainer() {
       const payload = {
         num_empleado: parseInt(data.num_empleado || "0"),
         tipo_movimiento: data.motivo,
-        nivel_aprobacion: (data.motivo === "Nueva Posición" || data.motivo === "Aumento Plantilla") ? 3 : 2,
+        nivel_aprobacion: (data.motivo === "Nueva Posición" || data.motivo === "Aumento Plantilla") ? 2 : 1,
         fecha_incidencia: data.fecha_solicitud?.toISOString().split("T")[0],
         datos_json: { ...data },
         comentarios: data?.datos_generales?.observaciones || "",

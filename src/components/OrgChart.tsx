@@ -69,7 +69,7 @@ const people: Person[] = [
         team: [
           {
             name: "Lezly Rodríguez",
-            role: "Auxiliar de DO",
+            role: "Auxiliar de Capacitación",
             employeeId: "2557",
             email: "lezly.rodriguez@grupotarahumara.com.mx",
             phone: "3310963475",

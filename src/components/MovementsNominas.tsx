@@ -360,8 +360,9 @@ const tiposFiltrados =
             <TableRow>
               <TableHead>Tipo de Movimiento</TableHead>
               <TableHead>Fecha de Incidencia</TableHead>
-              <TableHead>Empleado</TableHead>
-              <TableHead>Nivel de Aprobación</TableHead>
+              <TableHead>Nombre Empleado</TableHead>
+              <TableHead>Número Empleado</TableHead>
+              {/* <TableHead>Nivel de Aprobación</TableHead> */}
               <TableHead>Estado</TableHead>
             </TableRow>
           </TableHeader>
@@ -375,8 +376,9 @@ const tiposFiltrados =
               >
                 <TableCell>{mov.tipo_movimiento}</TableCell>
                 <TableCell>{format(new Date(mov.fecha_incidencia), "yyyy-MM-dd")}</TableCell>
+                <TableCell>{mov.nombre}</TableCell>
                 <TableCell>{mov.num_empleado}</TableCell>
-                <TableCell>{mov.nivel_aprobacion}</TableCell>
+                {/* <TableCell>{mov.nivel_aprobacion}</TableCell> */}
                 <TableCell>
                   <Badge
                     variant={

@@ -115,6 +115,15 @@ useEffect(() => {
   });
 
   useEffect(() => {
+  const interval = setInterval(() => {
+    fetchAsistencias();
+    fetchMovimientos();
+  }, 2 * 60 * 1000); // Cada 2 minutos
+
+  return () => clearInterval(interval); // Limpiar al desmontar
+}, []);
+
+  useEffect(() => {
 
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
@@ -408,6 +417,12 @@ useEffect(() => {
           </CardHeader>
 
           <CardContent className="overflow-x-auto">
+            <div className="flex items-center gap-3 text-sm bg-amber-100 border-l-4 border-amber-500 text-amber-900 p-2 rounded-md mb-2">
+              <span className="text-xl">🕒</span>
+              <div>
+                <strong>Sincronización retrasada:</strong> los registros se actualizan con <strong>1 día de desfase</strong>.
+              </div>
+            </div>
             <div className="max-h-[600px] overflow-y-auto">
               <table className="w-full text-sm text-left border">
                 <thead className="bg-gray-100 text-black sticky top-0 z-10">
@@ -541,11 +556,7 @@ useEffect(() => {
             <div>
               <Label>Fecha</Label>
               <Input
-                value={
-                  selectedIncident?.fecha
-                    ? new Date(selectedIncident.fecha).toLocaleDateString("sv-SE") // formato ISO yyyy-MM-dd
-                    : ""
-                }
+                value={selectedIncident?.fecha ? selectedIncident.fecha.toISOString().slice(0, 10) : ""}
                 disabled
               />
             </div>
