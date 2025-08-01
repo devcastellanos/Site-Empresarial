@@ -50,6 +50,7 @@ type MovimientoPersonal = {
   nota: string | null
   nivel_aprobacion: number
   historial_aprobaciones?: {
+    idAprobacion: number
     orden: number
     id_aprobador: number
     nombre_aprobador?: string
@@ -369,6 +370,7 @@ const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date |
                         <th className="text-left px-3 py-2 border-b">Estatus</th>
                         <th className="text-left px-3 py-2 border-b">Nota</th>
                         <th className="text-left px-3 py-2 border-b">Fecha</th>
+                        <th className="text-left px-3 py-2 border-b">Acción</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -382,6 +384,41 @@ const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date |
                             {aprob.fecha_aprobacion
                               ? formatDateTimeStr(aprob.fecha_aprobacion)
                               : '—'}
+                          </td>
+                          <td className="px-3 py-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={aprob.estatus?.toLowerCase() === 'aprobado'}
+                              onClick={async () => {
+                                try {
+                                  const response = await fetch(
+                                    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/aprobaciones/reenviar`,
+                                    {
+                                      method: 'POST',
+                                      headers: {
+                                        'Content-Type': 'application/json',
+                                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                                      },
+                                      body: JSON.stringify({ idAprobacion: aprob.idAprobacion }),
+                                    }
+                                  );
+
+                                  const result = await response.json();
+
+                                  if (response.ok) {
+                                    alert(`✅ Correo reenviado: ${result.message}`);
+                                  } else {
+                                    alert(`⚠️ Error: ${result.error}`);
+                                  }
+                                } catch (error) {
+                                  console.error('Error al reenviar correo:', error);
+                                  alert('❌ Error al conectar con el servidor.');
+                                }
+                              }}
+                            >
+                              Reenviar correo
+                            </Button>
                           </td>
                         </tr>
                       ))}

@@ -137,7 +137,7 @@ function PatronCard() {
 
       {/* Encabezado */}
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-gray-800">Carta Patronal</h2>
+        <h2 className="text-lg font-semibold text-gray-800">Constancia Laboral</h2>
         <Button onClick={generarPDF}>Generar PDF</Button>
       </div>
 

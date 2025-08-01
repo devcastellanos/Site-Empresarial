@@ -108,9 +108,9 @@ function Movements() {
   const [exitTime, setExitTime] = useState(""); // Define exitTime state
   const [approvalNotes, setApprovalNotes] = useState<{ [id: number]: string }>({});
   const [loadingActions, setLoadingActions] = useState<{ [id: number]: boolean }>({});
-const [misAprobaciones, setMisAprobaciones] = useState<any[]>([]);
-const aprobados = misAprobaciones.filter(m => m.estatus_aprobacion === 'aprobado');
-const rechazados = misAprobaciones.filter(m => m.estatus_aprobacion === 'rechazado');
+  const [misAprobaciones, setMisAprobaciones] = useState<any[]>([]);
+  const aprobados = misAprobaciones.filter(m => m.estatus_aprobacion === 'aprobado');
+  const rechazados = misAprobaciones.filter(m => m.estatus_aprobacion === 'rechazado');
   const [movementsData, setMovementsData] = useState<{
     pendientes: any[];
     aprobaciones: any[];
@@ -319,6 +319,16 @@ useEffect(() => {
 
     return () => clearInterval(interval);
   }, []);
+
+  const formatearFechaBonita = (fechaISO: string) => {
+    if (!fechaISO) return "";
+    const [anio, mes, dia] = fechaISO.split("T")[0].split("-");
+    const meses = [
+      "enero", "febrero", "marzo", "abril", "mayo", "junio",
+      "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+    ];
+    return `${parseInt(dia)} de ${meses[parseInt(mes) - 1]} de ${anio}`;
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6 mt-12">
@@ -643,6 +653,8 @@ useEffect(() => {
                 (mov) => mov.estatus_movimiento === status
               );
 
+              
+
               return (
                 <AccordionItem key={status} value={status}>
                   <AccordionTrigger className="text-lg font-semibold text-gray-800">
@@ -667,8 +679,9 @@ useEffect(() => {
                                 {format(new Date(mov.fecha_solicitud), "PPP", { locale: es })}
                               </p>
                             </div>
-                            <p className="font-medium text-gray-800">Fecha Incidencia{format(new Date(mov.fecha_incidencia), " - PPP", { locale: es })}</p>
-
+                            <p className="font-medium text-gray-800">
+                              Fecha Incidencia: {format(new Date(mov.fecha_incidencia), "PPP", { locale: es })}
+                            </p>
                             <p className="text-sm text-tinto-500 italic">
                               {status === "pendiente" && `En espera de aprobación de: ${obtenerAprobadorClave(mov.historial_aprobaciones_detallado, status)}`}
                               {status === "aprobado" && `Aprobado por: ${obtenerAprobadorClave(mov.historial_aprobaciones_detallado, status)}`}
@@ -748,7 +761,7 @@ useEffect(() => {
                         </p>
                         <p className="text-sm text-gray-500">
                           {mov.fecha_incidencia
-                            ? format(new Date(mov.fecha_incidencia), "PPP", { locale: es })
+                            ? formatearFechaBonita(mov.fecha_incidencia)
                             : "Fecha no disponible"}
                         </p>
                       </div>
@@ -942,76 +955,86 @@ useEffect(() => {
       }
 
       {/* Historial de aprobaciones realizadas */}
-       <Card className="space-y-4 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
-  <CardHeader>
-    <CardTitle className="text-xl">Aprobaciones que he realizado</CardTitle>
-  </CardHeader>
-  <CardContent>
-    <Accordion type="multiple" defaultValue={["aprobado", "rechazado"]} className="w-full space-y-4">
-      {["aprobado", "rechazado"].map((status) => {
-        const movimientos = status === "aprobado" ? aprobados : rechazados;
-        const titulo = {
-          aprobado: (
-            <span className="inline-flex items-center gap-2">
-              <MdTaskAlt className="text-gray-700" />
-              Aprobados
-              <span className="ml-auto text-sm text-muted-foreground font-medium">
-                {aprobados.length}
-              </span>
-            </span>
-          ),
-          rechazado: (
-            <span className="inline-flex items-center gap-2">
-              <MdCancel className="text-gray-700" />
-              Rechazados
-              <span className="ml-auto text-sm text-muted-foreground font-medium">
-                {rechazados.length}
-              </span>
-            </span>
-          ),
-        }[status];
+       {(
+        user?.rol === "admin" ||
+        user?.rol === "Coordinador" ||
+        user?.rol === "Jefe" ||
+        user?.rol === "Gerente" ||
+        user?.rol === "Direccion" ||
+        user?.rol === "Director"
+      ) && (
+        <Card className="space-y-4 bg-white/80 backdrop-blur-md rounded-2xl border shadow-md p-4">
+          <CardHeader>
+            <CardTitle className="text-xl">Aprobaciones realizadas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Accordion type="multiple" defaultValue={["aprobado", "rechazado"]} className="w-full space-y-4">
+              {["aprobado", "rechazado"].map((status) => {
+                const movimientos = status === "aprobado" ? aprobados : rechazados;
+                const titulo = {
+                  aprobado: (
+                    <span className="inline-flex items-center gap-2">
+                      <MdTaskAlt className="text-gray-700" />
+                      Aprobados
+                      <span className="ml-auto text-sm text-muted-foreground font-medium">
+                        {aprobados.length}
+                      </span>
+                    </span>
+                  ),
+                  rechazado: (
+                    <span className="inline-flex items-center gap-2">
+                      <MdCancel className="text-gray-700" />
+                      Rechazados
+                      <span className="ml-auto text-sm text-muted-foreground font-medium">
+                        {rechazados.length}
+                      </span>
+                    </span>
+                  ),
+                }[status];
 
-        return (
-          <AccordionItem key={status} value={status}>
-            <AccordionTrigger className="text-lg font-semibold text-gray-800">
-              {titulo}
-            </AccordionTrigger>
-            <AccordionContent>
-              {movimientos.length === 0 ? (
-                <p className="text-gray-500">No has {status === 'aprobado' ? 'aprobado' : 'rechazado'} ningún movimiento.</p>
-              ) : (
-                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-                  {movimientos.map((mov) => (
-                    <Card key={mov.idMovimiento} className="bg-white/90 border rounded-xl shadow-sm p-4 space-y-2">
-                      <div className="flex justify-between items-center">
-                        <p className="font-medium text-gray-800 flex items-center gap-1">
-                          <MdDescription className="text-gray-700" />
-                          {mov.tipo_movimiento}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          {format(new Date(mov.fecha_aprobacion), "PPP", { locale: es })}
-                        </p>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Empleado: <span className="font-semibold">{mov.nombre_empleado}</span>
-                      </p>
-                      <p className="text-sm text-gray-700 italic">
-                        {status === 'aprobado' ? 'Aprobado' : 'Rechazado'} con nota: <span className="text-gray-900 font-medium">{mov.nota_aprobacion || 'Sin comentarios'}</span>
-                      </p>
-                      <div className="text-sm text-gray-700">
-                        Comentarios generales: {mov.comentarios || 'N/A'}
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        );
-      })}
-    </Accordion>
-  </CardContent>
-</Card>
+                return (
+                  <AccordionItem key={status} value={status}>
+                    <AccordionTrigger className="text-lg font-semibold text-gray-800">
+                      {titulo}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      {movimientos.length === 0 ? (
+                        <p className="text-gray-500">No has {status === 'aprobado' ? 'aprobado' : 'rechazado'} ningún movimiento.</p>
+                      ) : (
+                        <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                          {movimientos.map((mov) => (
+                            <Card key={mov.idMovimiento} className="bg-white/90 border rounded-xl shadow-sm p-4 space-y-2">
+                              <div className="flex justify-between items-center">
+                                <p className="font-medium text-gray-800 flex items-center gap-1">
+                                  <MdDescription className="text-gray-700" />
+                                  {mov.tipo_movimiento}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  {format(new Date(mov.fecha_aprobacion), "PPP", { locale: es })}
+                                </p>
+                              </div>
+                              <p className="text-sm text-gray-600">
+                                Empleado: <span className="font-semibold">{mov.nombre_empleado}</span>
+                              </p>
+                              <p className="text-sm text-gray-700 italic">
+                                {status === 'aprobado' ? 'Aprobado' : 'Rechazado'} con nota: <span className="text-gray-900 font-medium">{mov.nota_aprobacion || 'Sin comentarios'}</span>
+                              </p>
+                              <div className="text-sm text-gray-700">
+                                Comentarios generales: {mov.comentarios || 'N/A'}
+                              </div>
+                            </Card>
+                          ))}
+                        </div>
+                      )}
+                    </AccordionContent>
+                  </AccordionItem>
+                );
+              })}
+            </Accordion>
+          </CardContent>
+        </Card>
+      )}
+
 
       
 

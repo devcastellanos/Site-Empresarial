@@ -77,11 +77,12 @@ function ContactCard({ name, email, phone, employeeId }: ContactCardProps) {
       <div className="text-left overflow-hidden">
         <p className="text-lg font-medium text-white break-words">{name}</p>
 
-        <p className="text-sm text-gray-400 flex items-center gap-1 break-words">
+        <p className="text-sm text-gray-400 flex items-center gap-1">
           <Mail className="w-4 h-4 shrink-0" />
           <a
             href={`mailto:${email}`}
-            className="hover:text-white transition-colors break-all"
+            className="hover:text-white transition-colors overflow-hidden text-ellipsis whitespace-nowrap truncate block max-w-[180px]"
+            title={email}
           >
             {email}
           </a>

@@ -22,17 +22,22 @@ import {
   TableBody,
   Paper,
 } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
+import CloseIcon from "@mui/icons-material/Close";
 import DownloadIcon from "@mui/icons-material/Download";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import * as XLSX from "xlsx";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Autocomplete } from "@mui/material"; // Asegúrate de importar esto
+import { Chip, TablePagination } from "@mui/material"; // Asegúrate de tener estos imports
+import { TablaPersonal } from "./TablaPersonal";
 
 type Personal = {
   Personal: string;
   Nombre: string;
-  ApellidoPaterno: string;
-  ApellidoMaterno: string;
+  ApellidoPaterno?: string;
+  ApellidoMaterno?: string;
   Sexo?: string | null;
   Puesto?: string | null;
   Departamento?: string | null;
@@ -51,29 +56,127 @@ export default function PersonalPage() {
   const [filters, setFilters] = useState({ nombre: "", Personal: "", departamento: "", estatus: "ALTA" });
   const router = useRouter();
   const theme = useTheme();
+  const rowsPerPage = 10;
+  const [page, setPage] = useState(0);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [fotoSrc, setFotoSrc] = useState("/image/user.jpg");
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingSave, setPendingSave] = useState(false);
+  const [changedFields, setChangedFields] = useState<Record<string, boolean>>({});
+  const disabledFields = [
+    "Cuenta Bancaria",
+    "Forma de Pago",
+    "Sucursal",
+    "Cuenta Nómina",
+    "NSS",
+    "RFC",
+    "CURP",
+    "Fecha Alta",
+    "Personal",
+  ];
+
+  const personalMolde: Partial<Personal> & Record<string, any> = {
+    ApellidoPaterno: "",
+    ApellidoMaterno: "",
+    Nombre: "",
+    Sexo: "",
+    Estatus: "",
+    Puesto: "",
+    Departamento: "",
+    PeriodoTipo: "",
+    TipoContrato: "",
+    Jornada: "",
+    TipoSueldo: "",
+    FechaAntiguedad: "",
+    Situacion: "",
+    CURP: "",
+    EstadoCivil: "",
+    RFC: "",
+    NSS: "",
+    Tipo: "",
+    Direccion: "",
+    DireccionNumero: "",
+    DireccionNumeroInt: "",
+    Colonia: "",
+    Delegacion: "",
+    Poblacion: "",
+    Estado: "",
+    Pais: "",
+    CodigoPostal: "",
+    Telefono: "",
+    eMail: "",
+    ZonaEconomica: "",
+    FormaPago: "",
+    CtaDinero: "",
+    PersonalSucursal: "",
+    PersonalCuenta: "",
+    FechaNacimiento: "",
+    LugarNacimiento: "",
+    Nacionalidad: "",
+    Beneficiario: "",
+    BeneficiarioParentesco: "",
+    PorcentajeBeneficiario: "",
+    Beneficiario2: "",
+    Parentesco2: "",
+    Madre: "",
+    Padre: "",
+    ReportaA: "",
+    Personal: "", // identificador
+  };
 
   useEffect(() => {
-    fetch("http://localhost:3041/api/personal")
-      .then((res) => res.json())
-      .then((data) => setRows(data))
-      .catch((err) => console.error("Error loading data:", err))
-      .finally(() => setLoading(false));
-  }, []);
+      fetch("http://localhost:3041/api/personal")
+        .then((res) => res.json())
+        .then((data) => setRows(data))
+        .catch((err) => console.error("Error loading data:", err))
+        .finally(() => setLoading(false));
+    }, []);
 
     useEffect(() => {
-    if (selectedRow?.Personal) {
-      setFotoSrc(`${process.env.NEXT_PUBLIC_IMAGE_URL}/uploads/${selectedRow.Personal}.jpg`);
-    }
-  }, [selectedRow]);
+    if (!selectedRow?.Personal) return;
+
+    const imageUrl = `${process.env.NEXT_PUBLIC_IMAGE_URL}/uploads/${selectedRow.Personal}.jpg`;
+
+    fetch(imageUrl, { method: "HEAD" })
+      .then((res) => {
+        setFotoSrc(res.ok ? imageUrl : "/image/user.jpg");
+      })
+      .catch(() => setFotoSrc("/image/user.jpg"));
+  }, [selectedRow?.Personal]);
+
 
   const handleReturn = () => {
     router.push("/Perfil");
   };
 
   const handleFieldChange = (field: string, value: string) => {
-    setSelectedRow((prev) => ({ ...prev!, [field]: value }));
+    setSelectedRow((prev) => {
+      const updated = { ...prev!, [field]: value };
+
+      setChangedFields((prevChanges) => ({
+        ...prevChanges,
+        [field]: true,
+      }));
+
+      return updated;
+    });
+  };
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const getEstatusColor = (estatus: string) => {
+    switch (estatus.toUpperCase()) {
+      case "ALTA":
+        return "success";
+      case "BAJA":
+        return "error";
+      case "ASPIRANTE":
+        return "warning";
+      default:
+        return "default";
+    }
   };
 
   const exportToExcel = () => {
@@ -96,9 +199,23 @@ export default function PersonalPage() {
   const handleSave = async () => {
     if (!selectedRow) return;
 
-    try {
-      const isNew = !selectedRow.Personal;
+    const isNew = !selectedRow.Personal;
 
+    const requiredFields = [
+      "Personal",
+      "Estatus",
+      "Nombre",
+      "ApellidoPaterno",
+      "ApellidoMaterno",
+    ];
+
+    const cleanedData = Object.fromEntries(
+      Object.entries(selectedRow).filter(
+        ([key]) => changedFields[key] || requiredFields.includes(key)
+      )
+    );
+
+    try {
       const endpoint = isNew
         ? "http://localhost:3041/api/personal"
         : `http://localhost:3041/api/personal/${selectedRow.Personal}`;
@@ -106,7 +223,7 @@ export default function PersonalPage() {
       const response = await fetch(endpoint, {
         method: isNew ? "POST" : "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(selectedRow),
+        body: JSON.stringify(cleanedData),
       });
 
       if (!response.ok) {
@@ -124,68 +241,83 @@ export default function PersonalPage() {
         );
       });
 
+      setChangedFields({});
       handleDialogClose();
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : "Error desconocido";
-      console.error("❌ Error al guardar:", msg);
-      alert("Error al guardar: " + msg);
+    } catch (error: any) {
+      alert("Error al guardar: " + (error.message || "Error desconocido"));
     }
   };
 
-  const filteredRows = rows.filter((r) =>
-  r.Personal?.toLowerCase().includes(filters.Personal.toLowerCase()) &&
-  r.Nombre?.toLowerCase().includes(filters.nombre.toLowerCase()) &&
-  r.Departamento?.toLowerCase().includes(filters.departamento.toLowerCase()) &&
-  r.Estatus?.toLowerCase().includes(filters.estatus.toLowerCase())
-);
+
+  const filteredRows = rows.filter((r) => {
+    const fullName = `${r.Nombre} ${r.ApellidoPaterno || ""} ${r.ApellidoMaterno || ""}`.toLowerCase();
+    return (
+      r.Personal?.toLowerCase().includes(filters.Personal.toLowerCase()) &&
+      fullName.includes(filters.nombre.toLowerCase()) &&
+      (r.Departamento || "").toLowerCase().includes(filters.departamento.toLowerCase()) &&
+      (r.Estatus || "").toLowerCase().includes(filters.estatus.toLowerCase())
+    );
+  });
 
   // Nuevo orden aplicado
   const sortedRows = [...filteredRows].sort(
     (a, b) => parseInt(b.Personal) - parseInt(a.Personal)
   );
 
+  const paginatedRows = sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
   const EmpleadoImage = ({ id, size = 50 }: { id: string; size?: number }) => {
-    const [src, setSrc] = useState("");
+    const [src, setSrc] = useState(`/image/user.jpg`);
 
     useEffect(() => {
-      const url = `${process.env.NEXT_PUBLIC_IMAGE_URL}/uploads/${id}.jpg`;
-      fetch(url, { method: "HEAD" })
+      const imageUrl = `${process.env.NEXT_PUBLIC_IMAGE_URL}/uploads/${id}.jpg`;
+
+      fetch(imageUrl, { method: "HEAD" })
         .then((res) => {
-          if (res.ok) setSrc(url);
-          else setSrc("/image/user.jpg");
+          if (res.ok) setSrc(imageUrl);
         })
-        .catch(() => setSrc("/image/user.jpg"));
+        .catch(() => {
+          // ya está en default
+        });
     }, [id]);
 
+    const handleFieldChange = (field: string, value: string) => {
+      setSelectedRow((prev) => {
+        const updated = { ...prev!, [field]: value };
+        setChangedFields((prevChanges) => ({
+          ...prevChanges,
+          [field]: true,
+        }));
+        return updated;
+      });
+    };
+
     return (
-      <Box
-        sx={{
-          width: size,
-          height: size,
-          borderRadius: "50%",
-          overflow: "hidden",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          border: "2px solid #ccc",
-        }}
-      >
-        <img
-          src={src}
-          alt={`Empleado ${id}`}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
-        />
-      </Box>
+       <Box
+      sx={{
+        width: size,
+        height: size,
+        borderRadius: "50%",
+        overflow: "hidden",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        border: "2px solid #ccc",
+      }}
+    >
+      <Image
+        src={src}
+        alt={`Empleado ${id}`}
+        width={size}
+        height={size}
+        style={{ objectFit: "cover" }}
+      />
+    </Box>
     );
   };
 
-
   return (
-    <Box sx={{ flex: 1, display: "flex", flexDirection: "column", backgroundColor: "#FAF4F2", p: { xs: 2, sm: 3, md: 4 } }}>
+    <Box sx={{ flex: 1, display: "flex", flexDirection: "column", backgroundColor: "#FAF4F2", p: { xs: 2, sm: 3, md: 6.5 } }}>
       {/* Encabezado */}
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 3, flexWrap: "wrap", gap: 2 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -203,88 +335,87 @@ export default function PersonalPage() {
           Exportar a Excel
         </Button>
 
-        <Button variant="outlined" onClick={() => { setSelectedRow({}); setOpenDialog(true); }} sx={{ borderColor: "#9A3324", color: "#9A3324", "&:hover": { borderColor: "#7A281C", backgroundColor: "#F8EDEB" } }}>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setSelectedRow({ ...personalMolde });
+            setChangedFields({});
+            setOpenDialog(true);
+          }}
+          sx={{
+            borderColor: "#9A3324",
+            color: "#9A3324",
+            "&:hover": {
+              borderColor: "#7A281C",
+              backgroundColor: "#F8EDEB",
+            },
+          }}
+        >
           Nuevo registro
         </Button>
       </Box>
 
       {/* Filtros */}
       <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 2 }}>
-        <TextField
-          label="Número de empleado"
-          value={filters.Personal || ""}
-          onChange={(e) => setFilters({ ...filters, Personal: e.target.value })}
-          size="small"
+        <Autocomplete
+          options={[...new Set(rows.map((r) => r.Personal))]}
+          value={filters.Personal}
+          onChange={(_, value) => setFilters({ ...filters, Personal: value || "" })}
+          renderInput={(params) => <TextField {...params} label="Número de empleado" size="small" />}
+          sx={{ minWidth: 180 }}
+          freeSolo
         />
-        <TextField
-          label="Buscar por nombre"
+        <Autocomplete
+          options={[
+            ...new Set(
+              rows.map((r) =>
+                [r.Nombre, r.ApellidoPaterno, r.ApellidoMaterno]
+                  .filter(Boolean)
+                  .join(" ")
+                  .trim()
+              )
+            ),
+          ]}
           value={filters.nombre}
-          onChange={(e) => setFilters({ ...filters, nombre: e.target.value })}
-          size="small"
+          onChange={(_, value) => setFilters({ ...filters, nombre: value || "" })}
+          renderInput={(params) => (
+            <TextField {...params} label="Nombre completo" size="small" />
+          )}
+          sx={{ minWidth: 200 }}
+          freeSolo
         />
-        <TextField
-          label="Departamento"
+        <Autocomplete
+          options={[...new Set(rows.map((r) => r.Departamento || ""))]}
           value={filters.departamento}
-          onChange={(e) => setFilters({ ...filters, departamento: e.target.value })}
-          size="small"
+          onChange={(_, value) => setFilters({ ...filters, departamento: value || "" })}
+          renderInput={(params) => <TextField {...params} label="Departamento" size="small" />}
+          sx={{ minWidth: 180 }}
+          freeSolo
         />
-        <TextField
-          label="Estatus"
+        <Autocomplete
+          options={[...new Set(rows.map((r) => r.Estatus || ""))]}
           value={filters.estatus}
-          onChange={(e) => setFilters({ ...filters, estatus: e.target.value })}
-          size="small"
+          onChange={(_, value) => setFilters({ ...filters, estatus: value || "" })}
+          renderInput={(params) => <TextField {...params} label="Estatus" size="small" />}
+          sx={{ minWidth: 150 }}
+          freeSolo
         />
       </Box>
 
-
-      {/* Tabla */}
       {loading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4, flex: 1 }}>
           <CircularProgress sx={{ color: "#9A3324" }} />
         </Box>
       ) : (
-        <TableContainer component={Paper} sx={{ maxHeight: "70vh" }}>
-          <Table stickyHeader size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>Foto</TableCell>
-                <TableCell>Número Empleado</TableCell>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Departamento</TableCell>
-                <TableCell>Puesto</TableCell>
-                <TableCell>Estatus</TableCell>
-                <TableCell>Acciones</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {sortedRows.map((row) => (
-                <TableRow key={row.Personal} hover onClick={() => handleRowClick(row)}>
-                  <TableCell>
-                    <EmpleadoImage id={row.Personal} />
-                  </TableCell>
-                  <TableCell>{row.Personal}</TableCell>
-                  <TableCell>{row.Nombre} {row.ApellidoPaterno}</TableCell>
-                  <TableCell>{row.Departamento}</TableCell>
-                  <TableCell>{row.Puesto}</TableCell>
-                  <TableCell>{row.Estatus}</TableCell>
-                  <TableCell>
-                    <Button
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedRow(row);
-                        setFotoSrc(`${process.env.NEXT_PUBLIC_IMAGE_URL}/uploads/${row.Personal}.jpg`);
-                        setOpenDialog(true);
-                      }}
-                    >
-                      Editar
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <TablaPersonal
+          rows={paginatedRows}
+          onEdit={(row) => {
+            setSelectedRow({ ...personalMolde, ...row });
+            setChangedFields({});
+            setFotoSrc(`${process.env.NEXT_PUBLIC_IMAGE_URL}/uploads/${row.Personal}.jpg`);
+            setOpenDialog(true);
+          }}
+        />
       )}
 
       {/* Diálogo */}
@@ -298,15 +429,17 @@ export default function PersonalPage() {
             alignItems: "center",
           }}
         >
-          <Typography variant="h6">
+          <span style={{ fontWeight: 600, fontSize: "1.1rem" }}>
             {selectedRow?.Nombre
               ? `Editar a ${selectedRow?.Nombre} ${selectedRow?.ApellidoPaterno ?? ""}`
               : "Nuevo registro"}
-          </Typography>
+          </span>
+
           <Button onClick={handleDialogClose} sx={{ color: "white" }}>
             Cerrar
           </Button>
         </DialogTitle>
+
 
         <DialogContent
           sx={{
@@ -316,29 +449,40 @@ export default function PersonalPage() {
             p: 3,
             height: "100%",
             gap: 4,
-          }}
+          }} 
         >
-          {/* Tarjeta del empleado */}
           <Box
             sx={{
               flex: "0 0 300px",
               textAlign: "center",
-              backgroundColor: "#FFFFFF",
+              background: "linear-gradient(145deg, #f2e8e6, #ffffff)",
               p: 3,
-              borderRadius: 3,
-              boxShadow: 3,
+              borderRadius: 4,
+              boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
             }}
           >
-            <Image
-              src={fotoSrc}
-              alt="Foto del empleado"
-              width={200}
-              height={200}
-              style={{ borderRadius: "50%", border: "4px solid #ccc", objectFit: "cover" }}
-              onError={() => setFotoSrc("/image/user.jpg")}
-            />
+            <Box
+              sx={{
+                width: 160,
+                height: 160,
+                borderRadius: "50%",
+                overflow: "hidden",
+                mx: "auto",
+                border: "5px solid #9A3324",
+              }}
+            >
+              {fotoSrc && (
+                <Image
+                  src={fotoSrc}
+                  alt="Foto del empleado"
+                  width={200}
+                  height={200}
+                  onError={() => setFotoSrc("")} // Limpia si hay 404
+                />
+              )}
+            </Box>
 
-            <Typography variant="h6" sx={{ mt: 2, color: "#333" }}>
+            <Typography variant="h6" sx={{ mt: 2, color: "#9A3324", fontWeight: 600 }}>
               {selectedRow?.Nombre} {selectedRow?.ApellidoPaterno}
             </Typography>
             <Typography variant="body2" sx={{ color: "#666" }}>
@@ -348,6 +492,7 @@ export default function PersonalPage() {
               {selectedRow?.Departamento || "Departamento no especificado"}
             </Typography>
           </Box>
+
 
           {/* Formulario */}
           <Box
@@ -376,25 +521,159 @@ export default function PersonalPage() {
                     onChange={(e) => handleFieldChange(key, e.target.value)}
                     fullWidth
                     size="small"
-                    disabled={key === "Personal"}
+                    disabled={disabledFields.includes(key)}
+                    sx={{
+                      "& .MuiInputBase-root": changedFields[key]
+                        ? { backgroundColor: "#FFF0EC", border: "1px solid #9A3324" }
+                        : {},
+                    }}
                   />
                 ))}
             </Box>
           </Box>
         </DialogContent>
 
-        <DialogActions sx={{ backgroundColor: "#FFF8F6", justifyContent: "flex-end", p: 3 }}>
-          <Button onClick={handleDialogClose}>Cancelar</Button>
+        <DialogActions
+          sx={{
+            backgroundColor: "#FFF8F6",
+            justifyContent: "flex-end",
+            p: 3,
+            gap: 2,
+          }}
+        >
           <Button
-            onClick={handleSave}
-            variant="contained"
+            onClick={handleDialogClose}
+            variant="outlined"
+            startIcon={<CloseIcon />}
             sx={{
+              px: 3,
+              py: 1.5,
+              borderRadius: 2,
+              fontWeight: "bold",
+              fontSize: "0.95rem",
+              textTransform: "none",
+              borderColor: "#B7422B",
+              color: "#B7422B",
+              backgroundColor: "white",
+              "&:hover": {
+                backgroundColor: "#FDECEA",
+                borderColor: "#9A3324",
+                color: "#9A3324",
+              },
+            }}
+          >
+            Cancelar
+          </Button>
+
+          <Button
+            onClick={() => {
+              if (Object.keys(changedFields).length === 0) {
+                alert("No hay cambios para guardar.");
+                return;
+              }
+              setPendingSave(true);
+              setConfirmOpen(true);
+            }}
+            variant="contained"
+            startIcon={<SaveIcon />}
+            sx={{
+              px: 3,
+              py: 1.5,
+              borderRadius: 2,
+              fontWeight: "bold",
+              fontSize: "0.95rem",
+              textTransform: "none",
               backgroundColor: "#B7422B",
-              color: "#fff",
-              "&:hover": { backgroundColor: "#9A3324" },
+              color: "white",
+              boxShadow: "0 2px 6px rgba(0, 0, 0, 0.15)",
+              "&:hover": {
+                backgroundColor: "#9A3324",
+              },
             }}
           >
             Guardar
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            backgroundColor: "#FFF8F6",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
+            width: "100%",
+            maxWidth: 500,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            backgroundColor: "#9A3324",
+            color: "white",
+            fontWeight: "bold",
+            fontSize: "1.25rem",
+            p: 2,
+          }}
+        >
+          Confirmar cambios
+        </DialogTitle>
+
+        <DialogContent dividers sx={{ p: 3 }}>
+          <Typography variant="body1" sx={{ mb: 2, fontWeight: 500 }}>
+            Los siguientes campos han sido modificados:
+          </Typography>
+
+          <Box component="ul" sx={{ pl: 3, m: 0 }}>
+            {Object.entries(changedFields).map(([field]) => (
+              <li key={field}>
+                <Typography variant="body2" sx={{ mb: 0.5 }}>
+                  <strong>{field}:</strong>{" "}
+                  {String(selectedRow?.[field as keyof Personal] ?? "—")}
+                </Typography>
+              </li>
+            ))}
+          </Box>
+        </DialogContent>
+
+        <DialogActions sx={{ px: 3, py: 2, backgroundColor: "#F3E8E5" }}>
+          <Button
+            onClick={() => setConfirmOpen(false)}
+            variant="outlined"
+            sx={{
+              borderColor: "#9A3324",
+              color: "#9A3324",
+              textTransform: "none",
+              fontWeight: "bold",
+              "&:hover": {
+                borderColor: "#7A281C",
+                backgroundColor: "#FBE9E7",
+              },
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            onClick={() => {
+              setConfirmOpen(false);
+              if (pendingSave) {
+                setPendingSave(false);
+                handleSave();
+              }
+            }}
+            variant="contained"
+            sx={{
+              backgroundColor: "#B7422B",
+              color: "white",
+              textTransform: "none",
+              fontWeight: "bold",
+              "&:hover": {
+                backgroundColor: "#9A3324",
+              },
+            }}
+          >
+            Confirmar y guardar
           </Button>
         </DialogActions>
       </Dialog>

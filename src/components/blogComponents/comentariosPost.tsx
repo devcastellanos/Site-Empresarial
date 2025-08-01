@@ -95,49 +95,56 @@ const ComentariosPost: React.FC<ComentariosPostProps> = ({ idBlog, isAdmin = fal
   };
 
   return (
-    <div className="mt-6">
-      <h4 className="text-lg font-semibold mb-3">Comentarios</h4>
+    <div className="mt-10">
+      <h4 className="text-xl font-semibold text-gray-800 mb-6 border-b pb-2 border-gray-200">Comentarios</h4>
 
       {comentarios.map((c) => (
-        <div key={c.idComentario} className="mb-4 bg-white/90 p-4 rounded-xl shadow">
-          <div className="flex justify-between items-start mb-1">
-            <span className="text-sm font-bold text-gray-800">Empleado #{c.num_empleado}</span>
+        <div
+          key={c.idComentario}
+          className="mb-6 bg-white shadow-sm border border-gray-200 rounded-xl p-5 transition hover:shadow-md"
+        >
+          <div className="flex justify-between items-start mb-2">
+            <span className="text-sm font-semibold text-gray-700">Empleado #{c.num_empleado}</span>
+
             {(user && (user.rol === "admin" || user.rol === "Capacitacion")) && (
               <div className="flex gap-2">
-                <Button size="sm" onClick={() => setEditando(c)}>Editar</Button>
+                <Button size="sm" variant="secondary" onClick={() => setEditando(c)}>Editar</Button>
                 <Button size="sm" variant="destructive" onClick={() => confirmarEliminacion(c.idComentario)}>Eliminar</Button>
               </div>
             )}
           </div>
 
           {editando?.idComentario === c.idComentario ? (
-            <>
+            <div className="space-y-2 mt-2">
               <Textarea
                 value={editando.contenido}
                 onChange={(e) => setEditando({ ...editando, contenido: e.target.value })}
               />
-              <div className="flex gap-2 mt-2">
+              <div className="flex gap-2">
                 <Button size="sm" onClick={handleGuardarEdicion}>Guardar</Button>
                 <Button size="sm" variant="outline" onClick={() => setEditando(null)}>Cancelar</Button>
               </div>
-            </>
+            </div>
           ) : (
-            <p className="text-gray-700 text-sm mt-1">{c.contenido}</p>
+            <p className="text-sm text-gray-800 mt-1 leading-relaxed">{c.contenido}</p>
           )}
         </div>
       ))}
 
-      <div className="mt-6">
-        <Label className="mb-1 block text-sm font-medium text-gray-700">Nuevo comentario</Label>
+      {/* Nuevo comentario */}
+      <div className="mt-10 bg-white border border-gray-200 p-5 rounded-xl shadow-sm">
+        <Label className="block text-sm font-medium text-gray-700 mb-2">Nuevo comentario</Label>
         <Textarea
           placeholder="Escribe tu comentario..."
           value={nuevoComentario}
           onChange={(e) => setNuevoComentario(e.target.value)}
+          className="mb-3"
         />
-        <Button className="mt-2" onClick={handleAgregar}>Comentar</Button>
+        <Button onClick={handleAgregar}>Comentar</Button>
       </div>
     </div>
   );
+
 };
 
 export default ComentariosPost;

@@ -191,6 +191,7 @@ function Movements() {
         estatus_movimiento: mov.estatus_movimiento,
         fecha_solicitud: mov.fecha_solicitud,
         historial_aprobaciones: mov.historial_aprobaciones,
+        IdAprobación: mov.IdAprobación,
         ...datosExtras,
       };
     });
@@ -406,6 +407,7 @@ const tiposFiltrados =
           {selectedMovimiento && (
             <div className="space-y-2 max-h-[70vh] overflow-y-auto text-sm">
               <p><strong>ID Movimiento:</strong> {selectedMovimiento.idMovimiento}</p>
+              <p><strong>ID Aprobación:</strong> {selectedMovimiento.IdAprobacion}</p>
               <p><strong>Tipo:</strong> {selectedMovimiento.tipo_movimiento}</p>
               <p><strong>Empleado:</strong> {selectedMovimiento.num_empleado}</p>
               <p>
