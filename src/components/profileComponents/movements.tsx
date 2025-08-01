@@ -675,12 +675,16 @@ useEffect(() => {
                                 <MdDescription className="text-gray-700" />
                                 {mov.tipo_movimiento}
                               </p>
-                              <p className="text-sm text-gray-600">
-                                {format(new Date(mov.fecha_solicitud), "PPP", { locale: es })}
-                              </p>
+                              <p className="text-sm text-gray-500">
+                              {mov.fecha_solicitud
+                                ? formatearFechaBonita(mov.fecha_solicitud)
+                                : "Fecha no disponible"}
+                            </p>
                             </div>
-                            <p className="font-medium text-gray-800">
-                              Fecha Incidencia: {format(new Date(mov.fecha_incidencia), "PPP", { locale: es })}
+                            <p>
+                              Fecha del movimiento: {mov.fecha_incidencia
+                                ? formatearFechaBonita(mov.fecha_incidencia)
+                                : "Fecha no disponible"}
                             </p>
                             <p className="text-sm text-tinto-500 italic">
                               {status === "pendiente" && `En espera de aprobación de: ${obtenerAprobadorClave(mov.historial_aprobaciones_detallado, status)}`}
