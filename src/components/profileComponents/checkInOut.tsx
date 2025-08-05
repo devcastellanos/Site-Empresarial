@@ -146,17 +146,36 @@ useEffect(() => {
     (m) => m.estatus_movimiento === "aprobado"
   );
 
-  const fechasJustificadas = new Set(
-    movimientosAprobados.map((m) => new Date(m.fecha_incidencia).toISOString().split("T")[0])
-  );
-  const movimientosPorFecha = Object.fromEntries(
-    movimientosAprobados.map((m) => [new Date(m.fecha_incidencia).toISOString().split("T")[0], m.tipo_movimiento])
-  );
+  const fechasJustificadas = new Set<string>();
+  const movimientosPorFecha: Record<string, string> = {};
+
+  movimientosAprobados.forEach((mov) => {
+    const tipo = mov.tipo_movimiento;
+    const fechaIncidencia = new Date(mov.fecha_incidencia).toISOString().split("T")[0];
+
+    if (tipo === "Vacaciones" && Array.isArray(mov.datos_json?.fechas)) {
+      mov.datos_json.fechas.forEach((fecha: string) => {
+        fechasJustificadas.add(fecha);
+        movimientosPorFecha[fecha] = tipo;
+      });
+    } else {
+      fechasJustificadas.add(fechaIncidencia);
+      movimientosPorFecha[fechaIncidencia] = tipo;
+    }
+  });
 
   const getEstatusMovimiento = (fecha: string) => {
     const match = movimientosSolicitados.find((mov) => {
-      const fechaIncidencia = new Date(mov.fecha_incidencia);
-      return fechaIncidencia.toISOString().split("T")[0] === fecha;
+      const tipo = mov.tipo_movimiento;
+
+      if (tipo === "Vacaciones") {
+        // Solo mostrar si la fecha está en datos_json.fechas
+        return mov.datos_json?.fechas?.includes(fecha);
+      }
+
+      // Para otros tipos, comparar con fecha_incidencia
+      const fechaIncidencia = new Date(mov.fecha_incidencia).toISOString().split("T")[0];
+      return fechaIncidencia === fecha;
     });
 
     if (!match) return null;

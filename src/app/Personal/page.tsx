@@ -62,6 +62,7 @@ export default function PersonalPage() {
   const [fotoSrc, setFotoSrc] = useState("/image/user.jpg");
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingSave, setPendingSave] = useState(false);
+  const [isNew, setIsNew] = useState(false);
   const [changedFields, setChangedFields] = useState<Record<string, boolean>>({});
   const disabledFields = [
     "Cuenta Bancaria",
@@ -75,7 +76,54 @@ export default function PersonalPage() {
     "Personal",
   ];
 
+  const fieldMaxLengths: Record<string, number> = {
+    Personal: 10,
+    ApellidoPaterno: 30,
+    ApellidoMaterno: 30,
+    Nombre: 30,
+    Tipo: 20,
+    Direccion: 100,
+    DireccionNumero: 20,
+    DireccionNumeroInt: 20,
+    Colonia: 100,
+    Delegacion: 100,
+    Poblacion: 100,
+    Estado: 30,
+    Pais: 30,
+    CodigoPostal: 15,
+    Telefono: 50,
+    eMail: 50,
+    ZonaEconomica: 30,
+    CURP: 30, // Registro
+    RFC: 30,  // Registro2
+    NSS: 30,  // Registro3
+    FormaPago: 50,
+    CtaDinero: 10,
+    PersonalSucursal: 50,
+    PersonalCuenta: 20,
+    LugarNacimiento: 50,
+    Nacionalidad: 30,
+    Beneficiario: 50,
+    BeneficiarioParentesco: 20,
+    PorcentajeBeneficiario: 10, // convertiremos float a string limitado si se requiere
+    Beneficiario2: 50,
+    Parentesco2: 20,
+    Madre: 50,
+    Padre: 50,
+    ReportaA: 10,
+    Estatus: 15,
+    Sexo: 10,
+    EstadoCivil: 20,
+    PeriodoTipo: 20,
+    TipoContrato: 50,
+    Jornada: 20,
+    TipoSueldo: 10,
+    Situacion: 50
+  };
+
+
   const personalMolde: Partial<Personal> & Record<string, any> = {
+    Personal: "",
     ApellidoPaterno: "",
     ApellidoMaterno: "",
     Nombre: "",
@@ -121,7 +169,6 @@ export default function PersonalPage() {
     Madre: "",
     Padre: "",
     ReportaA: "",
-    Personal: "", // identificador
   };
 
   useEffect(() => {
@@ -199,15 +246,7 @@ export default function PersonalPage() {
   const handleSave = async () => {
     if (!selectedRow) return;
 
-    const isNew = !selectedRow.Personal;
-
-    const requiredFields = [
-      "Personal",
-      "Estatus",
-      "Nombre",
-      "ApellidoPaterno",
-      "ApellidoMaterno",
-    ];
+    const requiredFields = ["Personal", "Estatus", "Nombre", "ApellidoPaterno", "ApellidoMaterno"];
 
     const cleanedData = Object.fromEntries(
       Object.entries(selectedRow).filter(
@@ -236,13 +275,12 @@ export default function PersonalPage() {
 
       setRows((prev) => {
         if (isNew) return [...prev, updated];
-        return prev.map((row) =>
-          row.Personal === updated.Personal ? { ...row, ...updated } : row
-        );
+        return prev.map((row) => (row.Personal === updated.Personal ? { ...row, ...updated } : row));
       });
 
+      setSelectedRow((prev) => ({ ...prev, ...updated }));
       setChangedFields({});
-      handleDialogClose();
+      // No cerramos el diálogo
     } catch (error: any) {
       alert("Error al guardar: " + (error.message || "Error desconocido"));
     }
@@ -338,8 +376,17 @@ export default function PersonalPage() {
         <Button
           variant="outlined"
           onClick={() => {
-            setSelectedRow({ ...personalMolde });
-            setChangedFields({});
+            const maxId = rows.reduce((max, row) => {
+              const num = parseInt(row.Personal);
+              return !isNaN(num) && num > max ? num : max;
+            }, 0);
+
+            const nextId = (maxId + 1).toString();
+
+            setSelectedRow({ ...personalMolde, Personal: nextId });
+            setChangedFields({ Personal: true });
+            setFotoSrc("/image/user.jpg");
+            setIsNew(true); // ✅ Marca que es nuevo
             setOpenDialog(true);
           }}
           sx={{
@@ -513,22 +560,63 @@ export default function PersonalPage() {
               }}
             >
               {selectedRow &&
-                Object.keys(selectedRow).map((key) => (
-                  <TextField
-                    key={key}
-                    label={key}
-                    value={selectedRow[key as keyof Personal] ?? ""}
-                    onChange={(e) => handleFieldChange(key, e.target.value)}
-                    fullWidth
-                    size="small"
-                    disabled={disabledFields.includes(key)}
-                    sx={{
-                      "& .MuiInputBase-root": changedFields[key]
-                        ? { backgroundColor: "#FFF0EC", border: "1px solid #9A3324" }
-                        : {},
-                    }}
-                  />
-                ))}
+                Object.keys(selectedRow).map((key) => {
+                  const isDateField = [
+                    "FechaNacimiento",
+                    "FechaAlta",
+                    "FechaAntiguedad",
+                    "FechaBaja",
+                    "AspiraFecha"
+                  ].includes(key);
+
+                  const value = (selectedRow as Record<string, any>)[key]
+
+                  if (isDateField) {
+                    // Convierte "DD/MM/YYYY" -> "YYYY-MM-DD"
+                    const parts = typeof value === "string" ? value.split("/") : [];
+                    const isoDate =
+                      parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : "";
+
+                    return (
+                      <TextField
+                        key={key}
+                        label={key}
+                        type="date"
+                        value={isoDate}
+                        onChange={(e) => {
+                          const newValue = e.target.value; // "YYYY-MM-DD"
+                          const formatted =
+                            newValue && newValue !== ""
+                              ? `${newValue.split("-")[2]}/${newValue.split("-")[1]}/${newValue.split("-")[0]}`
+                              : "";
+                          handleFieldChange(key, formatted);
+                        }}
+                        fullWidth
+                        size="small"
+                        disabled={!isNew && disabledFields.includes(key)}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                    );
+                  }
+
+                  return (
+                    <TextField
+                      key={key}
+                      label={key}
+                      value={value ?? ""}
+                      onChange={(e) => handleFieldChange(key, e.target.value)}
+                      fullWidth
+                      size="small"
+                      disabled={!isNew && disabledFields.includes(key)}
+                      inputProps={{ maxLength: fieldMaxLengths[key] || undefined }}
+                      sx={{
+                        "& .MuiInputBase-root": changedFields[key]
+                          ? { backgroundColor: "#FFF0EC", border: "1px solid #9A3324" }
+                          : {},
+                      }}
+                    />
+                  );
+                })}
             </Box>
           </Box>
         </DialogContent>
