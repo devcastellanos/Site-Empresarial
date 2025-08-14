@@ -51,6 +51,7 @@ export async function POST(req) {
 
     const token = jwt.sign({
       exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
+      puesto: user.data.puesto,
       email: user.data.email,
       user: user.data.name,
       num_empleado: user.data.num_empleado,

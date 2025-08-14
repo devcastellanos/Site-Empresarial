@@ -39,13 +39,60 @@ type Personal = {
   ApellidoPaterno?: string;
   ApellidoMaterno?: string;
   Sexo?: string | null;
-  Puesto?: string | null;
-  Departamento?: string | null;
   Estatus?: string;
+  Puesto?: string;
+  Departamento?: string;
+  PeriodoTipo?: string;
+  TipoContrato?: string;
+  Jornada?: string;
+  TipoSueldo?: string;
+  FechaAntiguedad?: string;
+  Situacion?: string;
   CURP?: string;
+  EstadoCivil?: string;
+  RFC?: string;
+  NSS?: string;
   Tipo?: string;
-  eMail?: string;
+  Direccion?: string;
+  DireccionNumero?: string;
+  DireccionNumeroInt?: string;
+  Colonia?: string;
+  Delegacion?: string;
+  Poblacion?: string;
+  Estado?: string;
+  Pais?: string;
+  CodigoPostal?: string;
   Telefono?: string;
+  eMail?: string;
+  ZonaEconomica?: string;
+  FormaPago?: string;
+  CtaDinero?: string;
+  PersonalSucursal?: string;
+  PersonalCuenta?: string;
+  FechaNacimiento?: string;
+  LugarNacimiento?: string;
+  Nacionalidad?: string;
+  Beneficiario?: string;
+  BeneficiarioRFC?: string;
+  BeneficiarioDomicilio?: string;
+  BeneficiarioNacimiento?: string;
+  BeneficiarioParentesco?: string;
+  PorcentajeBeneficiario?: string;
+  Beneficiario2?: string;
+  Beneficiario2RFC?: string;
+  Beneficiario2Domicilio?: string;
+  Beneficiario2Nacimiento?: string;
+  Parentesco2?: string;
+  Porcentaje2?: string;
+  Beneficiario3?: string;
+  Beneficiario3RFC?: string;
+  Beneficiario3Domicilio?: string;
+  Beneficiario3Nacimiento?: string;
+  Parentesco3?: string;
+  Porcentaje3?: string;
+  Madre?: string;
+  Padre?: string;
+  ReportaA?: string;
 };
 
 export default function PersonalPage() {
@@ -162,14 +209,28 @@ export default function PersonalPage() {
     LugarNacimiento: "",
     Nacionalidad: "",
     Beneficiario: "",
+    BeneficiarioRFC: "",
+    BeneficiarioDomicilio: "",
+    BeneficiarioNacimiento: "",
     BeneficiarioParentesco: "",
     PorcentajeBeneficiario: "",
     Beneficiario2: "",
+    Beneficiario2RFC: "",
+    Beneficiario2Domicilio: "",
+    Beneficiario2Nacimiento: "",
     Parentesco2: "",
+    Porcentaje2: "",
+    Beneficiario3: "",
+    Beneficiario3RFC: "",
+    Beneficiario3Domicilio: "",
+    Beneficiario3Nacimiento: "",
+    Parentesco3: "",
+    Porcentaje3: "",
     Madre: "",
     Padre: "",
     ReportaA: "",
   };
+
 
   useEffect(() => {
       fetch("http://localhost:3041/api/personal")
@@ -240,6 +301,9 @@ export default function PersonalPage() {
 
   const handleRowClick = (row: Personal) => {
     setSelectedRow(row);
+    setIsNew(false);  // Asegúrate de que al editar, no se marque como 'nuevo'
+    setChangedFields({});
+    setFotoSrc(`${process.env.NEXT_PUBLIC_IMAGE_URL}/uploads/${row.Personal}.jpg`);
     setOpenDialog(true);
   };
 
@@ -457,7 +521,15 @@ export default function PersonalPage() {
         <TablaPersonal
           rows={paginatedRows}
           onEdit={(row) => {
-            setSelectedRow({ ...personalMolde, ...row });
+            setSelectedRow({
+              ...personalMolde,
+              ...Object.fromEntries(
+                Object.entries(row).map(([key, value]) => [
+                  key,
+                  value === null ? undefined : value, // Convierte null a undefined
+                ])
+              ),
+            });
             setChangedFields({});
             setFotoSrc(`${process.env.NEXT_PUBLIC_IMAGE_URL}/uploads/${row.Personal}.jpg`);
             setOpenDialog(true);
@@ -607,7 +679,7 @@ export default function PersonalPage() {
                       onChange={(e) => handleFieldChange(key, e.target.value)}
                       fullWidth
                       size="small"
-                      disabled={!isNew && disabledFields.includes(key)}
+                      disabled={(isNew && disabledFields.includes(key)) || (!isNew && disabledFields.includes(key))}
                       inputProps={{ maxLength: fieldMaxLengths[key] || undefined }}
                       sx={{
                         "& .MuiInputBase-root": changedFields[key]
