@@ -152,12 +152,12 @@ export default function MallaCurricular() {
 
   /* ---- Carga inicial ---- */
   useEffect(() => {
-    fetch("http://localhost:3041/api/puestos")
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/puestos`)
       .then((r) => r.json())
       .then((data: string[]) => setPlanes(data.map((nombre, i) => ({ id_plan: i + 1, nombre }))))
       .catch(() => setPlanes([]));
 
-    fetch("http://localhost:3041/categorias")
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categorias`)
       .then((r) => r.json())
       .then((arr: Categoria[]) => {
         setCategorias(arr);
@@ -169,7 +169,7 @@ export default function MallaCurricular() {
       })
       .catch(() => setCategorias([]));
 
-    fetch("http://localhost:3041/cursospresenciales")
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/cursospresenciales`)
       .then((r) => r.json())
       .then(setCursosCatalogo)
       .catch(() => setCursosCatalogo([]));
@@ -250,7 +250,7 @@ export default function MallaCurricular() {
     const plan = planes.find((p) => p.id_plan === seleccionado);
     if (!plan) return;
 
-    fetch(`http://localhost:3041/api/malla/${encodeURIComponent(plan.nombre)}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/${encodeURIComponent(plan.nombre)}`)
       .then((r) => {
         if (!r.ok) throw new Error("No existe malla para este puesto");
         return r.json();
@@ -347,7 +347,7 @@ export default function MallaCurricular() {
 
     const payload = { plan: planSel.nombre, etapas };
     try {
-      const res = await fetch("http://localhost:3041/api/malla", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/malla`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -357,7 +357,7 @@ export default function MallaCurricular() {
 
       // refrescar
       const r = await fetch(
-        `http://localhost:3041/api/malla/${encodeURIComponent(planSel.nombre)}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/${encodeURIComponent(planSel.nombre)}`
       );
       if (r.ok) {
         const data = await r.json();
@@ -528,7 +528,7 @@ export default function MallaCurricular() {
                       </div>
                     ))}
                     {!(cursosPorSubcat[sub.id_subcategoria] || []).length && (
-                      <div className="text-xs text-slate-500">Sin cursos asignados.</div>
+                      <div className="text-xs text-slate-500">-</div>
                     )}
                   </div>
                 </div>
